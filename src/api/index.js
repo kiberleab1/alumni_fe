@@ -42,5 +42,5 @@ axios.interceptors.request.use(
 );
 export async function getUsers({ pageNumber, pageSize }) {
   const paging = { pageNumber, pageSize };
-  return await axios.get(`${API_BASE_URl}/departments`, paging);
+  return await axios.get(`${API_BASE_URl}/getDepartments`, paging);
 }
