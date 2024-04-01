@@ -40,7 +40,35 @@ axios.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-export async function getUsers({ pageNumber, pageSize }) {
+export async function getDepartments({ pageNumber, pageSize }) {
   const paging = { pageNumber, pageSize };
   return await axios.get(`${API_BASE_URl}/getDepartments`, paging);
+}
+
+export async function createDepartment({ name, description, contact_info }) {
+  const data = { name, description, contact_info };
+  console.log(data);
+  return await axios.post(`${API_BASE_URl}/createDepartment`, data);
+}
+
+export async function createInstitute({
+  name,
+  description,
+  contact_info,
+  address_id,
+  starting_year,
+}) {
+  const data = {
+    name,
+    description,
+    address_id,
+    starting_year,
+    contact_info,
+  };
+  return await axios.post(`${API_BASE_URl}/createInstitute`, data);
+}
+
+export async function getInstitutes({ pageNumber, pageSize }) {
+  const paging = { pageNumber, pageSize };
+  return await axios.get(`${API_BASE_URl}/getAllInstitute`, paging);
 }
