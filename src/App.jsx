@@ -9,6 +9,7 @@ import reportWebVitals from './reportWebVitals';
 import DeparmentsPage from './pages/Departments.jsx';
 import Header from './components/header/header.jsx';
 import InstitutionsPage from './pages/Institutions';
+import LoginPage from './pages/login';
 
 const hist = createBrowserHistory();
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ function App() {
             <Route path="/home" element={<Components />} />
             <Route path="/departments" element={<DeparmentsPage />} />
             <Route path="/institutions" element={<InstitutionsPage />} />
+            <Route path="/login" element={<LoginPage />} />
           </Routes>
         </div>
       </BrowserRouter>
