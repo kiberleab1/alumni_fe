@@ -72,3 +72,16 @@ export async function getInstitutes({ pageNumber, pageSize }) {
   const paging = { pageNumber, pageSize };
   return await axios.get(`${API_BASE_URl}/getAllInstitute`, paging);
 }
+
+export async function createEmailTemplates({ header, body }) {
+  const data = { header, body };
+  return await axios.post(`${API_BASE_URl}/emailsTemplates`, data);
+}
+
+export async function fetchEmailTemplates({ pageNumber, pageSize }) {
+  const paging = { count: pageSize, page: pageNumber };
+  console.log('here', paging);
+  return await axios.post(`${API_BASE_URl}/getEmailTemplates`, paging);
+}
+// header: joi.string().required(),
+// body: joi.string().required(),
