@@ -19,7 +19,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter history={hist}>
         <Header />
-        <div className="bg-yellow-400 w-full min-w-full ">
+        <div className="w-full min-w-full ">
           <Routes>
             <Route path="/custom-components" element={<CustomComponents />} />
             <Route path="/home" element={<Components />} />
