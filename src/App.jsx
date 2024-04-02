@@ -11,6 +11,7 @@ import Header from './components/header/header.jsx';
 import InstitutionsPage from './pages/Institutions';
 
 const hist = createBrowserHistory();
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -18,7 +19,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter history={hist}>
         <Header />
-        <div className="mt-24">
+        <div className="bg-yellow-400 w-full min-w-full ">
           <Routes>
             <Route path="/custom-components" element={<CustomComponents />} />
             <Route path="/home" element={<Components />} />
