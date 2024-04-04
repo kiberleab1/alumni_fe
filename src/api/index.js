@@ -72,3 +72,40 @@ export async function getInstitutes({ pageNumber, pageSize }) {
   const paging = { pageNumber, pageSize };
   return await axios.get(`${API_BASE_URl}/getAllInstitute`, paging);
 }
+
+export async function signin({
+  email,
+  first_name,
+  middle_name,
+  last_name,
+  phone_number,
+  password,
+  gender,
+  date_of_birth,
+  role_id,
+  address_id,
+  birth_place_id,
+  institute_id
+
+}) {
+  const data = {
+    email,
+    first_name,
+    middle_name,
+    last_name,
+    phone_number,
+    password,
+    gender,
+    date_of_birth,
+    role_id,
+    address_id,
+    birth_place_id,
+    institute_id
+  };
+  return await axios.post(`${API_BASE_URl}/signin`, data);
+}
+
+export async function signup({ email, first_name, middle_name, last_name, phone_number, password, gender, date_of_birth, role_id, address_id, birth_place_id, institute_id }) {
+  const data = { email, first_name, middle_name, last_name, phone_number, password, gender, date_of_birth, role_id, address_id, birth_place_id, institute_id };
+  return await axios.post(`${API_BASE_URl}/signup`, data);
+}
