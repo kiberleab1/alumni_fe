@@ -11,6 +11,9 @@ import Header from './components/header/header.jsx';
 import InstitutionsPage from './pages/Institutions';
 // import Signin from './pages/signin';
 import SignupPage from './pages/signup';
+import LoginPage from './pages/login';
+import RolePage from './pages/Role';
+import SideBar from './pages/SideBar';
 
 const hist = createBrowserHistory();
 const queryClient = new QueryClient();
@@ -19,15 +22,18 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter history={hist}>
-        <Header />
-        <div className="mt-24">
+        {/* <Header /> */}
+        <div className="w-full min-w-full ">
           <Routes>
             <Route path="/custom-components" element={<CustomComponents />} />
             <Route path="/home" element={<Components />} />
             <Route path="/departments" element={<DeparmentsPage />} />
+            <Route path="/roles" element={<RolePage />} />
+            <Route path="/admin" element={<SideBar />} />
             <Route path="/institutions" element={<InstitutionsPage />} />
             {/* <Route path="/signin" element={<Signin />} /> */}
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/login" element={<LoginPage />} />
           </Routes>
         </div>
       </BrowserRouter>
