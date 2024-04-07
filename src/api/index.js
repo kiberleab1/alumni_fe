@@ -46,13 +46,13 @@ export async function getDepartments({ pageNumber, pageSize }) {
   return await axios.get(`${API_BASE_URl}/getDepartments`, paging);
 }
 
-export async function getRoles({pageNumber, pageSize}) {
+export async function getRoles({ pageNumber, pageSize }) {
   const paging = { pageNumber, pageSize };
   return await axios.get(`${API_BASE_URl}/getAllRole`, paging);
 }
 
-export async function createNewRole({role_name}) {
-  const data = {role_name}
+export async function createNewRole({ role_name }) {
+  const data = { role_name };
   console.log(data);
   return await axios.post(`${API_BASE_URl}/createRole`, data);
 }
@@ -89,15 +89,14 @@ export async function getInstitutes({ pageNumber, pageSize }) {
 //   const data = { email, password, ip_address };
 //   return await axios.post(`${API_BASE_URl}/login`, loginData);
 // }
-export async function login({
-  email,
-  password,
-  ip_address
-}) {
+export async function login({ email, password, ip_address }) {
   const data = {
     email,
     password,
-    ip_address
+    ip_address,
   };
-  return await axios.get(`${API_BASE_URl}/login`, data);
+
+  const response = await axios.post(`${API_BASE_URl}/login`, data);
+  console.log(response);
+  return response;
 }

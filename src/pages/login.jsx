@@ -1,5 +1,5 @@
-import { useQueryClient, useMutation } from "react-query";
-import { login } from "../api";
+import { useQueryClient, useMutation } from 'react-query';
+import { login } from '../api';
 import {
   Container,
   Row,
@@ -9,10 +9,9 @@ import {
   Button,
   Input,
   FormFeedback,
-} from "reactstrap";
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
-
+} from 'reactstrap';
+import { Formik, Form } from 'formik';
+import * as Yup from 'yup';
 
 export default function LoginPage() {
   return (
@@ -28,7 +27,7 @@ const LoginForm = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation(login, {
     onSuccess: () => {
-      queryClient.invalidateQueries("login");
+      queryClient.invalidateQueries('login');
     },
   });
   const handleSubmit = (values) => {
@@ -52,15 +51,16 @@ const LoginForm = () => {
           <Col md="12">
             <Formik
               initialValues={{
-                email: "",
-                password: ""
+                email: '',
+                password: '',
               }}
               validationSchema={Yup.object({
-                email: Yup.string().required("Required").email("Invalid email"),
-                password: Yup.string().required("Required").min(8, "Too Short! must be at least 8 characters")
+                email: Yup.string().required('Required').email('Invalid email'),
+                password: Yup.string()
+                  .required('Required')
+                  .min(8, 'Too Short! must be at least 8 characters'),
               })}
               onSubmit={handleSubmit}
-              
             >
               {(formik) => (
                 <Form>
@@ -79,9 +79,7 @@ const LoginForm = () => {
                           valid={formik.touched.email && !formik.errors.email}
                         />
                         <Label for="email">Email</Label>
-                        <FormFeedback>
-                          Enter a valid email
-                        </FormFeedback>
+                        <FormFeedback>Enter a valid email</FormFeedback>
                       </FormGroup>
                     </Row>
                     <Row>
@@ -93,8 +91,13 @@ const LoginForm = () => {
                           value={formik.values.password}
                           onChange={formik.handleChange}
                           type="password"
-                          invalid={formik.touched.password && formik.errors.password} 
-                          valid={formik.touched.password && !formik.errors.password}
+                          autoComplete="on"
+                          invalid={
+                            formik.touched.password && formik.errors.password
+                          }
+                          valid={
+                            formik.touched.password && !formik.errors.password
+                          }
                         />
                         <FormFeedback>
                           Password can not be less than 8 characters.
@@ -103,11 +106,11 @@ const LoginForm = () => {
                       </FormGroup>
                     </Row>
                     <Col md="12"></Col>
-                    <div className="text-center flex justify-between pt-4 ">
+                    <div className="text-center flex justify-center  pt-4 ">
                       <Button
                         type="submit"
                         color="primary"
-                        className="text-nowrap"
+                        className="text-nowrap mr-4"
                         disabled={formik.isSubmitting}
                         onClick={formik.handleSubmit}
                       >
@@ -131,5 +134,3 @@ const LoginForm = () => {
     </div>
   );
 };
-
-
