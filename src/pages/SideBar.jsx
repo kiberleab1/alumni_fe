@@ -1,20 +1,10 @@
-import { Fragment, useState } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
-import {
-    ArrowLongLeftIcon,
-    Bars3Icon,
-    BuildingLibraryIcon,
-    CalendarIcon,
-    Cog6ToothIcon,
-    HomeIcon,
-    InboxArrowDownIcon,
-    NewspaperIcon,
-    TagIcon,
-    UsersIcon,
-    XMarkIcon,
-} from '@heroicons/react/24/outline'
-import RolePage from './Role'
-import Admins from './Admins'
+import { Fragment, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { ArrowLongLeftIcon, Bars3Icon, BuildingLibraryIcon, CalendarIcon, Cog6ToothIcon, HomeIcon, InboxArrowDownIcon, NewspaperIcon, TagIcon, UsersIcon, XMarkIcon, } from '@heroicons/react/24/outline';
+import RolePage from './Role';
+import Admins from './Admins';
+import InstitutionsPage from './Institutions';
+import DepartmentPage from './Departments';
 
 const navigation = [
     { name: 'Dashboard', href: '#', icon: HomeIcon, current: false },
@@ -26,19 +16,41 @@ const navigation = [
     { name: 'Email', href: '#', icon: InboxArrowDownIcon, current: false },
 ]
 
-const pages = [
-
-    { name: 'Admins', href: '/admin', current: true },
-]
-
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
+const componentsMap = {
+    'Dashboard': DepartmentPage,
+    'Admins': Admins,
+    'Institutions': InstitutionsPage,
+    'Events': RolePage,
+    'News': RolePage,
+    'Email': RolePage,
+    'Departments': DepartmentPage
+}
+
 export default function SideBar() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [sidebarOpenMain, setSidebarOpenMain] = useState(true);
+    const [componentClicked, setComponentClicked] = useState({ name: 'Admins', href: '/admin', current: true });
+
+    const [navigationItems, setNavigationItems] = useState(navigation);
+
+    const handleNavigationItemClick = (itemName) => {
+        const updatedNavigationItems = navigationItems.map(item => {
+            if (item.name === itemName) {
+                return { ...item, current: true };
+            } else {
+                return { ...item, current: false };
+            }
+        });
+        setNavigationItems(updatedNavigationItems);
+        setComponentClicked({ name: itemName, href: `/${itemName.toLowerCase()}`, current: true });
+    };
+
+    const ComponentToRender = componentsMap[componentClicked.name];
 
     return (
         <>
@@ -94,7 +106,7 @@ export default function SideBar() {
                                                     <ul role="list" className="-mx-2 space-y-1">
                                                         {navigation.map((item) => (
                                                             <li key={item.name}>
-                                                                <a href={item.href} className={classNames( item.current ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800','group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold')}>
+                                                                <a href={item.href} className={classNames(item.current ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold')} onClick={() => handleNavigationItemClick(item.name)}>
                                                                     <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
                                                                     {item.name}
                                                                 </a>
@@ -142,7 +154,7 @@ export default function SideBar() {
                                     <ul role="list" className="-mx-2 space-y-1">
                                         {navigation.map((item) => (
                                             <li key={item.name}>
-                                                <a href={item.href} className={classNames(  item.current ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold' )}>
+                                                <a href={item.href} className={classNames(item.current ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold')} onClick={() => handleNavigationItemClick(item.name)}>
                                                     <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
                                                     {item.name}
                                                 </a>
@@ -156,14 +168,14 @@ export default function SideBar() {
                                         <li>
                                             <a href="#" className={classNames('text-gray-400 hover:text-white hover:bg-gray-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold')} >
                                                 <ArrowLongLeftIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                                                    Logout
+                                                Logout
                                             </a>
                                         </li>
 
                                         <li>
                                             <a href="#" className={classNames('text-gray-400 hover:text-white hover:bg-gray-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold')} >
                                                 <Cog6ToothIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                                                    Settings
+                                                Settings
                                             </a>
                                         </li>
                                     </ul>
@@ -200,27 +212,25 @@ export default function SideBar() {
                                                 </a>
                                             </div>
                                         </li>
-                                        {pages.map((page) => (
-                                            <li key={page.name}>
-                                                <div className="flex items-center">
-                                                    <svg
-                                                        className="h-5 w-5 flex-shrink-0 text-gray-300"
-                                                        fill="currentColor"
-                                                        viewBox="0 0 20 20"
-                                                        aria-hidden="true"
-                                                    >
-                                                        <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
-                                                    </svg>
-                                                    <a
-                                                        href={page.href}
-                                                        className="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
-                                                        aria-current={page.current ? 'page' : undefined}
-                                                    >
-                                                        {page.name}
-                                                    </a>
-                                                </div>
-                                            </li>
-                                        ))}
+                                        <li>
+                                            <div className="flex items-center">
+                                                <svg
+                                                    className="h-5 w-5 flex-shrink-0 text-gray-300"
+                                                    fill="currentColor"
+                                                    viewBox="0 0 20 20"
+                                                    aria-hidden="true"
+                                                >
+                                                    <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+                                                </svg>
+                                                <a
+                                                    href={componentClicked.href}
+                                                    className="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+                                                    aria-current={componentClicked.current ? 'page' : undefined}
+                                                >
+                                                    {componentClicked.name}
+                                                </a>
+                                            </div>
+                                        </li>
                                     </ol>
                                 </nav>
                             </div>)
@@ -228,9 +238,10 @@ export default function SideBar() {
 
                     </div>
 
-                    {/* TODO make page rendering dynamin */}
                     <main className="py-10">
-                        <div className="px-4 sm:px-6 lg:px-8"><Admins /></div>
+                        <div className="px-4 sm:px-6 lg:px-8">
+                            <ComponentToRender />
+                        </div>
                     </main>
                 </div>
             </div>
