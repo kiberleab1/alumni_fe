@@ -1,10 +1,10 @@
-import { useQueryClient, useMutation } from "react-query";
-import { signup } from "../api";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { Container, Row, Col, FormGroup, Label, Button } from "reactstrap";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import { useQueryClient, useMutation } from 'react-query';
+import { signup } from '../api';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { Container, Row, Col, FormGroup, Label, Button } from 'reactstrap';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 export default function SignupPage() {
   return (
@@ -20,12 +20,12 @@ const SignupForm = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation(signup, {
     onSuccess: () => {
-      queryClient.invalidateQueries("signup");
+      queryClient.invalidateQueries('signup');
     },
   });
 
   const handleSubmit = (values) => {
-    console.log({ "new user": values });
+    console.log({ 'new user': values });
     mutation.mutate(values);
   };
 
@@ -42,35 +42,37 @@ const SignupForm = () => {
             </Col>
           </Row>
           <Formik
-          //TODO
-          //when fetching possible options from api for dropdown fields set the first option as default
+            //TODO
+            //when fetching possible options from api for dropdown fields set the first option as default
             initialValues={{
-              email: "",
-              first_name: "",
-              middle_name: "",
-              last_name: "",
-              phone_number: "",
-              password: "",
-              gender: "Male",
-              date_of_birth: "",
-              role_id: "",
-              address_id: "",
-              birth_place_id: "",
-              institute_id: "",
+              email: '',
+              first_name: '',
+              middle_name: '',
+              last_name: '',
+              phone_number: '',
+              password: '',
+              gender: 'Male',
+              date_of_birth: '',
+              role_id: '',
+              address_id: '',
+              birth_place_id: '',
+              institute_id: '',
             }}
             validationSchema={Yup.object({
-              email: Yup.string().email("Invalid email address").required("Required"),
-              first_name: Yup.string().required("Required"),
-              middle_name: Yup.string().required("Required"),
-              last_name: Yup.string().required("Required"),
-              phone_number: Yup.string().required("Required"),
-              password: Yup.string().required("Required"),
-              gender: Yup.string().required("Required"),
-              date_of_birth: Yup.date().required("Required"),
-              role_id: Yup.string().required("Required"),
-              address_id: Yup.string().required("Required"),
-              birth_place_id: Yup.string().required("Required"),
-              institute_id: Yup.string().required("Required"),
+              email: Yup.string()
+                .email('Invalid email address')
+                .required('Required'),
+              first_name: Yup.string().required('Required'),
+              middle_name: Yup.string().required('Required'),
+              last_name: Yup.string().required('Required'),
+              phone_number: Yup.string().required('Required'),
+              password: Yup.string().required('Required'),
+              gender: Yup.string().required('Required'),
+              date_of_birth: Yup.date().required('Required'),
+              role_id: Yup.string().required('Required'),
+              address_id: Yup.string().required('Required'),
+              birth_place_id: Yup.string().required('Required'),
+              institute_id: Yup.string().required('Required'),
             })}
             onSubmit={handleSubmit}
           >
@@ -83,12 +85,12 @@ const SignupForm = () => {
                         <Col>
                           <Row className="">
                             <div className="flex justify-end items-center mt-2">
-                              <Label htmlFor="email" className="m-2">
+                              <Label htmlFor="email" className="m-2 w-1/3">
                                 Email
                               </Label>
                               <Field
                                 type="text"
-                                className="form-control"
+                                className="form-control w-2/3"
                                 id="email"
                                 value={formik.values.email}
                                 onChange={formik.handleChange}
@@ -110,11 +112,16 @@ const SignupForm = () => {
                       <FormGroup>
                         <Col>
                           <Row>
-                            <div className="flex justify-end items-center mt-2">
-                              <Label htmlFor="first_name" className="text-nowrap">First Name</Label>
+                            <div className="flex justify-between items-center mt-2">
+                              <Label
+                                htmlFor="first_name"
+                                className="text-nowrap w-1/3 w-1/3"
+                              >
+                                First Name
+                              </Label>
                               <Field
                                 type="text"
-                                className="form-control"
+                                className="form-control w-2/3 w-2/3"
                                 id="first_name"
                                 value={formik.values.first_name}
                                 onChange={formik.handleChange}
@@ -134,11 +141,16 @@ const SignupForm = () => {
                     <Row>
                       <FormGroup>
                         <Row>
-                          <div className="flex justify-end items-center mt-2">
-                            <Label htmlFor="middle_name" className="text-nowrap">Middle Name</Label>
+                          <div className="flex justify-between items-center mt-2">
+                            <Label
+                              htmlFor="middle_name"
+                              className="text-nowrap w-1/3"
+                            >
+                              Middle Name
+                            </Label>
                             <Field
                               type="text"
-                              className="form-control"
+                              className="form-control w-2/3"
                               id="middle_name"
                               value={formik.values.middle_name}
                               onChange={formik.handleChange}
@@ -158,10 +170,15 @@ const SignupForm = () => {
                       <FormGroup>
                         <Row>
                           <div className="flex justify-end items-center mt-2">
-                            <Label htmlFor="last_name" className="text-nowrap">Last Name</Label>
+                            <Label
+                              htmlFor="last_name"
+                              className="text-nowrap w-1/3"
+                            >
+                              Last Name
+                            </Label>
                             <Field
                               type="text"
-                              className="form-control"
+                              className="form-control w-2/3"
                               id="last_name"
                               value={formik.values.last_name}
                               onChange={formik.handleChange}
@@ -181,10 +198,15 @@ const SignupForm = () => {
                       <FormGroup>
                         <Row>
                           <div className="flex justify-end items-center mt-2">
-                            <Label htmlFor="phone_number" className="text-nowrap">Phone Number</Label>
+                            <Label
+                              htmlFor="phone_number"
+                              className="text-nowrap w-1/3"
+                            >
+                              Phone Number
+                            </Label>
                             <Field
                               type="text"
-                              className="form-control"
+                              className="form-control w-2/3"
                               id="phone_number"
                               value={formik.values.phone_number}
                               onChange={formik.handleChange}
@@ -204,15 +226,19 @@ const SignupForm = () => {
                       <FormGroup>
                         <Row>
                           <div className="flex justify-end items-center mt-2">
-                            <Label htmlFor="password" className="text-nowrap">Password</Label>
+                            <Label
+                              htmlFor="password"
+                              className="text-nowrap w-1/3"
+                            >
+                              Password
+                            </Label>
                             <Field
                               type="password"
-                              className="form-control"
+                              className="form-control w-2/3"
                               id="password"
                               value={formik.values.password}
                               onChange={formik.handleChange}
                               name="password"
-                              
                               placeholder="Enter Password"
                             />
                             <ErrorMessage
@@ -228,9 +254,14 @@ const SignupForm = () => {
                       <FormGroup>
                         <Row>
                           <div className="flex justify-end items-center mt-2">
-                            <Label htmlFor="gender" className="text-nowrap">Gender</Label>
+                            <Label
+                              htmlFor="gender"
+                              className="text-nowrap w-1/3"
+                            >
+                              Gender
+                            </Label>
                             <select
-                              className="form-control"
+                              className="form-control w-2/3"
                               id="gender"
                               name="gender"
                               value={formik.values.gender}
@@ -248,12 +279,17 @@ const SignupForm = () => {
                         </Row>
                       </FormGroup>
                     </Row>
-                    
+
                     <Row>
                       <FormGroup>
                         <Row>
-                          <div className="flex justify-end items-center mt-2">
-                            <Label htmlFor="date_of_birth" className="text-nowrap">Date of Birth</Label>
+                          <div className="flex justify-right items-center mt-2">
+                            <Label
+                              htmlFor="date_of_birth"
+                              className="text-nowrap w-1/3"
+                            >
+                              Date of Birth
+                            </Label>
                             <DatePicker
                               id="date_of_birth"
                               name="date_of_birth"
@@ -271,9 +307,9 @@ const SignupForm = () => {
                               }
                               selected={formik.values.date_of_birth}
                               onChange={(date) =>
-                                formik.setFieldValue("date_of_birth", date)
+                                formik.setFieldValue('date_of_birth', date)
                               }
-                              className="form-control "
+                              className="form-control w-2/3 "
                             />
                             <ErrorMessage
                               name="date_of_birth"
@@ -288,9 +324,14 @@ const SignupForm = () => {
                       <FormGroup>
                         <Row>
                           <div className="flex justify-end items-center mt-2">
-                            <label htmlFor="role_id" className="text-nowrap">Role Id</label>
+                            <label
+                              htmlFor="role_id"
+                              className="text-nowrap w-1/3"
+                            >
+                              Role Id
+                            </label>
                             <select
-                              className="form-control"
+                              className="form-control w-2/3"
                               id="role_id"
                               value={formik.values.role_id}
                               onChange={formik.handleChange}
@@ -314,9 +355,14 @@ const SignupForm = () => {
                       <FormGroup>
                         <Row>
                           <div className="flex justify-end items-center mt-2">
-                            <label htmlFor="address_id" className="text-nowrap">Address Id</label>
+                            <label
+                              htmlFor="address_id"
+                              className="text-nowrap w-1/3"
+                            >
+                              Address Id
+                            </label>
                             <select
-                              className="form-control"
+                              className="form-control w-2/3"
                               id="address_id"
                               value={formik.values.address_id}
                               onChange={formik.handleChange}
@@ -341,11 +387,14 @@ const SignupForm = () => {
                       <FormGroup>
                         <Row>
                           <div className="flex justify-end items-center mt-2">
-                            <label htmlFor="birth_place_id" className="text-nowrap">
+                            <label
+                              htmlFor="birth_place_id"
+                              className="text-nowrap w-1/3"
+                            >
                               Birth Place Id
                             </label>
                             <select
-                              className="form-control"
+                              className="form-control w-2/3"
                               id="birth_place_id"
                               value={formik.values.birth_place_id}
                               onChange={formik.handleChange}
@@ -370,9 +419,14 @@ const SignupForm = () => {
                       <FormGroup>
                         <Row>
                           <div className="flex justify-end items-center mt-2">
-                            <label htmlFor="institute_id" className="text-nowrap">Institute Id</label>
+                            <label
+                              htmlFor="institute_id"
+                              className="text-nowrap w-1/3"
+                            >
+                              Institute Id
+                            </label>
                             <select
-                              className="form-control"
+                              className="form-control w-2/3"
                               id="institute_id"
                               value={formik.values.institute_id}
                               onChange={formik.handleChange}
@@ -397,12 +451,16 @@ const SignupForm = () => {
 
                 <Col md="12" className="text-center ">
                   <div className="flex justify-center gap-8 items-center my-4 pb-4">
-                  <Button color="primary" onClick={formik.handleSubmit} type="submit">
-                    Signup
-                  </Button>
-                  <Button color="secondary" onClick={formik.handleReset}>
-                    Reset
-                  </Button>
+                    <Button
+                      color="primary"
+                      onClick={formik.handleSubmit}
+                      type="submit"
+                    >
+                      Signup
+                    </Button>
+                    <Button color="secondary" onClick={formik.handleReset}>
+                      Reset
+                    </Button>
                   </div>
                 </Col>
               </Form>
