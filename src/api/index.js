@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { func } from 'prop-types';
 
 const API_BASE_URl = import.meta.env.VITE_BASE_URL;
 axios.interceptors.response.use(
@@ -43,6 +44,17 @@ axios.interceptors.request.use(
 export async function getDepartments({ pageNumber, pageSize }) {
   const paging = { pageNumber, pageSize };
   return await axios.get(`${API_BASE_URl}/getDepartments`, paging);
+}
+
+export async function getRoles({pageNumber, pageSize}) {
+  const paging = { pageNumber, pageSize };
+  return await axios.get(`${API_BASE_URl}/getAllRole`, paging);
+}
+
+export async function createNewRole({role_name}) {
+  const data = {role_name}
+  console.log(data);
+  return await axios.post(`${API_BASE_URl}/createRole`, data);
 }
 
 export async function createDepartment({ name, description, contact_info }) {
