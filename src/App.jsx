@@ -9,6 +9,7 @@ import reportWebVitals from './reportWebVitals';
 import DeparmentsPage from './pages/Departments.jsx';
 import Header from './components/header/header.jsx';
 import InstitutionsPage from './pages/Institutions';
+import LoginPage from './pages/login';
 import RolePage from './pages/Role';
 import SideBar from './pages/SideBar';
 
@@ -28,6 +29,7 @@ function App() {
             <Route path="/roles" element={<RolePage />} />
             <Route path="/admin" element={<SideBar />} />
             <Route path="/institutions" element={<InstitutionsPage />} />
+            <Route path="/login" element={<LoginPage />} />
           </Routes>
         </div>
       </BrowserRouter>

@@ -1,15 +1,10 @@
-import React from "react";
-import "./assets/scss/style.scss";
+import './assets/scss/style.scss';
 import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
-import { createBrowserHistory } from "history";
-import {
-  Route,
-  Routes,
-  HashRouter
-} from "react-router-dom";
-import Components from "./views/components/components.jsx";
-import CustomComponents from "./views/custom-components/custom-components.jsx";
+import { createBrowserHistory } from 'history';
+import { Route, Routes, HashRouter } from 'react-router-dom';
+import Components from './views/components/components.jsx';
+import CustomComponents from './views/custom-components/custom-components.jsx';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
