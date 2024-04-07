@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { func } from 'prop-types';
 
 const API_BASE_URl = import.meta.env.VITE_BASE_URL;
 axios.interceptors.response.use(
