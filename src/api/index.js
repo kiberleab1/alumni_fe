@@ -84,6 +84,68 @@ export async function getInstitutes({ pageNumber, pageSize }) {
   return await axios.get(`${API_BASE_URl}/getAllInstitute`, paging);
 }
 
+// export async function signin({
+//   email,
+//   first_name,
+//   middle_name,
+//   last_name,
+//   phone_number,
+//   password,
+//   gender,
+//   date_of_birth,
+//   role_id,
+//   address_id,
+//   birth_place_id,
+//   institute_id
+
+// }) {
+//   const data = {
+//     email,
+//     first_name,
+//     middle_name,
+//     last_name,
+//     phone_number,
+//     password,
+//     gender,
+//     date_of_birth,
+//     role_id,
+//     address_id,
+//     birth_place_id,
+//     institute_id
+//   };
+//   return await axios.post(`${API_BASE_URl}/signin`, data);
+// }
+
+export async function signup({
+  email,
+  first_name,
+  middle_name,
+  last_name,
+  phone_number,
+  password,
+  gender,
+  date_of_birth,
+  role_id,
+  address_id,
+  birth_place_id,
+  institute_id,
+}) {
+  const data = {
+    email,
+    first_name,
+    middle_name,
+    last_name,
+    phone_number,
+    password,
+    gender,
+    date_of_birth,
+    role_id,
+    address_id,
+    birth_place_id,
+    institute_id,
+  };
+  return await axios.post(`${API_BASE_URl}/signup`, data);
+}
 // export async function login({ email, password, ip_address }) {
 //   const data = { email, password, ip_address };
 //   return await axios.post(`${API_BASE_URl}/login`, loginData);
