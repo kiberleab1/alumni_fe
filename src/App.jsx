@@ -9,21 +9,24 @@ import reportWebVitals from './reportWebVitals';
 import DeparmentsPage from './pages/Departments.jsx';
 import Header from './components/header/header.jsx';
 import InstitutionsPage from './pages/Institutions';
+import RolePage from './pages/Role';
+import SideBar from './pages/SideBar';
 
 const hist = createBrowserHistory();
-
 const queryClient = new QueryClient();
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter history={hist}>
-        <Header />
+        {/* <Header /> */}
         <div className="w-full min-w-full ">
           <Routes>
             <Route path="/custom-components" element={<CustomComponents />} />
             <Route path="/home" element={<Components />} />
             <Route path="/departments" element={<DeparmentsPage />} />
+            <Route path="/roles" element={<RolePage />} />
+            <Route path="/admin" element={<SideBar />} />
             <Route path="/institutions" element={<InstitutionsPage />} />
           </Routes>
         </div>
