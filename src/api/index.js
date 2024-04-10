@@ -66,9 +66,9 @@ export async function createDepartment({ name, description, contact_info }) {
 export async function createInstitute({
   name,
   description,
-  contact_info,
   address_id,
   starting_year,
+  contact_info,
 }) {
   const data = {
     name,
@@ -77,10 +77,23 @@ export async function createInstitute({
     starting_year,
     contact_info,
   };
+  console.log(data)
+
   return await axios.post(`${API_BASE_URl}/createInstitute`, data);
 }
 
 export async function getInstitutes({ pageNumber, pageSize }) {
   const paging = { pageNumber, pageSize };
   return await axios.get(`${API_BASE_URl}/getAllInstitute`, paging);
+}
+
+export async function createAddress({country, region, city, houseNumber}) {
+  const data = {
+    country,
+    region,
+    city,
+    houseNumber
+  };
+  console.log(data)
+  return await axios.post(`${API_BASE_URl}/createAddress`, data);
 }
