@@ -6,6 +6,7 @@ import Admins from './Admins';
 import InstitutionsPage from './Institutions';
 import DepartmentPage from './Departments';
 import CreateInstitutionPage from './CreateInstitute';
+import createAdminPage from './createAdmin';
 
 const navigation = [
     { name: 'Dashboard', href: '#', icon: HomeIcon, current: false },
@@ -32,7 +33,7 @@ function classNames(...classes) {
 const componentsMap = {
     'Dashboard': DepartmentPage,
     'Admins': Admins,
-    'Create Admin': RolePage,
+    'Create Admin': createAdminPage,
     'Institutions': InstitutionsPage,
     'Create Institute': CreateInstitutionPage,
     'Users': RolePage,

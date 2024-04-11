@@ -61,6 +61,22 @@ function ListInstitutions({ institutes }) {
 
 	return (
 		<div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+			<div className="sm:flex sm:items-center mb-4">
+				<div className="sm:flex-auto">
+					<h1 className="text-base font-semibold leading-6 text-gray-900 font-mono">Institututions</h1>
+					<p className="mt-2 text-sm text-gray-500 font-mono">
+						A list of all the institutions in the system including their name, description, start date.
+					</p>
+				</div>
+				<div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+					<button
+						type="button"
+						className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+					>
+						Add Institute
+					</button>
+				</div>
+			</div>
 			<div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
 				<div className="min-w-full">
 					<div className="overflow-x-auto">
