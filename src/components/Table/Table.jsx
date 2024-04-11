@@ -17,7 +17,7 @@ function getStatusColorClass(status) {
 }
 
 export default function Table({ data, headers }) {
-    const itemsPerPage = 10; // Number of items to display per page
+    const itemsPerPage = 5; // Number of items to display per page
     const [currentPage, setCurrentPage] = useState(1);
 
     // Calculate pagination boundaries
@@ -27,7 +27,8 @@ export default function Table({ data, headers }) {
 
     // Calculate total number of pages
     const totalPages = Math.ceil(data.length / itemsPerPage);
-
+    console.log(data)
+    console.log(headers)
     // Change page
     const paginate = (pageNumber) => {
         if (pageNumber >= 1 && pageNumber <= totalPages) {
@@ -40,7 +41,7 @@ export default function Table({ data, headers }) {
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                 <div className="min-w-full">
                     <div className="overflow-x-auto">
-                        <div className="table-container" style={{ maxHeight: "750px" }}>
+                        <div className="table-container" style={{ maxHeight: "500px" }}>
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="sticky top-0 bg-gray-50 z-10">
                                     <tr>

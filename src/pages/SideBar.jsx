@@ -1,21 +1,29 @@
 import { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { ArrowLongLeftIcon, Bars3Icon, BuildingLibraryIcon, CalendarIcon, Cog6ToothIcon, HomeIcon, InboxArrowDownIcon, NewspaperIcon, TagIcon, UsersIcon, XMarkIcon, } from '@heroicons/react/24/outline';
+import { AcademicCapIcon, ArrowLongLeftIcon, Bars3Icon, BuildingLibraryIcon, CalendarIcon, ChevronDownIcon, ChevronUpIcon, Cog6ToothIcon, HomeIcon, InboxArrowDownIcon, NewspaperIcon, PlusCircleIcon, PlusIcon, TagIcon, UserPlusIcon, UsersIcon, XMarkIcon, } from '@heroicons/react/24/outline';
 import RolePage from './Role';
 import Admins from './Admins';
 import InstitutionsPage from './Institutions';
 import DepartmentPage from './Departments';
+import CreateInstitutionPage from './CreateInstitute';
 
 const navigation = [
     { name: 'Dashboard', href: '#', icon: HomeIcon, current: false },
     { name: 'Admins', href: '#', icon: UsersIcon, current: true },
     { name: 'Institutions', href: '#', icon: BuildingLibraryIcon, current: false },
     { name: 'Departments', href: '#', icon: TagIcon, current: false },
+    { name: 'Users', href: '#', icon: AcademicCapIcon, current: false },
     { name: 'Events', href: '#', icon: CalendarIcon, current: false },
     { name: 'News', href: '#', icon: NewspaperIcon, current: false },
     { name: 'Email', href: '#', icon: InboxArrowDownIcon, current: false },
 ]
 
+const subNavigation = [
+    { name: 'Create Admin', parent: 'Admins', icon: UserPlusIcon, current: false },
+    { name: 'Create Users', parent: 'Users', icon: PlusIcon, current: false },
+    { name: 'Create Institute', parent: 'Institutions', icon: PlusCircleIcon, current: false },
+    { name: 'Create Department', parent: 'Departments', icon: PlusCircleIcon, current: false },
+]
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -24,7 +32,10 @@ function classNames(...classes) {
 const componentsMap = {
     'Dashboard': DepartmentPage,
     'Admins': Admins,
+    'Create Admin': RolePage,
     'Institutions': InstitutionsPage,
+    'Create Institute': CreateInstitutionPage,
+    'Users': RolePage,
     'Events': RolePage,
     'News': RolePage,
     'Email': RolePage,
@@ -37,7 +48,15 @@ export default function SideBar() {
     const [componentClicked, setComponentClicked] = useState({ name: 'Admins', href: '/admin', current: true });
 
     const [navigationItems, setNavigationItems] = useState(navigation);
+    const [openDropDown, setOpenDropDown] = useState({});
 
+    const handleOpenDropDown = (itemName) => {
+        setOpenDropDown((prevState) => ({
+            ...prevState,
+            [itemName]: !prevState[itemName]
+        }));
+        console.log(itemName)
+    };
     const handleNavigationItemClick = (itemName) => {
         const updatedNavigationItems = navigationItems.map(item => {
             if (item.name === itemName) {
@@ -48,6 +67,7 @@ export default function SideBar() {
         });
         setNavigationItems(updatedNavigationItems);
         setComponentClicked({ name: itemName, href: `/${itemName.toLowerCase()}`, current: true });
+        console.log(itemName)
     };
 
     const ComponentToRender = componentsMap[componentClicked.name];
@@ -106,9 +126,10 @@ export default function SideBar() {
                                                     <ul role="list" className="-mx-2 space-y-1">
                                                         {navigation.map((item) => (
                                                             <li key={item.name}>
-                                                                <a href={item.href} className={classNames(item.current ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold')} onClick={() => handleNavigationItemClick(item.name)}>
+                                                                <a href={item.href} className={classNames(componentClicked.name == item.name ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold')} onClick={() => handleNavigationItemClick(item.name)}>
                                                                     <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
                                                                     {item.name}
+                                                                    <ChevronDownIcon className="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
                                                                 </a>
                                                             </li>
                                                         ))}
@@ -154,10 +175,34 @@ export default function SideBar() {
                                     <ul role="list" className="-mx-2 space-y-1">
                                         {navigation.map((item) => (
                                             <li key={item.name}>
-                                                <a href={item.href} className={classNames(item.current ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold')} onClick={() => handleNavigationItemClick(item.name)}>
+                                                <a href={item.href} className={classNames(componentClicked.name === item.name ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold')} onClick={() => handleNavigationItemClick(item.name)}>
                                                     <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
                                                     {item.name}
+                                                    {(item.name !== "Dashboard" && openDropDown[item.name]) && (
+                                                        <ChevronUpIcon className="-mr-1 h-5 w-5 text-gray-400 ml-auto" aria-hidden="true" onClick={() => handleOpenDropDown(item.name)} />
+                                                    )}
+                                                    {(item.name !== "Dashboard" && !openDropDown[item.name]) && (
+                                                        <ChevronDownIcon className="-mr-1 h-5 w-5 text-gray-400 ml-auto" aria-hidden="true" onClick={() => handleOpenDropDown(item.name)} />
+                                                    )}
                                                 </a>
+                                                {openDropDown[item.name] && (
+                                                    <ul role="list" className="pl-4">
+                                                        {subNavigation.map((subItem) => (
+                                                            subItem.parent === item.name && (
+                                                                <li key={subItem.name}>
+                                                                    <a
+                                                                        href={subItem.href}
+                                                                        className={classNames(componentClicked.name === subItem.name ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold')}
+                                                                        onClick={() => handleNavigationItemClick(subItem.name)}
+                                                                    >
+                                                                        <subItem.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
+                                                                        {subItem.name}
+                                                                    </a>
+                                                                </li>
+                                                            )
+                                                        ))}
+                                                    </ul>
+                                                )}
                                             </li>
                                         ))}
                                     </ul>
@@ -223,7 +268,7 @@ export default function SideBar() {
                                                     <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
                                                 </svg>
                                                 <a
-                                                    href={componentClicked.href}
+                                                    href="#"
                                                     className="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
                                                     aria-current={componentClicked.current ? 'page' : undefined}
                                                 >
