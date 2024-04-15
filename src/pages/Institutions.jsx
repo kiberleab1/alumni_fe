@@ -2,268 +2,196 @@ import { useQuery, useQueryClient, useMutation } from 'react-query';
 import { createInstitute, getInstitutes } from '../api';
 
 import {
-  Container,
-  Row,
-  Col,
-  FormGroup,
-  Label,
-  Button,
-  Table,
+	Container,
+	Row,
+	Col,
+	FormGroup,
+	Label,
+	Button,
+	Table,
 } from 'reactstrap';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import DatePicker from 'react-datepicker'; //
 import 'react-datepicker/dist/react-datepicker.css'; // Import the styles Import react-datepicker
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
 
 export default function InstitutionsPage() {
-  const { isError, data, error, isFetching } = useQuery(
-    'getInstitutions',
-    async () => {
-      return await getInstitutes({ pageNumber: 0, pageSize: 10 });
-    }
-  );
+	const { isError, data, error, isFetching } = useQuery(
+		'getInstitutions',
+		async () => {
+			return await getInstitutes({ pageNumber: 0, pageSize: 10 });
+		}
+	);
 
-  console.log(data);
-  if (isFetching) return <div>Loading...</div>;
-  if (isError) return <div>Error: {error.message}</div>;
-  return (
-    <>
-      <div>
-        <ListInstitutions departments={data.data.institute} />
-        <CreateInstitutionForm />
-      </div>
-    </>
-  );
+	console.log(data);
+	if (isFetching) return <div>Loading...</div>;
+	if (isError) return <div>Error: {error.message}</div>;
+	return (
+		<>
+			<div>
+				<ListInstitutions institutes={data.data.institute} />
+			</div>
+		</>
+	);
 }
 
-// eslint-disable-next-line react/prop-types
-const CreateInstitutionForm = () => {
-  const queryClient = useQueryClient();
-  const mutation = useMutation(createInstitute, {
-    onSuccess: () => {
-      queryClient.invalidateQueries('getInstitutions');
-    },
-  });
-  const handleSubmit = (values) => {
-    console.log({ values });
-    mutation.mutate(values);
-  };
-  return (
-    <div>
-      <div className="spacer" id="forms-component">
-        <Container>
-          <Row className="justify-content-center">
-            <Col md="7" className="text-center">
-              <h1 className="title font-bold">Create Institute</h1>
-              <h6 className="subtitle">
-                Fill the form below to create a new institute.
-              </h6>
-            </Col>
-          </Row>
-        </Container>
-      </div>
-      <Container>
-        <Row>
-          <Col md="12">
-            <Formik
-              initialValues={{
-                name: '',
-                description: '',
-                contactInfo: '',
-                address_id: '',
-                starting_year: null,
-              }}
-              validationSchema={Yup.object({
-                name: Yup.string().required('Required'),
-                description: Yup.string().required('Required'),
-                contactInfo: Yup.string().required('Required'),
-                address_id: Yup.string().required('Required'),
-                starting_year: Yup.date().required('Required'),
-              })}
-              onSubmit={handleSubmit}
-            >
-              {(formik) => (
-                <Form className="row justify-center">
-                  <FormGroup className="col-md-9">
-                    <Label htmlFor="name">Name</Label>
-                    <Field
-                      type="text"
-                      className="form-control"
-                      id="name"
-                      name="name"
-                      placeholder="Enter Departments Name"
-                    />
-                    <ErrorMessage
-                      name="name"
-                      component="div"
-                      className="error"
-                    />
-                  </FormGroup>
-                  <FormGroup className="col-md-9">
-                    <Label htmlFor="description">Description</Label>
-                    <Field
-                      type="textarea"
-                      className="form-control"
-                      id="description"
-                      name="description"
-                      placeholder="Description"
-                    />
-                    <ErrorMessage
-                      name="description"
-                      component="div"
-                      className="error"
-                    />
-                  </FormGroup>
-                  <FormGroup className="col-md-9">
-                    <Label htmlFor="contactInfo">Contact Info</Label>
-                    <Field
-                      type="textarea"
-                      className="form-control"
-                      id="contactInfo"
-                      name="contactInfo"
-                      placeholder="Department ContactInfo"
-                    />
-                    <ErrorMessage
-                      name="contactInfo"
-                      component="div"
-                      className="error"
-                    />
-                  </FormGroup>
-                  <FormGroup className="col-md-6">
-                    <Label htmlFor="startingYear">Starting Year</Label>
-                    <br />
-                    <DatePicker
-                      id="starting_year"
-                      name="starting_year"
-                      selected={formik.values.starting_year}
-                      onChange={(date) =>
-                        formik.setFieldValue('starting_year', date)
-                      }
-                      className="form-control" // Set class to style the date picker
-                      placeholderText="Select Starting Year" // Placeholder text
-                    />
-                    <ErrorMessage
-                      name="startingYear"
-                      component="div"
-                      className="error"
-                    />
-                  </FormGroup>
-                  <FormGroup className="col-md-6">
-                    <Label htmlFor="address_id">Address Id</Label>
-                    <Field
-                      as="select" // Use "select" instead of "textarea"
-                      className="form-control"
-                      id="address_id"
-                      name="address_id"
-                    >
-                      <option value="">Select an address</option>
-                      <option value="1">Address 1</option>
-                      <option value="2">Address 2</option>
-                      {/* Add more options as needed */}
-                    </Field>
-                    <ErrorMessage
-                      name="address_id"
-                      component="div"
-                      className="error"
-                    />
-                  </FormGroup>
-
-                  <Col md="12">
-                    <Button
-                      type="submit"
-                      className="btn btn-success waves-effect waves-light m-r-10"
-                      disabled={formik.isSubmitting}
-                    >
-                      Submit
-                    </Button>
-                    <Button
-                      type="button"
-                      className="btn btn-inverse waves-effect waves-light"
-                      onClick={formik.handleReset}
-                    >
-                      Reset
-                    </Button>
-                  </Col>
-                </Form>
-              )}
-            </Formik>
-          </Col>
-        </Row>
-      </Container>
-    </div>
-  );
-};
 
 // eslint-disable-next-line react/prop-types
-function ListInstitutions({ departments }) {
-  return (
-    <div>
-      <div className="spacer" id="table-component">
-        <Container>
-          <Row className="justify-content-center">
-            <Col md="7" className="text-center">
-              <h1 className="title font-bold">List of Institutions</h1>
-              <h6 className="subtitle">
-                Here is list of institutions you have accesses too.
-              </h6>
-            </Col>
-          </Row>
-        </Container>
-      </div>
-      <Container>
-        <Row>
-          <Col md="12">
-            <div className="table-responsive">
-              <Table>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Institution Name</th>
-                    <th>Description</th>
-                    <th>Contact Info</th>
-                    <th>Starting Year</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {
-                    // eslint-disable-next-line react/prop-types
-                    departments.map((department, index) => {
-                      return (
-                        <tr key={department.id}>
-                          <td>{index + 1}</td>
-                          <td>{department.name}</td>
-                          <td className="truncate ...">
-                            {department.description}
-                          </td>
-                          <td className="truncate ...">
-                            {department.contact_info}
-                          </td>
-                          <td>{department.starting_year}</td>
+function ListInstitutions({ institutes }) {
 
-                          <td>
-                            <span
-                              className="label label-danger"
-                              onClick={() => {
-                                console.log('get here');
-                              }}
-                            >
-                              admin
-                            </span>{' '}
-                            <span className="label label-warning text-red-500">
-                              admin
-                            </span>{' '}
-                          </td>
-                        </tr>
-                      );
-                    })
-                  }
-                </tbody>
-              </Table>
-            </div>
-          </Col>
-        </Row>
-      </Container>
-    </div>
-  );
+	const itemsPerPage = 5; // Number of items to display per page
+	const [currentPage, setCurrentPage] = useState(1);
+
+	// Calculate pagination boundaries
+	const indexOfLastItem = currentPage * itemsPerPage;
+	const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+	const currentItems = institutes.slice(indexOfFirstItem, indexOfLastItem);
+
+	// Calculate total number of pages
+	const totalPages = Math.ceil(institutes.length / itemsPerPage);
+
+	// Change page
+	const paginate = (pageNumber) => {
+		if (pageNumber >= 1 && pageNumber <= totalPages) {
+			setCurrentPage(pageNumber);
+		}
+	};
+
+	return (
+		<div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+			<div className="sm:flex sm:items-center mb-4">
+				<div className="sm:flex-auto">
+					<h1 className="text-base font-semibold leading-6 text-gray-900 font-mono">Institututions</h1>
+					<p className="mt-2 text-sm text-gray-500 font-mono">
+						A list of all the institutions in the system including their name, description, start date.
+					</p>
+				</div>
+				<div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+					<button
+						type="button"
+						className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+					>
+						Add Institute
+					</button>
+				</div>
+			</div>
+			<div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+				<div className="min-w-full">
+					<div className="overflow-x-auto">
+						<div className="table-container" style={{ maxHeight: "500px" }}>
+							<table className="min-w-full divide-y divide-gray-200">
+								<thead className="sticky top-0 bg-gray-50 z-10">
+									<tr>
+										<th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+											Name
+										</th>
+										<th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+											Contact Information
+										</th>
+										<th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+											Description
+										</th>
+										<th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+											Start Date
+										</th>
+										<th scope="col" className="relative px-6 py-3">
+											<span className="sr-only">Edit</span>
+										</th>
+									</tr>
+								</thead>
+								<tbody className="bg-white divide-y divide-gray-200">
+									{currentItems.map(institute => (
+										<tr key={institute.name}>
+											<td className="px-6 py-4 whitespace-nowrap">
+												<div className="flex text-start">
+													<div className="ml-4 text-start">
+														<div className="text-sm font-medium text-gray-900 text-start">{institute.name}</div>
+													</div>
+												</div>
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap text-start">
+												<div className="text-sm text-gray-900">{institute.contact_info}</div>
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap text-start">
+												<div className="text-sm text-gray-900">{institute.description}</div>
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap text-start">
+												<div className="text-sm text-gray-900">{institute.starting_year}</div>
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium ">
+												<a href="#" className="text-indigo-600 hover:text-indigo-900">
+													Edit
+												</a>
+											</td>
+										</tr>
+									))}
+								</tbody>
+
+							</table>
+
+						</div>
+					</div>
+				</div>
+				<div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+					<div className="flex flex-1 justify-between sm:hidden">
+						<button
+							onClick={() => paginate(currentPage - 1)}
+							disabled={currentPage === 1}
+							className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${currentPage === 1 ? 'cursor-not-allowed' : ''}`}
+						>
+							<ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+							<span className="ml-2">Previous</span>
+						</button>
+						<button
+							onClick={() => paginate(currentPage + 1)}
+							disabled={currentPage === totalPages}
+							className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${currentPage === totalPages ? 'cursor-not-allowed' : ''}`}
+						>
+							<span className="mr-2">Next</span>
+							<ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+						</button>
+					</div>
+					<div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+						<div>
+							<p className="text-sm text-gray-700">
+								Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to <span className="font-medium">{Math.min(indexOfLastItem, institutes.length)}</span> of{' '}
+								<span className="font-medium">{institutes.length}</span> results
+							</p>
+						</div>
+						<div>
+							<nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+								<button
+									onClick={() => paginate(currentPage - 1)}
+									disabled={currentPage === 1}
+									className={`mr-2 ml-2 relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${currentPage === 1 ? 'cursor-not-allowed' : ''}`}
+								>
+									<span className="sr-only">Previous</span>
+									<ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+								</button>
+								{Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+									<button
+										key={pageNumber}
+										onClick={() => paginate(pageNumber)}
+										className={`relative ${currentPage === pageNumber ? 'z-10 bg-indigo-600 text-white' : 'text-gray-900 bg-white hover:bg-gray-50'} inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus:outline-offset-0`}
+									>
+										{pageNumber}
+									</button>
+								))}
+								<button
+									onClick={() => paginate(currentPage + 1)}
+									disabled={currentPage === totalPages}
+									className={`relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-100 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${currentPage === totalPages ? 'cursor-not-allowed' : ''}`}
+								>
+									<span className="sr-only">Next</span>
+									<ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+								</button>
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 }

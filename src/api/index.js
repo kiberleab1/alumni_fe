@@ -32,7 +32,7 @@ axios.interceptors.request.use(
       console.log(error);
     }
     //TODO dev
-    config.headers.Authorization = 'dev';
+    config.headers.Authorization = 'Bearer dev';
 
     return config;
   },
@@ -45,6 +45,17 @@ export async function getDepartments({ pageNumber, pageSize }) {
   return await axios.get(`${API_BASE_URl}/getDepartments`, paging);
 }
 
+export async function getRoles({ pageNumber, pageSize }) {
+  const paging = { pageNumber, pageSize };
+  return await axios.get(`${API_BASE_URl}/getAllRole`, paging);
+}
+
+export async function createNewRole({ role_name }) {
+  const data = { role_name };
+  console.log(data);
+  return await axios.post(`${API_BASE_URl}/createRole`, data);
+}
+
 export async function createDepartment({ name, description, contact_info }) {
   const data = { name, description, contact_info };
   console.log(data);
@@ -54,9 +65,9 @@ export async function createDepartment({ name, description, contact_info }) {
 export async function createInstitute({
   name,
   description,
-  contact_info,
   address_id,
   starting_year,
+  contact_info,
 }) {
   const data = {
     name,
@@ -65,6 +76,8 @@ export async function createInstitute({
     starting_year,
     contact_info,
   };
+  console.log(data);
+
   return await axios.post(`${API_BASE_URl}/createInstitute`, data);
 }
 
@@ -85,3 +98,90 @@ export async function fetchEmailTemplates({ pageNumber, pageSize }) {
 }
 // header: joi.string().required(),
 // body: joi.string().required(),
+export async function createAddress({ country, region, city, houseNumber }) {
+  const data = {
+    country,
+    region,
+    city,
+    houseNumber,
+  };
+  console.log(data);
+  return await axios.post(`${API_BASE_URl}/createAddress`, data);
+}
+// export async function signin({
+//   email,
+//   first_name,
+//   middle_name,
+//   last_name,
+//   phone_number,
+//   password,
+//   gender,
+//   date_of_birth,
+//   role_id,
+//   address_id,
+//   birth_place_id,
+//   institute_id
+
+// }) {
+//   const data = {
+//     email,
+//     first_name,
+//     middle_name,
+//     last_name,
+//     phone_number,
+//     password,
+//     gender,
+//     date_of_birth,
+//     role_id,
+//     address_id,
+//     birth_place_id,
+//     institute_id
+//   };
+//   return await axios.post(`${API_BASE_URl}/signin`, data);
+// }
+
+export async function signup({
+  email,
+  first_name,
+  middle_name,
+  last_name,
+  phone_number,
+  password,
+  gender,
+  date_of_birth,
+  role_id,
+  address_id,
+  birth_place_id,
+  institute_id,
+}) {
+  const data = {
+    email,
+    first_name,
+    middle_name,
+    last_name,
+    phone_number,
+    password,
+    gender,
+    date_of_birth,
+    role_id,
+    address_id,
+    birth_place_id,
+    institute_id,
+  };
+  return await axios.post(`${API_BASE_URl}/signup`, data);
+}
+// export async function login({ email, password, ip_address }) {
+//   const data = { email, password, ip_address };
+//   return await axios.post(`${API_BASE_URl}/login`, loginData);
+// }
+export async function login({ email, password, ip_address }) {
+  const data = {
+    email,
+    password,
+    ip_address,
+  };
+
+  const response = await axios.post(`${API_BASE_URl}/login`, data);
+  console.log(response);
+  return response;
+}
