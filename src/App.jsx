@@ -14,6 +14,7 @@ import SignupPage from './pages/signup';
 import LoginPage from './pages/login';
 import RolePage from './pages/Role';
 import SideBar from './pages/SideBar';
+import Alumni_profile from './pages/alumni_profile';
 
 const hist = createBrowserHistory();
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ function App() {
             {/* <Route path="/signin" element={<Signin />} /> */}
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/alumni_profile" element={<Alumni_profile />} />
           </Routes>
         </div>
       </BrowserRouter>
