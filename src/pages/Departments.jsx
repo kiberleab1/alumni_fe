@@ -1,17 +1,7 @@
-import { useQuery, useQueryClient, useMutation } from 'react-query';
-import { getDepartments, createDepartment } from '../api';
+import { useQuery } from 'react-query';
+import { getDepartments } from '../api';
 
-import {
-  Container,
-  Row,
-  Col,
-  FormGroup,
-  Label,
-  Button,
-  Table,
-} from 'reactstrap';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
+import { Container, Row, Col, Table } from 'reactstrap';
 
 export default function DepartmentPage() {
   const { isError, data, error, isFetching } = useQuery(
@@ -28,126 +18,12 @@ export default function DepartmentPage() {
     <>
       <div>
         <ListDepartment departments={data.data.department} />
-        <CreateDepartmentForm />
       </div>
     </>
   );
 }
 
 // eslint-disable-next-line react/prop-types
-const CreateDepartmentForm = () => {
-  const queryClient = useQueryClient();
-  const mutation = useMutation(createDepartment, {
-    onSuccess: () => {
-      queryClient.invalidateQueries('getDepartments');
-    },
-  });
-  const handleSubmit = (values) => {
-    console.log({ values });
-    mutation.mutate(values);
-  };
-  return (
-    <div>
-      <div className="spacer" id="forms-component">
-        <Container>
-          <Row className="justify-content-center">
-            <Col md="7" className="text-center">
-              <h1 className="title font-bold">Create Department</h1>
-              <h6 className="subtitle">
-                Fill the form below to create a new department.
-              </h6>
-            </Col>
-          </Row>
-        </Container>
-      </div>
-      <Container>
-        <Row>
-          <Col md="12">
-            <Formik
-              initialValues={{
-                name: '',
-                description: '',
-                contactInfo: '',
-              }}
-              validationSchema={Yup.object({
-                name: Yup.string().required('Required'),
-                description: Yup.string().required('Required'),
-                contactInfo: Yup.string().required('Required'),
-              })}
-              onSubmit={handleSubmit}
-            >
-              {(formik) => (
-                <Form className="row justify-center">
-                  <FormGroup className="col-md-9">
-                    <Label htmlFor="name">Name</Label>
-                    <Field
-                      type="text"
-                      className="form-control"
-                      id="name"
-                      name="name"
-                      placeholder="Enter Departments Name"
-                    />
-                    <ErrorMessage
-                      name="name"
-                      component="div"
-                      className="error"
-                    />
-                  </FormGroup>
-                  <FormGroup className="col-md-9">
-                    <Label htmlFor="description">Description</Label>
-                    <Field
-                      type="textarea"
-                      className="form-control"
-                      id="description"
-                      name="description"
-                      placeholder="Description"
-                    />
-                    <ErrorMessage
-                      name="description"
-                      component="div"
-                      className="error"
-                    />
-                  </FormGroup>
-                  <FormGroup className="col-md-9">
-                    <Label htmlFor="contactInfo">Contact Info</Label>
-                    <Field
-                      type="textarea"
-                      className="form-control"
-                      id="contactInfo"
-                      name="contactInfo"
-                      placeholder="Department ContactInfo"
-                    />
-                    <ErrorMessage
-                      name="contactInfo"
-                      component="div"
-                      className="error"
-                    />
-                  </FormGroup>
-                  <Col md="12">
-                    <Button
-                      type="submit"
-                      className="btn btn-success waves-effect waves-light m-r-10"
-                      disabled={formik.isSubmitting}
-                    >
-                      Submit
-                    </Button>
-                    <Button
-                      type="button"
-                      className="btn btn-inverse waves-effect waves-light"
-                      onClick={formik.handleReset}
-                    >
-                      Reset
-                    </Button>
-                  </Col>
-                </Form>
-              )}
-            </Formik>
-          </Col>
-        </Row>
-      </Container>
-    </div>
-  );
-};
 
 // eslint-disable-next-line react/prop-types
 function ListDepartment({ departments }) {

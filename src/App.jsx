@@ -7,7 +7,7 @@ import './App.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import reportWebVitals from './reportWebVitals';
 import DeparmentsPage from './pages/Departments.jsx';
-import Header from './components/header/header.jsx';
+// import Header from './components/header/header.jsx';
 import InstitutionsPage from './pages/Institutions';
 import ComposeEmail from './pages/emails/compose';
 // import Signin from './pages/signin';
@@ -17,7 +17,15 @@ import RolePage from './pages/Role';
 import SideBar from './pages/SideBar';
 
 const hist = createBrowserHistory();
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 60, // 1 hour in ms
+      cacheTime: 1000 * 60 * 60, // 1 hour in ms
+      refetchOnWindowFocus: false, // Disables automatic refetching when browser window is focused.
+    },
+  },
+});
 
 function App() {
   return (
@@ -32,7 +40,7 @@ function App() {
             <Route path="/roles" element={<RolePage />} />
             <Route path="/admin" element={<SideBar />} />
             <Route path="/institutions" element={<InstitutionsPage />} />
-            <Route path="/email/compose" element={<ComposeEmail />} />
+            <Route path="/admin/email/compose" element={<ComposeEmail />} />
             {/* <Route path="/signin" element={<Signin />} /> */}
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />

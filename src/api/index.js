@@ -108,6 +108,16 @@ export async function createAddress({ country, region, city, houseNumber }) {
   console.log(data);
   return await axios.post(`${API_BASE_URl}/createAddress`, data);
 }
+export async function getEmailFetchingOptions() {
+  const departments = await getDepartments({ pageNumber: 1, pageSize: 10 });
+  const institutions = await getInstitutes({ pageNumber: 1, pageSize: 10 });
+  const allFetchingOptions = {
+    departments: departments.data.department,
+    institutions: institutions.data.institute,
+  };
+  console.log({ allFetchingOptions });
+  return allFetchingOptions;
+}
 // export async function signin({
 //   email,
 //   first_name,
@@ -185,3 +195,37 @@ export async function login({ email, password, ip_address }) {
   console.log(response);
   return response;
 }
+
+export async function sendEmail({
+  email_template_id,
+  email_filtering_options: {
+    option_type,
+    option_value,
+    email_blast_option = 'one_time',
+  },
+}) {
+  const data = {
+    email_template_id,
+    email_filtering_options: {
+      option_type,
+      option_value,
+      email_blast_option,
+    },
+  };
+  const response = await axios.post(`${API_BASE_URl}/sendEmails`, data);
+  return response;
+}
+
+// email_template_id: joi.string().required(),
+// email_filtering_options: joi
+//   .object({
+//     option_type: joi
+//       .string()
+//       .valid(...EMAIL_FILTERING_OPTIONS_CONST)
+//       .required(),
+//     option_value: joi.string().required(),
+//     email_blast_option: joi
+//       .string()
+//       .valid(...email_blast_options)
+//       .default('one_time'),
+//   })
