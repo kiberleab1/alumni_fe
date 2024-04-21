@@ -8,13 +8,17 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import reportWebVitals from './reportWebVitals';
 import DeparmentsPage from './pages/Departments.jsx';
 // import Header from './components/header/header.jsx';
+import Navbar from './components/header/header';
+
 import InstitutionsPage from './pages/Institutions';
 import ComposeEmail from './pages/emails/compose';
 // import Signin from './pages/signin';
 import SignupPage from './pages/signup';
 import LoginPage from './pages/login';
 import RolePage from './pages/Role';
+import LandingPage from './pages/Landing';
 import SideBar from './pages/SideBar';
+import Alumni_profile from './pages/alumni_profile';
 
 const hist = createBrowserHistory();
 const queryClient = new QueryClient({
@@ -32,8 +36,11 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter history={hist}>
         {/* <Header /> */}
+        <Navbar />
+
         <div className="w-full min-w-full ">
           <Routes>
+            <Route path="/landing" element={<LandingPage />} />
             <Route path="/custom-components" element={<CustomComponents />} />
             <Route path="/home" element={<Components />} />
             <Route path="/departments" element={<DeparmentsPage />} />
@@ -44,6 +51,7 @@ function App() {
             {/* <Route path="/signin" element={<Signin />} /> */}
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/alumni_profile" element={<Alumni_profile />} />
           </Routes>
         </div>
       </BrowserRouter>
