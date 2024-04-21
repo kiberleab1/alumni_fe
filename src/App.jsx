@@ -7,12 +7,15 @@ import './App.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import reportWebVitals from './reportWebVitals';
 import DeparmentsPage from './pages/Departments.jsx';
-import Header from './components/header/header.jsx';
+// import Header from './components/header/header.jsx';
+import Navbar from './components/header/header';
+
 import InstitutionsPage from './pages/Institutions';
 // import Signin from './pages/signin';
 import SignupPage from './pages/signup';
 import LoginPage from './pages/login';
 import RolePage from './pages/Role';
+import LandingPage from './pages/Landing';
 import SideBar from './pages/SideBar';
 
 const hist = createBrowserHistory();
@@ -23,8 +26,11 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter history={hist}>
         {/* <Header /> */}
+        <Navbar />
+        
         <div className="w-full min-w-full ">
           <Routes>
+            <Route path="/landing" element={<LandingPage />} />
             <Route path="/custom-components" element={<CustomComponents />} />
             <Route path="/home" element={<Components />} />
             <Route path="/departments" element={<DeparmentsPage />} />
