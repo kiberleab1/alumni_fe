@@ -83,8 +83,19 @@ export async function createInstitute({
 }
 
 export async function getInstitutes({ pageNumber, pageSize }) {
-  const paging = { pageNumber, pageSize };
-  return await axios.get(`${API_BASE_URl}/getAllInstitute`, paging);
+  try {
+    const response = await axios({
+      method: 'GET',
+      url: `${API_BASE_URl}/getAllInstitute?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    return response;
+  } catch (error) {
+    console.error('Error fetching institutes:', error);
+    throw error;
+  }
 }
 
 export async function createAddress({country, region, city, houseNumber}) {
@@ -96,4 +107,60 @@ export async function createAddress({country, region, city, houseNumber}) {
   };
   console.log(data)
   return await axios.post(`${API_BASE_URl}/createAddress`, data);
+}
+
+export async function getAddressById(id) {
+  try {
+    const response = await axios({
+      method: 'GET',
+      url: `${API_BASE_URl}/getAddressById?id=${id}`,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    return response;
+  } catch (error) {
+    console.error('Error fetching address detail:', error);
+    throw error;
+  }
+}
+
+
+export async function getAllinstituteAdmins({ pageNumber, pageSize,value }) {
+  try {
+    const response = await axios({
+      method: 'GET',
+      url: `${API_BASE_URl}/filterUsers?pageNumber=${pageNumber}&pageSize=${pageSize}&value=${value}&filterKeyword=role_id`,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    return response;
+  } catch (error) {
+    console.error('Error fetching institutes admins:', error);
+    throw error;
+  }
+}
+
+export async function getRoleByName({name}) {
+  try {
+    const response = await axios({
+      method: 'GET',
+      url: `${API_BASE_URl}/getRoleByName?role_name=${name}`,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    console.log(response)
+    console.log(name)
+    return response;
+  } catch (error) {
+    console.error('Error fetching roles:', error);
+    throw error;
+  }
+}
+
+export async function createAInstituteAdmin(adminData) {
+  console.log(adminData)
+  return await axios.post(`${API_BASE_URl}/signup`, adminData);
 }

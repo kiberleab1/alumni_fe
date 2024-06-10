@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createAddress, createInstitute, getInstitutes, getRoles } from '../api';
+import { createAddress, createAInstituteAdmin, createInstitute, getInstitutes, getRoles } from '../api';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useQuery } from 'react-query';
@@ -15,6 +15,7 @@ export default function createAdminPage() {
     const [roles, setRoles] = useState([]);
     const [institutions, setInstitutions] = useState([]);
     const [adminFields, setAdminFields] = useState({
+        email: '',
         firstName: '',
         middleName: '',
         lastName: '',
@@ -44,7 +45,7 @@ export default function createAdminPage() {
         ['getRoles', 'getInstitutes'],
         async () => {
             try {
-                const roleData = await getRoles({ pageNumber: 0, pageSize: 10 });
+                const roleData = await getRoles({ pageNumber: 0, pageSize: 20 });
                 console.log(roleData);
                 if (roleData) {
                     const roles = Object.values(roleData.data.role).map(role => ({
@@ -54,7 +55,7 @@ export default function createAdminPage() {
                     setRoles(roles);
                 }
 
-                const instituteData = await getInstitutes({ pageNumber: 0, pageSize: 10 });
+                const instituteData = await getInstitutes({ pageNumber: 1, pageSize: 10 });
                 console.log(instituteData);
                 if (instituteData) {
                     const instituteNames = Object.values(instituteData.data.institute).map(
@@ -191,6 +192,23 @@ export default function createAdminPage() {
             return;
         }
         try {
+            console.log(adminFields)
+            const adminData = {
+                email: adminFields.email,
+                first_name: adminFields.firstName,
+                middle_name: adminFields.middleName,
+                last_name: adminFields.lastName,
+                phone_number: adminFields.phoneNumber,
+                password: adminFields.password,
+                gender: adminFields.password,
+                date_of_birth: adminFields.dateOfBirth,
+                role_id: adminFields.role,
+                address_id: adminAddressId,
+                birth_place_id: adminPlaceOfBirthId,
+                institute_id: adminFields.institute
+            };
+            console.log(adminData)
+            const result = await createAInstituteAdmin(adminData);
             toast.success('Admin saved successfully!');
             setAdminError();
             clearAdminFields();
@@ -207,8 +225,8 @@ export default function createAdminPage() {
         <div className="space-y-10 divide-y divide-gray-900/10">
             <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
                 <div className="px-4 sm:px-0">
-                    <h2 className="text-base font-semibold leading-7 text-gray-900">Address Information</h2>
-                    <p className="mt-1 text-sm leading-6 text-gray-600">Please provide updated and accurate address information of the Admin</p>
+                    <h2 className="text-base font-semibold leading-7 text-gray-900 font-mono">Address Information</h2>
+                    <p className="mt-1 text-sm leading-6 text-gray-600 font-mono">Please provide updated and accurate address information of the Admin</p>
                 </div>
 
                 <form className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
@@ -281,12 +299,12 @@ export default function createAdminPage() {
                     </div>
                     <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
                         {addressError && <p className="text-red-600 font-mono">{addressError}</p>}
-                        <button type="button" className="text-sm font-semibold leading-6 text-gray-100" onClick={handleAddressClear}>
+                        <button type="button" className="text-sm font-semibold leading-6 text-gray-100 font-mono" onClick={handleAddressClear}>
                             Clear
                         </button>
                         <button
                             type="button"
-                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 font-mono"
                             onClick={handleAddressSubmit}
                         >
                             Save
@@ -297,8 +315,8 @@ export default function createAdminPage() {
 
             <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
                 <div className="px-4 sm:px-0">
-                    <h2 className="text-base font-semibold leading-7 text-gray-900">Admin Place Of Birth Information</h2>
-                    <p className="mt-1 text-sm leading-6 text-gray-600">Please provide updated and accurate place of birth information of the admin</p>
+                    <h2 className="text-base font-semibold leading-7 text-gray-900 font-mono">Admin Place Of Birth Information</h2>
+                    <p className="mt-1 text-sm leading-6 text-gray-600 font-mono">Please provide updated and accurate place of birth information of the admin</p>
                 </div>
 
                 <form className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
@@ -320,12 +338,12 @@ export default function createAdminPage() {
                     </div>
                     <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
                         {placeOfBirthError && <p className="text-red-600 font-mono">{placeOfBirthError}</p>}
-                        <button type="button" className="text-sm font-semibold leading-6 text-gray-100" onClick={handlePlaceOfBirthClear}>
+                        <button type="button" className="text-sm font-semibold leading-6 text-gray-100 font-mono" onClick={handlePlaceOfBirthClear}>
                             Clear
                         </button>
                         <button
                             type="button"
-                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 font-mono"
                             onClick={handlePlaceOfBirthSubmit}
                         >
                             Save
@@ -336,8 +354,8 @@ export default function createAdminPage() {
 
             <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
                 <div className="px-4 sm:px-0">
-                    <h2 className="text-base font-semibold leading-7 text-gray-900">Admin Information</h2>
-                    <p className="mt-1 text-sm leading-6 text-gray-600">Please make sure every input is correct and accurately describes the admin.</p>
+                    <h2 className="text-base font-semibold leading-7 text-gray-900 font-mono">Admin Information</h2>
+                    <p className="mt-1 text-sm leading-6 text-gray-600 font-mono">Please make sure every input is correct and accurately describes the admin.</p>
                 </div>
                 <form className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
                     <div className="px-4 py-6 sm:p-8">
@@ -398,10 +416,10 @@ export default function createAdminPage() {
                     <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
                         {adminError && <p className="text-red-600 font-mono">{adminError}</p>}
 
-                        <button type="button" className="text-sm font-semibold leading-6 text-gray-100" onClick={handleAdminClear}>
+                        <button type="button" className="text-sm font-semibold leading-6 text-gray-100 font-mono" onClick={handleAdminClear}>
                             Clear
                         </button>
-                        <button type="button" className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onClick={handleAdminSubmit} >
+                        <button type="button" className="font-mono rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onClick={handleAdminSubmit} >
                             Save
                         </button>
                     </div>

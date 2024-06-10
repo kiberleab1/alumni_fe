@@ -1,27 +1,15 @@
-import { useQuery, useQueryClient, useMutation } from 'react-query';
-import { createInstitute, getInstitutes } from '../api';
-
-import {
-	Container,
-	Row,
-	Col,
-	FormGroup,
-	Label,
-	Button,
-	Table,
-} from 'reactstrap';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import DatePicker from 'react-datepicker'; //
-import 'react-datepicker/dist/react-datepicker.css'; // Import the styles Import react-datepicker
+import { useQuery } from 'react-query';
+import { getInstitutes } from '../api';
+import 'react-datepicker/dist/react-datepicker.css';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
+import { formatDate, handleContactInfo, parseContactInfo, truncateDescription } from '../utils/utils';
 
-export default function InstitutionsPage() {
+export default function InstitutionsPage({ onCreateInstituteClick, onInstituteEditClick }) {
 	const { isError, data, error, isFetching } = useQuery(
 		'getInstitutions',
 		async () => {
-			return await getInstitutes({ pageNumber: 0, pageSize: 10 });
+			return await getInstitutes({ pageNumber: 1, pageSize: 20 });
 		}
 	);
 
@@ -31,15 +19,14 @@ export default function InstitutionsPage() {
 	return (
 		<>
 			<div>
-				<ListInstitutions institutes={data.data.institute} />
+				<ListInstitutions institutes={data.data.institute} onCreateInstituteClick={onCreateInstituteClick} onInstituteEditClick={(institute) => onInstituteEditClick(institute)}  />
 			</div>
 		</>
 	);
 }
 
-
 // eslint-disable-next-line react/prop-types
-function ListInstitutions({ institutes }) {
+function ListInstitutions({ institutes, onCreateInstituteClick, onInstituteEditClick }) {
 
 	const itemsPerPage = 5; // Number of items to display per page
 	const [currentPage, setCurrentPage] = useState(1);
@@ -47,7 +34,7 @@ function ListInstitutions({ institutes }) {
 	// Calculate pagination boundaries
 	const indexOfLastItem = currentPage * itemsPerPage;
 	const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-	const currentItems = institutes.slice(indexOfFirstItem, indexOfLastItem);
+	let currentItems = institutes.slice(indexOfFirstItem, indexOfLastItem);
 
 	// Calculate total number of pages
 	const totalPages = Math.ceil(institutes.length / itemsPerPage);
@@ -59,9 +46,13 @@ function ListInstitutions({ institutes }) {
 		}
 	};
 
+	console.log(currentItems)
+
+	currentItems = parseContactInfo(currentItems);
+	console.log(currentItems)
 	return (
-		<div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-			<div className="sm:flex sm:items-center mb-4">
+		<div className="flex flex-col">
+			<div className="sm:flex sm:items-center">
 				<div className="sm:flex-auto">
 					<h1 className="text-base font-semibold leading-6 text-gray-900 font-mono">Institututions</h1>
 					<p className="mt-2 text-sm text-gray-500 font-mono">
@@ -72,6 +63,7 @@ function ListInstitutions({ institutes }) {
 					<button
 						type="button"
 						className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+						onClick={onCreateInstituteClick}
 					>
 						Add Institute
 					</button>
@@ -88,7 +80,10 @@ function ListInstitutions({ institutes }) {
 											Name
 										</th>
 										<th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
-											Contact Information
+											Email
+										</th>
+										<th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+											Phone Number
 										</th>
 										<th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
 											Description
@@ -104,24 +99,23 @@ function ListInstitutions({ institutes }) {
 								<tbody className="bg-white divide-y divide-gray-200">
 									{currentItems.map(institute => (
 										<tr key={institute.name}>
-											<td className="px-6 py-4 whitespace-nowrap">
-												<div className="flex text-start">
-													<div className="ml-4 text-start">
-														<div className="text-sm font-medium text-gray-900 text-start">{institute.name}</div>
-													</div>
-												</div>
+											<td className="px-6 py-4 whitespace-nowrap text-start">
+												<div className="text-sm font-medium text-gray-900 text-start">{institute.name}</div>
 											</td>
 											<td className="px-6 py-4 whitespace-nowrap text-start">
-												<div className="text-sm text-gray-900">{institute.contact_info}</div>
+												<div className="text-sm text-gray-900">{institute.contact_obj.email ? institute.contact_obj.email : 'N/A'}</div>
 											</td>
 											<td className="px-6 py-4 whitespace-nowrap text-start">
-												<div className="text-sm text-gray-900">{institute.description}</div>
+												<div className="text-sm text-gray-900">{institute.contact_obj.phone ? institute.contact_obj.phone : 'N/A'}</div>
 											</td>
 											<td className="px-6 py-4 whitespace-nowrap text-start">
-												<div className="text-sm text-gray-900">{institute.starting_year}</div>
+												<div className="text-sm text-gray-900">{truncateDescription(institute.description)}</div>
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap text-start">
+												<div className="text-sm text-gray-900">{formatDate(institute.starting_year)}</div>
 											</td>
 											<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium ">
-												<a href="#" className="text-indigo-600 hover:text-indigo-900">
+												<a href="#" className="text-indigo-600 hover:text-indigo-900" onClick={() => onInstituteEditClick(institute)}>
 													Edit
 												</a>
 											</td>

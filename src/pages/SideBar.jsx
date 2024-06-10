@@ -1,12 +1,7 @@
-import { Fragment, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { AcademicCapIcon, ArrowLongLeftIcon, Bars3Icon, BuildingLibraryIcon, CalendarIcon, ChevronDownIcon, ChevronUpIcon, Cog6ToothIcon, HomeIcon, InboxArrowDownIcon, NewspaperIcon, PlusCircleIcon, PlusIcon, TagIcon, UserPlusIcon, UsersIcon, XMarkIcon, } from '@heroicons/react/24/outline';
-import RolePage from './Role';
-import Admins from './Admins';
-import InstitutionsPage from './Institutions';
-import DepartmentPage from './Departments';
-import CreateInstitutionPage from './CreateInstitute';
-import createAdminPage from './createAdmin';
+import { AcademicCapIcon, ArrowLongLeftIcon, Bars3Icon, BuildingLibraryIcon, CalendarIcon, ChevronDownIcon, ChevronUpIcon, Cog6ToothIcon, HomeIcon, InboxArrowDownIcon, NewspaperIcon, PencilSquareIcon, PlusCircleIcon, PlusIcon, TagIcon, UserPlusIcon, UsersIcon, XMarkIcon, } from '@heroicons/react/24/outline';
+import ComponentRender from './PageRender';
 
 const navigation = [
     { name: 'Dashboard', href: '#', icon: HomeIcon, current: false },
@@ -28,19 +23,6 @@ const subNavigation = [
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
-}
-
-const componentsMap = {
-    'Dashboard': DepartmentPage,
-    'Admins': Admins,
-    'Create Admin': createAdminPage,
-    'Institutions': InstitutionsPage,
-    'Create Institute': CreateInstitutionPage,
-    'Users': RolePage,
-    'Events': RolePage,
-    'News': RolePage,
-    'Email': RolePage,
-    'Departments': DepartmentPage
 }
 
 export default function SideBar() {
@@ -71,7 +53,10 @@ export default function SideBar() {
         console.log(itemName)
     };
 
-    const ComponentToRender = componentsMap[componentClicked.name];
+    const handlePageSet = (pageName) => {
+        console.log(`Page set to: ${pageName}`);
+        setComponentClicked({ name: pageName, href: `/${pageName.toLowerCase()}`, current: true });
+    };
 
     return (
         <>
@@ -286,7 +271,7 @@ export default function SideBar() {
 
                     <main className="py-10">
                         <div className="px-4 sm:px-6 lg:px-8">
-                            <ComponentToRender />
+                            <ComponentRender page={componentClicked.name} onPageSet={handlePageSet} />
                         </div>
                     </main>
                 </div>

@@ -116,11 +116,11 @@ export default function CreateInstitutionPage() {
         }
 
         const instituteContactInfo = {
-            email: instituteFields.email,
-            phone: instituteFields.phone,
-            telegram: instituteFields.telegram,
-            twitter: instituteFields.twitter,
-            facebook: instituteFields.facebook
+            email: "email:" + instituteFields.email,
+            phone: "phone:" + instituteFields.phone,
+            telegram: "telegram:" + instituteFields.telegram,
+            twitter: "twitter:" + instituteFields.twitter,
+            facebook: "facebook:" + instituteFields.facebook
         };
 
 
