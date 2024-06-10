@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { getInstitutes } from '../api';
+import { deleteInstitute, getInstitutes } from '../api';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
@@ -46,6 +46,16 @@ function ListInstitutions({ institutes, onCreateInstituteClick, onInstituteEditC
 		}
 	};
 
+	const onInstituteDeleteButtonClick = async (institute) => { // Add 'async' here
+		console.log(institute);
+		const deleteInstituteData = {
+			address_id: institute.address_id,
+			institute_id: institute.id
+		}; 
+		const deleteResult = await deleteInstitute(deleteInstituteData);
+		console.log(deleteResult);
+	};
+	
 	console.log(currentItems)
 
 	currentItems = parseContactInfo(currentItems);
@@ -118,7 +128,7 @@ function ListInstitutions({ institutes, onCreateInstituteClick, onInstituteEditC
 												<a href="#" className="text-indigo-600 hover:text-green-900" onClick={() => onInstituteEditClick(institute)}>
 													Edit
 												</a>
-												<a href="#" className="text-red-600 hover:text-red-900 pl-5" onClick={() => onInstituteEditClick(institute)}>
+												<a href="#" className="text-red-600 hover:text-red-900 pl-5" onClick={() => onInstituteDeleteButtonClick(institute)}>
 													Delete
 												</a>
 											</td>

@@ -175,3 +175,17 @@ export async function updateInstitute(instituteData) {
   console.log(instituteData)
   return await axios.put(`${API_BASE_URl}/updateInstitute`, instituteData);
 }
+
+export async function deleteInstitute(instituteData) {
+  console.log(instituteData)
+  const response = await axios({
+    method: 'GET',
+    url: `${API_BASE_URl}/deleteAddress?id=${instituteData.address_id}`,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+  console.log(response)
+
+  return await axios.get(`${API_BASE_URl}/deleteInstitute?id=${instituteData.institute_id}`,);
+}
