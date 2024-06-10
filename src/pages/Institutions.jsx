@@ -91,8 +91,8 @@ function ListInstitutions({ institutes, onCreateInstituteClick, onInstituteEditC
 										<th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
 											Start Date
 										</th>
-										<th scope="col" className="relative px-6 py-3">
-											<span className="sr-only">Edit</span>
+										<th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+											Action
 										</th>
 									</tr>
 								</thead>
@@ -114,9 +114,12 @@ function ListInstitutions({ institutes, onCreateInstituteClick, onInstituteEditC
 											<td className="px-6 py-4 whitespace-nowrap text-start">
 												<div className="text-sm text-gray-900">{formatDate(institute.starting_year)}</div>
 											</td>
-											<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium ">
-												<a href="#" className="text-indigo-600 hover:text-indigo-900" onClick={() => onInstituteEditClick(institute)}>
+											<td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium ">
+												<a href="#" className="text-indigo-600 hover:text-green-900" onClick={() => onInstituteEditClick(institute)}>
 													Edit
+												</a>
+												<a href="#" className="text-red-600 hover:text-red-900 pl-5" onClick={() => onInstituteEditClick(institute)}>
+													Delete
 												</a>
 											</td>
 										</tr>

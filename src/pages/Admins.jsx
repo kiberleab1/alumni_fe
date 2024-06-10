@@ -87,8 +87,9 @@ export default function Admins({ onAddAdminClick }) {
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
                                             Created Date
                                         </th>
-                                        <th scope="col" className="relative px-6 py-3">
-                                            <span className="sr-only">Edit</span>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+                                            {/* <span className="sr-only">Edit</span> */}
+                                            Action
                                         </th>
                                     </tr>
                                 </thead>
@@ -110,9 +111,12 @@ export default function Admins({ onAddAdminClick }) {
                                             <td className="px-6 py-4 whitespace-nowrap text-start">
                                                 <div className="text-sm text-gray-900">{formatDate(admin.createdAt)}</div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium ">
-                                                <a href="#" className="text-indigo-600 hover:text-indigo-900">
+                                            <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium ">
+                                                <a href="#" className="text-indigo-600 hover:text-green-900">
                                                     Edit
+                                                </a>
+                                                <a href="#" className="text-red-600 hover:text-red-900 pl-5">
+                                                    Delete
                                                 </a>
                                             </td>
                                         </tr>

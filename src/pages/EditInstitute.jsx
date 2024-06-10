@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "react-query";
-import { getAddressById } from "../api";
-import { ToastContainer } from "react-toastify";
+import { getAddressById, updateAddress, updateInstitute } from "../api";
+import { ToastContainer, toast } from 'react-toastify';
+import { ChatBubbleLeftIcon, EnvelopeIcon, LinkIcon, PhoneIcon } from "@heroicons/react/24/outline";
 
 export default function EditInstitute({ institute }) {
     const [addressError, setAddressError] = useState(null);
@@ -56,7 +57,7 @@ export default function EditInstitute({ institute }) {
                 country: addressData.country || "",
                 region: addressData.region || "",
                 city: addressData.city || "",
-                houseNumber: addressData.houseNumber || ""
+                house_number: addressData.house_number || ""
             }));
 
             setInstituteFields(prevState => ({
@@ -82,10 +83,36 @@ export default function EditInstitute({ institute }) {
             houseNumber: ""
         });
     };
-    
-    const handleAddressSubmit = () => {
-        // Logic to submit address
-    }
+
+    const handleAddressSubmit = async (e) => {
+        e.preventDefault();
+        if (!addressFields.country || !addressFields.region || !addressFields.city) {
+            setAddressError('Please fill in all required fields.');
+            return;
+        }
+        if (!addressFields.country) {
+            throw new Error('Country is a required field.');
+        }
+        if (!addressFields.region) {
+            throw new Error('Region is a required field.');
+        }
+        if (!addressFields.city) {
+            throw new Error('City is a required field.');
+        }
+
+        addressFields.id = institute.address_id;
+        console.log(addressFields)
+        try {
+            const result = await updateAddress(addressFields);
+            toast.success('Address updated successfully!');
+            setAddressError();
+            console.log('Update address result:', result.data);
+        } catch (error) {
+            toast.success('Error updating address!');
+            console.error('Error updating address', error);
+            setAddressError(error);
+        }
+    };
 
     const handleInstituteClear = () => {
         setInstituteFields({
@@ -101,8 +128,43 @@ export default function EditInstitute({ institute }) {
         });
     };
     
-    const handleInstituteSubmit = () => {
-        // Logic to submit institute
+    const handleInstituteSubmit = async (e) => {
+        e.preventDefault();
+
+        const instituteContactInfo = {
+            email: "email:" + instituteFields.email,
+            phone: "phone:" + instituteFields.phone,
+            telegram: "telegram:" + instituteFields.telegram,
+            twitter: "twitter:" + instituteFields.twitter,
+            facebook: "facebook:" + instituteFields.facebook
+        };
+
+
+        const contactInfo = Object.values(instituteContactInfo)
+            .filter(value => value && value !== '')
+            .join(', ');
+
+        instituteFields.contact_info = contactInfo;
+
+        const instituteData = {
+            name: instituteFields.instituteName,
+            description: instituteFields.instituteDescription,
+            starting_year: instituteFields.instituteStartingYear,
+            id: institute.id,
+            contact_info: contactInfo,
+
+        };
+        console.log(instituteData)
+        try {
+            const result = await updateInstitute(instituteData);
+            toast.success('Institute updated successfully!');
+            setInstituteError();
+            console.log('Update Institute result:', result.data);
+        } catch (error) {
+            toast.success('Error updating Institute!');
+            console.error('Error updating Institute', error);
+            setInstituteError(error);
+        }
     }
 
     if (isFetching) return <div>Loading...</div>;
@@ -176,8 +238,8 @@ export default function EditInstitute({ institute }) {
                                             type="text"
                                             name="house-number"
                                             id="house-number"
-                                            value={addressFields.houseNumber}
-                                            onChange={(e) => setAddressFields({ ...addressFields, houseNumber: e.target.value })}
+                                            value={addressFields.house_number}
+                                            onChange={(e) => setAddressFields({ ...addressFields, house_number: e.target.value })}
                                             className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
                                         />
                                     </div>
@@ -262,63 +324,94 @@ export default function EditInstitute({ institute }) {
                                 <label htmlFor="institute-contact-info" className="block text-sm font-medium leading-6 text-gray-900">
                                     Institute Contact Info
                                 </label>
-                                <div className="mt-2 grid grid-cols-2 gap-4 sm:grid-cols-3">
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        id="email"
-                                        autoComplete="email"
-                                        value={instituteFields.email}
-                                        onChange={(e) => setInstituteFields({ ...instituteFields, email: e.target.value })}
-                                        className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                                        placeholder="Email Address"
-                                    />
-                                    <input
-                                        type="tel"
-                                        name="phone"
-                                        id="phone"
-                                        autoComplete="tel"
-                                        value={instituteFields.phone}
-                                        onChange={(e) => setInstituteFields({ ...instituteFields, phone: e.target.value })}
-                                        className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                                        placeholder="Phone Number"
-                                    />
-                                    <input
-                                        type="url"
-                                        name="twitter"
-                                        id="twitter"
-                                        value={instituteFields.twitter}
-                                        onChange={(e) => setInstituteFields({ ...instituteFields, twitter: e.target.value })}
-                                        className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                                        placeholder="Twitter Link"
-                                    />
-                                    <input
-                                        type="url"
-                                        name="linkedin"
-                                        id="linkedin"
-                                        value={instituteFields.linkedin}
-                                        onChange={(e) => setInstituteFields({ ...instituteFields, linkedin: e.target.value })}
-                                        className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                                        placeholder="LinkedIn Link"
-                                    />
-                                    <input
-                                        type="url"
-                                        name="telegram"
-                                        id="telegram"
-                                        value={instituteFields.telegram}
-                                        onChange={(e) => setInstituteFields({ ...instituteFields, telegram: e.target.value })}
-                                        className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                                        placeholder="Telegram Link"
-                                    />
-                                    <input
-                                        type="url"
-                                        name="facebook"
-                                        id="facebook"
-                                        value={instituteFields.facebook}
-                                        onChange={(e) => setInstituteFields({ ...instituteFields, facebook: e.target.value })}
-                                        className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                                        placeholder="Facebook Link"
-                                    />
+                                <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                                    <div className="relative mt-2 rounded-md shadow-sm">
+                                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <EnvelopeIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                            </div>
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            id="email"
+                                            autoComplete="email"
+                                            value={instituteFields.email}
+                                            onChange={(e) => setInstituteFields({ ...instituteFields, email: e.target.value })}
+                                            className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 py-2 pl-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                                            placeholder="Email Address"
+                                        />
+                                    </div>
+
+                                    <div className="relative mt-2 rounded-md shadow-sm">
+                                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <PhoneIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                            </div>
+                                        <input
+                                            type="tel"
+                                            name="phone"
+                                            id="phone"
+                                            autoComplete="tel"
+                                            value={instituteFields.phone}
+                                            onChange={(e) => setInstituteFields({ ...instituteFields, phone: e.target.value })}
+                                            className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 py-2 pl-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                                            placeholder="Phone Number"
+                                        />
+                                    </div>
+                                    <div className="relative mt-2 rounded-md shadow-sm">
+                                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <LinkIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                            </div>
+                                        <input
+                                            type="url"
+                                            name="twitter"
+                                            id="twitter"
+                                            value={instituteFields.twitter}
+                                            onChange={(e) => setInstituteFields({ ...instituteFields, twitter: e.target.value })}
+                                            className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 py-2 pl-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                                            placeholder="Twitter Link"
+                                        />
+                                    </div>
+                                    <div className="relative mt-2 rounded-md shadow-sm">
+                                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <LinkIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                            </div>
+                                        <input
+                                            type="url"
+                                            name="linkedin"
+                                            id="linkedin"
+                                            value={instituteFields.linkedin}
+                                            onChange={(e) => setInstituteFields({ ...instituteFields, linkedin: e.target.value })}
+                                            className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 py-2 pl-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                                            placeholder="LinkedIn Link"
+                                        />
+                                    </div>
+                                    <div className="relative mt-2 rounded-md shadow-sm">
+                                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <ChatBubbleLeftIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                            </div>
+                                        <input
+                                            type="url"
+                                            name="telegram"
+                                            id="telegram"
+                                            value={instituteFields.telegram}
+                                            onChange={(e) => setInstituteFields({ ...instituteFields, telegram: e.target.value })}
+                                            className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 py-2 pl-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                                            placeholder="Telegram Link"
+                                        />
+                                    </div>
+                                    <div className="relative mt-2 rounded-md shadow-sm">
+                                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <LinkIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                            </div>
+                                        <input
+                                            type="url"
+                                            name="facebook"
+                                            id="facebook"
+                                            value={instituteFields.facebook}
+                                            onChange={(e) => setInstituteFields({ ...instituteFields, facebook: e.target.value })}
+                                            className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 py-2 pl-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                                            placeholder="Facebook Link"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>

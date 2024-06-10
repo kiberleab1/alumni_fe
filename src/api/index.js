@@ -164,3 +164,14 @@ export async function createAInstituteAdmin(adminData) {
   console.log(adminData)
   return await axios.post(`${API_BASE_URl}/signup`, adminData);
 }
+
+
+export async function updateAddress(addressData) {
+  console.log(addressData)
+  return await axios.put(`${API_BASE_URl}/updateAddress`, addressData);
+}  
+
+export async function updateInstitute(instituteData) {
+  console.log(instituteData)
+  return await axios.put(`${API_BASE_URl}/updateInstitute`, instituteData);
+}
