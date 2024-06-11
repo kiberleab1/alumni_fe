@@ -1,12 +1,13 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import React, { useState } from 'react';
 import Table from '../components/Table/Table';
-import { getAllinstituteAdmins, getRoleByName } from '../api';
+import { deleteAdmin, getAllinstituteAdmins, getRoleByName } from '../api';
 import { useQuery } from 'react-query';
 import { formatDate } from '../utils/utils';
+import { AdjustmentsHorizontalIcon, BuildingLibraryIcon, EllipsisHorizontalIcon, InboxArrowDownIcon, NewspaperIcon, UserIcon } from '@heroicons/react/20/solid'
+import { CalendarDaysIcon, UsersIcon } from '@heroicons/react/24/solid';
 
-
-export default function Admins({ onAddAdminClick }) {
+export default function Admins({ onAddAdminClick, onAdminEditClick }) {
     const [adminRoleId, setAdminRoleId] = useState(null);
     const [institutionAdmins, setInstitutionAdmins] = useState([]);
     const itemsPerPage = 5;
@@ -45,6 +46,17 @@ export default function Admins({ onAddAdminClick }) {
         if (pageNumber < 1 || pageNumber > totalPages) return;
         setCurrentPage(pageNumber);
     };
+
+    const handleDeleteAdminClick = async (admin) => {
+		console.log(admin);
+		const deleteAdminData = {
+			address_id: admin.address_id,
+			birth_place_id: admin.birth_place_id,
+			id: admin.id
+		};
+		const deleteResult = await deleteAdmin(deleteAdminData);
+		console.log(deleteResult);
+    }
     
     return (
         <div className="flex flex-col">
@@ -88,7 +100,6 @@ export default function Admins({ onAddAdminClick }) {
                                             Created Date
                                         </th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
-                                            {/* <span className="sr-only">Edit</span> */}
                                             Action
                                         </th>
                                     </tr>
@@ -112,10 +123,10 @@ export default function Admins({ onAddAdminClick }) {
                                                 <div className="text-sm text-gray-900">{formatDate(admin.createdAt)}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium ">
-                                                <a href="#" className="text-indigo-600 hover:text-green-900">
+                                                <a href="#" className="text-indigo-600 hover:text-green-900" onClick={() => onAdminEditClick(admin)}>
                                                     Edit
                                                 </a>
-                                                <a href="#" className="text-red-600 hover:text-red-900 pl-5">
+                                                <a href="#" className="text-red-600 hover:text-red-900 pl-5" onClick={() => handleDeleteAdminClick(admin)}>
                                                     Delete
                                                 </a>
                                             </td>
@@ -184,6 +195,168 @@ export default function Admins({ onAddAdminClick }) {
                     </div>
                 </div>
             </div>
+            <StatData/>
         </div>
     );
+}
+
+
+function StatData() {
+	return (
+		<ul role="list" className="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-4 xl:gap-x-8 mt-5">
+			<li key="1" className="overflow-hidden rounded-xl border border-gray-200">
+				<div className="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+					<UserIcon className="h-12 w-12 flex-none rounded-lg bg-white text-green-900 object-cover ring-1 ring-gray-100/10" />
+					<div className="text-sm font-medium leading-6 text-gray-900">Recently Active Admins</div>
+				</div>
+				<dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Bahir Dar University</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">2000</div>
+						</dd>
+					</div>
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Addis Ababa Commercial College</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">1980</div>
+						</dd>
+					</div>
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Addis Ababa Science and Technology University</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">1657</div>
+						</dd>
+					</div>
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Mekelle Business College</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">1200</div>
+						</dd>
+					</div>
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Jimma Engineering College</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">870</div>
+						</dd>
+					</div>
+				</dl>
+			</li>
+			<li key="2" className="overflow-hidden rounded-xl border border-gray-200">
+				<div className="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+					<BuildingLibraryIcon className="h-12 w-12 flex-none rounded-lg bg-white text-blue-900 object-cover ring-1 ring-gray-100/10" />
+					<div className="text-sm font-medium leading-6 text-gray-900">Most Number of Institutions with admin</div>
+				</div>
+				<dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Bahir Dar University</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">2000</div>
+						</dd>
+					</div>
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Addis Ababa Commercial College</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">1980</div>
+						</dd>
+					</div>
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Addis Ababa Science and Technology University</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">1657</div>
+						</dd>
+					</div>
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Mekelle Business College</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">1200</div>
+						</dd>
+					</div>
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Jimma Engineering College</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">870</div>
+						</dd>
+					</div>
+				</dl>
+			</li>
+			<li key="3" className="overflow-hidden rounded-xl border border-gray-200">
+				<div className="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+					<AdjustmentsHorizontalIcon className="h-12 w-12 flex-none rounded-lg bg-white text-pink-900 object-cover ring-1 ring-gray-100/10" />
+					<div className="text-sm font-medium leading-6 text-gray-900">Recently Added Admins</div>
+				</div>
+				<dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Bahir Dar University</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">2000</div>
+						</dd>
+					</div>
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Addis Ababa Commercial College</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">1980</div>
+						</dd>
+					</div>
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Addis Ababa Science and Technology University</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">1657</div>
+						</dd>
+					</div>
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Mekelle Business College</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">1200</div>
+						</dd>
+					</div>
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Jimma Engineering College</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">870</div>
+						</dd>
+					</div>
+				</dl>
+			</li>
+
+			<li key="3" className="overflow-hidden rounded-xl border border-gray-200">
+				<div className="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+					<CalendarDaysIcon className="h-12 w-12 flex-none rounded-lg bg-white text-orange-900 object-cover ring-1 ring-gray-100/10" />
+					<div className="text-sm font-medium leading-6 text-gray-900">Most Event Organized</div>
+				</div>
+				<dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Bahir Dar University</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">2000</div>
+						</dd>
+					</div>
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Addis Ababa Commercial College</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">1980</div>
+						</dd>
+					</div>
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Addis Ababa Science and Technology University</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">1657</div>
+						</dd>
+					</div>
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Mekelle Business College</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">1200</div>
+						</dd>
+					</div>
+					<div className="flex justify-between gap-x-4 py-3">
+						<dt className="font-mono font-medium text-gray-900">Jimma Engineering College</dt>
+						<dd className="text-gray-700">
+							<div className="font-medium text-gray-900">870</div>
+						</dd>
+					</div>
+				</dl>
+			</li>
+		</ul>
+	);
 }

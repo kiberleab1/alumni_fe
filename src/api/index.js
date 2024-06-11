@@ -42,8 +42,7 @@ axios.interceptors.request.use(
   }
 );
 export async function getDepartments({ pageNumber, pageSize }) {
-  const paging = { pageNumber, pageSize };
-  return await axios.get(`${API_BASE_URl}/getDepartments`, paging);
+  return await axios.get(`${API_BASE_URl}/getDepartments?pageNumber=${pageNumber}&pageSize=${pageSize}`);
 }
 
 export async function getRoles({pageNumber, pageSize}) {
@@ -187,5 +186,17 @@ export async function deleteInstitute(instituteData) {
   });
   console.log(response)
 
-  return await axios.get(`${API_BASE_URl}/deleteInstitute?id=${instituteData.institute_id}`,);
+  return await axios.get(`${API_BASE_URl}/deleteInstitute?id=${instituteData.institute_id}`);
+}
+
+export async function updateAdmin(adminData) {
+  console.log(adminData)
+  return await axios.put(`${API_BASE_URl}/profileUpdate`, adminData);
+}
+
+export async function deleteAdmin (adminData) {
+  const addressDelete =  await axios.get(`${API_BASE_URl}/deleteAddress?id=${adminData.address_id}`);
+  const birthPlaceDelete =  await axios.get(`${API_BASE_URl}/deleteAddress?id=${adminData.birth_place_id}`);
+  return await axios.get(`${API_BASE_URl}/deleteUser?id=${adminData.id}`);
+
 }
