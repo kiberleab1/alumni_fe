@@ -32,11 +32,13 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  const navbarPaths = ['/landing'];
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter history={hist}>
         {/* <Header /> */}
-        <Navbar />
+        {/* <Navbar /> */}
+        {navbarPaths.includes(window.location.pathname) && <Navbar />}
 
         <div className="w-full min-w-full ">
           <Routes>
