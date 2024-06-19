@@ -16,7 +16,7 @@ import { formatDate } from '../utils/utils';
 import { useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
-export default function RolePage() {
+export default function EventsPage() {
     const { isError, data, error, isFetching } = useQuery(
         'getRoles',
         async () => {

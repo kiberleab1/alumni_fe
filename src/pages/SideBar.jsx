@@ -9,6 +9,7 @@ const navigation = [
     { name: 'Institutions', href: '#', icon: BuildingLibraryIcon, current: false },
     { name: 'Departments', href: '#', icon: TagIcon, current: false },
     { name: 'Users', href: '#', icon: AcademicCapIcon, current: false },
+    { name: 'Roles', href: '#', icon: AcademicCapIcon, current: false },
     { name: 'Events', href: '#', icon: CalendarIcon, current: false },
     { name: 'News', href: '#', icon: NewspaperIcon, current: false },
     { name: 'Email', href: '#', icon: InboxArrowDownIcon, current: false },
@@ -16,10 +17,12 @@ const navigation = [
 
 const subNavigation = [
     { name: 'Create Admin', parent: 'Admins', icon: UserPlusIcon, current: false },
-    { name: 'Create Users', parent: 'Users', icon: PlusIcon, current: false },
+    { name: 'Create User', parent: 'Users', icon: PlusIcon, current: false },
     { name: 'Create Institute', parent: 'Institutions', icon: PlusCircleIcon, current: false },
     { name: 'Create Department', parent: 'Departments', icon: PlusCircleIcon, current: false },
 ]
+
+const navigationWithNoSubNavigation = ['Dashboard', 'Roles', "Events", "News", "Email"];
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -164,10 +167,10 @@ export default function SideBar() {
                                                 <a href={item.href} className={classNames(componentClicked.name === item.name ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold')} onClick={() => handleNavigationItemClick(item.name)}>
                                                     <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
                                                     {item.name}
-                                                    {(item.name !== "Dashboard" && openDropDown[item.name]) && (
+                                                    {( !navigationWithNoSubNavigation.includes(item.name) &&  openDropDown[item.name]) && (
                                                         <ChevronUpIcon className="-mr-1 h-5 w-5 text-gray-400 ml-auto" aria-hidden="true" onClick={() => handleOpenDropDown(item.name)} />
                                                     )}
-                                                    {(item.name !== "Dashboard" && !openDropDown[item.name]) && (
+                                                    {( !navigationWithNoSubNavigation.includes(item.name) && !openDropDown[item.name]) && (
                                                         <ChevronDownIcon className="-mr-1 h-5 w-5 text-gray-400 ml-auto" aria-hidden="true" onClick={() => handleOpenDropDown(item.name)} />
                                                     )}
                                                 </a>

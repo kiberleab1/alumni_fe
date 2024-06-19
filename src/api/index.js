@@ -56,6 +56,12 @@ export async function createNewRole({role_name}) {
   return await axios.post(`${API_BASE_URl}/createRole`, data);
 }
 
+export async function deleteRole(role) {
+  console.log(role)
+  console.log(role.id)
+  return await axios.get(`${API_BASE_URl}/deleteRole?id=${role.id}`);
+}
+
 export async function createDepartment({ name, description, contact_info }) {
   const data = { name, description, contact_info };
   console.log(data);

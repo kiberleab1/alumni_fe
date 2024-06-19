@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { deleteInstitute, getInstitutes } from '../api';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
@@ -51,13 +51,20 @@ function ListInstitutions({ institutes, onCreateInstituteClick, onInstituteEditC
 		}
 	};
 
+	const queryClient = useQueryClient();
+    const mutation = useMutation(deleteInstitute, {
+        onSuccess: () => {
+            queryClient.invalidateQueries('getInstitutions');
+        },
+    });
+
 	const onInstituteDeleteButtonClick = async (institute) => { // Add 'async' here
 		console.log(institute);
 		const deleteInstituteData = {
 			address_id: institute.address_id,
 			institute_id: institute.id
 		};
-		const deleteResult = await deleteInstitute(deleteInstituteData);
+        mutation.mutate(deleteInstituteData);
 		console.log(deleteResult);
 	};
 
