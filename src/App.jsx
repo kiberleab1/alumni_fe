@@ -11,6 +11,7 @@ import DeparmentsPage from './pages/Departments.jsx';
 import Navbar from './components/header/header';
 
 import InstitutionsPage from './pages/Institutions';
+import ComposeEmail from './pages/emails/compose';
 // import Signin from './pages/signin';
 import SignupPage from './pages/signup';
 import LoginPage from './pages/login';
@@ -20,15 +21,25 @@ import SideBar from './pages/SideBar';
 import Alumni_profile from './pages/alumni_profile';
 
 const hist = createBrowserHistory();
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 60, // 1 hour in ms
+      cacheTime: 1000 * 60 * 60, // 1 hour in ms
+      refetchOnWindowFocus: false, // Disables automatic refetching when browser window is focused.
+    },
+  },
+});
 
 function App() {
+  const navbarPaths = ['/landing'];
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter history={hist}>
         {/* <Header /> */}
-        <Navbar />
-        
+        {/* <Navbar /> */}
+        {navbarPaths.includes(window.location.pathname) && <Navbar />}
+
         <div className="w-full min-w-full ">
           <Routes>
             <Route path="/landing" element={<LandingPage />} />
@@ -38,6 +49,7 @@ function App() {
             <Route path="/roles" element={<RolePage />} />
             <Route path="/admin" element={<SideBar />} />
             <Route path="/institutions" element={<InstitutionsPage />} />
+            <Route path="/admin/email/compose" element={<ComposeEmail />} />
             {/* <Route path="/signin" element={<Signin />} /> */}
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
