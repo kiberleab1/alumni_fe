@@ -1,19 +1,7 @@
-import { useQuery, useQueryClient, useMutation } from 'react-query';
-import { createInstitute, getInstitutes } from '../api';
+import { useQuery,  } from 'react-query';
+import {  getInstitutes } from '../api';
 
-import {
-	Container,
-	Row,
-	Col,
-	FormGroup,
-	Label,
-	Button,
-	Table,
-} from 'reactstrap';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import DatePicker from 'react-datepicker'; //
-import 'react-datepicker/dist/react-datepicker.css'; // Import the styles Import react-datepicker
+import 'react-datepicker/dist/react-datepicker.css';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 
@@ -50,7 +38,7 @@ function ListInstitutions({ institutes }) {
 	const currentItems = institutes.slice(indexOfFirstItem, indexOfLastItem);
 
 	// Calculate total number of pages
-	const totalPages = Math.ceil(institutes.length / itemsPerPage);
+	const totalPages = Math.ceil(institutes?.length / itemsPerPage);
 
 	// Change page
 	const paginate = (pageNumber) => {

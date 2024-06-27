@@ -37,7 +37,7 @@ export default function ComposeEmail() {
 }
 
 function ComposeNewEmail({ subject, body, emailAddress }) {
-  const [emailTemplateId, setEmailTemplateId] = useState('');
+  const [, setEmailTemplateId] = useState('');
   const mutation = useMutation(createEmailTemplates, {
     onSuccess: (data) => {
       console.log(data.data.id);
@@ -53,7 +53,9 @@ function ComposeNewEmail({ subject, body, emailAddress }) {
     },
   });
   const sendEmailBlast = useMutation(sendEmail, {
-    onSuccess: (data) => {},
+    onSuccess: (data) => {
+      console.log(data);
+    },
   });
 
   const modules = {
@@ -183,7 +185,7 @@ function FlitteringOptions({ setEmailAddress }) {
       return await getEmailFetchingOptions();
     }
   );
-  // console.log({ asd: data.departments });
+  console.log({ asd: error });
 
   return (
     <div className="flex">

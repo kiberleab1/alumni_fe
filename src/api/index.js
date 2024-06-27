@@ -213,7 +213,7 @@ export async function sendEmail({
     },
   };
   const response = await axios.post(`${API_BASE_URl}/sendEmails`, data);
-  return response;
+  return response
 }
 
 // email_template_id: joi.string().required(),

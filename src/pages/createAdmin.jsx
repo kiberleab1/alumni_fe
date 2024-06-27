@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { createAddress, getInstitutes, getRoles, signup } from '../api';
+import  { useState } from 'react';
+import { createAddress, signup } from '../api';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation,  } from 'react-query';
 
 export default function CreateAdminPage() {
   const [addressError, setAddressError] = useState('');
   const [adminError, setAdminError] = useState('');
   const [placeOfBirthError, setPlaceOfBirthError] = useState('');
-  const [disableAdminSection, setDisableAdminSection] = useState(true);
-  const [adminAddressId, setAdminAddressId] = useState();
+  const [, setDisableAdminSection] = useState(true);
+  const [, setAdminAddressId] = useState();
   const [adminPlaceOfBirthId, setAdminPlaceOfBirthId] = useState();
-  const [roles, setRoles] = useState([]);
-  const [institutions, setInstitutions] = useState([]);
+  const [roles, ] = useState([]);
+  const [institutions, ] = useState([]);
   const [adminFields, setAdminFields] = useState({
     email: '',
     firstName: '',
@@ -40,39 +40,39 @@ export default function CreateAdminPage() {
     houseNumber: '',
   });
 
-  const { isError, data, error, isFetching } = useQuery(
-    ['getRoles', 'getInstitutes'],
-    async () => {
-      try {
-        const roleData = await getRoles({ pageNumber: 0, pageSize: 10 });
-        console.log(roleData);
-        if (roleData) {
-          const roles = Object.values(roleData.data.role).map((role) => ({
-            roleName: role.role_name,
-            roleId: role.id,
-          }));
-          setRoles(roles);
-        }
+  // const { isError, data, error, isFetching } = useQuery(
+  //   ['getRoles', 'getInstitutes'],
+  //   async () => {
+  //     try {
+  //       const roleData = await getRoles({ pageNumber: 0, pageSize: 10 });
+  //       console.log(roleData);
+  //       if (roleData) {
+  //         const roles = Object.values(roleData.data.role).map((role) => ({
+  //           roleName: role.role_name,
+  //           roleId: role.id,
+  //         }));
+  //         setRoles(roles);
+  //       }
 
-        const instituteData = await getInstitutes({
-          pageNumber: 0,
-          pageSize: 10,
-        });
-        console.log(instituteData);
-        if (instituteData) {
-          const instituteNames = Object.values(
-            instituteData.data.institute
-          ).map((institute) => ({
-            name: institute.name,
-            id: institute.id,
-          }));
-          setInstitutions(instituteNames);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  );
+  //       const instituteData = await getInstitutes({
+  //         pageNumber: 0,
+  //         pageSize: 10,
+  //       });
+  //       console.log(instituteData);
+  //       if (instituteData) {
+  //         const instituteNames = Object.values(
+  //           instituteData.data.institute
+  //         ).map((institute) => ({
+  //           name: institute.name,
+  //           id: institute.id,
+  //         }));
+  //         setInstitutions(instituteNames);
+  //       }
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   }
+  // );
 
   const clearAdminFields = () => {
     setAdminFields({
