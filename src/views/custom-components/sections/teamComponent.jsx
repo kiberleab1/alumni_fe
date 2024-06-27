@@ -1,5 +1,3 @@
-/* eslint-disable */
-import React from 'react';
 import { Row, Col, Container } from 'reactstrap';
 
 const TeamComponent = () => {

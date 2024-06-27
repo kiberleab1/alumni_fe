@@ -14,7 +14,7 @@ import PortfolioComponent from './sections/portfoliocomponent.jsx';
 import PricingComponent from './sections/pricingcomponent.jsx';
 import TeamComponent from './sections/teamcomponent.jsx';
 import TestimonialComponent from './sections/testimonialcomponent.jsx';
-import BlogComponent from './sections/blogcomponent.jsx';
+import BlogComponent from './sections/blogComponent.jsx';
 import C2aComponent from './sections/c2acomponent.jsx';
 import ContactComponent from './sections/contactcomponent.jsx';
 import CallToAction from '../../components/call-to-action/CallToAction';

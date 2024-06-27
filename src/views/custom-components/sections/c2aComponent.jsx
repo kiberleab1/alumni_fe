@@ -1,5 +1,4 @@
-/* eslint-disable */
-import React from 'react';
+
 import { Row, Col, Container } from 'reactstrap';
 
 import img1 from '../../../assets/images/features/feature48/app-store.png';

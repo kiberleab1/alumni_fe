@@ -1,5 +1,3 @@
-/* eslint-disable */
-import React from 'react';
 import { Row, Col, Container, Card, CardBody } from 'reactstrap';
 
 import img1 from '../../../assets/images/features/feature13/img1.jpg';

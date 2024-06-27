@@ -1,5 +1,3 @@
-/* eslint-disable */
-import React from 'react';
 import { Card, Button, CardTitle, CardText, Row, Col, Container } from 'reactstrap';
 
 const Cards = () => {

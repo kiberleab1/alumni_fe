@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Row, Col, Container, Form } from 'reactstrap';
 
 import banner from '../../../assets/images/form-banners/banner1/banner-img.png';
