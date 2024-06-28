@@ -64,7 +64,7 @@ export default function createAdminPage() {
                             id: institute.id,
                         }));
                         
-                    userFields.institute = instituteData.data.institute[0].id;
+                    adminFields.institute = instituteData.data.institute[0].id;
                     setInstitutions(instituteNames);
                 }
             } catch (error) {
@@ -191,6 +191,8 @@ export default function createAdminPage() {
         if (missingFields.length > 0) {
             setAdminError(`Please fill in all required fields: ${missingFields.join(', ')}`);
             toast.error("Please fill in all required fields");
+            console.log(missingFields)
+            console.log(adminFields)
             return;
         }
         try {

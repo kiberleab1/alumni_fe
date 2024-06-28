@@ -10,6 +10,8 @@ export default function CreateInstitutionPage() {
     const [instituteAddressId, setInstituteAddressId] = useState(null);
     const [disableInstitutionSection, setDisableInstitutionSection] = useState(true);
 
+    const [instituteTypes, setInstituteTypes] = useState(['University','College','TVET']);
+    
     const [addressFields, setAddressFields] = useState({
         country: '',
         region: '',
@@ -21,6 +23,12 @@ export default function CreateInstitutionPage() {
         instituteName: '',
         instituteStartingYear: '',
         instituteDescription: '',
+        website: '',
+        type: '',
+        accreditations: '',
+        number_of_students: '',
+        number_of_alumni: '',
+        president_name: '',
         email: '',
         phone: '',
         twitter: '',
@@ -116,8 +124,6 @@ export default function CreateInstitutionPage() {
         }
 
         const instituteContactInfo = {
-            email: "email:" + instituteFields.email,
-            phone: "phone:" + instituteFields.phone,
             telegram: "telegram:" + instituteFields.telegram,
             twitter: "twitter:" + instituteFields.twitter,
             facebook: "facebook:" + instituteFields.facebook
@@ -132,6 +138,14 @@ export default function CreateInstitutionPage() {
         console.log(instituteFields)
         const institute = {
             name: instituteFields.instituteName,
+            phone_number: instituteFields.phone,
+            email: instituteFields.email,
+            website: instituteFields.website,
+            type: instituteFields.type,
+            accreditations: instituteFields.accreditations,
+            number_of_students: instituteFields.number_of_students,
+            number_of_alumni: instituteFields.number_of_alumni,
+            president_name: instituteFields.president_name,
             description: instituteFields.instituteDescription,
             address_id: instituteAddressId,
             starting_year: instituteFields.instituteStartingYear,
@@ -256,8 +270,8 @@ export default function CreateInstitutionPage() {
 
                 <form className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
                     <div className="px-4 py-6 sm:p-8">
-                        <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                            <div className="sm:col-span-3">
+                        <div className="grid max-w-full grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                            <div className="sm:col-span-2">
                                 <label htmlFor="institute-name" className="block text-sm font-medium leading-6 text-gray-900">
                                     Institute Name
                                 </label>
@@ -269,12 +283,47 @@ export default function CreateInstitutionPage() {
                                         required
                                         value={instituteFields.instituteName}
                                         onChange={(e) => setInstituteFields({ ...instituteFields, instituteName: e.target.value })}
-                                        autoComplete="organization"
+                                        autoComplete="institute_name"
+                                        placeholder="Institute Name"
                                         className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
                                     />
                                 </div>
                             </div>
-                            <div className="sm:col-span-3">
+                            <div className="sm:col-span-2">
+                                <label htmlFor="institute-name" className="block text-sm font-medium leading-6 text-gray-900">
+                                    Institute Email
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        id="email"
+                                        autoComplete="email"
+                                        value={instituteFields.email}
+                                        onChange={(e) => setInstituteFields({ ...instituteFields, email: e.target.value })}
+                                        className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                                        placeholder="Email Address"
+                                    />
+                                </div>
+                            </div>
+                            <div className="sm:col-span-2">
+                                <label htmlFor="institute-name" className="block text-sm font-medium leading-6 text-gray-900">
+                                    Institute Phone Number
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        id="phone"
+                                        autoComplete="tel"
+                                        value={instituteFields.phone}
+                                        onChange={(e) => setInstituteFields({ ...instituteFields, phone: e.target.value })}
+                                        className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                                        placeholder="Phone Number"
+                                    />
+                                </div>
+                            </div>
+                            <div className="sm:col-span-2">
                                 <label htmlFor="institute-starting-year" className="block text-sm font-medium leading-6 text-gray-900">
                                     Institute Starting Year
                                 </label>
@@ -288,6 +337,104 @@ export default function CreateInstitutionPage() {
                                         onChange={(e) => setInstituteFields({ ...instituteFields, instituteStartingYear: e.target.value })}
                                         className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
                                     />
+                                </div>
+                            </div>
+                            <div className="sm:col-span-2">
+                                <label htmlFor="institute-name" className="block text-sm font-medium leading-6 text-gray-900">
+                                    Institute website
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        type="url"
+                                        name="website"
+                                        id="website"
+                                        value={instituteFields.website}
+                                        onChange={(e) => setInstituteFields({ ...instituteFields, website: e.target.value })}
+                                        className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                                        placeholder="website Link"
+                                    />
+                                </div>
+                            </div>
+                            <div className="sm:col-span-2">
+                                <label htmlFor="institute-name" className="block text-sm font-medium leading-6 text-gray-900">
+                                    Institute Type
+                                </label>
+                                <div className="mt-2">
+                                    <select
+                                        value={instituteFields.type}
+                                        onChange={(e) => setInstituteFields({ ...instituteFields, type: e.target.value })}
+                                        className="mt-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-5 font-medium font-mono"
+                                    >
+                                        {instituteTypes.map((type) => (
+                                            <option key={type} value={type}>
+                                                {type}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="sm:col-span-2">
+                                <label htmlFor="president_name" className="block text-sm font-medium leading-6 text-gray-900">
+                                    Institute President Name
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        type="text"
+                                        name="president_name"
+                                        id="president_name"
+                                        value={instituteFields.president_name}
+                                        onChange={(e) => setInstituteFields({ ...instituteFields, president_name: e.target.value })}
+                                        className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                                        placeholder="President Name"
+                                    />
+                                </div>
+                            </div>
+                            <div className="sm:col-span-2">
+                                <label htmlFor="number_of_students" className="block text-sm font-medium leading-6 text-gray-900">
+                                    Institute Number Of Students
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        type="number"
+                                        name="number_of_students"
+                                        id="number_of_students"
+                                        value={instituteFields.number_of_students}
+                                        onChange={(e) => setInstituteFields({ ...instituteFields, number_of_students: e.target.value })}
+                                        className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                                        placeholder="Number Of Students"
+                                    />
+                                </div>
+                            </div>
+                            <div className="sm:col-span-2">
+                                <label htmlFor="number_of_alumni" className="block text-sm font-medium leading-6 text-gray-900">
+                                    Institute Number Of Alumni
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        type="number"
+                                        name="number_of_alumni"
+                                        id="number_of_alumni"
+                                        value={instituteFields.number_of_alumni}
+                                        onChange={(e) => setInstituteFields({ ...instituteFields, number_of_alumni: e.target.value })}
+                                        className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                                        placeholder="Number Of Alumni"
+                                    />
+                                </div>
+                            </div>
+                            <div className="sm:col-span-6">
+                                <label htmlFor="institute-accreditations" className="block text-sm font-medium leading-6 text-gray-900">
+                                    Institute Accreditations
+                                </label>
+                                <div className="mt-2">
+                                    <textarea
+                                        id="institute-accreditations"
+                                        name="institute-accreditations"
+                                        rows="3"
+                                        required
+                                        value={instituteFields.accreditations}
+                                        onChange={(e) => setInstituteFields({ ...instituteFields, accreditations: e.target.value })}
+                                        className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                                    ></textarea>
                                 </div>
                             </div>
                             <div className="sm:col-span-6">
@@ -311,26 +458,6 @@ export default function CreateInstitutionPage() {
                                     Institute Contact Info
                                 </label>
                                 <div className="mt-2 grid grid-cols-2 gap-4 sm:grid-cols-3">
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        id="email"
-                                        autoComplete="email"
-                                        value={instituteFields.email}
-                                        onChange={(e) => setInstituteFields({ ...instituteFields, email: e.target.value })}
-                                        className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                                        placeholder="Email Address"
-                                    />
-                                    <input
-                                        type="tel"
-                                        name="phone"
-                                        id="phone"
-                                        autoComplete="tel"
-                                        value={instituteFields.phone}
-                                        onChange={(e) => setInstituteFields({ ...instituteFields, phone: e.target.value })}
-                                        className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                                        placeholder="Phone Number"
-                                    />
                                     <input
                                         type="url"
                                         name="twitter"

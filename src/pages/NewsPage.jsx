@@ -1,99 +1,108 @@
-import { useQuery, useQueryClient, useMutation } from 'react-query';
-import { getDepartments, deleteDepartment } from '../api';
-import { useState } from 'react';
-import { parseContactInfo } from '../utils/utils';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
-import { Fragment } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
+import React, { useState } from 'react';
+import Table from '../components/Table/Table';
+import { deleteAdmin, getAllNews, getRoleByName } from '../api';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { formatDate } from '../utils/utils';
+import { AdjustmentsHorizontalIcon, BuildingLibraryIcon, EllipsisHorizontalIcon, InboxArrowDownIcon, NewspaperIcon, UserIcon } from '@heroicons/react/20/solid'
+import { CalendarDaysIcon, UsersIcon } from '@heroicons/react/24/solid';
 import Modal from './DeleteModal';
-export default function DepartmentPage({ onCreateDepartmentClick, onDepartmentEditClick }) {
-    const { isError, data, error, isFetching } = useQuery(
-        'getDepartments',
-        async () => {
-            return await getDepartments({ pageNumber: 1, pageSize: 10 });
-        }
-    );
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-    if (isFetching) return <div>Loading...</div>;
-    if (isError) return <div>Error: {error.message}</div>;
-    return (
-        <div>
-            <ListDepartment
-                departments={data.data.department}
-                onCreateDepartmentClick={onCreateDepartmentClick}
-                onDepartmentEditClick={(department) => onDepartmentEditClick(department)}
-            />
-        </div>
-    );
-}
-
-
-// eslint-disable-next-line react/prop-types
-function ListDepartment({ departments, onCreateDepartmentClick, onDepartmentEditClick }) {
-    const itemsPerPage = 5; // Number of items to display per page
+export default function NewsPage({ onCreateNewsClick, onNewsEditClick}) {
+    const [newsList, setNewsList] = useState([]);
+    const itemsPerPage = 5;
     const [currentPage, setCurrentPage] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedDepartment, setSelectedDepartment] = useState(null);
+    const [selectedNews, setSelectedNews] = useState(null);
     const queryClient = useQueryClient();
 
-    // Mutation for deleting a department
-    const { mutate: deleteDept } = useMutation(deleteDepartment, {
-        onSuccess: () => {
-            queryClient.invalidateQueries('getDepartments');
-            closeModal();
+    const { isError, error, isFetching } = useQuery(
+        ['getAllNews'],
+        async () => {
+            const newsData = await getAllNews({ pageNumber: 1, pageSize: 10 });
+            console.log(newsData)
+            const newsListData = newsData.data.news.map(newss => ({ ...newss }));
+            setNewsList(newsListData);
         },
-        onError: (error) => {
-            closeModal();
-            queryClient.invalidateQueries('getDepartments');
-            console.error('Error deleting department:', error.message);
+        { keepPreviousData: true }
+    );
+
+    const mutation = useMutation(deleteAdmin, {
+        onSuccess: () => {
+            queryClient.invalidateQueries('getAllNews');
         },
     });
 
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = parseContactInfo(departments.slice(indexOfFirstItem, indexOfLastItem));
+    const { mutate: deleteAdminModalAction } = useMutation(deleteAdmin, {
+        onSuccess: () => {
+            queryClient.invalidateQueries('getAllNews');
+            closeModal();
+            toast.success('Admin Deleted successfully!');
 
-    const totalPages = Math.ceil(departments.length / itemsPerPage);
+        },
+        onError: (error) => {
+            closeModal();
+            queryClient.invalidateQueries('getAllNews');
+            console.error('Error deleting news:', error.message);
+            toast.success('Error deleting news!');
 
-    const paginate = (pageNumber) => {
-        if (pageNumber >= 1 && pageNumber <= totalPages) {
-            setCurrentPage(pageNumber);
-        }
-    };
+        },
+    });
 
-    const openModal = (department) => {
-        setSelectedDepartment(department);
+    const openModal = (news) => {
+        setSelectedNews(news);
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
-        setSelectedDepartment(null);
+        setSelectedNews(null);
         setIsModalOpen(false);
     };
 
     const confirmDeletion = () => {
-        console.log(selectedDepartment)
-        if (selectedDepartment) {
-            deleteDept(selectedDepartment);
+        console.log(selectedNews)
+        if (selectedNews) {
+            const deleteAdminData = {
+                address_id: selectedNews.address_id,
+                birth_place_id: selectedNews.birth_place_id,
+                id: selectedNews.id
+            };
+            deleteAdminModalAction(deleteAdminData);
         }
+    };
+
+
+    if (isFetching) return <div>Loading...</div>;
+    if (isError) return <div>Error: {error.message}</div>;
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = newsList.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(newsList.length / itemsPerPage);
+
+    const paginate = (pageNumber) => {
+        if (pageNumber < 1 || pageNumber > totalPages) return;
+        setCurrentPage(pageNumber);
     };
 
     return (
         <div className="flex flex-col">
             <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
-                    <h1 className="text-base font-semibold leading-6 text-gray-900 font-mono">Departments</h1>
-                    <p className="mt-2 text-sm text-gray-500 font-mono">
-                        A list of all the departments in the system including their name, description, start date.
+                    <h1 className="text-base font-semibold leading-6 text-gray-900">News</h1>
+                    <p className="mt-2 text-sm text-gray-700">
+                        A list of all the news in the system.
                     </p>
                 </div>
                 <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                     <button
                         type="button"
                         className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        onClick={onCreateDepartmentClick}
+                        onClick={onCreateNewsClick}
                     >
-                        Add Department
+                        Add New News
                     </button>
                 </div>
             </div>
@@ -104,35 +113,51 @@ function ListDepartment({ departments, onCreateDepartmentClick, onDepartmentEdit
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="sticky top-0 bg-gray-50 z-10">
                                     <tr>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Name</th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Email</th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Phone Number</th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Head Of Department</th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Institute Id</th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">Action</th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+                                            ID
+                                        </th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+                                            Published By
+                                        </th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+                                            Publisher Institute
+                                        </th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+                                            News Level
+                                        </th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+                                            Created At
+                                        </th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+                                            Action
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                    {currentItems.map(department => (
-                                        <tr key={department.id}>
+                                    {currentItems.map(news => (
+                                        <tr key={news.email}>
                                             <td className="px-6 py-4 whitespace-nowrap text-start">
-                                                <div className="text-sm font-medium text-gray-900">{department.name}</div>
+                                                <div className="text-sm font-medium text-gray-900 text-start">{news.id} </div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-start">
-                                                <div className="text-sm text-gray-900">{department.email}</div>
+                                                <div className="text-sm text-gray-900">{news.ownerAdminId ? news.ownerAdminId : "N/A"}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-start">
-                                                <div className="text-sm text-gray-900">{department.phone_number}</div>
+                                                <div className="text-sm text-gray-900">{news.ownerInstituteId ? news.ownerInstituteId : "N/A"}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-start">
-                                                <div className="text-sm text-gray-900">{department.head_of_department || 'N/A'}</div>
+                                                <div className="text-sm text-gray-900">{news.level}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-start">
-                                                <div className="text-sm text-gray-900">{department.institute_id || 'N/A'}</div>
+                                                <div className="text-sm text-gray-900">{formatDate(news.createdAt)}</div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium">
-                                                <a href="#" className="text-indigo-600 hover:text-green-900" onClick={() => onDepartmentEditClick(department)}>Edit</a>
-                                                <a href="#" className="text-red-600 hover:text-red-900 pl-5" onClick={() => openModal(department)}>Delete</a>
+                                            <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium ">
+                                                <a href="#" className="text-indigo-600 hover:text-green-900" >
+                                                    Edit
+                                                </a>
+                                                <a href="#" className="text-red-600 hover:text-red-900 pl-5" onClick={() => openModal(news)}>
+                                                    Delete
+                                                </a>
                                             </td>
                                         </tr>
                                     ))}
@@ -163,8 +188,8 @@ function ListDepartment({ departments, onCreateDepartmentClick, onDepartmentEdit
                     <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                         <div>
                             <p className="text-sm text-gray-700">
-                                Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to <span className="font-medium">{Math.min(indexOfLastItem, departments.length)}</span> of{' '}
-                                <span className="font-medium">{departments.length}</span> results
+                                Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to <span className="font-medium">{Math.min(indexOfLastItem, newsList.length)}</span> of{' '}
+                                <span className="font-medium">{newsList.length}</span> results
                             </p>
                         </div>
                         <div>
@@ -199,16 +224,15 @@ function ListDepartment({ departments, onCreateDepartmentClick, onDepartmentEdit
                     </div>
                 </div>
             </div>
-            {selectedDepartment && (
+            {selectedNews && (
                 <Modal
                     isOpen={isModalOpen}
                     closeModal={closeModal}
                     confirmAction={confirmDeletion}
                     title="Confirm Deletion"
-                    message={`Are you sure you want to delete the department "${selectedDepartment.name}"? This action cannot be undone.`}
+                    message={`Are you sure you want to delete the institute "${selectedNews.id}"? This action cannot be undone.`}
                 />
             )}
         </div>
     );
 }
-

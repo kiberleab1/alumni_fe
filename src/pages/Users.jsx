@@ -6,6 +6,9 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { formatDate } from '../utils/utils';
 import { AdjustmentsHorizontalIcon, BuildingLibraryIcon, EllipsisHorizontalIcon, InboxArrowDownIcon, NewspaperIcon, UserIcon } from '@heroicons/react/20/solid'
 import { CalendarDaysIcon, UsersIcon } from '@heroicons/react/24/solid';
+import Modal from './DeleteModal';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Users({ onCreateUserClick, onUserEditClick }) {
     const [adminRoleId, setAdminRoleId] = useState(null);
@@ -13,6 +16,8 @@ export default function Users({ onCreateUserClick, onUserEditClick }) {
     const itemsPerPage = 5;
     const [currentPage, setCurrentPage] = useState(1);
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
     const queryClient = useQueryClient();
 
     const { isError, error, isFetching } = useQuery(
@@ -29,21 +34,44 @@ export default function Users({ onCreateUserClick, onUserEditClick }) {
         { keepPreviousData: true }
     );
 
-    const mutation = useMutation(deleteAdmin, {
+
+    const { mutate: deleteUserModalAction } = useMutation(deleteAdmin, {
         onSuccess: () => {
             queryClient.invalidateQueries('getAllinstituteAdmins');
+            closeModal();
+            toast.success('Admin Deleted successfully!');
+
+        },
+        onError: (error) => {
+            closeModal();
+            queryClient.invalidateQueries('getAllinstituteAdmins');
+            console.error('Error deleting user:', error.message);
+            toast.success('Error deleting user!');
+
         },
     });
 
-    const handleDeleteAdminClick = (user) => {
-        const deleteAdminData = {
-            address_id: user.address_id,
-            birth_place_id: user.birth_place_id,
-            id: user.id
-        };
-        mutation.mutate(deleteAdminData);
+    const openModal = (user) => {
+        setSelectedUser(user);
+        setIsModalOpen(true);
     };
 
+    const closeModal = () => {
+        setSelectedUser(null);
+        setIsModalOpen(false);
+    };
+
+    const confirmDeletion = () => {
+        console.log(selectedUser)
+        if (selectedUser) {
+            const deleteUserData = {
+                address_id: selectedUser.address_id,
+                birth_place_id: selectedUser.birth_place_id,
+                id: selectedUser.id
+            };
+            deleteUserModalAction(deleteUserData);
+        }
+    };
 
     if (isFetching) return <div>Loading...</div>;
     if (isError) return <div>Error: {error.message}</div>;
@@ -133,7 +161,7 @@ export default function Users({ onCreateUserClick, onUserEditClick }) {
                                                 <a href="#" className="text-indigo-600 hover:text-green-900" onClick={() => onUserEditClick(user)}>
                                                     Edit
                                                 </a>
-                                                <a href="#" className="text-red-600 hover:text-red-900 pl-5" onClick={() => handleDeleteAdminClick(user)}>
+                                                <a href="#" className="text-red-600 hover:text-red-900 pl-5" onClick={() => openModal(user)}>
                                                     Delete
                                                 </a>
                                             </td>
@@ -202,6 +230,15 @@ export default function Users({ onCreateUserClick, onUserEditClick }) {
                     </div>
                 </div>
             </div>
+            {selectedUser && (
+                <Modal
+                    isOpen={isModalOpen}
+                    closeModal={closeModal}
+                    confirmAction={confirmDeletion}
+                    title="Confirm Deletion"
+                    message={`Are you sure you want to delete the institute "${selectedUser.first_name} ${selectedUser.last_name}"? This action cannot be undone.`}
+                />
+            )}
             <StatData/>
         </div>
     );

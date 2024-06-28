@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { formatDate, handleContactInfo, parseContactInfo, truncateDescription } from '../utils/utils';
 import { EllipsisHorizontalIcon, InboxArrowDownIcon, NewspaperIcon } from '@heroicons/react/20/solid'
 import { CalendarDaysIcon, UsersIcon } from '@heroicons/react/24/solid';
+import Modal from './DeleteModal';
 
 export default function InstitutionsPage({ onCreateInstituteClick, onInstituteEditClick }) {
 	const { isError, data, error, isFetching } = useQuery(
@@ -35,7 +36,9 @@ function ListInstitutions({ institutes, onCreateInstituteClick, onInstituteEditC
 
 	const itemsPerPage = 5; // Number of items to display per page
 	const [currentPage, setCurrentPage] = useState(1);
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedInstitute, setSelectedInstitute] = useState(null);
+    const queryClient = useQueryClient();
 	// Calculate pagination boundaries
 	const indexOfLastItem = currentPage * itemsPerPage;
 	const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -51,10 +54,15 @@ function ListInstitutions({ institutes, onCreateInstituteClick, onInstituteEditC
 		}
 	};
 
-	const queryClient = useQueryClient();
-    const mutation = useMutation(deleteInstitute, {
+	const { mutate: deleteInstituteModalAction } = useMutation(deleteInstitute, {
         onSuccess: () => {
             queryClient.invalidateQueries('getInstitutions');
+            closeModal();
+        },
+        onError: (error) => {
+            closeModal();
+            queryClient.invalidateQueries('getInstitutions');
+            console.error('Error deleting institute:', error.message);
         },
     });
 
@@ -67,6 +75,27 @@ function ListInstitutions({ institutes, onCreateInstituteClick, onInstituteEditC
         mutation.mutate(deleteInstituteData);
 		console.log(deleteResult);
 	};
+
+	const openModal = (institute) => {
+        setSelectedInstitute(institute);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setSelectedInstitute(null);
+        setIsModalOpen(false);
+    };
+
+    const confirmDeletion = () => {
+        console.log(selectedInstitute)
+        if (selectedInstitute) {
+			const deleteInstituteData = {
+				address_id: selectedInstitute.address_id,
+				institute_id: selectedInstitute.id
+			};
+            deleteInstituteModalAction(deleteInstituteData);
+        }
+    };
 
 	console.log(currentItems)
 
@@ -108,7 +137,16 @@ function ListInstitutions({ institutes, onCreateInstituteClick, onInstituteEditC
 											Phone Number
 										</th>
 										<th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
-											Description
+											President Name
+										</th>
+										<th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+											Number Of Students
+										</th>
+										<th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+											Number Of Alumni
+										</th>
+										<th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+											Type
 										</th>
 										<th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
 											Start Date
@@ -125,13 +163,22 @@ function ListInstitutions({ institutes, onCreateInstituteClick, onInstituteEditC
 												<div className="text-sm font-medium text-gray-900 text-start">{institute.name}</div>
 											</td>
 											<td className="px-6 py-4 whitespace-nowrap text-start">
-												<div className="text-sm text-gray-900">{institute.contact_obj.email ? institute.contact_obj.email : 'N/A'}</div>
+												<div className="text-sm text-gray-900">{institute.email ? institute.email : 'N/A'}</div>
 											</td>
 											<td className="px-6 py-4 whitespace-nowrap text-start">
-												<div className="text-sm text-gray-900">{institute.contact_obj.phone ? institute.contact_obj.phone : 'N/A'}</div>
+												<div className="text-sm text-gray-900">{institute.phone_number ? institute.phone_number : 'N/A'}</div>
 											</td>
 											<td className="px-6 py-4 whitespace-nowrap text-start">
-												<div className="text-sm text-gray-900">{truncateDescription(institute.description)}</div>
+												<div className="text-sm text-gray-900">{truncateDescription(institute.president_name)}</div>
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap text-start">
+												<div className="text-sm text-gray-900">{institute.number_of_students ? institute.number_of_students : 'N/A'}</div>
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap text-start">
+												<div className="text-sm text-gray-900">{institute.number_of_alumni ? institute.number_of_alumni : 'N/A'}</div>
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap text-start">
+												<div className="text-sm text-gray-900">{institute.type ? institute.type : 'N/A'}</div>
 											</td>
 											<td className="px-6 py-4 whitespace-nowrap text-start">
 												<div className="text-sm text-gray-900">{formatDate(institute.starting_year)}</div>
@@ -140,7 +187,7 @@ function ListInstitutions({ institutes, onCreateInstituteClick, onInstituteEditC
 												<a href="#" className="text-indigo-600 hover:text-green-900" onClick={() => onInstituteEditClick(institute)}>
 													Edit
 												</a>
-												<a href="#" className="text-red-600 hover:text-red-900 pl-5" onClick={() => onInstituteDeleteButtonClick(institute)}>
+												<a href="#" className="text-red-600 hover:text-red-900 pl-5" onClick={() => openModal(institute)}>
 													Delete
 												</a>
 											</td>
@@ -211,6 +258,15 @@ function ListInstitutions({ institutes, onCreateInstituteClick, onInstituteEditC
 					</div>
 				</div>
 			</div>
+			{selectedInstitute && (
+                <Modal
+                    isOpen={isModalOpen}
+                    closeModal={closeModal}
+                    confirmAction={confirmDeletion}
+                    title="Confirm Deletion"
+                    message={`Are you sure you want to delete the institute "${selectedInstitute.name}"? This action cannot be undone.`}
+                />
+            )}
 		</div>
 	);
 }

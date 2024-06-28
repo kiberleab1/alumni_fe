@@ -6,13 +6,17 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { formatDate } from '../utils/utils';
 import { AdjustmentsHorizontalIcon, BuildingLibraryIcon, EllipsisHorizontalIcon, InboxArrowDownIcon, NewspaperIcon, UserIcon } from '@heroicons/react/20/solid'
 import { CalendarDaysIcon, UsersIcon } from '@heroicons/react/24/solid';
+import Modal from './DeleteModal';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Admins({ onAddAdminClick, onAdminEditClick }) {
     const [adminRoleId, setAdminRoleId] = useState(null);
     const [institutionAdmins, setInstitutionAdmins] = useState([]);
     const itemsPerPage = 5;
     const [currentPage, setCurrentPage] = useState(1);
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedAdmin, setSelectedAdmin] = useState(null);
     const queryClient = useQueryClient();
 
     const { isError, error, isFetching } = useQuery(
@@ -35,14 +39,44 @@ export default function Admins({ onAddAdminClick, onAdminEditClick }) {
         },
     });
 
-    const handleDeleteAdminClick = (admin) => {
-        const deleteAdminData = {
-            address_id: admin.address_id,
-            birth_place_id: admin.birth_place_id,
-            id: admin.id
-        };
-        mutation.mutate(deleteAdminData);
+    const { mutate: deleteAdminModalAction } = useMutation(deleteAdmin, {
+        onSuccess: () => {
+            queryClient.invalidateQueries('getAllinstituteAdmins');
+            closeModal();
+            toast.success('Admin Deleted successfully!');
+
+        },
+        onError: (error) => {
+            closeModal();
+            queryClient.invalidateQueries('getAllinstituteAdmins');
+            console.error('Error deleting admin:', error.message);
+            toast.success('Error deleting admin!');
+
+        },
+    });
+
+    const openModal = (admin) => {
+        setSelectedAdmin(admin);
+        setIsModalOpen(true);
     };
+
+    const closeModal = () => {
+        setSelectedAdmin(null);
+        setIsModalOpen(false);
+    };
+
+    const confirmDeletion = () => {
+        console.log(selectedAdmin)
+        if (selectedAdmin) {
+            const deleteAdminData = {
+                address_id: selectedAdmin.address_id,
+                birth_place_id: selectedAdmin.birth_place_id,
+                id: selectedAdmin.id
+            };
+            deleteAdminModalAction(deleteAdminData);
+        }
+    };
+
 
     if (isFetching) return <div>Loading...</div>;
     if (isError) return <div>Error: {error.message}</div>;
@@ -125,7 +159,7 @@ export default function Admins({ onAddAdminClick, onAdminEditClick }) {
                                                 <a href="#" className="text-indigo-600 hover:text-green-900" onClick={() => onAdminEditClick(admin)}>
                                                     Edit
                                                 </a>
-                                                <a href="#" className="text-red-600 hover:text-red-900 pl-5" onClick={() => handleDeleteAdminClick(admin)}>
+                                                <a href="#" className="text-red-600 hover:text-red-900 pl-5" onClick={() => openModal(admin)}>
                                                     Delete
                                                 </a>
                                             </td>
@@ -194,6 +228,15 @@ export default function Admins({ onAddAdminClick, onAdminEditClick }) {
                     </div>
                 </div>
             </div>
+            {selectedAdmin && (
+                <Modal
+                    isOpen={isModalOpen}
+                    closeModal={closeModal}
+                    confirmAction={confirmDeletion}
+                    title="Confirm Deletion"
+                    message={`Are you sure you want to delete the institute "${selectedAdmin.first_name} ${selectedAdmin.last_name}"? This action cannot be undone.`}
+                />
+            )}
             <StatData/>
         </div>
     );

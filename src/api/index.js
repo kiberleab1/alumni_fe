@@ -45,13 +45,13 @@ export async function getDepartments({ pageNumber, pageSize }) {
   return await axios.get(`${API_BASE_URl}/getDepartments?pageNumber=${pageNumber}&pageSize=${pageSize}`);
 }
 
-export async function getRoles({pageNumber, pageSize}) {
+export async function getRoles({ pageNumber, pageSize }) {
   const paging = { pageNumber, pageSize };
   return await axios.get(`${API_BASE_URl}/getAllRole`, paging);
 }
 
-export async function createNewRole({role_name}) {
-  const data = {role_name}
+export async function createNewRole({ role_name }) {
+  const data = { role_name }
   console.log(data);
   return await axios.post(`${API_BASE_URl}/createRole`, data);
 }
@@ -62,29 +62,25 @@ export async function deleteRole(role) {
   return await axios.get(`${API_BASE_URl}/deleteRole?id=${role.id}`);
 }
 
-export async function createDepartment({ name, description, contact_info }) {
-  const data = { name, description, contact_info };
-  console.log(data);
-  return await axios.post(`${API_BASE_URl}/createDepartment`, data);
+export async function createDepartment(department) {
+  console.log(department);
+  return await axios.post(`${API_BASE_URl}/createDepartment`, department);
 }
 
-export async function createInstitute({
-  name,
-  description,
-  address_id,
-  starting_year,
-  contact_info,
-}) {
-  const data = {
-    name,
-    description,
-    address_id,
-    starting_year,
-    contact_info,
-  };
-  console.log(data)
+export async function editDepartent(department) {
+  console.log(department)
+  return await axios.put(`${API_BASE_URl}/updateDepartment`, department);
+}
 
-  return await axios.post(`${API_BASE_URl}/createInstitute`, data);
+export async function deleteDepartment(department) {
+  return await axios.get(`${API_BASE_URl}/deleteDepartment?id=${department.id}`);
+}
+
+export async function createInstitute(instituteData) {
+
+  console.log(instituteData)
+
+  return await axios.post(`${API_BASE_URl}/createInstitute`, instituteData);
 }
 
 export async function getInstitutes({ pageNumber, pageSize }) {
@@ -103,7 +99,7 @@ export async function getInstitutes({ pageNumber, pageSize }) {
   }
 }
 
-export async function createAddress({country, region, city, houseNumber}) {
+export async function createAddress({ country, region, city, houseNumber }) {
   const data = {
     country,
     region,
@@ -131,7 +127,7 @@ export async function getAddressById(id) {
 }
 
 
-export async function getAllinstituteAdmins({ pageNumber, pageSize,value }) {
+export async function getAllinstituteAdmins({ pageNumber, pageSize, value }) {
   try {
     const response = await axios({
       method: 'GET',
@@ -147,7 +143,7 @@ export async function getAllinstituteAdmins({ pageNumber, pageSize,value }) {
   }
 }
 
-export async function getRoleByName({name}) {
+export async function getRoleByName({ name }) {
   try {
     const response = await axios({
       method: 'GET',
@@ -174,7 +170,7 @@ export async function createAInstituteAdmin(adminData) {
 export async function updateAddress(addressData) {
   console.log(addressData)
   return await axios.put(`${API_BASE_URl}/updateAddress`, addressData);
-}  
+}
 
 export async function updateInstitute(instituteData) {
   console.log(instituteData)
@@ -200,9 +196,78 @@ export async function updateAdmin(adminData) {
   return await axios.put(`${API_BASE_URl}/profileUpdate`, adminData);
 }
 
-export async function deleteAdmin (adminData) {
-  const addressDelete =  await axios.get(`${API_BASE_URl}/deleteAddress?id=${adminData.address_id}`);
-  const birthPlaceDelete =  await axios.get(`${API_BASE_URl}/deleteAddress?id=${adminData.birth_place_id}`);
+export async function deleteAdmin(adminData) {
+  const addressDelete = await axios.get(`${API_BASE_URl}/deleteAddress?id=${adminData.address_id}`);
+  const birthPlaceDelete = await axios.get(`${API_BASE_URl}/deleteAddress?id=${adminData.birth_place_id}`);
   return await axios.get(`${API_BASE_URl}/deleteUser?id=${adminData.id}`);
 
+}
+
+export async function getAllEvents({ pageNumber, pageSize }) {
+  try {
+    return await axios.get(`${API_BASE_URl}/getAllEvents?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+  } catch (error) {
+    console.error('Error fetching events:', error);
+    throw error;
+  }
+}
+
+export async function getInstituteEvents({ institute_id, max_count }) {
+  try {
+    return await axios.get(`${API_BASE_URl}/getInstituteEvents?max_count=${max_count}&institute_id=${institute_id}`);
+  } catch (error) {
+    console.log("Error fetching institute events ", error)
+    throw error;
+  }
+}
+
+export async function getEventById(event_id) {
+  return await axios.get(`${API_BASE_URl}/getEventById?id=${event_id}`);
+}
+
+export async function createEvents(eventData) {
+  console.log(eventData)
+
+  const response = await axios.post(`${API_BASE_URl}/createEvent`, eventData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+  return response;
+}
+
+export async function updateEvents(eventData) {
+  console.log(eventData)
+  return await axios.put(`${API_BASE_URl}/updateEvent`, eventData);
+}
+
+export async function deleteEvent(event_id) {
+  return await axios.get(`${API_BASE_URl}/deleteEvents?id=${event_id}`);
+}
+
+export async function filterEvents() {
+
+}
+
+export async function getEventsStatByDate(institute_id, max_count) {
+  return await axios.get(`${API_BASE_URl}/getEventsStatByDate?institute_id=${institute_id}&max_count=${max_count}`);
+}
+
+export async function getAllNews({ pageNumber, pageSize }) {
+  try {
+    return await axios.get(`${API_BASE_URl}/getAllNews?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+  } catch (error) {
+    console.error('Error fetching news:', error);
+    throw error;
+  }
+}
+
+export async function createNews(newsData) {
+  console.log(newsData)
+  const response = await axios.post(`${API_BASE_URl}/createNews`, newsData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+  return response;
 }

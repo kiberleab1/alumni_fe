@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient, useMutation } from 'react-query';
-import { getRoles, createNewRole, deleteRole } from '../api';
+import { getRoles, createNewRole, deleteRole, getAllEvents, createEvents } from '../api';
 
 import {
     Container,
@@ -16,11 +16,11 @@ import { formatDate } from '../utils/utils';
 import { useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
-export default function EventsPage() {
+export default function EventsPage({onCreateEventClick, onEditEventClick}) {
     const { isError, data, error, isFetching } = useQuery(
-        'getRoles',
+        'getAllEvents',
         async () => {
-            return await getRoles({ pageNumber: 0, pageSize: 10 });
+            return await getAllEvents({ pageNumber: 1, pageSize: 10 });
         }
     );
 
@@ -30,7 +30,7 @@ export default function EventsPage() {
     return (
         <>
             <div>
-                <ListRole roles={data.data.role} />
+                <ListEvent eventsData={data.data.events} onCreateEventClick={onCreateEventClick} onEditEventClick={(event) => onEditEventClick(event)} />
             </div>
         </>
     );
@@ -38,9 +38,9 @@ export default function EventsPage() {
 
 function Modal({ onClose }) {
     const queryClient = useQueryClient();
-    const mutation = useMutation(createNewRole, {
+    const mutation = useMutation(createEvents, {
         onSuccess: () => {
-            queryClient.invalidateQueries('getRoles');
+            queryClient.invalidateQueries('getAllEvents');
         },
     });
     const handleSubmit = (values) => {
@@ -107,15 +107,15 @@ function Modal({ onClose }) {
     );
 }
 // eslint-disable-next-line react/prop-types
-function ListRole({ roles }) {
+function ListEvent({ eventsData, onCreateEventClick, onEditEventClick }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const itemsPerPage = 5;
     const [currentPage, setCurrentPage] = useState(1);
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = roles.slice(indexOfFirstItem, indexOfLastItem);
-    const totalPages = Math.ceil(roles.length / itemsPerPage);
+    const currentItems = eventsData.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(eventsData.length / itemsPerPage);
 
     const paginate = (pageNumber) => {
         if (pageNumber < 1 || pageNumber > totalPages) return;
@@ -138,26 +138,26 @@ function ListRole({ roles }) {
     });
 
 
-    const deleteRoleClickHandler = async (role) => {
-        mutation.mutate(role);
+    const deleteRoleClickHandler = async (event) => {
+        mutation.mutate(event);
     }
 
     return (
         <div className="flex flex-col">
             <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
-                    <h1 className="text-base font-semibold leading-6 text-gray-900">Roles</h1>
+                    <h1 className="text-base font-semibold leading-6 text-gray-900">Events</h1>
                     <p className="mt-2 text-sm text-gray-700">
-                        A list of all the roles in the system.
+                        A list of all the evnets in the system.
                     </p>
                 </div>
                 <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                     <button
                         type="button"
                         className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        onClick={openModal}
+                        onClick={onCreateEventClick}
                     >
-                        Add Role
+                        Add New Event
                     </button>
                 </div>
             </div>
@@ -172,13 +172,19 @@ function ListRole({ roles }) {
                                             ID
                                         </th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
-                                            Role Name
+                                            Owner Admin
                                         </th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
-                                            Created Date
+                                            Owner Institute
                                         </th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
-                                            Updated Date
+                                            Event Level
+                                        </th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+                                            Event Time
+                                        </th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+                                            Created At
                                         </th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
                                             Action
@@ -186,22 +192,25 @@ function ListRole({ roles }) {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                    {currentItems.map(role => (
-                                        <tr key={role.id}>
+                                    {currentItems.map(event => (
+                                        <tr key={event.id}>
                                             <td className="px-6 py-4 whitespace-nowrap text-start">
-                                                <div className="text-sm font-medium text-gray-900">{role.id}</div>
+                                                <div className="text-sm font-medium text-gray-900">{event.id}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-start">
-                                                <div className="text-sm text-gray-900">{role.role_name ? role.role_name : "N/A"}</div>
+                                                <div className="text-sm text-gray-900">{event.ownerAdminId ? event.ownerAdminId : "N/A"}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-start">
-                                                <div className="text-sm text-gray-900">{formatDate(role.createdAt)}</div>
+                                                <div className="text-sm text-gray-900">{event.ownerInstituteId ? event.ownerInstituteId : "N/A"}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-start">
-                                                <div className="text-sm text-gray-900">{formatDate(role.updatedAt)}</div>
+                                                <div className="text-sm text-gray-900">{event.level ? event.level : "N/A"}</div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-start">
+                                                <div className="text-sm text-gray-900">{event.time ? event.time : "N/A"}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium ">
-                                                <a href="#" className="text-red-600 hover:text-red-900" onClick={() => deleteRoleClickHandler(role)}>
+                                                <a href="#" className="text-red-600 hover:text-red-900" onClick={() => deleteRoleClickHandler(event)}>
                                                     Delete
                                                 </a>
                                             </td>
@@ -234,8 +243,8 @@ function ListRole({ roles }) {
                     <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                         <div>
                             <p className="text-sm text-gray-700">
-                                Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to <span className="font-medium">{Math.min(indexOfLastItem, roles.length)}</span> of{' '}
-                                <span className="font-medium">{roles.length}</span> results
+                                Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to <span className="font-medium">{Math.min(indexOfLastItem, eventsData.length)}</span> of{' '}
+                                <span className="font-medium">{eventsData.length}</span> results
                             </p>
                         </div>
                         <div>
