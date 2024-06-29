@@ -1,7 +1,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import React, { useState } from 'react';
 import Table from '../components/Table/Table';
-import { deleteAdmin, getAllNews, getRoleByName } from '../api';
+import { deletedNews, getAllNews, getRoleByName } from '../api';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { formatDate } from '../utils/utils';
 import { AdjustmentsHorizontalIcon, BuildingLibraryIcon, EllipsisHorizontalIcon, InboxArrowDownIcon, NewspaperIcon, UserIcon } from '@heroicons/react/20/solid'
@@ -29,17 +29,17 @@ export default function NewsPage({ onCreateNewsClick, onNewsEditClick}) {
         { keepPreviousData: true }
     );
 
-    const mutation = useMutation(deleteAdmin, {
+    const mutation = useMutation(deletedNews, {
         onSuccess: () => {
             queryClient.invalidateQueries('getAllNews');
         },
     });
 
-    const { mutate: deleteAdminModalAction } = useMutation(deleteAdmin, {
+    const { mutate: deleteAdminModalAction } = useMutation(deletedNews, {
         onSuccess: () => {
             queryClient.invalidateQueries('getAllNews');
             closeModal();
-            toast.success('Admin Deleted successfully!');
+            toast.success('News Deleted successfully!');
 
         },
         onError: (error) => {
@@ -64,12 +64,7 @@ export default function NewsPage({ onCreateNewsClick, onNewsEditClick}) {
     const confirmDeletion = () => {
         console.log(selectedNews)
         if (selectedNews) {
-            const deleteAdminData = {
-                address_id: selectedNews.address_id,
-                birth_place_id: selectedNews.birth_place_id,
-                id: selectedNews.id
-            };
-            deleteAdminModalAction(deleteAdminData);
+            deleteAdminModalAction(selectedNews.id);
         }
     };
 
@@ -152,7 +147,7 @@ export default function NewsPage({ onCreateNewsClick, onNewsEditClick}) {
                                                 <div className="text-sm text-gray-900">{formatDate(news.createdAt)}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium ">
-                                                <a href="#" className="text-indigo-600 hover:text-green-900" >
+                                                <a href="#" className="text-indigo-600 hover:text-green-900" onClick={() => onNewsEditClick(news)}>
                                                     Edit
                                                 </a>
                                                 <a href="#" className="text-red-600 hover:text-red-900 pl-5" onClick={() => openModal(news)}>

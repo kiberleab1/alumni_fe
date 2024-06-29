@@ -48,3 +48,14 @@ export const parseContactInfo = (institutes) => {
         return { ...institute, contact_obj: contactObj };
     });
 }
+
+
+export const formatInputDate = (date) => {
+    const dateObject = new Date(date);
+    const year = dateObject.getUTCFullYear();
+    const month = String(dateObject.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(dateObject.getUTCDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+
+    return formattedDate;
+}

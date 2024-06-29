@@ -236,12 +236,18 @@ export async function createEvents(eventData) {
   return response;
 }
 
-export async function updateEvents(eventData) {
+export async function updateEvent(eventData) {
   console.log(eventData)
-  return await axios.put(`${API_BASE_URl}/updateEvent`, eventData);
+  const response = await axios.put(`${API_BASE_URl}/updateEvent`, eventData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+  return response;
 }
 
 export async function deleteEvent(event_id) {
+  console.log(event_id)
   return await axios.get(`${API_BASE_URl}/deleteEvents?id=${event_id}`);
 }
 
@@ -270,4 +276,21 @@ export async function createNews(newsData) {
     }
   });
   return response;
+}
+
+
+export async function updateNews(newsData) {
+  console.log(newsData)
+  const response = await axios.put(`${API_BASE_URl}/updateNews`, newsData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+  return response;
+
+}
+
+export async function deletedNews(news_id) {
+  console.log(news_id)
+  return axios.get(`${API_BASE_URl}/deleteNews?id=${news_id}`);
 }

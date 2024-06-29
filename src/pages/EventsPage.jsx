@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient, useMutation } from 'react-query';
-import { getRoles, createNewRole, deleteRole, getAllEvents, createEvents } from '../api';
+import { getAllEvents, deleteEvent, createEvents } from '../api';
+import Modal from './DeleteModal';
 
 import {
     Container,
@@ -16,7 +17,7 @@ import { formatDate } from '../utils/utils';
 import { useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
-export default function EventsPage({onCreateEventClick, onEditEventClick}) {
+export default function EventsPage({ onCreateEventClick, onEditEventClick }) {
     const { isError, data, error, isFetching } = useQuery(
         'getAllEvents',
         async () => {
@@ -36,81 +37,12 @@ export default function EventsPage({onCreateEventClick, onEditEventClick}) {
     );
 }
 
-function Modal({ onClose }) {
-    const queryClient = useQueryClient();
-    const mutation = useMutation(createEvents, {
-        onSuccess: () => {
-            queryClient.invalidateQueries('getAllEvents');
-        },
-    });
-    const handleSubmit = (values) => {
-        console.log({ values });
-        mutation.mutate(values);
-    };
 
-    return (
-        <div className="fixed inset-0 z-10 flex items-center justify-center overflow-y-auto bg-gray-500 bg-opacity-75">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6">
-                <div className="flex justify-between items-center pb-3 border-b">
-                    <h3 className="text-xl font-semibold">Create Role</h3>
-                    <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-                        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-                <div className="mt-4">
-                    <Formik
-                        initialValues={{ role_name: '' }}
-                        validationSchema={Yup.object({
-                            role_name: Yup.string().required('Role Name is required'),
-                        })}
-                        onSubmit={handleSubmit}
-                    >
-                        {({ isSubmitting }) => (
-                            <Form className="space-y-10">
-                                <div>
-                                    <label htmlFor="role_name" className="block text-sm font-medium text-gray-700">
-                                        Role Name
-                                    </label>
-                                    <Field
-                                        type="text"
-                                        id="role_name"
-                                        name="role_name"
-                                        placeholder="Enter Role Name"
-                                        className="mt-1 block w-full border bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
-                                    />
-                                    <ErrorMessage name="role_name" component="div" className="text-red-600 text-sm mt-1" />
-                                </div>
-                                <div className="flex justify-end space-x-2">
-                                    <button
-                                        type="button"
-                                        onClick={onClose}
-                                        className="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        disabled={isSubmitting}
-                                        className="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                                    >
-                                        Submit
-                                    </button>
-                                </div>
-                            </Form>
-                        )}
-                    </Formik>
-                </div>
-            </div>
-        </div>
-    );
-}
-// eslint-disable-next-line react/prop-types
 function ListEvent({ eventsData, onCreateEventClick, onEditEventClick }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const itemsPerPage = 5;
     const [currentPage, setCurrentPage] = useState(1);
+    const [selectedEvent, setSelectedEvent] = useState(null);
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -122,25 +54,39 @@ function ListEvent({ eventsData, onCreateEventClick, onEditEventClick }) {
         setCurrentPage(pageNumber);
     };
 
-    const openModal = () => {
+    const openModal = (event) => {
+        setSelectedEvent(event);
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
+        setSelectedEvent(null);
         setIsModalOpen(false);
     };
 
+    const confirmDeletion = () => {
+        console.log(selectedEvent)
+        if (selectedEvent) {
+            deleteEventModalAction(selectedEvent.id);
+        }
+    };
+
     const queryClient = useQueryClient();
-    const mutation = useMutation(deleteRole, {
+    const { mutate: deleteEventModalAction } = useMutation(deleteEvent, {
         onSuccess: () => {
-            queryClient.invalidateQueries('getRoles');
+            queryClient.invalidateQueries('getAllEvents');
+            closeModal();
+            toast.success('Event Deleted successfully!');
+
+        },
+        onError: (error) => {
+            closeModal();
+            queryClient.invalidateQueries('getAllEvents');
+            console.error('Error deleting Event:', error.message);
+            toast.success('Error deleting Event!');
+
         },
     });
-
-
-    const deleteRoleClickHandler = async (event) => {
-        mutation.mutate(event);
-    }
 
     return (
         <div className="flex flex-col">
@@ -209,8 +155,14 @@ function ListEvent({ eventsData, onCreateEventClick, onEditEventClick }) {
                                             <td className="px-6 py-4 whitespace-nowrap text-start">
                                                 <div className="text-sm text-gray-900">{event.time ? event.time : "N/A"}</div>
                                             </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-start">
+                                                <div className="text-sm text-gray-900">{formatDate(event.createdAt)}</div>
+                                            </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium ">
-                                                <a href="#" className="text-red-600 hover:text-red-900" onClick={() => deleteRoleClickHandler(event)}>
+                                                <a href="#" className="text-indigo-600 hover:text-green-900" onClick={() => onEditEventClick(event)}>
+                                                    Edit
+                                                </a>
+                                                <a href="#" className="text-red-600 hover:text-red-900 pl-5" onClick={() => openModal(event)}>
                                                     Delete
                                                 </a>
                                             </td>
@@ -279,7 +231,15 @@ function ListEvent({ eventsData, onCreateEventClick, onEditEventClick }) {
                     </div>
                 </div>
             </div>
-            {isModalOpen && <Modal onClose={closeModal} />}
+			{selectedEvent && (
+                <Modal
+                    isOpen={isModalOpen}
+                    closeModal={closeModal}
+                    confirmAction={confirmDeletion}
+                    title="Confirm Deletion"
+                    message={`Are you sure you want to delete the institute "${selectedEvent.id}"? This action cannot be undone.`}
+                />
+            )}
         </div>
     );
 }
