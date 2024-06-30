@@ -20,6 +20,7 @@ import CreateNews from './CreateNews';
 import EditNews from './EditNews';
 import CreateEvents from './CreateEvents';
 import EditEvents from './EditEvents';
+import PermissionPage from './PermissionPage';
 
 const componentsMap = {
     Dashboard: CreateAdmin,
@@ -43,6 +44,8 @@ const componentsMap = {
     Departments: DepartmentPage,
     "Create Department": CreateDepartment,
     "Edit Department": EditDepartment,
+    Permission: PermissionPage,
+    
 };
 
 export default function ComponentRender({ page, onPageSet }) {

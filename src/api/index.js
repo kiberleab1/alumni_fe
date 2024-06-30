@@ -292,5 +292,39 @@ export async function updateNews(newsData) {
 
 export async function deletedNews(news_id) {
   console.log(news_id)
-  return axios.get(`${API_BASE_URl}/deleteNews?id=${news_id}`);
+  return await axios.get(`${API_BASE_URl}/deleteNews?id=${news_id}`);
+}
+
+//permission
+
+export async function getAllPremissions({pageNumber, pageSize}) {
+  console.log(pageNumber, pageSize)
+  const result = await axios.get(`${API_BASE_URl}/getAllPermission?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+  return result;
+}
+
+export async function getPermissionById(permission_id) {
+  const result = await axios.get(`${API_BASE_URl}/getPermissionById?id=${permission_id}`);
+  return result;
+}
+
+export async function createPermission(permissionData) {
+  console.log(permissionData)
+  const result = axios.post(`${API_BASE_URl}/createPermission`, permissionData);
+  console.log(result)
+  return result;
+}
+
+export async function deletePermission(permissionData) {
+  console.log(permissionData)
+  // const result = await axios.get(`${API_BASE_URl}/deletePermission?id=${permission_id}`);
+  // console.log(result)
+  // return result;
+  return await axios.get(`${API_BASE_URl}/deletePermission?id=${permissionData.id}`);
+}
+
+export async function updatePermission(permissionData) {
+  console.log(permissionData);
+  const result = await axios.put(`${API_BASE_URl}/updatePermission`, permissionData);
+  return result;
 }

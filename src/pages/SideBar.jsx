@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { AcademicCapIcon, ArrowLongLeftIcon, Bars3Icon, BuildingLibraryIcon, CalendarIcon, ChevronDownIcon, ChevronUpIcon, Cog6ToothIcon, HomeIcon, InboxArrowDownIcon, NewspaperIcon, PencilSquareIcon, PlusCircleIcon, PlusIcon, TagIcon, UserPlusIcon, UsersIcon, XMarkIcon, } from '@heroicons/react/24/outline';
+import { AcademicCapIcon, ArrowLongLeftIcon, Bars3Icon, BriefcaseIcon, BuildingLibraryIcon, CalendarIcon, ChevronDownIcon, ChevronUpIcon, ClipboardDocumentCheckIcon, Cog6ToothIcon, EllipsisHorizontalCircleIcon, EllipsisHorizontalIcon, EllipsisVerticalIcon, HomeIcon, InboxArrowDownIcon, NewspaperIcon, PencilSquareIcon, PlusCircleIcon, PlusIcon, TagIcon, UserPlusIcon, UsersIcon, XMarkIcon, } from '@heroicons/react/24/outline';
 import ComponentRender from './PageRender';
 
 const navigation = [
@@ -9,7 +9,13 @@ const navigation = [
     { name: 'Institutions', href: '#', icon: BuildingLibraryIcon, current: false },
     { name: 'Departments', href: '#', icon: TagIcon, current: false },
     { name: 'Users', href: '#', icon: AcademicCapIcon, current: false },
-    { name: 'Roles', href: '#', icon: AcademicCapIcon, current: false },
+    { name: 'Roles', href: '#', icon: EllipsisHorizontalCircleIcon, current: false },
+    { name: 'Permission', href: '#', icon: EllipsisVerticalIcon, current: false },
+    { name: 'Jobs', href: '#', icon: BriefcaseIcon , current: false },
+    { name: 'Staff', href: '#', icon: UsersIcon, current: false },
+    { name: 'Jobs History', href: '#', icon: BriefcaseIcon, current: false },
+    { name: 'Almuni', href: '#', icon: AcademicCapIcon, current: false },
+    { name: 'Document Verification', href: '#', icon: ClipboardDocumentCheckIcon, current: false },
     { name: 'Events', href: '#', icon: CalendarIcon, current: false },
     { name: 'News', href: '#', icon: NewspaperIcon, current: false },
     { name: 'Email', href: '#', icon: InboxArrowDownIcon, current: false },
@@ -22,7 +28,7 @@ const subNavigation = [
     { name: 'Create Department', parent: 'Departments', icon: PlusCircleIcon, current: false },
 ]
 
-const navigationWithNoSubNavigation = ['Dashboard', 'Roles', "Events", "News", "Email"];
+const navigationWithNoSubNavigation = ['Dashboard', 'Roles', "Events", "News", "Email", "Permission", "Jobs", "Staff", "Jobs History", "Almuni", "Document Verification"];
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
