@@ -27,6 +27,9 @@ import EditJob from './EditJobs';
 import StaffPage from './StaffPage';
 import CreateStaff from './CreateStaff';
 import EditStaff from './EditStaff';
+import JobHistoryPage from './JobHistoryPage';
+import CreateJobHistory from './CreateJobHistory';
+import EditJobHistory from './EditJobHistory';
 
 const componentsMap = {
     Dashboard: CreateAdmin,
@@ -56,7 +59,10 @@ const componentsMap = {
     "Edit Job": EditJob,
     Staff: StaffPage,
     "Create Staff": CreateStaff,
-    "Edit Staff": EditStaff 
+    "Edit Staff": EditStaff,
+    "Jobs History": JobHistoryPage,
+    "Create JobHistory": CreateJobHistory,
+    "Edit JobHistory": EditJobHistory
 };
 
 export default function ComponentRender({ page, onPageSet }) {
@@ -82,6 +88,7 @@ export default function ComponentRender({ page, onPageSet }) {
         onCreateEventClick={() => onPageSet('Create Event')}
         onCreateJobClick={() => onPageSet('Create Job')}
         onCreateStaffClick={()=> onPageSet("Create Staff")}
+        onCreateJobHistoryClick={() => onPageSet('Create JobHistory')}
 
         onInstituteEditClick={(institute) => { setSelectedInstitute(institute); onPageSet('Edit Institute'); }}
         onAdminEditClick={(admin) => { setSelectedAdmin(admin); onPageSet('Edit Admin'); }}
@@ -91,6 +98,7 @@ export default function ComponentRender({ page, onPageSet }) {
         onEditEventClick={(event) => {setSelectedEvent(event); onPageSet('Edit Event');}}
         onEditJobClick={(job) => {setSelectedJob(job); onPageSet('Edit Job');}}
         onEditStaffClick={(staff) => {setSelectedStaff(staff); onPageSet("Edit Staff");}}
+        onEditJobHistoryClick={(jobHistory) => {setSelectedJobHistory(jobHistory); onPageSet("Edit JobHistory");}}
 
         institute={selectedInstitute}
         admin={selectedAdmin}
@@ -100,5 +108,6 @@ export default function ComponentRender({ page, onPageSet }) {
         event={selectedEvent}
         job={selectedJob}
         staff={selectedStaff}
+        jobHistory={selectedJobHistory}
     />;
 }
