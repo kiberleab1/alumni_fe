@@ -361,3 +361,26 @@ export async function deleteJob(jobs_id) {
   console.log(jobs_id)
   return await axios.get(`${API_BASE_URl}/deleteJob?id=${jobs_id}`);
 }
+
+// staff
+
+export async function getAllStaff({ pageNumber, pageSize}) {
+  const result = await axios.get(`${API_BASE_URl}/getAllStaff?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+  return result;
+}
+
+export async function createStaff(staffData) {
+  console.log(staffData);
+  return await axios.post(`${API_BASE_URl}/createStaff`, staffData);
+}
+
+export async function updateStaff(staffData) {
+  console.log(staffData)
+  return await axios.put(`${API_BASE_URl}/updateStaff`, staffData);
+}
+
+export async function deleteStaff(staffData) {
+  const addressDelete = await axios.get(`${API_BASE_URl}/deleteAddress?id=${staffData.address_id}`);
+
+  return await axios.get(`${API_BASE_URl}/deleteStaff?id=${staffData.id}`);
+}

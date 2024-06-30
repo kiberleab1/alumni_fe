@@ -24,6 +24,9 @@ import PermissionPage from './PermissionPage';
 import JobsPage from './JobsPage';
 import CreateJob from './CreateJob';
 import EditJob from './EditJobs';
+import StaffPage from './StaffPage';
+import CreateStaff from './CreateStaff';
+import EditStaff from './EditStaff';
 
 const componentsMap = {
     Dashboard: CreateAdmin,
@@ -51,6 +54,9 @@ const componentsMap = {
     Jobs: JobsPage,
     "Create Job": CreateJob,
     "Edit Job": EditJob,
+    Staff: StaffPage,
+    "Create Staff": CreateStaff,
+    "Edit Staff": EditStaff 
 };
 
 export default function ComponentRender({ page, onPageSet }) {
@@ -75,6 +81,7 @@ export default function ComponentRender({ page, onPageSet }) {
         onCreateNewsClick={() => onPageSet('Create News')}
         onCreateEventClick={() => onPageSet('Create Event')}
         onCreateJobClick={() => onPageSet('Create Job')}
+        onCreateStaffClick={()=> onPageSet("Create Staff")}
 
         onInstituteEditClick={(institute) => { setSelectedInstitute(institute); onPageSet('Edit Institute'); }}
         onAdminEditClick={(admin) => { setSelectedAdmin(admin); onPageSet('Edit Admin'); }}
@@ -83,6 +90,7 @@ export default function ComponentRender({ page, onPageSet }) {
         onNewsEditClick={(news) => {setSelectedNews(news); onPageSet('Edit News');}}
         onEditEventClick={(event) => {setSelectedEvent(event); onPageSet('Edit Event');}}
         onEditJobClick={(job) => {setSelectedJob(job); onPageSet('Edit Job');}}
+        onEditStaffClick={(staff) => {setSelectedStaff(staff); onPageSet("Edit Staff");}}
 
         institute={selectedInstitute}
         admin={selectedAdmin}
@@ -91,5 +99,6 @@ export default function ComponentRender({ page, onPageSet }) {
         news={selectedNews}
         event={selectedEvent}
         job={selectedJob}
+        staff={selectedStaff}
     />;
 }
