@@ -21,6 +21,9 @@ import EditNews from './EditNews';
 import CreateEvents from './CreateEvents';
 import EditEvents from './EditEvents';
 import PermissionPage from './PermissionPage';
+import JobsPage from './JobsPage';
+import CreateJob from './CreateJob';
+import EditJob from './EditJobs';
 
 const componentsMap = {
     Dashboard: CreateAdmin,
@@ -45,7 +48,9 @@ const componentsMap = {
     "Create Department": CreateDepartment,
     "Edit Department": EditDepartment,
     Permission: PermissionPage,
-    
+    Jobs: JobsPage,
+    "Create Job": CreateJob,
+    "Edit Job": EditJob,
 };
 
 export default function ComponentRender({ page, onPageSet }) {
@@ -55,7 +60,13 @@ export default function ComponentRender({ page, onPageSet }) {
     const [selectedDepartment, setSelectedDepartment] = useState(null);
     const [selectedNews, setSelectedNews] = useState(null);
     const [selectedEvent, setSelectedEvent] = useState(null);
+    const [selectedJob, setSelectedJob] = useState(null);
+    const [selectedJobHistory, setSelectedJobHistory] = useState(null);
+    const [selectedStaff, setSelectedStaff] = useState(null);
+    const [selectedAlumni, setSelectedAlumni] = useState(null);
+    const [selectedDocumentVerificationRequest, setSelectedDocumentVerificationRequest] = useState(null);
     const ComponentToRender = componentsMap[page] || (() => <div>Page not found</div>);
+
     return <ComponentToRender
         onAddAdminClick={() => onPageSet('Create Admin')}
         onCreateInstituteClick={() => onPageSet('Create Institute')}
@@ -63,17 +74,22 @@ export default function ComponentRender({ page, onPageSet }) {
         onCreateDepartmentClick={() => onPageSet('Create Department')}
         onCreateNewsClick={() => onPageSet('Create News')}
         onCreateEventClick={() => onPageSet('Create Event')}
+        onCreateJobClick={() => onPageSet('Create Job')}
+
         onInstituteEditClick={(institute) => { setSelectedInstitute(institute); onPageSet('Edit Institute'); }}
         onAdminEditClick={(admin) => { setSelectedAdmin(admin); onPageSet('Edit Admin'); }}
         onUserEditClick={(user) => { setSelectedUser(user); onPageSet('Edit User'); }}
         onDepartmentEditClick={(department) => { setSelectedDepartment(department); onPageSet('Edit Department'); }}
         onNewsEditClick={(news) => {setSelectedNews(news); onPageSet('Edit News');}}
         onEditEventClick={(event) => {setSelectedEvent(event); onPageSet('Edit Event');}}
+        onEditJobClick={(job) => {setSelectedJob(job); onPageSet('Edit Job');}}
+
         institute={selectedInstitute}
         admin={selectedAdmin}
         user={selecteduser}
         department={selectedDepartment}
         news={selectedNews}
         event={selectedEvent}
+        job={selectedJob}
     />;
 }

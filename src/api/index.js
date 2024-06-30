@@ -328,3 +328,36 @@ export async function updatePermission(permissionData) {
   const result = await axios.put(`${API_BASE_URl}/updatePermission`, permissionData);
   return result;
 }
+
+// jobs 
+
+export async function getAllJobs({ pageNumber, pageSize}) {
+  const result = await axios.get(`${API_BASE_URl}/getAllJobs?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+  return result;
+}
+
+export async function createJob(jobData) {
+  console.log(jobData)
+  const response = await axios.post(`${API_BASE_URl}/createJob`, jobData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+  return response;
+}
+
+export async function updateJob(jobData) {
+  console.log(jobData)
+  const response = await axios.put(`${API_BASE_URl}/updateJob`, jobData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+  return response;
+
+}
+
+export async function deleteJob(jobs_id) {
+  console.log(jobs_id)
+  return await axios.get(`${API_BASE_URl}/deleteJob?id=${jobs_id}`);
+}
