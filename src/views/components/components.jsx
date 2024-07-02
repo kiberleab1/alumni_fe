@@ -19,39 +19,38 @@ import Notification from "./sections/notification.jsx";
 import TooltipPopover from "./sections/tooltip-popover.jsx";
 import Typography from "./sections/typography.jsx";
 import JsComponents from "./sections/js-components.jsx";
-import CallToAction from "../../components/call-to-action/CallToAction"
-
+import ComingSoonComponent from "../../components/call-to-action/ComingSoonComponent.jsx";
 
 const Components = () => {
-    return (
-        <div id="main-wrapper">
-            <Header />
-            <div className="page-wrapper">
-                <div className="container-fluid">
-                    <HeaderBanner />
-                    <Buttons />
-                    <Labels />
-                    <PagePagination />
-                    <Images />
-                    <Breadcrumbs />
-                    <Cards />
-                    <Dropdowns />
-                    <PageForm />
-                    <PageTable />
-                    <Notification />
-                    <TooltipPopover />
-                    <Typography />
-                    <JsComponents />
-                    <CallToAction />
-                </div>
-            </div>
-            <Footer />
+  return (
+    <div id="main-wrapper">
+      <Header />
+      <div className="page-wrapper">
+        <div className="container-fluid">
+          <HeaderBanner />
+          <Buttons />
+          <Labels />
+          <PagePagination />
+          <Images />
+          <Breadcrumbs />
+          <Cards />
+          <Dropdowns />
+          <PageForm />
+          <PageTable />
+          <Notification />
+          <TooltipPopover />
+          <Typography />
+          <JsComponents />
+          <ComingSoonComponent />
         </div>
-    );
-}
+      </div>
+      <Footer />
+    </div>
+  );
+};
 
 Components.propTypes = {
-    classes: PropTypes.object
+  classes: PropTypes.object,
 };
 
 export default Components;

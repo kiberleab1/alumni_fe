@@ -1,4 +1,5 @@
-import axios from 'axios';
+// @ts-nocheck
+import axios from "axios";
 
 const API_BASE_URl = import.meta.env.VITE_BASE_URL;
 axios.interceptors.response.use(
@@ -9,7 +10,7 @@ axios.interceptors.response.use(
   (error) => {
     console.log(error);
     if (error.response.status === 401) {
-      localStorage.removeItem('_user');
+      localStorage.removeItem("_user");
       // window.location.reload();
     }
     if (error?.request && !error?.response) {
@@ -32,7 +33,7 @@ axios.interceptors.request.use(
       console.log(error);
     }
     //TODO dev
-    config.headers.Authorization = 'Bearer dev';
+    config.headers.Authorization = "Bearer dev";
 
     return config;
   },
@@ -93,7 +94,7 @@ export async function createEmailTemplates({ header, body }) {
 
 export async function fetchEmailTemplates({ pageNumber, pageSize }) {
   const paging = { count: pageSize, page: pageNumber };
-  console.log('here', paging);
+  console.log("here", paging);
   return await axios.post(`${API_BASE_URl}/getEmailTemplates`, paging);
 }
 // header: joi.string().required(),
@@ -201,7 +202,7 @@ export async function sendEmail({
   email_filtering_options: {
     option_type,
     option_value,
-    email_blast_option = 'one_time',
+    email_blast_option = "one_time",
   },
 }) {
   const data = {
@@ -213,7 +214,7 @@ export async function sendEmail({
     },
   };
   const response = await axios.post(`${API_BASE_URl}/sendEmails`, data);
-  return response
+  return response;
 }
 
 // email_template_id: joi.string().required(),

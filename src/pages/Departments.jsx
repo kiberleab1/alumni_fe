@@ -1,19 +1,16 @@
-import { useQuery } from 'react-query';
-import { getDepartments } from '../api';
+import { useQuery } from "react-query";
+import { getDepartments } from "../api";
 
-import { Container, Row, Col, Table } from 'reactstrap';
+import { Container, Row, Col, Table } from "reactstrap";
 
 export default function DepartmentPage() {
-  const { isError, data, error, isFetching } = useQuery(
-    'getDepartments',
-    async () => {
-      return await getDepartments({ pageNumber: 0, pageSize: 10 });
-    }
-  );
+  const { isError, data, isFetching } = useQuery("getDepartments", async () => {
+    return await getDepartments({ pageNumber: 0, pageSize: 10 });
+  });
 
   console.log(data);
   if (isFetching) return <div>Loading...</div>;
-  if (isError) return <div>Error: {error.message}</div>;
+  if (isError) return <div>Error: {}</div>;
   return (
     <>
       <div>
@@ -76,14 +73,14 @@ function ListDepartment({ departments }) {
                             <span
                               className="label label-danger"
                               onClick={() => {
-                                console.log('get here');
+                                console.log("get here");
                               }}
                             >
                               admin
-                            </span>{' '}
+                            </span>{" "}
                             <span className="label label-warning text-red-500">
                               admin
-                            </span>{' '}
+                            </span>{" "}
                           </td>
                         </tr>
                       );
