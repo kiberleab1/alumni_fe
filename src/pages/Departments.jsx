@@ -18,7 +18,7 @@ export default function DepartmentPage({
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
       <div>
         <ListDepartment
-          departments={data.data.department}
+          departments={data?.data?.department}
           onCreateDepartmentClick={onCreateDepartmentClick}
           onDepartmentEditClick={(department) =>
             onDepartmentEditClick(department)

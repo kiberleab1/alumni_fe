@@ -1,71 +1,74 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
-import { deleteJob, getAllJobs } from "../api";
+import { deletedNews, getAllNews } from "../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { formatDate } from "../utils/utils";
+
 import Modal from "./DeleteModal";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import QueryResult from "src/components/utils/queryResults";
 
-export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
-  const [jobs, setJobs] = useState([]);
+export default function NewsPage({ onCreateNewsClick, onNewsEditClick }) {
+  const [newsList, setNewsList] = useState([]);
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedJob, setSelectedJob] = useState(null);
+  const [selectedNews, setSelectedNews] = useState(null);
   const queryClient = useQueryClient();
 
   const { isError, data, isLoading } = useQuery(
-    ["getAllJobs"],
+    ["getAllNews"],
     async () => {
-      const jobsData = await getAllJobs({ pageNumber: 1, pageSize: 10 });
-      setJobs(jobsData.data.jobs);
+      const newsData = await getAllNews({ pageNumber: 1, pageSize: 10 });
+      console.log(newsData);
+      const newsListData = newsData.data.news.map((newss) => ({ ...newss }));
+      setNewsList(newsListData);
     },
     { keepPreviousData: true }
   );
 
-  const mutation = useMutation(deleteJob, {
+  const mutation = useMutation(deletedNews, {
     onSuccess: () => {
-      queryClient.invalidateQueries("getAllJobs");
+      queryClient.invalidateQueries("getAllNews");
     },
   });
 
-  const { mutate: deleteAdminModalAction } = useMutation(deleteJob, {
+  const { mutate: deleteAdminModalAction } = useMutation(deletedNews, {
     onSuccess: () => {
-      queryClient.invalidateQueries("getAllJobs");
+      queryClient.invalidateQueries("getAllNews");
       closeModal();
-      toast.success("Job Deleted successfully!");
+      toast.success("News Deleted successfully!");
     },
     onError: (error) => {
       closeModal();
-      queryClient.invalidateQueries("getAllJobs");
-      console.error("Error deleting job:", error);
-      toast.success("Error deleting job!");
+      queryClient.invalidateQueries("getAllNews");
+      console.error("Error deleting news:", error.message);
+      toast.success("Error deleting news!");
     },
   });
 
-  const openModal = (job) => {
-    setSelectedJob(job);
+  const openModal = (news) => {
+    setSelectedNews(news);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
-    setSelectedJob(null);
+    setSelectedNews(null);
     setIsModalOpen(false);
   };
 
   const confirmDeletion = () => {
-    console.log(selectedJob);
-    if (selectedJob) {
-      deleteAdminModalAction(selectedJob.id);
+    console.log(selectedNews);
+    if (selectedNews) {
+      deleteAdminModalAction(selectedNews.id);
     }
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = jobs.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(jobs.length / itemsPerPage);
+  const currentItems = newsList.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(newsList.length / itemsPerPage);
 
   const paginate = (pageNumber) => {
     if (pageNumber < 1 || pageNumber > totalPages) return;
@@ -73,24 +76,24 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
   };
 
   return (
-    <QueryResult isError={isError} isLoading={isLoading} data={data}>
+    <QueryResult isLoading={isLoading} isError={isError} data={data}>
       <div className="flex flex-col">
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
             <h1 className="text-base font-semibold leading-6 text-gray-900">
-              Jobs
+              News
             </h1>
             <p className="mt-2 text-sm text-gray-700">
-              A list of all the jobs in the system.
+              A list of all the news in the system.
             </p>
           </div>
           <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
             <button
               type="button"
               className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              onClick={onCreateJobClick}
+              onClick={onCreateNewsClick}
             >
-              Add New Job
+              Add New News
             </button>
           </div>
         </div>
@@ -105,31 +108,25 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
                       >
-                        Title
+                        ID
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
                       >
-                        Job Name
+                        Published By
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
                       >
-                        Insitute Name
+                        Publisher Institute
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
                       >
-                        Deadline
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
-                      >
-                        level
+                        News Level
                       </th>
                       <th
                         scope="col"
@@ -146,52 +143,47 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {currentItems.map((job) => (
-                      <tr key={job.id}>
+                    {currentItems.map((news) => (
+                      <tr key={news.email}>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm font-medium text-gray-900 text-start">
-                            {job.title ? job.title : "N/A"}
+                            {news.id}{" "}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm text-gray-900">
-                            {job.ownerAdminId ? job.ownerAdminId : "N/A"}
+                            {news.ownerAdminId ? news.ownerAdminId : "N/A"}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm text-gray-900">
-                            {job.ownerInstituteId
-                              ? job.ownerInstituteId
+                            {news.ownerInstituteId
+                              ? news.ownerInstituteId
                               : "N/A"}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm text-gray-900">
-                            {formatDate(job.deadline)}
+                            {news.level}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm text-gray-900">
-                            {job.level ? job.level : "N/A"}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-start">
-                          <div className="text-sm text-gray-900">
-                            {formatDate(job.createdAt)}
+                            {formatDate(news.createdAt)}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium ">
                           <a
                             href="#"
                             className="text-indigo-600 hover:text-green-900"
-                            onClick={() => onEditJobClick(job)}
+                            onClick={() => onNewsEditClick(news)}
                           >
                             Edit
                           </a>
                           <a
                             href="#"
                             className="text-red-600 hover:text-red-900 pl-5"
-                            onClick={() => openModal(job)}
+                            onClick={() => openModal(news)}
                           >
                             Delete
                           </a>
@@ -232,9 +224,10 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
                   Showing{" "}
                   <span className="font-medium">{indexOfFirstItem + 1}</span> to{" "}
                   <span className="font-medium">
-                    {Math.min(indexOfLastItem, jobs.length)}
+                    {Math.min(indexOfLastItem, newsList.length)}
                   </span>{" "}
-                  of <span className="font-medium">{jobs.length}</span> results
+                  of <span className="font-medium">{newsList.length}</span>{" "}
+                  results
                 </p>
               </div>
               <div>
@@ -283,13 +276,13 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
             </div>
           </div>
         </div>
-        {selectedJob && (
+        {selectedNews && (
           <Modal
             isOpen={isModalOpen}
             closeModal={closeModal}
             confirmAction={confirmDeletion}
             title="Confirm Deletion"
-            message={`Are you sure you want to delete the job "${selectedJob.title}"? This action cannot be undone.`}
+            message={`Are you sure you want to delete the institute "${selectedNews.id}"? This action cannot be undone.`}
           />
         )}
       </div>

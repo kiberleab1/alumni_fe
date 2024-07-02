@@ -25,7 +25,7 @@ export default function InstitutionsPage({
     <QueryResult isLoading={isLoading} isError={isError} data={data}>
       <div>
         <ListInstitutions
-          institutes={data.data.institute}
+          institutes={data?.data?.institute}
           onCreateInstituteClick={onCreateInstituteClick}
           onInstituteEditClick={(institute) => onInstituteEditClick(institute)}
         />
