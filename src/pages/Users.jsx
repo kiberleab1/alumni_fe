@@ -10,19 +10,20 @@ import Modal from './DeleteModal';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export default function Admins({ onAddAdminClick, onAdminEditClick }) {
+export default function Users({ onCreateUserClick, onUserEditClick }) {
     const [adminRoleId, setAdminRoleId] = useState(null);
     const [institutionAdmins, setInstitutionAdmins] = useState([]);
     const itemsPerPage = 5;
     const [currentPage, setCurrentPage] = useState(1);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedAdmin, setSelectedAdmin] = useState(null);
+    const [selectedUser, setSelectedUser] = useState(null);
     const queryClient = useQueryClient();
 
     const { isError, error, isFetching } = useQuery(
         ['getRoleByName', 'getAllinstituteAdmins'],
         async () => {
-            const roleData = await getRoleByName({ name: 'admin' });
+            const roleData = await getRoleByName({ name: 'user' });
             const admin_role_id = roleData.data.id;
             setAdminRoleId(admin_role_id);
 
@@ -33,13 +34,8 @@ export default function Admins({ onAddAdminClick, onAdminEditClick }) {
         { keepPreviousData: true }
     );
 
-    const mutation = useMutation(deleteAdmin, {
-        onSuccess: () => {
-            queryClient.invalidateQueries('getAllinstituteAdmins');
-        },
-    });
 
-    const { mutate: deleteAdminModalAction } = useMutation(deleteAdmin, {
+    const { mutate: deleteUserModalAction } = useMutation(deleteAdmin, {
         onSuccess: () => {
             queryClient.invalidateQueries('getAllinstituteAdmins');
             closeModal();
@@ -49,34 +45,33 @@ export default function Admins({ onAddAdminClick, onAdminEditClick }) {
         onError: (error) => {
             closeModal();
             queryClient.invalidateQueries('getAllinstituteAdmins');
-            console.error('Error deleting admin:', error.message);
-            toast.success('Error deleting admin!');
+            console.error('Error deleting user:', error.message);
+            toast.success('Error deleting user!');
 
         },
     });
 
-    const openModal = (admin) => {
-        setSelectedAdmin(admin);
+    const openModal = (user) => {
+        setSelectedUser(user);
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
-        setSelectedAdmin(null);
+        setSelectedUser(null);
         setIsModalOpen(false);
     };
 
     const confirmDeletion = () => {
-        console.log(selectedAdmin)
-        if (selectedAdmin) {
-            const deleteAdminData = {
-                address_id: selectedAdmin.address_id,
-                birth_place_id: selectedAdmin.birth_place_id,
-                id: selectedAdmin.id
+        console.log(selectedUser)
+        if (selectedUser) {
+            const deleteUserData = {
+                address_id: selectedUser.address_id,
+                birth_place_id: selectedUser.birth_place_id,
+                id: selectedUser.id
             };
-            deleteAdminModalAction(deleteAdminData);
+            deleteUserModalAction(deleteUserData);
         }
     };
-
 
     if (isFetching) return <div>Loading...</div>;
     if (isError) return <div>Error: {error.message}</div>;
@@ -91,22 +86,23 @@ export default function Admins({ onAddAdminClick, onAdminEditClick }) {
         setCurrentPage(pageNumber);
     };
 
+
     return (
         <div className="flex flex-col">
             <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
-                    <h1 className="text-base font-semibold leading-6 text-gray-900">ADMINISTRATORS</h1>
+                    <h1 className="text-base font-semibold leading-6 text-gray-900">USERS</h1>
                     <p className="mt-2 text-sm text-gray-700">
-                        A list of all the Admins in the system including their name, title, email and role.
+                        A list of all the users in the system including their name, title, email and role.
                     </p>
                 </div>
                 <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
                     <button
                         type="button"
                         className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        onClick={onAddAdminClick}
+                        onClick={onCreateUserClick}
                     >
-                        Add Admin
+                        Add User
                     </button>
                 </div>
             </div>
@@ -127,6 +123,9 @@ export default function Admins({ onAddAdminClick, onAdminEditClick }) {
                                             Phone Number
                                         </th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+                                            Gender
+                                        </th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
                                             Institute Name
                                         </th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
@@ -138,28 +137,31 @@ export default function Admins({ onAddAdminClick, onAdminEditClick }) {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                    {currentItems.map(admin => (
-                                        <tr key={admin.email}>
+                                    {currentItems.map(user => (
+                                        <tr key={user.email}>
                                             <td className="px-6 py-4 whitespace-nowrap text-start">
-                                                <div className="text-sm font-medium text-gray-900 text-start">{admin.first_name} {admin.last_name}</div>
+                                                <div className="text-sm font-medium text-gray-900 text-start">{user.first_name} {user.last_name}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-start">
-                                                <div className="text-sm text-gray-900">{admin.email ? admin.email : "N/A"}</div>
+                                                <div className="text-sm text-gray-900">{user.email ? user.email : "N/A"}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-start">
-                                                <div className="text-sm text-gray-900">{admin.phone_number ? admin.phone_number : "N/A"}</div>
+                                                <div className="text-sm text-gray-900">{user.phone_number ? user.phone_number : "N/A"}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-start">
-                                                <div className="text-sm text-gray-900">{admin.institute_id}</div>
+                                                <div className="text-sm text-gray-900">{user.gender}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-start">
-                                                <div className="text-sm text-gray-900">{formatDate(admin.createdAt)}</div>
+                                                <div className="text-sm text-gray-900">{user.institute_id}</div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-start">
+                                                <div className="text-sm text-gray-900">{formatDate(user.createdAt)}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium ">
-                                                <a href="#" className="text-indigo-600 hover:text-green-900" onClick={() => onAdminEditClick(admin)}>
+                                                <a href="#" className="text-indigo-600 hover:text-green-900" onClick={() => onUserEditClick(user)}>
                                                     Edit
                                                 </a>
-                                                <a href="#" className="text-red-600 hover:text-red-900 pl-5" onClick={() => openModal(admin)}>
+                                                <a href="#" className="text-red-600 hover:text-red-900 pl-5" onClick={() => openModal(user)}>
                                                     Delete
                                                 </a>
                                             </td>
@@ -228,13 +230,13 @@ export default function Admins({ onAddAdminClick, onAdminEditClick }) {
                     </div>
                 </div>
             </div>
-            {selectedAdmin && (
+            {selectedUser && (
                 <Modal
                     isOpen={isModalOpen}
                     closeModal={closeModal}
                     confirmAction={confirmDeletion}
                     title="Confirm Deletion"
-                    message={`Are you sure you want to delete the institute "${selectedAdmin.first_name} ${selectedAdmin.last_name}"? This action cannot be undone.`}
+                    message={`Are you sure you want to delete the institute "${selectedUser.first_name} ${selectedUser.last_name}"? This action cannot be undone.`}
                 />
             )}
             <StatData/>

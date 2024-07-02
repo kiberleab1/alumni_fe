@@ -1,14 +1,18 @@
-import { Fragment, useState } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
+import { Fragment, useState } from "react";
+import { Dialog, Transition } from "@headlessui/react";
 import {
   AcademicCapIcon,
   ArrowLongLeftIcon,
   Bars3Icon,
+  BriefcaseIcon,
   BuildingLibraryIcon,
   CalendarIcon,
   ChevronDownIcon,
   ChevronUpIcon,
+  ClipboardDocumentCheckIcon,
   Cog6ToothIcon,
+  EllipsisHorizontalCircleIcon,
+  EllipsisVerticalIcon,
   HomeIcon,
   InboxArrowDownIcon,
   NewspaperIcon,
@@ -18,84 +22,88 @@ import {
   UserPlusIcon,
   UsersIcon,
   XMarkIcon,
-} from '@heroicons/react/24/outline';
-import RolePage from './Role';
-import Admins from './Admins';
-import InstitutionsPage from './Institutions';
-import DepartmentPage from './Departments';
-import CreateInstitutionPage from './CreateInstitute';
-import CreateAdminPage from './createAdmin';
-import ComposeEmail from './emails/compose';
-
-import CreateDepartmentPage from './CreateDepartment';
+} from "@heroicons/react/24/outline";
+import ComponentRender from "./PageRender";
 
 const navigation = [
-  { name: 'Dashboard', href: '#', icon: HomeIcon, current: false },
-  { name: 'Admins', href: '#', icon: UsersIcon, current: true },
+  { name: "Dashboard", href: "#", icon: HomeIcon, current: false },
+  { name: "Admins", href: "#", icon: UsersIcon, current: true },
   {
-    name: 'Institutions',
-    href: '#',
+    name: "Institutions",
+    href: "#",
     icon: BuildingLibraryIcon,
     current: false,
   },
-  { name: 'Departments', href: '#', icon: TagIcon, current: false },
-  { name: 'Users', href: '#', icon: AcademicCapIcon, current: false },
-  { name: 'Events', href: '#', icon: CalendarIcon, current: false },
-  { name: 'News', href: '#', icon: NewspaperIcon, current: false },
+  { name: "Departments", href: "#", icon: TagIcon, current: false },
+  { name: "Users", href: "#", icon: AcademicCapIcon, current: false },
   {
-    name: 'Email',
-    href: '#',
-    icon: InboxArrowDownIcon,
+    name: "Roles",
+    href: "#",
+    icon: EllipsisHorizontalCircleIcon,
     current: false,
   },
+  { name: "Permission", href: "#", icon: EllipsisVerticalIcon, current: false },
+  { name: "Jobs", href: "#", icon: BriefcaseIcon, current: false },
+  { name: "Staff", href: "#", icon: UsersIcon, current: false },
+  { name: "Jobs History", href: "#", icon: BriefcaseIcon, current: false },
+  { name: "Almuni", href: "#", icon: AcademicCapIcon, current: false },
+  {
+    name: "Document Verification",
+    href: "#",
+    icon: ClipboardDocumentCheckIcon,
+    current: false,
+  },
+  { name: "Events", href: "#", icon: CalendarIcon, current: false },
+  { name: "News", href: "#", icon: NewspaperIcon, current: false },
+  { name: "Email", href: "#", icon: InboxArrowDownIcon, current: false },
 ];
 
 const subNavigation = [
   {
-    name: 'Create Admin',
-    parent: 'Admins',
+    name: "Create Admin",
+    parent: "Admins",
     icon: UserPlusIcon,
     current: false,
   },
-  { name: 'Create Users', parent: 'Users', icon: PlusIcon, current: false },
+  { name: "Create User", parent: "Users", icon: PlusIcon, current: false },
   {
-    name: 'Create Institute',
-    parent: 'Institutions',
+    name: "Create Institute",
+    parent: "Institutions",
     icon: PlusCircleIcon,
     current: false,
   },
   {
-    name: 'Create Department',
-    parent: 'Departments',
+    name: "Create Department",
+    parent: "Departments",
     icon: PlusCircleIcon,
     current: false,
   },
 ];
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
+const navigationWithNoSubNavigation = [
+  "Dashboard",
+  "Roles",
+  "Events",
+  "News",
+  "Email",
+  "Permission",
+  "Jobs",
+  "Staff",
+  "Jobs History",
+  "Almuni",
+  "Document Verification",
+];
 
-const componentsMap = {
-  'Dashboard': DepartmentPage,
-  'Admins': Admins,
-  'Create Admin': CreateAdminPage,
-  'Institutions': InstitutionsPage,
-  'Create Institute': CreateInstitutionPage,
-  'Users': RolePage,
-  'Events': RolePage,
-  'News': RolePage,
-  'Email': ComposeEmail,
-  'Departments': DepartmentPage,
-  'Create Department': CreateDepartmentPage,
-};
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
 
 export default function SideBar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarOpenMain, setSidebarOpenMain] = useState(true);
   const [componentClicked, setComponentClicked] = useState({
-    name: 'Admins',
-    href: '/admin',
+    name: "Admins",
+    href: "/admin",
     current: true,
   });
 
@@ -126,7 +134,14 @@ export default function SideBar() {
     console.log(itemName);
   };
 
-  const ComponentToRender = componentsMap[componentClicked.name];
+  const handlePageSet = (pageName) => {
+    console.log(`Page set to: ${pageName}`);
+    setComponentClicked({
+      name: pageName,
+      href: `/${pageName.toLowerCase()}`,
+      current: true,
+    });
+  };
 
   return (
     <>
@@ -199,9 +214,9 @@ export default function SideBar() {
                                   href={item.href}
                                   className={classNames(
                                     componentClicked.name == item.name
-                                      ? 'bg-gray-800 text-white'
-                                      : 'text-gray-400 hover:text-white hover:bg-gray-800',
-                                    'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                                      ? "bg-gray-800 text-white"
+                                      : "text-gray-400 hover:text-white hover:bg-gray-800",
+                                    "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                                   )}
                                   onClick={() =>
                                     handleNavigationItemClick(item.name)
@@ -227,8 +242,8 @@ export default function SideBar() {
                               <a
                                 href="#"
                                 className={classNames(
-                                  'text-gray-400 hover:text-white hover:bg-gray-800',
-                                  'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                                  "text-gray-400 hover:text-white hover:bg-gray-800",
+                                  "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                                 )}
                               >
                                 <ArrowLongLeftIcon
@@ -243,8 +258,8 @@ export default function SideBar() {
                               <a
                                 href="#"
                                 className={classNames(
-                                  'text-gray-400 hover:text-white hover:bg-gray-800',
-                                  'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                                  "text-gray-400 hover:text-white hover:bg-gray-800",
+                                  "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                                 )}
                               >
                                 <Cog6ToothIcon
@@ -267,8 +282,8 @@ export default function SideBar() {
         <div
           className={`${
             sidebarOpenMain
-              ? 'hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col'
-              : 'hidden'
+              ? "hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col"
+              : "hidden"
           }`}
         >
           <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
@@ -298,9 +313,9 @@ export default function SideBar() {
                           href={item.href}
                           className={classNames(
                             componentClicked.name === item.name
-                              ? 'bg-gray-800 text-white'
-                              : 'text-gray-400 hover:text-white hover:bg-gray-800',
-                            'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                              ? "bg-gray-800 text-white"
+                              : "text-gray-400 hover:text-white hover:bg-gray-800",
+                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                           )}
                           onClick={() => handleNavigationItemClick(item.name)}
                         >
@@ -309,7 +324,7 @@ export default function SideBar() {
                             aria-hidden="true"
                           />
                           {item.name}
-                          {item.name !== 'Dashboard' &&
+                          {!navigationWithNoSubNavigation.includes(item.name) &&
                             openDropDown[item.name] && (
                               <ChevronUpIcon
                                 className="-mr-1 h-5 w-5 text-gray-400 ml-auto"
@@ -317,7 +332,7 @@ export default function SideBar() {
                                 onClick={() => handleOpenDropDown(item.name)}
                               />
                             )}
-                          {item.name !== 'Dashboard' &&
+                          {!navigationWithNoSubNavigation.includes(item.name) &&
                             !openDropDown[item.name] && (
                               <ChevronDownIcon
                                 className="-mr-1 h-5 w-5 text-gray-400 ml-auto"
@@ -336,9 +351,9 @@ export default function SideBar() {
                                       href={subItem.href}
                                       className={classNames(
                                         componentClicked.name === subItem.name
-                                          ? 'bg-gray-800 text-white'
-                                          : 'text-gray-400 hover:text-white hover:bg-gray-800',
-                                        'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                                          ? "bg-gray-800 text-white"
+                                          : "text-gray-400 hover:text-white hover:bg-gray-800",
+                                        "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                                       )}
                                       onClick={() =>
                                         handleNavigationItemClick(subItem.name)
@@ -366,8 +381,8 @@ export default function SideBar() {
                       <a
                         href="#"
                         className={classNames(
-                          'text-gray-400 hover:text-white hover:bg-gray-800',
-                          'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                          "text-gray-400 hover:text-white hover:bg-gray-800",
+                          "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                         )}
                       >
                         <ArrowLongLeftIcon
@@ -382,8 +397,8 @@ export default function SideBar() {
                       <a
                         href="#"
                         className={classNames(
-                          'text-gray-400 hover:text-white hover:bg-gray-800',
-                          'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                          "text-gray-400 hover:text-white hover:bg-gray-800",
+                          "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                         )}
                       >
                         <Cog6ToothIcon
@@ -400,7 +415,7 @@ export default function SideBar() {
           </div>
         </div>
 
-        <div className={`${sidebarOpenMain ? 'lg:pl-72' : 'lg:pl-85'}`}>
+        <div className={`${sidebarOpenMain ? "lg:pl-72" : "lg:pl-85"}`}>
           <div className="flex ml-4 mt-4">
             {!sidebarOpenMain ? (
               <div>
@@ -456,7 +471,7 @@ export default function SideBar() {
                           href="#"
                           className="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
                           aria-current={
-                            componentClicked.current ? 'page' : undefined
+                            componentClicked.current ? "page" : undefined
                           }
                         >
                           {componentClicked.name}
@@ -471,7 +486,10 @@ export default function SideBar() {
 
           <main className="py-10">
             <div className="px-4 sm:px-6 lg:px-8">
-              <ComponentToRender />
+              <ComponentRender
+                page={componentClicked.name}
+                onPageSet={handlePageSet}
+              />
             </div>
           </main>
         </div>

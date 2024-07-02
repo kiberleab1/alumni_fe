@@ -1,54 +1,68 @@
-import { useState } from 'react';
-import { createAddress, createInstitute } from '../api';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useState } from "react";
+import { createAddress, createInstitute } from "../api";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function CreateInstitutionPage() {
-  const [addressError, setAddressError] = useState('');
-  const [instituteError, setInstituteError] = useState('');
+  const [addressError, setAddressError] = useState("");
+  const [instituteError, setInstituteError] = useState("");
   const [instituteAddressId, setInstituteAddressId] = useState(null);
   const [disableInstitutionSection, setDisableInstitutionSection] =
     useState(true);
 
+  const [instituteTypes] = useState(["University", "College", "TVET"]);
+
   const [addressFields, setAddressFields] = useState({
-    country: '',
-    region: '',
-    city: '',
-    houseNumber: '',
+    country: "",
+    region: "",
+    city: "",
+    houseNumber: "",
   });
 
   const [instituteFields, setInstituteFields] = useState({
-    instituteName: '',
-    instituteStartingYear: '',
-    instituteDescription: '',
-    email: '',
-    phone: '',
-    twitter: '',
-    linkedin: '',
-    telegram: '',
-    facebook: '',
+    instituteName: "",
+    instituteStartingYear: "",
+    instituteDescription: "",
+    website: "",
+    type: "",
+    accreditations: "",
+    number_of_students: "",
+    number_of_alumni: "",
+    president_name: "",
+    email: "",
+    phone: "",
+    twitter: "",
+    linkedin: "",
+    telegram: "",
+    facebook: "",
   });
 
   const clearAddressFields = () => {
     setAddressFields({
-      country: '',
-      region: '',
-      city: '',
-      houseNumber: '',
+      country: "",
+      region: "",
+      city: "",
+      houseNumber: "",
     });
   };
 
   const clearInstituteFields = () => {
     setInstituteFields({
-      instituteName: '',
-      instituteStartingYear: '',
-      instituteDescription: '',
-      email: '',
-      phone: '',
-      twitter: '',
-      linkedin: '',
-      telegram: '',
-      facebook: '',
+      instituteName: "",
+      instituteStartingYear: "",
+      instituteDescription: "",
+      website: "",
+      type: "",
+      accreditations: "",
+      number_of_students: "",
+      number_of_alumni: "",
+      president_name: "",
+      email: "",
+      phone: "",
+      twitter: "",
+      linkedin: "",
+      telegram: "",
+      facebook: "",
     });
   };
 
@@ -67,29 +81,29 @@ export default function CreateInstitutionPage() {
       !addressFields.region ||
       !addressFields.city
     ) {
-      setAddressError('Please fill in all required fields.');
+      setAddressError("Please fill in all required fields.");
       return;
     }
     if (!addressFields.country) {
-      throw new Error('Country is a required field.');
+      throw new Error("Country is a required field.");
     }
     if (!addressFields.region) {
-      throw new Error('Region is a required field.');
+      throw new Error("Region is a required field.");
     }
     if (!addressFields.city) {
-      throw new Error('City is a required field.');
+      throw new Error("City is a required field.");
     }
 
     try {
       const result = await createAddress(addressFields);
-      toast.success('Address saved successfully!');
+      toast.success("Address saved successfully!");
       setDisableInstitutionSection(false);
       setInstituteAddressId(result.data.id);
-      setAddressError();
-      console.log('Create address result:', result.data);
+      setAddressError("");
+      console.log("Create address result:", result.data);
     } catch (error) {
-      toast.success('Error creating address!');
-      console.error('Error creating address', error);
+      toast.success("Error creating address!");
+      console.error("Error creating address", error);
       setAddressError(error);
       setDisableInstitutionSection(true);
     }
@@ -102,42 +116,48 @@ export default function CreateInstitutionPage() {
       !instituteFields.instituteStartingYear ||
       !instituteFields.instituteDescription
     ) {
-      setInstituteError('Please fill in all required fields!');
+      setInstituteError("Please fill in all required fields!");
       return;
     }
     if (!instituteAddressId) {
-      setInstituteError('Please Fill And Save Address First!');
+      setInstituteError("Please Fill And Save Address First!");
       return;
     }
     if (!instituteFields.instituteName) {
-      throw new Error('Institute name is a required field.');
+      throw new Error("Institute name is a required field.");
     }
     if (!instituteFields.instituteStartingYear) {
-      throw new Error('Institute starting year is a required field.');
+      throw new Error("Institute starting year is a required field.");
     }
     if (!instituteFields.instituteDescription) {
-      throw new Error('Institute description is a required field.');
+      throw new Error("Institute description is a required field.");
     }
 
     if (!instituteAddressId) {
-      throw new Error('Please Fill And Save Address First.');
+      throw new Error("Please Fill And Save Address First.");
     }
 
     const instituteContactInfo = {
-      email: instituteFields.email,
-      phone: instituteFields.phone,
-      telegram: instituteFields.telegram,
-      twitter: instituteFields.twitter,
-      facebook: instituteFields.facebook,
+      telegram: "telegram:" + instituteFields.telegram,
+      twitter: "twitter:" + instituteFields.twitter,
+      facebook: "facebook:" + instituteFields.facebook,
     };
 
     const contactInfo = Object.values(instituteContactInfo)
-      .filter((value) => value && value !== '')
-      .join(', ');
+      .filter((value) => value && value !== "")
+      .join(", ");
 
     console.log(instituteFields);
     const institute = {
       name: instituteFields.instituteName,
+      phone_number: instituteFields.phone,
+      email: instituteFields.email,
+      website: instituteFields.website,
+      type: instituteFields.type,
+      accreditations: instituteFields.accreditations,
+      number_of_students: instituteFields.number_of_students,
+      number_of_alumni: instituteFields.number_of_alumni,
+      president_name: instituteFields.president_name,
       description: instituteFields.instituteDescription,
       address_id: instituteAddressId,
       starting_year: instituteFields.instituteStartingYear,
@@ -146,15 +166,15 @@ export default function CreateInstitutionPage() {
 
     try {
       const result = await createInstitute(institute);
-      toast.success('Institute saved successfully!');
+      toast.success("Institute saved successfully!");
       setInstituteAddressId();
-      setInstituteError();
+      setInstituteError("");
       handleInstituteClear();
       handleAddressClear();
-      console.log('Create institute result:', result.data);
+      console.log("Create institute result:", result.data);
     } catch (error) {
-      toast.success('Error creating institute!');
-      console.error('Error creating institute!', error);
+      toast.success("Error creating institute!");
+      console.error("Error creating institute!", error);
       setInstituteError(error);
     }
   };
@@ -307,8 +327,8 @@ export default function CreateInstitutionPage() {
 
         <form className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
           <div className="px-4 py-6 sm:p-8">
-            <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div className="sm:col-span-3">
+            <div className="grid max-w-full grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <div className="sm:col-span-2">
                 <label
                   htmlFor="institute-name"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -328,12 +348,63 @@ export default function CreateInstitutionPage() {
                         instituteName: e.target.value,
                       })
                     }
-                    autoComplete="organization"
+                    autoComplete="institute_name"
+                    placeholder="Institute Name"
                     className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
                   />
                 </div>
               </div>
-              <div className="sm:col-span-3">
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="institute-name"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Institute Email
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    autoComplete="email"
+                    value={instituteFields.email}
+                    onChange={(e) =>
+                      setInstituteFields({
+                        ...instituteFields,
+                        email: e.target.value,
+                      })
+                    }
+                    className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                    placeholder="Email Address"
+                  />
+                </div>
+              </div>
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="institute-name"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Institute Phone Number
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="tel"
+                    name="phone"
+                    id="phone"
+                    autoComplete="tel"
+                    value={instituteFields.phone}
+                    onChange={(e) =>
+                      setInstituteFields({
+                        ...instituteFields,
+                        phone: e.target.value,
+                      })
+                    }
+                    className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                    placeholder="Phone Number"
+                  />
+                </div>
+              </div>
+              <div className="sm:col-span-2">
                 <label
                   htmlFor="institute-starting-year"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -357,6 +428,152 @@ export default function CreateInstitutionPage() {
                   />
                 </div>
               </div>
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="institute-name"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Institute website
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="url"
+                    name="website"
+                    id="website"
+                    value={instituteFields.website}
+                    onChange={(e) =>
+                      setInstituteFields({
+                        ...instituteFields,
+                        website: e.target.value,
+                      })
+                    }
+                    className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                    placeholder="website Link"
+                  />
+                </div>
+              </div>
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="institute-name"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Institute Type
+                </label>
+                <div className="mt-2">
+                  <select
+                    value={instituteFields.type}
+                    onChange={(e) =>
+                      setInstituteFields({
+                        ...instituteFields,
+                        type: e.target.value,
+                      })
+                    }
+                    className="mt-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-5 font-medium font-mono"
+                  >
+                    {instituteTypes.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="president_name"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Institute President Name
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    name="president_name"
+                    id="president_name"
+                    value={instituteFields.president_name}
+                    onChange={(e) =>
+                      setInstituteFields({
+                        ...instituteFields,
+                        president_name: e.target.value,
+                      })
+                    }
+                    className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                    placeholder="President Name"
+                  />
+                </div>
+              </div>
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="number_of_students"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Institute Number Of Students
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="number"
+                    name="number_of_students"
+                    id="number_of_students"
+                    value={instituteFields.number_of_students}
+                    onChange={(e) =>
+                      setInstituteFields({
+                        ...instituteFields,
+                        number_of_students: e.target.value,
+                      })
+                    }
+                    className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                    placeholder="Number Of Students"
+                  />
+                </div>
+              </div>
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="number_of_alumni"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Institute Number Of Alumni
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="number"
+                    name="number_of_alumni"
+                    id="number_of_alumni"
+                    value={instituteFields.number_of_alumni}
+                    onChange={(e) =>
+                      setInstituteFields({
+                        ...instituteFields,
+                        number_of_alumni: e.target.value,
+                      })
+                    }
+                    className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                    placeholder="Number Of Alumni"
+                  />
+                </div>
+              </div>
+              <div className="sm:col-span-6">
+                <label
+                  htmlFor="institute-accreditations"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Institute Accreditations
+                </label>
+                <div className="mt-2">
+                  <textarea
+                    id="institute-accreditations"
+                    name="institute-accreditations"
+                    rows={3}
+                    required
+                    value={instituteFields.accreditations}
+                    onChange={(e) =>
+                      setInstituteFields({
+                        ...instituteFields,
+                        accreditations: e.target.value,
+                      })
+                    }
+                    className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                  ></textarea>
+                </div>
+              </div>
               <div className="sm:col-span-6">
                 <label
                   htmlFor="institute-description"
@@ -368,7 +585,7 @@ export default function CreateInstitutionPage() {
                   <textarea
                     id="institute-description"
                     name="institute-description"
-                    rows="3"
+                    rows={3}
                     required
                     value={instituteFields.instituteDescription}
                     onChange={(e) =>
@@ -389,36 +606,6 @@ export default function CreateInstitutionPage() {
                   Institute Contact Info
                 </label>
                 <div className="mt-2 grid grid-cols-2 gap-4 sm:grid-cols-3">
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    autoComplete="email"
-                    value={instituteFields.email}
-                    onChange={(e) =>
-                      setInstituteFields({
-                        ...instituteFields,
-                        email: e.target.value,
-                      })
-                    }
-                    className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                    placeholder="Email Address"
-                  />
-                  <input
-                    type="tel"
-                    name="phone"
-                    id="phone"
-                    autoComplete="tel"
-                    value={instituteFields.phone}
-                    onChange={(e) =>
-                      setInstituteFields({
-                        ...instituteFields,
-                        phone: e.target.value,
-                      })
-                    }
-                    className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                    placeholder="Phone Number"
-                  />
                   <input
                     type="url"
                     name="twitter"
