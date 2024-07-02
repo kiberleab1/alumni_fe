@@ -24,6 +24,7 @@ export default function JobHistoryPage({
     async () => {
       const jobsData = await getAllJobHistory({ pageNumber: 1, pageSize: 10 });
       setJobs(jobsData.data.jobHistory);
+      return jobsData;
     },
     { keepPreviousData: true }
   );

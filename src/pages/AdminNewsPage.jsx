@@ -24,6 +24,7 @@ export default function NewsPage({ onCreateNewsClick, onNewsEditClick }) {
       console.log(newsData);
       const newsListData = newsData.data.news.map((newss) => ({ ...newss }));
       setNewsList(newsListData);
+      return newsData;
     },
     { keepPreviousData: true }
   );
@@ -43,7 +44,7 @@ export default function NewsPage({ onCreateNewsClick, onNewsEditClick }) {
     onError: (error) => {
       closeModal();
       queryClient.invalidateQueries("getAllNews");
-      console.error("Error deleting news:", error.message);
+      console.error("Error deleting news:", error);
       toast.success("Error deleting news!");
     },
   });

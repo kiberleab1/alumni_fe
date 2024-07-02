@@ -41,6 +41,7 @@ export default function PermissionPage() {
         if (permissionDataResult) {
           setPermissionData(permissionDataResult.data.permission);
         }
+        return permissionDataResult;
       } catch (error) {
         console.error(error);
       }

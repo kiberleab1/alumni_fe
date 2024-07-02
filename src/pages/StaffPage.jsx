@@ -21,6 +21,7 @@ export default function StaffPage({ onCreateStaffClick, onEditStaffClick }) {
     async () => {
       const staffData = await getAllStaff({ pageNumber: 1, pageSize: 10 });
       setStaffs(staffData.data.staff);
+      return staffData;
     },
     { keepPreviousData: true }
   );

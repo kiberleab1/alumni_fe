@@ -21,6 +21,7 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
     async () => {
       const jobsData = await getAllJobs({ pageNumber: 1, pageSize: 10 });
       setJobs(jobsData.data.jobs);
+      return jobsData;
     },
     { keepPreviousData: true }
   );

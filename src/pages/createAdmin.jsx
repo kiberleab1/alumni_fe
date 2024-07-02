@@ -73,9 +73,10 @@ export default function CreateAdminPage() {
             id: institute.id,
           }));
 
-          adminFields.institute = instituteData.data.institute[0].id;
+          adminFields.institute = instituteData.data?.institute[0]?.id;
           setInstitutions(instituteNames);
         }
+        return instituteData;
       } catch (error) {
         console.error(error);
       }

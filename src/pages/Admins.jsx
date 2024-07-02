@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { deleteAdmin, getAllinstituteAdmins, getRoleByName } from "../api";
+import {
+  deleteAdmin,
+  getAllinstituteAdmins as getAllInstituteAdmins,
+  getRoleByName,
+} from "../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { formatDate } from "../utils/utils";
 import {
@@ -30,7 +34,7 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
       const admin_role_id = roleData.data?.id;
       setAdminRoleId(admin_role_id);
 
-      const instituteAdminsData = await getAllinstituteAdmins({
+      const instituteAdminsData = await getAllInstituteAdmins({
         pageNumber: 1,
         pageSize: 10,
         value: admin_role_id,
@@ -39,6 +43,7 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
         ...user,
       }));
       setInstitutionAdmins(admins);
+      return instituteAdminsData;
     },
     { keepPreviousData: true }
   );
@@ -96,6 +101,7 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
     if (pageNumber < 1 || pageNumber > totalPages) return;
     setCurrentPage(pageNumber);
   };
+  console.log("What the fuck is going on here", data);
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
