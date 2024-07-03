@@ -1,5 +1,5 @@
-import { useQueryClient, useMutation } from 'react-query';
-import { login } from '../api';
+import { useQueryClient, useMutation } from "react-query";
+import { login } from "src/api";
 import {
   Container,
   Row,
@@ -9,9 +9,9 @@ import {
   Button,
   Input,
   FormFeedback,
-} from 'reactstrap';
-import { Formik, Form } from 'formik';
-import * as Yup from 'yup';
+} from "reactstrap";
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
 
 export default function LoginPage() {
   return (
@@ -27,7 +27,7 @@ const LoginForm = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation(login, {
     onSuccess: () => {
-      queryClient.invalidateQueries('login');
+      queryClient.invalidateQueries("login");
     },
   });
   const handleSubmit = (values) => {
@@ -51,14 +51,14 @@ const LoginForm = () => {
           <Col md="12">
             <Formik
               initialValues={{
-                email: '',
-                password: '',
+                email: "",
+                password: "",
               }}
               validationSchema={Yup.object({
-                email: Yup.string().required('Required').email('Invalid email'),
+                email: Yup.string().required("Required").email("Invalid email"),
                 password: Yup.string()
-                  .required('Required')
-                  .min(8, 'Too Short! must be at least 8 characters'),
+                  .required("Required")
+                  .min(8, "Too Short! must be at least 8 characters"),
               })}
               onSubmit={handleSubmit}
             >

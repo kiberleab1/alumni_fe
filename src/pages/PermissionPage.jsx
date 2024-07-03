@@ -4,7 +4,7 @@ import {
   deletePermission,
   getRoles,
   createPermission,
-} from "../api";
+} from "src/api";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { formatDate } from "../utils/utils";
@@ -12,7 +12,7 @@ import { useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import DeleteModal from "./DeleteModal";
+import DeleteModal from "../components/utils/DeleteModal";
 import QueryResult from "src/components/utils/queryResults";
 
 export default function PermissionPage() {

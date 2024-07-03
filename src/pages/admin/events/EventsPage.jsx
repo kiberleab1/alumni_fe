@@ -1,213 +1,96 @@
-import { useQuery, useQueryClient, useMutation } from "react-query";
-import { getRoles, createNewRole, deleteRole } from "src/api";
-
-import {
-  Container,
-  Row,
-  Col,
-  FormGroup,
-  Label,
-  Button,
-  Table,
-} from "reactstrap";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { formatDate } from "../utils/utils";
-import { useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import DeleteModal from "../components/utils/DeleteModal";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { toast } from "react-toastify";
+import { deleteEvent, getAllEvents } from "src/api";
+import Modal from "src/components/utils/DeleteModal";
+import QueryResult from "src/components/utils/queryResults";
+import { formatDate } from "src/utils/utils";
 
-export default function RolePage() {
-  const { isError, data, error, isFetching } = useQuery(
-    "getRoles",
-    async () => {
-      return await getRoles({ pageNumber: 0, pageSize: 10 });
-    }
-  );
-
-  console.log(data);
-  if (isFetching) return <div>Loading...</div>;
-  if (isError) return <div>Error: {error.message}</div>;
-  return (
-    <>
-      <div>
-        <ListRole roles={data.data.role} />
-      </div>
-    </>
-  );
-}
-
-function Modal({ onClose }) {
-  const queryClient = useQueryClient();
-  const mutation = useMutation(createNewRole, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("getRoles");
-    },
+export default function EventsPage({ onCreateEventClick, onEditEventClick }) {
+  const { isError, data, isLoading } = useQuery("getAllEvents", async () => {
+    return await getAllEvents({ pageNumber: 1, pageSize: 10 });
   });
-  const handleSubmit = (values) => {
-    console.log({ values });
-    mutation.mutate(values);
-  };
 
   return (
-    <div className="fixed inset-0 z-10 flex items-center justify-center overflow-y-auto bg-gray-500 bg-opacity-75">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6">
-        <div className="flex justify-between items-center pb-3 border-b">
-          <h3 className="text-xl font-semibold">Create Role</h3>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              ></path>
-            </svg>
-          </button>
-        </div>
-        <div className="mt-4">
-          <Formik
-            initialValues={{ role_name: "" }}
-            validationSchema={Yup.object({
-              role_name: Yup.string().required("Role Name is required"),
-            })}
-            onSubmit={handleSubmit}
-          >
-            {({ isSubmitting }) => (
-              <Form className="space-y-10">
-                <div>
-                  <label
-                    htmlFor="role_name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Role Name
-                  </label>
-                  <Field
-                    type="text"
-                    id="role_name"
-                    name="role_name"
-                    placeholder="Enter Role Name"
-                    className="mt-1 block w-full border bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
-                  />
-                  <ErrorMessage
-                    name="role_name"
-                    component="div"
-                    className="text-red-600 text-sm mt-1"
-                  />
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Submit
-                  </button>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        </div>
+    <QueryResult isError={isError} isLoading={isLoading} data={data}>
+      <div>
+        <ListEvent
+          eventsData={data?.data?.events}
+          onCreateEventClick={onCreateEventClick}
+          onEditEventClick={(event) => onEditEventClick(event)}
+        />
       </div>
-    </div>
+    </QueryResult>
   );
 }
-// eslint-disable-next-line react/prop-types
-function ListRole({ roles }) {
+
+function ListEvent({ eventsData, onCreateEventClick, onEditEventClick }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedRole, setSelectedRole] = useState(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = roles.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(roles.length / itemsPerPage);
+  const currentItems = eventsData.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(eventsData.length / itemsPerPage);
 
   const paginate = (pageNumber) => {
     if (pageNumber < 1 || pageNumber > totalPages) return;
     setCurrentPage(pageNumber);
   };
 
-  const openModal = () => {
+  const openModal = (event) => {
+    setSelectedEvent(event);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
+    setSelectedEvent(null);
     setIsModalOpen(false);
   };
 
-  const queryClient = useQueryClient();
-
-  const openDeleteModal = (role) => {
-    setSelectedRole(role);
-    setIsDeleteModalOpen(true);
-  };
-
-  const closeDeleteModal = () => {
-    setSelectedRole(null);
-    setIsDeleteModalOpen(false);
-  };
-
   const confirmDeletion = () => {
-    console.log(selectedRole);
-    if (selectedRole) {
-      deletePermissionModalAction(selectedRole);
+    console.log(selectedEvent);
+    if (selectedEvent) {
+      deleteEventModalAction(selectedEvent.id);
     }
   };
 
-  const { mutate: deletePermissionModalAction } = useMutation(deleteRole, {
+  const queryClient = useQueryClient();
+  const { mutate: deleteEventModalAction } = useMutation(deleteEvent, {
     onSuccess: () => {
-      queryClient.invalidateQueries("getRoles");
-      closeDeleteModal();
+      queryClient.invalidateQueries("getAllEvents");
+      closeModal();
+      toast.success("Event Deleted successfully!");
     },
     onError: (error) => {
-      closeDeleteModal();
-      queryClient.invalidateQueries("getRoles");
+      closeModal();
+      queryClient.invalidateQueries("getAllEvents");
+      console.error("Error deleting Event:", error);
+      toast.success("Error deleting Event!");
     },
   });
-
-  const deleteRoleClickHandler = async (role) => {
-    mutation.mutate(role);
-  };
 
   return (
     <div className="flex flex-col">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-base font-semibold leading-6 text-gray-900">
-            Roles
+            Events
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            A list of all the roles in the system.
+            A list of all the evnets in the system.
           </p>
         </div>
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
           <button
             type="button"
             className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            onClick={openModal}
+            onClick={onCreateEventClick}
           >
-            Add Role
+            Add New Event
           </button>
         </div>
       </div>
@@ -228,19 +111,31 @@ function ListRole({ roles }) {
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
                     >
-                      Role Name
+                      Owner Admin
                     </th>
                     <th
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
                     >
-                      Created Date
+                      Owner Institute
                     </th>
                     <th
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
                     >
-                      Updated Date
+                      Event Level
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
+                    >
+                      Event Time
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
+                    >
+                      Created At
                     </th>
                     <th
                       scope="col"
@@ -251,33 +146,52 @@ function ListRole({ roles }) {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {currentItems.map((role) => (
-                    <tr key={role.id}>
+                  {currentItems.map((event) => (
+                    <tr key={event.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm font-medium text-gray-900">
-                          {role.id}
+                          {event.id}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {role.role_name ? role.role_name : "N/A"}
+                          {event.ownerAdminId ? event.ownerAdminId : "N/A"}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {formatDate(role.createdAt)}
+                          {event.ownerInstituteId
+                            ? event.ownerInstituteId
+                            : "N/A"}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {formatDate(role.updatedAt)}
+                          {event.level ? event.level : "N/A"}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-start">
+                        <div className="text-sm text-gray-900">
+                          {event.time ? event.time : "N/A"}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-start">
+                        <div className="text-sm text-gray-900">
+                          {formatDate(event.createdAt)}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium ">
                         <a
                           href="#"
-                          className="text-red-600 hover:text-red-900"
-                          onClick={() => openDeleteModal(role)}
+                          className="text-indigo-600 hover:text-green-900"
+                          onClick={() => onEditEventClick(event)}
+                        >
+                          Edit
+                        </a>
+                        <a
+                          href="#"
+                          className="text-red-600 hover:text-red-900 pl-5"
+                          onClick={() => openModal(event)}
                         >
                           Delete
                         </a>
@@ -318,9 +232,10 @@ function ListRole({ roles }) {
                 Showing{" "}
                 <span className="font-medium">{indexOfFirstItem + 1}</span> to{" "}
                 <span className="font-medium">
-                  {Math.min(indexOfLastItem, roles.length)}
+                  {Math.min(indexOfLastItem, eventsData.length)}
                 </span>{" "}
-                of <span className="font-medium">{roles.length}</span> results
+                of <span className="font-medium">{eventsData.length}</span>{" "}
+                results
               </p>
             </div>
             <div>
@@ -369,14 +284,13 @@ function ListRole({ roles }) {
           </div>
         </div>
       </div>
-      {isModalOpen && <Modal onClose={closeModal} />}
-      {selectedRole && (
-        <DeleteModal
-          isOpen={isDeleteModalOpen}
+      {selectedEvent && (
+        <Modal
+          isOpen={isModalOpen}
           closeModal={closeModal}
           confirmAction={confirmDeletion}
           title="Confirm Deletion"
-          message={`Are you sure you want to delete the role "${selectedRole.role_name}"? This action cannot be undone.`}
+          message={`Are you sure you want to delete the institute "${selectedEvent.id}"? This action cannot be undone.`}
         />
       )}
     </div>

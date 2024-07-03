@@ -1,31 +1,29 @@
+import { QueryClient, QueryClientProvider } from "react-query";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "./App.css";
 import "./assets/scss/style.scss";
-import { Route, Routes, BrowserRouter } from "react-router-dom";
+import reportWebVitals from "./reportWebVitals";
 import Components from "./views/components/components.jsx";
 import CustomComponents from "./views/custom-components/custom-components.jsx";
-import "./App.css";
-import { QueryClient, QueryClientProvider } from "react-query";
-import reportWebVitals from "./reportWebVitals";
-import DeparmentsPage from "./pages/Departments.jsx";
 // import Header from './components/header/header.jsx';
 import Navbar from "./components/header/header";
 
-import InstitutionsPage from "./pages/Institutions";
-import ComposeEmail from "./pages/emails/compose";
+import ComposeEmail from "./pages/admin/emails/compose";
 // import Signin from './pages/signin';
-import SignupPage from "./pages/signup";
-import LoginPage from "./pages/login";
-import RolePage from "./pages/Role";
-import LandingPage from "./pages/home/landing";
-import SideBar from "./pages/SideBar";
 import Alumni_profile from "./pages/alumni_profile";
 import AboutUsPage from "./pages/home/aboutus/aboutPage";
 import ContactUsPage from "./pages/home/aboutus/contactUsPage";
-import NewsPage from "./pages/home/aboutus/newsPage";
 import DirectoryPage from "./pages/home/aboutus/directoryPage";
 import GalleryPage from "./pages/home/aboutus/galleryPage";
-import CareerPage from "./pages/home/career/careerPage";
+import NewsPage from "./pages/home/aboutus/newsPage";
 import ApplyForJobsPage from "./pages/home/career/applyForJobs";
-import ContentPage from "./pages/content/contentPage";
+import CareerPage from "./pages/home/career/careerPage";
+import ContentPage from "./pages/home/content/contentPage";
+import LandingPage from "./pages/home/landing";
+import LoginPage from "./pages/login";
+import RolePage from "./pages/Role";
+import SideBar from "./pages/SideBar";
+import SignupPage from "./pages/signup";
 
 // const hist = createBrowserHistory();
 const queryClient = new QueryClient({
@@ -51,10 +49,8 @@ function App() {
           <Routes>
             <Route path="/custom-components" element={<CustomComponents />} />
             <Route path="/home" element={<Components />} />
-            <Route path="/departments" element={<DeparmentsPage />} />
             <Route path="/roles" element={<RolePage />} />
             <Route path="/admin" element={<SideBar />} />
-            <Route path="/institutions" element={<InstitutionsPage />} />
             <Route path="/admin/email/compose" element={<ComposeEmail />} />
             {/* <Route path="/signin" element={<Signin />} /> */}
             <Route path="/signup" element={<SignupPage />} />
