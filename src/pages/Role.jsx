@@ -1,41 +1,26 @@
-import { useQuery, useQueryClient, useMutation } from "react-query";
-import { getRoles, createNewRole, deleteRole } from "src/api";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { createNewRole, deleteRole, getRoles } from "src/api";
 
-import {
-  Container,
-  Row,
-  Col,
-  FormGroup,
-  Label,
-  Button,
-  Table,
-} from "reactstrap";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { formatDate } from "../utils/utils";
-import { useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import { ToastContainer, toast } from "react-toastify";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import { useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
+import QueryResult from "src/components/utils/queryResults";
+import * as Yup from "yup";
 import DeleteModal from "../components/utils/DeleteModal";
+import { formatDate } from "../utils/utils";
 
 export default function RolePage() {
-  const { isError, data, error, isFetching } = useQuery(
-    "getRoles",
-    async () => {
-      return await getRoles({ pageNumber: 0, pageSize: 10 });
-    }
-  );
+  const { isError, data, isLoading } = useQuery("getRoles", async () => {
+    return await getRoles({ pageNumber: 0, pageSize: 10 });
+  });
 
-  console.log(data);
-  if (isFetching) return <div>Loading...</div>;
-  if (isError) return <div>Error: {error.message}</div>;
   return (
-    <>
+    <QueryResult isError={isError} isLoading={isLoading} data={data}>
       <div>
         <ListRole roles={data.data.role} />
       </div>
-    </>
+    </QueryResult>
   );
 }
 
@@ -183,12 +168,14 @@ function ListRole({ roles }) {
     onError: (error) => {
       closeDeleteModal();
       queryClient.invalidateQueries("getRoles");
+      console.log(error);
     },
   });
 
-  const deleteRoleClickHandler = async (role) => {
-    mutation.mutate(role);
-  };
+  // const deleteRoleClickHandler = async (role) => {
+  //   mutation.mutate(role);
+
+  // };
 
   return (
     <div className="flex flex-col">
