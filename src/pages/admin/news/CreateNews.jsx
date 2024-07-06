@@ -26,8 +26,8 @@ export default function CreateNews() {
         pageNumber: 1,
         pageSize: 10,
       });
-      console.log(instituteData);
-      if (instituteData) {
+      console.log({ instituteData });
+      if (instituteData.data) {
         const instituteNames = Object.values(instituteData.data.institute).map(
           (institute) => ({
             name: institute.name,
@@ -35,16 +35,17 @@ export default function CreateNews() {
           })
         );
 
-        newsFormFields.ownerInstituteId = instituteData.data.institute[0].id;
+        newsFormFields.ownerInstituteId = instituteData.data?.institute[0]?.id;
         setInstitutions(instituteNames);
-        return instituteData;
       }
+      return instituteData;
     } catch (error) {
       console.error(error);
     }
   });
 
   const handleImageChange = (e) => {
+    console.log(e.target.files[0]);
     setNewsFormFields({ ...newsFormFields, image: e.target.files[0] });
   };
 
@@ -120,9 +121,10 @@ export default function CreateNews() {
                   </label>
                   <div
                     className="mt-2 cursor-pointer"
-                    // onClick={() =>
-                    //   document.getElementById("news-deadline").showPicker()
-                    // }
+                    onClick={() =>
+                      // @ts-ignore
+                      document.getElementById("news-deadline").showPicker()
+                    }
                   >
                     <input
                       type="date"
@@ -153,7 +155,9 @@ export default function CreateNews() {
                       name="news-image"
                       id="news-image"
                       accept="image/*"
-                      onChange={handleImageChange}
+                      onChange={(e) => {
+                        handleImageChange(e);
+                      }}
                       className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
                     />
                   </div>

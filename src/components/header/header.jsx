@@ -67,7 +67,7 @@ const Navbar = () => {
     },
   ];
   return (
-    <div className="flex flex-column">
+    <div className="flex flex-column z-10">
       <div className="bg-green-400 flex justify-end">
         <InputGroup className="w-1/5 ">
           <Input />
@@ -90,7 +90,7 @@ const Navbar = () => {
         </InputGroup>
       </div>
       <nav className="bg-gray-800 flex justify-center space-x-8 pb-2 pt-8 ">
-        <ul className="flex">
+        <ul className="flex z-10">
           {links.map((mainLink, idx) => {
             return (
               <li className="relative group" key={idx}>

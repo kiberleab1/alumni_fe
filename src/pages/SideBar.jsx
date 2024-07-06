@@ -1,4 +1,3 @@
-import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   AcademicCapIcon,
@@ -18,15 +17,25 @@ import {
   NewspaperIcon,
   PlusCircleIcon,
   PlusIcon,
+  StarIcon,
   TagIcon,
   UserPlusIcon,
   UsersIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { Fragment, useState } from "react";
 import ComponentRender from "./PageRender";
+import CreateAdminPage from "./admin/admins/createAdmin";
+// import { useLocation } from "react-router-dom";
 
 const navigation = [
-  { name: "Dashboard", href: "#", icon: HomeIcon, current: false },
+  {
+    name: "Dashboard",
+    href: "#",
+    icon: HomeIcon,
+    current: false,
+    comp: CreateAdminPage,
+  },
   { name: "Admins", href: "#", icon: UsersIcon, current: true },
   {
     name: "Institutions",
@@ -56,6 +65,7 @@ const navigation = [
   { name: "Events", href: "#", icon: CalendarIcon, current: false },
   { name: "News", href: "#", icon: NewspaperIcon, current: false },
   { name: "Email", href: "#", icon: InboxArrowDownIcon, current: false },
+  { name: "WebContent", href: "#", icon: StarIcon, current: false },
 ];
 
 const subNavigation = [
@@ -75,6 +85,24 @@ const subNavigation = [
   {
     name: "Create Department",
     parent: "Departments",
+    icon: PlusCircleIcon,
+    current: false,
+  },
+  {
+    name: "Create About us",
+    parent: "WebContent",
+    icon: PlusCircleIcon,
+    current: false,
+  },
+  {
+    name: "Create Slide Show",
+    parent: "WebContent",
+    icon: PlusCircleIcon,
+    current: false,
+  },
+  {
+    name: "Create Gallery Show",
+    parent: "WebContent",
     icon: PlusCircleIcon,
     current: false,
   },
@@ -98,7 +126,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function SideBar() {
+function SideBar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarOpenMain, setSidebarOpenMain] = useState(true);
   const [componentClicked, setComponentClicked] = useState({
@@ -117,6 +145,7 @@ export default function SideBar() {
     }));
     console.log(itemName);
   };
+
   const handleNavigationItemClick = (itemName) => {
     const updatedNavigationItems = navigationItems.map((item) => {
       if (item.name === itemName) {
@@ -134,6 +163,13 @@ export default function SideBar() {
     console.log(itemName);
   };
 
+  // const location = useLocation();
+  // useEffect(() => {
+  //   const item = navigation.find((item) => {
+  //     return item.href === location.pathname;
+  //   });
+  //   handleNavigationItemClick(item.name);
+  // }, []);
   const handlePageSet = (pageName) => {
     console.log(`Page set to: ${pageName}`);
     setComponentClicked({
@@ -497,3 +533,5 @@ export default function SideBar() {
     </>
   );
 }
+
+export default SideBar;

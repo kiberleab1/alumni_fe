@@ -24,6 +24,8 @@ import LoginPage from "./pages/login";
 import RolePage from "./pages/Role";
 import SideBar from "./pages/SideBar";
 import SignupPage from "./pages/signup";
+import CreateWebContent from "./pages/admin/webcontent/AboutUsPage";
+import Header from "./components/header/header";
 
 // const hist = createBrowserHistory();
 const queryClient = new QueryClient({
@@ -41,7 +43,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        {/* <Header /> */}
+        <Header />
         {/* <Navbar /> */}
         {navbarPaths.includes(window.location.pathname) && <Navbar />}
 
@@ -50,12 +52,13 @@ function App() {
             <Route path="/custom-components" element={<CustomComponents />} />
             <Route path="/home" element={<Components />} />
             <Route path="/roles" element={<RolePage />} />
-            <Route path="/admin" element={<SideBar />} />
             <Route path="/admin/email/compose" element={<ComposeEmail />} />
+            <Route path="/admin/*" element={<SideBar />} />
             {/* <Route path="/signin" element={<Signin />} /> */}
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/alumni_profile" element={<Alumni_profile />} />
+            <Route path="/asd" element={<CreateWebContent />} />
             <Route path="/landing">
               <Route path="content" element={<ContentPage />} />
               <Route index element={<LandingPage />} />
@@ -86,3 +89,29 @@ export default App;
 // address_id: joi.string().required(),
 // starting_year: joi.date().required(),
 // contact_info: joi.string()
+
+// userId: {
+//   type: Sequelize.STRING,
+//   allowNull: false
+// },
+// status: {
+//   type: Sequelize.STRING,
+//   allowNull: true
+// },
+// title: {
+//   type: Sequelize.STRING,
+//   allowNull: true
+// },
+// description: {
+//   type: Sequelize.STRING,
+//   allowNull: true
+// },
+// component: {
+//   type: Sequelize.STRING,
+//   allowNull: true
+// },
+// image: {
+//   type: Sequelize.STRING,
+//   allowNull: true
+// }
+// });

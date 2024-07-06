@@ -40,6 +40,7 @@
     "react-scripts": "5.0.1",
     "react-toastify": "^10.0.5",
     "reactstrap": "9.2.0",
+    "reactstrap-formik": "^1.0.9",
     "sass": "1.63.3",
     "tw-elements-react": "1.0.0-alpha-end",
     "uuid": "^9.0.1",

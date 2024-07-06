@@ -32,7 +32,10 @@ const ContentCatalogComponent = ({ newsArray }) => {
                         {news.header}
                       </a>
                     </h5>
-                    <p className="m-t-20 line-clamp-2">{news.details}</p>
+                    <div
+                      dangerouslySetInnerHTML={{ __html: news.detail }}
+                      className="bg-yellow-50 text-black w-4/5 line-clamp-2"
+                    ></div>
                     <a
                       href={news.link}
                       className="linking text-themecolor m-t-10"

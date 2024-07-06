@@ -30,6 +30,9 @@ import EditUser from "src/pages/admin/users/EditUser";
 import Users from "src/pages/admin/users/Users";
 import PermissionPage from "src/pages/PermissionPage";
 import RolePage from "src/pages/Role";
+import CreateWebContent from "./admin/webcontent/AboutUsPage";
+import CreateSlideShowPage from "./admin/webcontent/CreateSlideShowPage";
+import CreateGallaryPage from "./admin/webcontent/CreateGallaryPage";
 
 const componentsMap = {
   Dashboard: CreateAdmin,
@@ -63,6 +66,9 @@ const componentsMap = {
   "Jobs History": JobHistoryPage,
   "Create JobHistory": CreateJobHistory,
   "Edit JobHistory": EditJobHistory,
+  "Create About us": CreateWebContent,
+  "Create Slide Show": CreateSlideShowPage,
+  "Create Gallery Show": CreateGallaryPage,
 };
 
 export default function ComponentRender({ page, onPageSet }) {

@@ -1,32 +1,43 @@
 // TODO
 
+import { useQuery } from "react-query";
+import { getImageBaseUrl, getWebContentByComonent } from "src/api";
+import QueryResult from "src/components/utils/queryResults";
 import SectionHolderComponent from "src/views/custom-components/sections/SectionHeaderComponent";
 import { GalleryComponent } from "./GalleryComponent";
-const sectionContent = {
-  title: "Gallery",
-  body: `Here you can check Demos we created based on WrapKit. Its quite
-             easy to Create your own dream website &amp; dashboard in No-time`,
-};
+import { useState } from "react";
 function GalleryPage() {
-  const imageArray = [
-    "https://tecdn.b-cdn.net/img/Photos/Horizontal/Nature/4-col/img%20(73).webp",
-    "https://tecdn.b-cdn.net/img/Photos/Horizontal/Nature/4-col/img%20(74).webp",
-    "https://tecdn.b-cdn.net/img/Photos/Horizontal/Nature/4-col/img%20(75).webp",
-    "https://tecdn.b-cdn.net/img/Photos/Horizontal/Nature/4-col/img%20(76).webp",
-    "https://tecdn.b-cdn.net/img/Photos/Horizontal/Nature/4-col/img%20(77).webp",
-    "https://tecdn.b-cdn.net/img/Photos/Horizontal/Nature/4-col/img%20(78).webp",
-    "https://tecdn.b-cdn.net/img/Photos/Horizontal/Nature/4-col/img%20(79).webp",
-    "https://tecdn.b-cdn.net/img/Photos/Horizontal/Nature/4-col/img%20(76).webp",
-    "https://tecdn.b-cdn.net/img/Photos/Horizontal/Nature/4-col/img%20(77).webp",
-  ];
+  const [gallery, setGallery] = useState({
+    header: "",
+    subheader: "",
+    imagesList: [],
+  });
+  const { isError, data, isLoading } = useQuery(["gallery"], async () => {
+    const data = await getWebContentByComonent({ component: "gallery" });
+    const imgArray = [];
+    data.data.map((img) => {
+      img.image.map((link) => {
+        imgArray.push(getImageBaseUrl(link));
+      });
+    });
+    setGallery({
+      header: data.data[0].title,
+      subheader: data.data[0].description,
+      imagesList: imgArray,
+    });
+
+    return data;
+  });
   return (
-    <div className="flex flex-col gap-y-4">
-      <SectionHolderComponent
-        title={sectionContent.title}
-        body={sectionContent.body}
-      />
-      <GalleryComponent imagesArray={imageArray} />
-    </div>
+    <QueryResult isError={isError} isLoading={isLoading} data={data}>
+      <div className="flex flex-col gap-y-4">
+        <SectionHolderComponent
+          title={gallery.header}
+          body={gallery.subheader}
+        />
+        <GalleryComponent imagesArray={gallery.imagesList} />
+      </div>
+    </QueryResult>
   );
 }
 

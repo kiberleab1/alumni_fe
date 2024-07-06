@@ -2,6 +2,9 @@
 import axios from "axios";
 
 const API_BASE_URl = import.meta.env.VITE_BASE_URL;
+const IMAGE_API_URL = import.meta.env?.VITE_IMAGE_BASE_URL;
+const BASE_URL = import.meta.env?.VITE_BASE_FE_URL;
+
 axios.interceptors.response.use(
   (response) => {
     // console.log(response);
@@ -403,14 +406,14 @@ export async function getEventsStatByDate(institute_id, max_count) {
 }
 
 export async function getAllNews({ pageNumber, pageSize }) {
-  try {
-    return await axios.get(
-      `${API_BASE_URl}/getAllNews?pageNumber=${pageNumber}&pageSize=${pageSize}`
-    );
-  } catch (error) {
-    console.error("Error fetching news:", error);
-    throw error;
-  }
+  // try {
+  return await axios.get(
+    `${API_BASE_URl}/getAllNews?pageNumber=${pageNumber}&pageSize=${pageSize}`
+  );
+  // } catch (error) {
+  //   console.error("Error fetching news:", error);
+  //   throw error;
+  // }
 }
 
 export async function createNews(newsData) {
@@ -436,6 +439,11 @@ export async function updateNews(newsData) {
 export async function deletedNews(news_id) {
   console.log(news_id);
   return await axios.get(`${API_BASE_URl}/deleteNews?id=${news_id}`);
+}
+
+export async function getNewsByID(news_id) {
+  console.log(news_id);
+  return await axios.get(`${API_BASE_URl}/getNewsById?id=${news_id}`);
 }
 
 //permission
@@ -565,4 +573,40 @@ export async function deleteJobHistory(jobHistoryData) {
   return await axios.get(
     `${API_BASE_URl}/deleteJobHistory?id=${jobHistoryData.id}`
   );
+}
+
+export async function createWebContent({
+  component,
+  title,
+  description,
+  images,
+}) {
+  const formData = new FormData();
+  images.forEach((file) => {
+    formData.append("images", file);
+  });
+  formData.append("component", component);
+  formData.append("title", title);
+  formData.append("description", description);
+
+  return await axios.post(`${API_BASE_URl}/createWebContent`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+}
+
+export async function getWebContentByComonent({ component }) {
+  const data = { component, pageNumber: 1, pageSize: 1 };
+  return await axios.post(`${API_BASE_URl}/getWebContentByComponent`, data);
+}
+
+export function getImageBaseUrl(link) {
+  return IMAGE_API_URL + "/" + link;
+}
+
+export function buildNewsUrl(id) {
+  const url = BASE_URL + `landing/content?type=news&id=${id}`;
+  console.log({ url });
+  return url;
 }

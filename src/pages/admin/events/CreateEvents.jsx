@@ -179,6 +179,7 @@ export default function CreateEvents() {
                 <div
                   className="mt-2 cursor-pointer"
                   onClick={() =>
+                    // @ts-ignore
                     document.getElementById("news-deadline").showPicker()
                   }
                 >

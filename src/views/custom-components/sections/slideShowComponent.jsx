@@ -1,6 +1,11 @@
 import { TECarousel, TECarouselItem } from "tw-elements-react";
 
-function SlideShowComponent({ images, sliderControl = false }) {
+function SlideShowComponent({
+  images,
+  header,
+  subHeader,
+  sliderControl = false,
+}) {
   return (
     <div className="bg-fuchsia-600  min-w-full  h-full">
       <TECarousel
@@ -9,7 +14,7 @@ function SlideShowComponent({ images, sliderControl = false }) {
         ride="carousel"
         className="max-h-full h-full"
       >
-        <div className="absolute w-full h-full after:clear-both after:block after:content-['']">
+        <div className="w-full h-full after:clear-both after:block after:content-['']">
           {images.map((img, idx) => {
             return (
               <TECarouselItem
@@ -19,9 +24,9 @@ function SlideShowComponent({ images, sliderControl = false }) {
               >
                 <img src={img} className="w-full h-full" alt="..." />
                 <div className="absolute inset-x-[15%] bottom-5 hidden  py-12 text-center text-white md:block">
-                  <p className="text-6xl mb-4 font-bold">Story Header</p>
-                  <p className="text-3xl mb-4">This my story</p>
-                  <button className="text-xl bg-yellow-500">Read Story</button>
+                  <p className="text-6xl mb-4 font-bold">{header}</p>
+                  <p className="text-3xl mb-4">{subHeader}</p>
+                  {/* <button className="text-xl bg-yellow-500">Read Story</button> */}
                 </div>
               </TECarouselItem>
             );
