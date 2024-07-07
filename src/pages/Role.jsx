@@ -18,7 +18,7 @@ export default function RolePage() {
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
       <div>
-        <ListRole roles={data.data.role} />
+        <ListRole roles={data?.data?.role} />
       </div>
     </QueryResult>
   );
