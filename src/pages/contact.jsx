@@ -45,7 +45,7 @@ const Contact = () => {
               phone_number: Yup.string().required("Phone number is required"),
               email: Yup.string().required("Email is required"),
               message: Yup.string().required("Message is required"),
-            })}
+            })},................................
             onSubmit={handleSubmit}
           >
             {(formik) => (
@@ -99,11 +99,11 @@ const Contact = () => {
 
                   <FormGroup>
                     <div>
-                      
+
                     </div>
                     <Field
                       type="textarea"
-                      
+
                       name="message"
                       placeholder="Message"
                       className="form-control"

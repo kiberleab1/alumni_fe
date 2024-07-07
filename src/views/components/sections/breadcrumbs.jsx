@@ -1,5 +1,3 @@
-/* eslint-disable */
-import React from 'react';
 import { Row, Col, Breadcrumb, BreadcrumbItem, Container } from 'reactstrap';
 
 const Breadcrumbs = () => {

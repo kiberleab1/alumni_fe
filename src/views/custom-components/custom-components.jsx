@@ -1,23 +1,23 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 // core components
-import Header from '../../components/header/header.jsx';
-import HeaderBanner2 from '../../components/banner2/banner2.jsx';
-import Footer from '../../components/footer/footer.jsx';
+import Header from "../../components/header/header.jsx";
+import HeaderBanner2 from "../../components/banner2/banner2.jsx";
+import Footer from "../../components/footer/footer.jsx";
 
 // sections for this page
-import HeaderComponent from './sections/headercomponent.jsx';
-import BannerComponent from './sections/bannercomponent.jsx';
-import FormBannerComponent from './sections/formbannercomponent.jsx';
-import FeatureComponent from './sections/featurecomponent.jsx';
-import PortfolioComponent from './sections/portfoliocomponent.jsx';
-import PricingComponent from './sections/pricingcomponent.jsx';
-import TeamComponent from './sections/teamcomponent.jsx';
-import TestimonialComponent from './sections/testimonialcomponent.jsx';
-import BlogComponent from './sections/blogcomponent.jsx';
-import C2aComponent from './sections/c2acomponent.jsx';
-import ContactComponent from './sections/contactcomponent.jsx';
-import CallToAction from '../../components/call-to-action/CallToAction';
+import HeaderComponent from "./sections/headerComponent.jsx";
+import BannerComponent from "./sections/bannerComponent.jsx";
+import FormBannerComponent from "./sections/formBannerComponent.jsx";
+import FeatureComponent from "./sections/featureComponent.jsx";
+import PortfolioComponent from "./sections/portfolioComponent.jsx";
+import PricingComponent from "./sections/pricingComponent.jsx";
+import TeamComponent from "./sections/teamComponent.jsx";
+import TestimonialComponent from "./sections/testimonialComponent.jsx";
+// import ConentCatalogCompnent from "./sections/conentCatalogComponent.jsx";
+import C2aComponent from "./sections/c2aComponent.jsx";
+import ContactComponent from "./sections/contactComponent.jsx";
+import ComingSoonComponent from "../../components/call-to-action/ComingSoonComponent.jsx";
 
 const CustomComponents = () => {
   return (
@@ -34,10 +34,10 @@ const CustomComponents = () => {
           <PricingComponent />
           <TeamComponent />
           <TestimonialComponent />
-          <BlogComponent />
+          {/* <ConentCatalogCompnent /> */}
           <C2aComponent />
           <ContactComponent />
-          <CallToAction />
+          <ComingSoonComponent />
         </div>
       </div>
       <Footer />

@@ -1,10 +1,10 @@
-import { useQueryClient, useMutation } from 'react-query';
-import { signup } from '../api';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import { Container, Row, Col, FormGroup, Label, Button } from 'reactstrap';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import { useQueryClient, useMutation } from "react-query";
+import { signup } from "src/api";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { Container, Row, Col, FormGroup, Label, Button } from "reactstrap";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function SignupPage() {
   return (
@@ -20,12 +20,12 @@ const SignupForm = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation(signup, {
     onSuccess: () => {
-      queryClient.invalidateQueries('signup');
+      queryClient.invalidateQueries("signup");
     },
   });
 
   const handleSubmit = (values) => {
-    console.log({ 'new user': values });
+    console.log({ "new user": values });
     mutation.mutate(values);
   };
 
@@ -45,34 +45,34 @@ const SignupForm = () => {
             //TODO
             //when fetching possible options from api for dropdown fields set the first option as default
             initialValues={{
-              email: '',
-              first_name: '',
-              middle_name: '',
-              last_name: '',
-              phone_number: '',
-              password: '',
-              gender: 'Male',
-              date_of_birth: '',
-              role_id: '',
-              address_id: '',
-              birth_place_id: '',
-              institute_id: '',
+              email: "",
+              first_name: "",
+              middle_name: "",
+              last_name: "",
+              phone_number: "",
+              password: "",
+              gender: "Male",
+              date_of_birth: "",
+              role_id: "",
+              address_id: "",
+              birth_place_id: "",
+              institute_id: "",
             }}
             validationSchema={Yup.object({
               email: Yup.string()
-                .email('Invalid email address')
-                .required('Required'),
-              first_name: Yup.string().required('Required'),
-              middle_name: Yup.string().required('Required'),
-              last_name: Yup.string().required('Required'),
-              phone_number: Yup.string().required('Required'),
-              password: Yup.string().required('Required'),
-              gender: Yup.string().required('Required'),
-              date_of_birth: Yup.date().required('Required'),
-              role_id: Yup.string().required('Required'),
-              address_id: Yup.string().required('Required'),
-              birth_place_id: Yup.string().required('Required'),
-              institute_id: Yup.string().required('Required'),
+                .email("Invalid email address")
+                .required("Required"),
+              first_name: Yup.string().required("Required"),
+              middle_name: Yup.string().required("Required"),
+              last_name: Yup.string().required("Required"),
+              phone_number: Yup.string().required("Required"),
+              password: Yup.string().required("Required"),
+              gender: Yup.string().required("Required"),
+              date_of_birth: Yup.date().required("Required"),
+              role_id: Yup.string().required("Required"),
+              address_id: Yup.string().required("Required"),
+              birth_place_id: Yup.string().required("Required"),
+              institute_id: Yup.string().required("Required"),
             })}
             onSubmit={handleSubmit}
           >
@@ -307,7 +307,7 @@ const SignupForm = () => {
                               }
                               selected={formik.values.date_of_birth}
                               onChange={(date) =>
-                                formik.setFieldValue('date_of_birth', date)
+                                formik.setFieldValue("date_of_birth", date)
                               }
                               className="form-control w-2/3 "
                             />
