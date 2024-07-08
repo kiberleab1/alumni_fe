@@ -34,6 +34,7 @@ import CreateWebContent from "./admin/webcontent/AboutUsPage";
 import CreateSlideShowPage from "./admin/webcontent/CreateSlideShowPage";
 import CreateGallaryPage from "./admin/webcontent/CreateGallaryPage";
 import AlumniPage from "./admin/alumni/AlumniPage";
+import DocumentVerificationPage from "./admin/documentVerification/DocumentVerificationPage";
 
 const componentsMap = {
   Dashboard: CreateAdmin,
@@ -68,6 +69,7 @@ const componentsMap = {
   "Create JobHistory": CreateJobHistory,
   "Edit JobHistory": EditJobHistory,
   Alumni: AlumniPage,
+  "Document Verification": DocumentVerificationPage,
   "Create About us": CreateWebContent,
   "Create Slide Show": CreateSlideShowPage,
   "Create Gallery Show": CreateGallaryPage,
@@ -100,6 +102,7 @@ export default function ComponentRender({ page, onPageSet }) {
       onCreateStaffClick={() => onPageSet("Create Staff")}
       onCreateJobHistoryClick={() => onPageSet("Create JobHistory")}
       onCreateAlumniClick={() => onPageSet("Create Alumni")}
+      onCreateDocumentVerificationClick={()=> onPageSet("Create Document Verification")}
 
       onInstituteEditClick={(institute) => {
         setSelectedInstitute(institute);
@@ -142,6 +145,12 @@ export default function ComponentRender({ page, onPageSet }) {
         setSelectedAlumni(alumni);
         onPageSet("Edit Alumni");
       }}
+
+      onEditDocumentVerififcationClick={(document) => {
+        setSelectedDocumentVerificationRequest(document);
+        onPageSet("Edit Document Verification");
+      }}
+
       institute={selectedInstitute}
       admin={selectedAdmin}
       user={selecteduser}
@@ -152,6 +161,7 @@ export default function ComponentRender({ page, onPageSet }) {
       staff={selectedStaff}
       jobHistory={selectedJobHistory}
       alumni={selectedAlumni}
+      document={selectedDocumentVerificationRequest}
     />
   );
 }
