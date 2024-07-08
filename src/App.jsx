@@ -26,6 +26,7 @@ import SideBar from "./pages/SideBar";
 import SignupPage from "./pages/signup";
 import CreateWebContent from "./pages/admin/webcontent/AboutUsPage";
 import Header from "./components/header/header";
+import UserSideBar from "./pages/UserSideBar";
 
 // const hist = createBrowserHistory();
 const queryClient = new QueryClient({
@@ -40,10 +41,13 @@ const queryClient = new QueryClient({
 
 function App() {
   const navbarPaths = ["/landing"];
+  const hideHeaderPaths = ["/user", "/admin"];
+  const currentPath = window.location.pathname;
+  const shouldHideHeader = hideHeaderPaths.some(path => currentPath.startsWith(path));
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <Header />
+        {!shouldHideHeader && <Header />}
         {/* <Navbar /> */}
         {navbarPaths.includes(window.location.pathname) && <Navbar />}
 
@@ -54,6 +58,7 @@ function App() {
             <Route path="/roles" element={<RolePage />} />
             <Route path="/admin/email/compose" element={<ComposeEmail />} />
             <Route path="/admin/*" element={<SideBar />} />
+            <Route path="/user/*" element={<UserSideBar />} />
             {/* <Route path="/signin" element={<Signin />} /> */}
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />

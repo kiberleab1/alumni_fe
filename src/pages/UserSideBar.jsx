@@ -55,7 +55,7 @@ const navigation = [
   { name: "Jobs", href: "#", icon: BriefcaseIcon, current: false },
   { name: "Staff", href: "#", icon: UsersIcon, current: false },
   { name: "Jobs History", href: "#", icon: BriefcaseIcon, current: false },
-  { name: "Alumni", href: "#", icon: AcademicCapIcon, current: false },
+  { name: "Almuni", href: "#", icon: AcademicCapIcon, current: false },
   {
     name: "Document Verification",
     href: "#",
@@ -118,7 +118,7 @@ const navigationWithNoSubNavigation = [
   "Jobs",
   "Staff",
   "Jobs History",
-  "Alumni",
+  "Almuni",
   "Document Verification",
 ];
 
@@ -126,7 +126,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-function SideBar() {
+function UserSideBar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarOpenMain, setSidebarOpenMain] = useState(true);
   const [componentClicked, setComponentClicked] = useState({
@@ -534,4 +534,4 @@ function SideBar() {
   );
 }
 
-export default SideBar;
+export default UserSideBar;

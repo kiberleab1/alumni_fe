@@ -33,6 +33,7 @@ import RolePage from "src/pages/Role";
 import CreateWebContent from "./admin/webcontent/AboutUsPage";
 import CreateSlideShowPage from "./admin/webcontent/CreateSlideShowPage";
 import CreateGallaryPage from "./admin/webcontent/CreateGallaryPage";
+import AlumniPage from "./admin/alumni/AlumniPage";
 
 const componentsMap = {
   Dashboard: CreateAdmin,
@@ -66,6 +67,7 @@ const componentsMap = {
   "Jobs History": JobHistoryPage,
   "Create JobHistory": CreateJobHistory,
   "Edit JobHistory": EditJobHistory,
+  Alumni: AlumniPage,
   "Create About us": CreateWebContent,
   "Create Slide Show": CreateSlideShowPage,
   "Create Gallery Show": CreateGallaryPage,
@@ -81,11 +83,8 @@ export default function ComponentRender({ page, onPageSet }) {
   const [selectedJob, setSelectedJob] = useState(null);
   const [selectedJobHistory, setSelectedJobHistory] = useState(null);
   const [selectedStaff, setSelectedStaff] = useState(null);
-  // const [selectedAlumni, setSelectedAlumni] = useState(null);
-  // const [
-  //   selectedDocumentVerificationRequest,
-  //   setSelectedDocumentVerificationRequest,
-  // ] = useState(null);
+  const [selectedAlumni, setSelectedAlumni] = useState(null);
+  const [selectedDocumentVerificationRequest, setSelectedDocumentVerificationRequest,] = useState(null);
   const ComponentToRender =
     componentsMap[page] || (() => <div>Page not found</div>);
 
@@ -100,6 +99,8 @@ export default function ComponentRender({ page, onPageSet }) {
       onCreateJobClick={() => onPageSet("Create Job")}
       onCreateStaffClick={() => onPageSet("Create Staff")}
       onCreateJobHistoryClick={() => onPageSet("Create JobHistory")}
+      onCreateAlumniClick={() => onPageSet("Create Alumni")}
+
       onInstituteEditClick={(institute) => {
         setSelectedInstitute(institute);
         onPageSet("Edit Institute");
@@ -136,6 +137,11 @@ export default function ComponentRender({ page, onPageSet }) {
         setSelectedJobHistory(jobHistory);
         onPageSet("Edit JobHistory");
       }}
+
+      onEditAlumniClick={(alumni) => {
+        setSelectedAlumni(alumni);
+        onPageSet("Edit Alumni");
+      }}
       institute={selectedInstitute}
       admin={selectedAdmin}
       user={selecteduser}
@@ -145,6 +151,7 @@ export default function ComponentRender({ page, onPageSet }) {
       job={selectedJob}
       staff={selectedStaff}
       jobHistory={selectedJobHistory}
+      alumni={selectedAlumni}
     />
   );
 }

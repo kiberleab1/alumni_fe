@@ -610,3 +610,10 @@ export function buildNewsUrl(id) {
   console.log({ url });
   return url;
 }
+
+export async function getAllAlumni({ pageNumber, pageSize}) {
+  const result = await axios.get(
+    `${API_BASE_URl}/getAllAlumniProfile?pageNumber=${pageNumber}&pageSize=${pageSize}`
+  );
+  return result;
+}
