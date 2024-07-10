@@ -1,6 +1,6 @@
-import { InputGroup, Input, Button } from "reactstrap";
+import { Button, Input, InputGroup } from "reactstrap";
 
-const Navbar = () => {
+const Header = () => {
   const links = [
     {
       name: "about us",
@@ -122,4 +122,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Header;

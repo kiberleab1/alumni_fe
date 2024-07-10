@@ -24,7 +24,7 @@ import ComingSoonComponent from "../../components/call-to-action/ComingSoonCompo
 const Components = () => {
   return (
     <div id="main-wrapper">
-      <Header />
+      {/* <Header /> */}
       <div className="page-wrapper">
         <div className="container-fluid">
           <HeaderBanner />

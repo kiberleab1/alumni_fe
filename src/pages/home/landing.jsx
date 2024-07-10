@@ -5,6 +5,7 @@ import QueryResult from "src/components/utils/queryResults";
 import C2aComponent from "src/views/custom-components/sections/c2aComponent";
 import ContactComponent from "src/views/custom-components/sections/contactComponent";
 import SlideShowComponent from "src/views/custom-components/sections/slideShowComponent";
+import TeamComponent from "src/views/custom-components/sections/teamComponent";
 
 function LandingPage() {
   const [slider, setSlider] = useState({
@@ -40,7 +41,7 @@ function LandingPage() {
           sliderControl={false}
         />
       </div>{" "}
-      {/* <TeamComponent /> */}
+      <TeamComponent />
       {/* <GalleryComponent img={}/> */}
       <ContactComponent />
       {/* <div className="w-full bg-black h-[80vh]">
