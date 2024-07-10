@@ -518,7 +518,7 @@ export default function CreateStaff() {
                   <textarea
                     id="staff-description"
                     name="staff-description"
-                    rows="3"
+                    rows={3}
                     required
                     value={staffFields.description}
                     onChange={(e) =>

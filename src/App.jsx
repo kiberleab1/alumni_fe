@@ -6,10 +6,11 @@ import reportWebVitals from "./reportWebVitals";
 import Components from "./views/components/components.jsx";
 import CustomComponents from "./views/custom-components/custom-components.jsx";
 // import Header from './components/header/header.jsx';
-import Navbar from "./components/header/header";
 
 import ComposeEmail from "./pages/admin/emails/compose";
 // import Signin from './pages/signin';
+import LandingLayout from "./LandingLayout";
+import CreateWebContent from "./pages/admin/webcontent/AboutUsPage";
 import Alumni_profile from "./pages/alumni_profile";
 import AboutUsPage from "./pages/home/aboutus/aboutPage";
 import ContactUsPage from "./pages/home/aboutus/contactUsPage";
@@ -24,8 +25,6 @@ import LoginPage from "./pages/login";
 import RolePage from "./pages/Role";
 import SideBar from "./pages/SideBar";
 import SignupPage from "./pages/signup";
-import CreateWebContent from "./pages/admin/webcontent/AboutUsPage";
-import Header from "./components/header/header";
 
 // const hist = createBrowserHistory();
 const queryClient = new QueryClient({
@@ -39,13 +38,13 @@ const queryClient = new QueryClient({
 });
 
 function App() {
-  const navbarPaths = ["/landing"];
+  // const navbarPaths = ["/landing"];
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <Header />
+        {/* <Header /> */}
         {/* <Navbar /> */}
-        {navbarPaths.includes(window.location.pathname) && <Navbar />}
+        {/* {navbarPaths.includes(window.location.pathname) && <Navbar />} */}
 
         <div className="w-full min-w-full ">
           <Routes>
@@ -59,9 +58,9 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/alumni_profile" element={<Alumni_profile />} />
             <Route path="/asd" element={<CreateWebContent />} />
-            <Route path="/landing">
-              <Route path="content" element={<ContentPage />} />
+            <Route path="/landing" element={<LandingLayout />}>
               <Route index element={<LandingPage />} />
+              <Route path="content" element={<ContentPage />} />
               <Route path="aboutus">
                 <Route index element={<AboutUsPage />} />
                 <Route path="contact" element={<ContactUsPage />} />
