@@ -1,11 +1,11 @@
-import { Row, Col, Container, Card, CardBody } from "reactstrap";
+import { Card, CardBody, Col, Container, Row } from "reactstrap";
 
-import img1 from "../../../assets/images/portfolio/img1.jpg";
-import img2 from "../../../assets/images/portfolio/img2.jpg";
-import img3 from "../../../assets/images/portfolio/img3.jpg";
-import img4 from "../../../assets/images/portfolio/img4.jpg";
-import img5 from "../../../assets/images/portfolio/img5.jpg";
-import img6 from "../../../assets/images/portfolio/img6.jpg";
+import img1 from "src/assets/images/portfolio/img1.jpg";
+import img2 from "src/assets/images/portfolio/img2.jpg";
+import img3 from "src/assets/images/portfolio/img3.jpg";
+import img4 from "src/assets/images/portfolio/img4.jpg";
+import img5 from "src/assets/images/portfolio/img5.jpg";
+import img6 from "src/assets/images/portfolio/img6.jpg";
 
 const PortfolioComponent = () => {
   return (

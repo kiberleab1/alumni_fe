@@ -26,11 +26,11 @@ const Header = () => {
     },
     {
       name: "program & events",
-      link: "/landing/aboutus",
+      link: "/landing/events",
       subLink: [
         {
-          name: "Sponsorship",
-          link: "/landing/program/sponsorship",
+          name: "upcoming events",
+          link: "/landing/events",
         },
         {
           name: "latest members",

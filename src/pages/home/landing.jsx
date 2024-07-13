@@ -6,6 +6,7 @@ import C2aComponent from "src/views/custom-components/sections/c2aComponent";
 import ContactComponent from "src/views/custom-components/sections/contactComponent";
 import SlideShowComponent from "src/views/custom-components/sections/slideShowComponent";
 import TeamComponent from "src/views/custom-components/sections/teamComponent";
+import TestimonialComponent from "src/views/custom-components/sections/testimonialComponent";
 
 function LandingPage() {
   const [slider, setSlider] = useState({
@@ -50,9 +51,9 @@ function LandingPage() {
       {/* <BannerComponent />
 
 <PortfolioComponent />
-<TestimonialComponent />
 <FeatureComponent />
 <Outlet /> */}
+      <TestimonialComponent />
       <C2aComponent />
     </QueryResult>
   );

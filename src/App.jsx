@@ -10,8 +10,9 @@ import CustomComponents from "./views/custom-components/custom-components.jsx";
 import ComposeEmail from "./pages/admin/emails/compose";
 // import Signin from './pages/signin';
 import LandingLayout from "./LandingLayout";
-import CreateWebContent from "./pages/admin/webcontent/AboutUsPage";
+import CreateStaff from "./pages/admin/staff/CreateStaff";
 import Alumni_profile from "./pages/alumni_profile";
+import Directory from "./pages/directory";
 import AboutUsPage from "./pages/home/aboutus/aboutPage";
 import ContactUsPage from "./pages/home/aboutus/contactUsPage";
 import DirectoryPage from "./pages/home/aboutus/directoryPage";
@@ -25,8 +26,10 @@ import LoginPage from "./pages/login";
 import RolePage from "./pages/Role";
 import SideBar from "./pages/SideBar";
 import SignupPage from "./pages/signup";
-import Header from "./components/header/header";
 import UserSideBar from "./pages/UserSideBar";
+import LandingEventsPage from "./pages/home/program/events";
+import LandingProfile from "./pages/home/program/profile";
+import LandingMembersPage from "./pages/home/program/members";
 
 // const hist = createBrowserHistory();
 const queryClient = new QueryClient({
@@ -40,15 +43,10 @@ const queryClient = new QueryClient({
 });
 
 function App() {
-  const hideHeaderPaths = ["/user", "/admin"];
-  const currentPath = window.location.pathname;
-  const shouldHideHeader = hideHeaderPaths.some((path) =>
-    currentPath.startsWith(path)
-  );
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        {!shouldHideHeader && <Header />}
+        {/* {!shouldHideHeader && <Header />} */}
 
         {/* <Header /> */}
         {/* <Navbar /> */}
@@ -66,7 +64,8 @@ function App() {
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/alumni_profile" element={<Alumni_profile />} />
-            <Route path="/asd" element={<CreateWebContent />} />
+            <Route path="/asd" element={<CreateStaff />} />
+            <Route path="/sdsds" element={<Directory />} />
             <Route path="/landing" element={<LandingLayout />}>
               <Route index element={<LandingPage />} />
               <Route path="content" element={<ContentPage />} />
@@ -76,6 +75,15 @@ function App() {
                 <Route path="directory" element={<DirectoryPage />} />
                 <Route path="gallery" element={<GalleryPage />} />
                 <Route path="news" element={<NewsPage />} />
+              </Route>
+              <Route path="events">
+                <Route index element={<LandingEventsPage />} />
+                <Route path="news" element={<NewsPage />} />
+              </Route>
+              <Route path="program">
+                <Route index element={<LandingEventsPage />} />
+                <Route path="profile" element={<LandingProfile />} />
+                <Route path="members" element={<LandingMembersPage />} />
               </Route>
               <Route path="career">
                 <Route index element={<CareerPage />} />

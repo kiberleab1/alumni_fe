@@ -534,7 +534,11 @@ export async function getAllStaff({ pageNumber, pageSize }) {
 
 export async function createStaff(staffData) {
   console.log(staffData);
-  return await axios.post(`${API_BASE_URl}/createStaff`, staffData);
+  return await axios.post(`${API_BASE_URl}/createStaff`, staffData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 }
 
 export async function updateStaff(staffData) {
@@ -610,15 +614,20 @@ export function buildNewsUrl(id) {
   console.log({ url });
   return url;
 }
+export function buildEventsUrl(id) {
+  const url = BASE_URL + `landing/content?type=events&id=${id}`;
+  console.log({ url });
+  return url;
+}
 
-export async function getAllAlumni({ pageNumber, pageSize}) {
+export async function getAllAlumni({ pageNumber, pageSize }) {
   const result = await axios.get(
     `${API_BASE_URl}/getAllAlumniProfile?pageNumber=${pageNumber}&pageSize=${pageSize}`
   );
   return result;
 }
 
-export async function getAllVerificationRequest({pageNumber, pageSize}) {
+export async function getAllVerificationRequest({ pageNumber, pageSize }) {
   const result = await axios.get(
     `${API_BASE_URl}/getAllVerificationRequest?pageNumber=${pageNumber}&pageSize=${pageSize}`
   );

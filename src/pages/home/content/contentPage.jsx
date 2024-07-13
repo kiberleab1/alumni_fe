@@ -1,13 +1,10 @@
 import { useSearchParams } from "react-router-dom";
 import { Col, Container, Row } from "reactstrap";
-//url  = http://localhost:3000/main/ride?type=send
 import { clsx } from "clsx";
-import img from "src/assets/images/landingpage/banner-bg.jpg";
-
-import { useQuery } from "react-query";
-import QueryResult from "src/components/utils/queryResults";
-import { getImageBaseUrl, getNewsByID } from "src/api";
 import { useState } from "react";
+import { useQuery } from "react-query";
+import { getEventById, getImageBaseUrl, getNewsByID } from "src/api";
+import QueryResult from "src/components/utils/queryResults";
 
 function ContentPage() {
   const [searchParams] = useSearchParams();
@@ -18,6 +15,8 @@ function ContentPage() {
     imgLink: "",
     subheader: "",
     content: "",
+    venue: "",
+    time: "",
   });
 
   const { data, isError, isLoading } = useQuery("getContent", async () => {
@@ -28,6 +27,8 @@ function ContentPage() {
       imgLink: getImageBaseUrl(data.data.image),
       subheader: data.data.title,
       content: data.data.description,
+      venue: data.data.venue,
+      time: data.data.time,
     });
     return data;
   });
@@ -48,10 +49,22 @@ function ContentPage() {
             </Row>
           </Container>
         </div>
-        <div className="justify-items-center justify-center flex w-full bg-yellow-50">
+        <div className="flex flex-col w-full bg-yellow-50 min-h-full">
+          <Container>
+            <Row className="justify-content-end">
+              <Col lg="12" md="6" className="align-self-center text-center">
+                <h2 className="title text-end text-red-900 text-3xl">
+                  {content.venue}
+                </h2>
+                <h4 className="subtitle font-light text-end  text-red-400">
+                  {new Date(content.time).toLocaleDateString()}
+                </h4>
+              </Col>
+            </Row>
+          </Container>
           <div
             dangerouslySetInnerHTML={{ __html: content.content }}
-            className=" text-black w-4/5 "
+            className=" text-black w-4/5  justify-items-start justify-start flex flex-col"
           ></div>
         </div>
       </div>
@@ -64,6 +77,9 @@ export default ContentPage;
 async function getContent({ type, id }) {
   if (type === "news") {
     return await getNewsByID(id);
+  }
+  if (type === "events") {
+    return await getEventById(id);
   }
   throw new Error("Unknown category");
 }
