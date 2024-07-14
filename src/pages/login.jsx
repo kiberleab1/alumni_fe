@@ -1,16 +1,17 @@
-import { useQueryClient, useMutation } from "react-query";
-import { login } from "src/api";
+import { Form, Formik } from "formik";
+import { useState } from "react";
+import { useMutation, useQueryClient } from "react-query";
 import {
-  Container,
-  Row,
-  Col,
-  FormGroup,
-  Label,
   Button,
-  Input,
+  Col,
+  Container,
   FormFeedback,
+  FormGroup,
+  Input,
+  Label,
+  Row,
 } from "reactstrap";
-import { Formik, Form } from "formik";
+import { login } from "src/api";
 import * as Yup from "yup";
 
 export default function LoginPage() {
@@ -22,6 +23,11 @@ export default function LoginPage() {
     </>
   );
 }
+const ErrorMessage = ({ errorText }) => {
+  if (!errorText) return null;
+
+  return <div className="text-red-500 text-xl mt-1">{errorText}</div>;
+};
 
 const LoginForm = () => {
   const queryClient = useQueryClient();
@@ -29,8 +35,13 @@ const LoginForm = () => {
     onSuccess: () => {
       queryClient.invalidateQueries("login");
     },
+    onError: () => {
+      setErrorMessage("Failed to Login,please retry .....");
+    },
   });
+  const [errorMes, setErrorMessage] = useState("");
   const handleSubmit = (values) => {
+    values.ip_address = "";
     console.log({ values });
     mutation.mutate(values);
   };
@@ -44,6 +55,7 @@ const LoginForm = () => {
               <h6 className="subtitle">Fill the form below to login.</h6>
             </Col>
           </Row>
+          <ErrorMessage errorText={errorMes} />
         </Container>
       </div>
       <Container>
@@ -75,8 +87,8 @@ const LoginForm = () => {
                           placeholder="Email"
                           type="email"
                           autoComplete="on"
-                          invalid={formik.touched.email && formik.errors.email}
-                          valid={formik.touched.email && !formik.errors.email}
+                          // @ts-ignore
+                          valid={formik.touched.email && formik.errors.email}
                         />
                         <Label for="email">Email</Label>
                         <FormFeedback>Enter a valid email</FormFeedback>
@@ -92,11 +104,9 @@ const LoginForm = () => {
                           onChange={formik.handleChange}
                           type="password"
                           autoComplete="on"
-                          invalid={
-                            formik.touched.password && formik.errors.password
-                          }
+                          // @ts-ignore
                           valid={
-                            formik.touched.password && !formik.errors.password
+                            formik.touched.password && formik.errors.password
                           }
                         />
                         <FormFeedback>
@@ -111,7 +121,8 @@ const LoginForm = () => {
                         type="submit"
                         color="primary"
                         className="text-nowrap mr-4"
-                        disabled={formik.isSubmitting}
+                        // disabled={formik.}
+                        // @ts-ignore
                         onClick={formik.handleSubmit}
                       >
                         Login

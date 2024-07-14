@@ -21,11 +21,10 @@ const TeamComponent = () => {
           <Container>
             <Row className="justify-content-center">
               <Col md="7" className="text-center">
-                <h1 className="title font-bold">Team</h1>
+                <h1 className="title font-bold">Our Team</h1>
                 <h6 className="subtitle">
-                  Here you can check Demos we created based on WrapKit. Its
-                  quite easy to Create your own dream website &amp; dashboard in
-                  No-time.
+                  Here you can check Demos we created based on . Its quite easy
+                  to Create your own dream
                 </h6>
               </Col>
             </Row>
@@ -38,8 +37,8 @@ const TeamComponent = () => {
                 <h2 className="title">Experienced & Professional Team</h2>
                 <h6 className="subtitle">
                   You can relay on our amazing features list and also our
-                  customer services will be great experience for you without
-                  doubt and in no-time
+                  {/* customer services will be great experience for you without
+                  doubt and in no-time */}
                 </h6>
               </Col>
             </Row>
@@ -50,7 +49,7 @@ const TeamComponent = () => {
                 return (
                   <Col lg="3" md="6" className="m-b-30" key={staff.id}>
                     <div className="block rounded-lg bg-slate-100 shadow-secondary-1 dark:bg-surface-dark">
-                      <a href="#!">
+                      <a href={"/landing/program/profile"}>
                         <img
                           className="rounded-t-lg w-full"
                           src={getImageBaseUrl(staff.photo)}

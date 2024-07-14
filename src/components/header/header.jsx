@@ -3,6 +3,11 @@ import { Button, Input, InputGroup } from "reactstrap";
 const Header = () => {
   const links = [
     {
+      name: "Home",
+      link: "/landing",
+      subLink: [],
+    },
+    {
       name: "about us",
       link: "/landing/aboutus",
       subLink: [

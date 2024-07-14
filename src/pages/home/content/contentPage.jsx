@@ -49,7 +49,7 @@ function ContentPage() {
             </Row>
           </Container>
         </div>
-        <div className="flex flex-col w-full bg-yellow-50 min-h-full">
+        <div className="flex flex-col w-full bg-light min-h-full">
           <Container>
             <Row className="justify-content-end">
               <Col lg="12" md="6" className="align-self-center text-center">
@@ -62,10 +62,13 @@ function ContentPage() {
               </Col>
             </Row>
           </Container>
-          <div
-            dangerouslySetInnerHTML={{ __html: content.content }}
-            className=" text-black w-4/5  justify-items-start justify-start flex flex-col"
-          ></div>
+          <div className="justify-center flex ql-snow">
+            <div
+              dangerouslySetInnerHTML={{ __html: content.content }}
+              className="ql-editor w-4/5  justify-items-center justify-center flex flex-col"
+              // className=" text-black w-4/5  justify-items-start justify-start flex flex-col"
+            ></div>
+          </div>
         </div>
       </div>
     </QueryResult>

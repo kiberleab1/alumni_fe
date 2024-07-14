@@ -453,7 +453,7 @@ const SignupForm = () => {
                   <div className="flex justify-center gap-8 items-center my-4 pb-4">
                     <Button
                       color="primary"
-                      onClick={formik.handleSubmit}
+                      // onClick={handleSubmit(e)}get
                       type="submit"
                     >
                       Signup

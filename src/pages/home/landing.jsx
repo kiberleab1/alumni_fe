@@ -8,6 +8,9 @@ import SlideShowComponent from "src/views/custom-components/sections/slideShowCo
 import TeamComponent from "src/views/custom-components/sections/teamComponent";
 import TestimonialComponent from "src/views/custom-components/sections/testimonialComponent";
 
+import LandingEventsPage from "./program/events";
+import AboutUsPage from "./aboutus/aboutPage";
+
 function LandingPage() {
   const [slider, setSlider] = useState({
     header: "",
@@ -32,18 +35,21 @@ function LandingPage() {
   });
 
   return (
-    <QueryResult isError={isError} isLoading={isLoading} data={data}>
-      <div className="h-[80svh] -z-10">
-        {" "}
-        <SlideShowComponent
-          images={slider.imagesList}
-          header={slider.header}
-          subHeader={slider.subheader}
-          sliderControl={false}
-        />
-      </div>{" "}
+    <>
+      <QueryResult isError={isError} isLoading={isLoading} data={data}>
+        <div className="h-[80svh] -z-10">
+          {" "}
+          <SlideShowComponent
+            images={slider.imagesList}
+            header={slider.header}
+            subHeader={slider.subheader}
+            sliderControl={false}
+          />
+        </div>{" "}
+      </QueryResult>
+      <AboutUsPage />
+      <LandingEventsPage />
       <TeamComponent />
-      {/* <GalleryComponent img={}/> */}
       <ContactComponent />
       {/* <div className="w-full bg-black h-[80vh]">
       </div> */}
@@ -55,7 +61,7 @@ function LandingPage() {
 <Outlet /> */}
       <TestimonialComponent />
       <C2aComponent />
-    </QueryResult>
+    </>
   );
 }
 

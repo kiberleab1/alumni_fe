@@ -30,6 +30,8 @@ import UserSideBar from "./pages/UserSideBar";
 import LandingEventsPage from "./pages/home/program/events";
 import LandingProfile from "./pages/home/program/profile";
 import LandingMembersPage from "./pages/home/program/members";
+import { Navigate } from "react-router-dom";
+import NotFoundComponent from "./components/utils/notFound";
 
 // const hist = createBrowserHistory();
 const queryClient = new QueryClient({
@@ -82,14 +84,22 @@ function App() {
               </Route>
               <Route path="program">
                 <Route index element={<LandingEventsPage />} />
-                <Route path="profile" element={<LandingProfile />} />
+                <Route path="profile" element={<Alumni_profile />} />
                 <Route path="members" element={<LandingMembersPage />} />
+                <Route path="login" element={<LoginPage />} />
+                <Route path="register" element={<SignupPage />} />
+              </Route>
+              <Route path="alumni">
+                <Route index element={<LandingProfile />} />
               </Route>
               <Route path="career">
                 <Route index element={<CareerPage />} />
                 <Route path="apply" element={<ApplyForJobsPage />} />
               </Route>
+              <Route path="*" element={<NotFoundComponent />} />
             </Route>
+            <Route path="/" element={<Navigate to="/landing" replace />} />
+            <Route path="*" element={<NotFoundComponent />} />
           </Routes>
         </div>
       </BrowserRouter>

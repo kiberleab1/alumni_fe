@@ -1,9 +1,9 @@
 import { Card, CardBody, Col, Container, Row } from "reactstrap";
 
-import img1 from "../../../assets/images/features/feature13/img1.jpg";
-import img2 from "../../../assets/images/features/feature13/img2.jpg";
-import img3 from "../../../assets/images/features/feature13/img3.jpg";
-import img4 from "../../../assets/images/features/feature13/img4.jpg";
+import img1 from "src/assets/images/features/feature13/img1.jpg";
+import img2 from "src/assets/images/features/feature13/img2.jpg";
+import img3 from "src/assets/images/features/feature13/img3.jpg";
+import img4 from "src/assets/images/features/feature13/img4.jpg";
 
 const FeatureComponent = () => {
   return (
