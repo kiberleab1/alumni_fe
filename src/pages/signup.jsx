@@ -5,6 +5,9 @@ import * as Yup from "yup";
 import { Container, Row, Col, FormGroup, Label, Button } from "reactstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import FormErrorMessage from "src/components/utils/formErrorMessage";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function SignupPage() {
   return (
@@ -17,10 +20,18 @@ export default function SignupPage() {
 }
 
 const SignupForm = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [errorMsg, setErrorMsg] = useState("");
   const mutation = useMutation(signup, {
     onSuccess: () => {
       queryClient.invalidateQueries("signup");
+      navigate("/landing/program/profile");
+    },
+    onError: () => {
+      setErrorMsg(
+        "Something went wrong in the sign-up process, please fix the errors and try again."
+      );
     },
   });
 
@@ -40,6 +51,7 @@ const SignupForm = () => {
                 Fill the form below to create a new account.
               </h6>
             </Col>
+            <FormErrorMessage errorText={errorMsg} />
           </Row>
           <Formik
             //TODO
@@ -53,10 +65,10 @@ const SignupForm = () => {
               password: "",
               gender: "Male",
               date_of_birth: "",
-              role_id: "",
-              address_id: "",
-              birth_place_id: "",
-              institute_id: "",
+              role_id: "1",
+              address_id: "1",
+              birth_place_id: "1",
+              institute_id: "1",
             }}
             validationSchema={Yup.object({
               email: Yup.string()
@@ -298,6 +310,7 @@ const SignupForm = () => {
                               openToDate={new Date()}
                               maxDate={new Date()}
                               showIcon={true}
+                              toggleCalendarOnIconClick
                               // eslint-disable-next-line react/jsx-no-undef
                               icon={
                                 <i
@@ -320,7 +333,7 @@ const SignupForm = () => {
                         </Row>
                       </FormGroup>
                     </Row>
-                    <Row>
+                    {/* <Row>
                       <FormGroup>
                         <Row>
                           <div className="flex justify-end items-center mt-2">
@@ -350,8 +363,8 @@ const SignupForm = () => {
                           </div>
                         </Row>
                       </FormGroup>
-                    </Row>
-                    <Row>
+                    </Row> */}
+                    {/* <Row>
                       <FormGroup>
                         <Row>
                           <div className="flex justify-end items-center mt-2">
@@ -445,7 +458,7 @@ const SignupForm = () => {
                           </div>
                         </Row>
                       </FormGroup>
-                    </Row>
+                    </Row> */}
                   </Col>
                 </Row>
 

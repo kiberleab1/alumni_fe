@@ -13,6 +13,8 @@ import {
 } from "reactstrap";
 import { login } from "src/api";
 import * as Yup from "yup";
+import FormErrorMessage from "src/components/utils/formErrorMessage";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
   return (
@@ -23,17 +25,14 @@ export default function LoginPage() {
     </>
   );
 }
-const ErrorMessage = ({ errorText }) => {
-  if (!errorText) return null;
-
-  return <div className="text-red-500 text-xl mt-1">{errorText}</div>;
-};
 
 const LoginForm = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const mutation = useMutation(login, {
     onSuccess: () => {
       queryClient.invalidateQueries("login");
+      navigate("/landing/program/profile");
     },
     onError: () => {
       setErrorMessage("Failed to Login,please retry .....");
@@ -55,7 +54,7 @@ const LoginForm = () => {
               <h6 className="subtitle">Fill the form below to login.</h6>
             </Col>
           </Row>
-          <ErrorMessage errorText={errorMes} />
+          <FormErrorMessage errorText={errorMes} />
         </Container>
       </div>
       <Container>

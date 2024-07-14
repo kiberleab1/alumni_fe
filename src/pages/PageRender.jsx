@@ -35,6 +35,7 @@ import CreateSlideShowPage from "./admin/webcontent/CreateSlideShowPage";
 import CreateGallaryPage from "./admin/webcontent/CreateGallaryPage";
 import AlumniPage from "./admin/alumni/AlumniPage";
 import DocumentVerificationPage from "./admin/documentVerification/DocumentVerificationPage";
+import ComposeEmail from "./admin/emails/compose";
 
 const componentsMap = {
   Dashboard: CreateAdmin,
@@ -54,7 +55,7 @@ const componentsMap = {
   News: NewsPage,
   "Create News": CreateNews,
   "Edit News": EditNews,
-  Email: RolePage,
+  Email: ComposeEmail,
   Departments: DepartmentPage,
   "Create Department": CreateDepartment,
   "Edit Department": EditDepartment,
@@ -86,7 +87,10 @@ export default function ComponentRender({ page, onPageSet }) {
   const [selectedJobHistory, setSelectedJobHistory] = useState(null);
   const [selectedStaff, setSelectedStaff] = useState(null);
   const [selectedAlumni, setSelectedAlumni] = useState(null);
-  const [selectedDocumentVerificationRequest, setSelectedDocumentVerificationRequest,] = useState(null);
+  const [
+    selectedDocumentVerificationRequest,
+    setSelectedDocumentVerificationRequest,
+  ] = useState(null);
   const ComponentToRender =
     componentsMap[page] || (() => <div>Page not found</div>);
 
@@ -102,8 +106,9 @@ export default function ComponentRender({ page, onPageSet }) {
       onCreateStaffClick={() => onPageSet("Create Staff")}
       onCreateJobHistoryClick={() => onPageSet("Create JobHistory")}
       onCreateAlumniClick={() => onPageSet("Create Alumni")}
-      onCreateDocumentVerificationClick={()=> onPageSet("Create Document Verification")}
-
+      onCreateDocumentVerificationClick={() =>
+        onPageSet("Create Document Verification")
+      }
       onInstituteEditClick={(institute) => {
         setSelectedInstitute(institute);
         onPageSet("Edit Institute");
@@ -140,17 +145,14 @@ export default function ComponentRender({ page, onPageSet }) {
         setSelectedJobHistory(jobHistory);
         onPageSet("Edit JobHistory");
       }}
-
       onEditAlumniClick={(alumni) => {
         setSelectedAlumni(alumni);
         onPageSet("Edit Alumni");
       }}
-
       onEditDocumentVerififcationClick={(document) => {
         setSelectedDocumentVerificationRequest(document);
         onPageSet("Edit Document Verification");
       }}
-
       institute={selectedInstitute}
       admin={selectedAdmin}
       user={selecteduser}
