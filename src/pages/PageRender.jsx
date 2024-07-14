@@ -38,7 +38,7 @@ import DocumentVerificationPage from "./admin/documentVerification/DocumentVerif
 import ComposeEmail from "./admin/emails/compose";
 
 const componentsMap = {
-  Dashboard: CreateAdmin,
+  Dashboard: AdminsPage,
   Admins: AdminsPage,
   "Create Admin": CreateAdmin,
   "Edit Admin": EditAdmin,

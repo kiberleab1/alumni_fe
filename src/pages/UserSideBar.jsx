@@ -24,101 +24,30 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
-import ComponentRender from "./PageRender";
+import ComponentRender from "../pages/UserComponentRender";
 import CreateAdminPage from "./admin/admins/createAdmin";
 // import { useLocation } from "react-router-dom";
 
 const navigation = [
   {
-    name: "Dashboard",
-    href: "#",
-    icon: HomeIcon,
-    current: false,
-    comp: CreateAdminPage,
-  },
-  { name: "Admins", href: "#", icon: UsersIcon, current: true },
-  {
-    name: "Institutions",
-    href: "#",
-    icon: BuildingLibraryIcon,
-    current: false,
-  },
-  { name: "Departments", href: "#", icon: TagIcon, current: false },
-  { name: "Users", href: "#", icon: AcademicCapIcon, current: false },
-  {
-    name: "Roles",
-    href: "#",
-    icon: EllipsisHorizontalCircleIcon,
-    current: false,
-  },
-  { name: "Permission", href: "#", icon: EllipsisVerticalIcon, current: false },
+    name: "Profile", href: "#", icon: HomeIcon, current: false, comp: CreateAdminPage, },
+  { name: "Alumni", href: "#", icon: AcademicCapIcon, current: false },
   { name: "Jobs", href: "#", icon: BriefcaseIcon, current: false },
-  { name: "Staff", href: "#", icon: UsersIcon, current: false },
   { name: "Jobs History", href: "#", icon: BriefcaseIcon, current: false },
-  { name: "Almuni", href: "#", icon: AcademicCapIcon, current: false },
-  {
-    name: "Document Verification",
-    href: "#",
-    icon: ClipboardDocumentCheckIcon,
-    current: false,
-  },
+  { name: "Document Verification", href: "#", icon: ClipboardDocumentCheckIcon,current: false, },
   { name: "Events", href: "#", icon: CalendarIcon, current: false },
   { name: "News", href: "#", icon: NewspaperIcon, current: false },
-  { name: "Email", href: "#", icon: InboxArrowDownIcon, current: false },
-  { name: "WebContent", href: "#", icon: StarIcon, current: false },
 ];
 
-const subNavigation = [
-  {
-    name: "Create Admin",
-    parent: "Admins",
-    icon: UserPlusIcon,
-    current: false,
-  },
-  { name: "Create User", parent: "Users", icon: PlusIcon, current: false },
-  {
-    name: "Create Institute",
-    parent: "Institutions",
-    icon: PlusCircleIcon,
-    current: false,
-  },
-  {
-    name: "Create Department",
-    parent: "Departments",
-    icon: PlusCircleIcon,
-    current: false,
-  },
-  {
-    name: "Create About us",
-    parent: "WebContent",
-    icon: PlusCircleIcon,
-    current: false,
-  },
-  {
-    name: "Create Slide Show",
-    parent: "WebContent",
-    icon: PlusCircleIcon,
-    current: false,
-  },
-  {
-    name: "Create Gallery Show",
-    parent: "WebContent",
-    icon: PlusCircleIcon,
-    current: false,
-  },
-];
+const subNavigation = [];
 
 const navigationWithNoSubNavigation = [
-  "Dashboard",
-  "Roles",
+  "Profile",
   "Events",
   "News",
-  "Email",
-  "Permission",
   "Jobs",
-  "Staff",
   "Jobs History",
-  "Almuni",
+  "Alumni",
   "Document Verification",
 ];
 

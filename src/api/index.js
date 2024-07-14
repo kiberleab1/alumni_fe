@@ -633,3 +633,8 @@ export async function getAllVerificationRequest({ pageNumber, pageSize }) {
   );
   return result;
 }
+
+export async function createAlumniProfile(alumni) {
+  console.log(alumni);
+  return await axios.post(`${API_BASE_URl}/createAlumniProfile`, alumni);
+}
