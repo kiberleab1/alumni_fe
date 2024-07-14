@@ -58,7 +58,8 @@ export default function CreateUserPage() {
           };
           userFields.role = roleData.data.id;
           // @ts-ignore
-          setRoles(roles);
+          console.log(roles)
+          // setRoles(roles);
         }
 
         const instituteData = await getInstitutes({
@@ -245,7 +246,6 @@ export default function CreateUserPage() {
   };
 
   return (
-    <QueryResult isLoading={isLoading} isError={isError} data={data}>
       <div className="space-y-10 divide-y divide-gray-900/10">
         <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
           <div className="px-4 sm:px-0">
@@ -562,6 +562,7 @@ export default function CreateUserPage() {
           <ToastContainer />
         </div>
       </div>
-    </QueryResult>
+    // <QueryResult isLoading={isLoading} isError={isError} data={data}>
+    // </QueryResult>
   );
 }

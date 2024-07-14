@@ -56,9 +56,7 @@ function ListDepartment({
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = parseContactInfo(
-    alumnus.slice(indexOfFirstItem, indexOfLastItem)
-  );
+  const currentItems = alumnus.slice(indexOfFirstItem, indexOfLastItem)
 
   const totalPages = Math.ceil(alumnus.length / itemsPerPage);
 

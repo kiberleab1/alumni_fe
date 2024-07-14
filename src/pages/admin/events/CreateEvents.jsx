@@ -9,12 +9,15 @@ import "react-quill/dist/quill.snow.css";
 export default function CreateEvents() {
   const [institutions, setInstitutions] = useState([]);
   const [eventsLevel, setEventsLevel] = useState(["High", "Medium", "Low"]);
+  const [VisibilityType] = useState(["All Alumni", "My alumni"]);
+
   const [eventFormData, setEventFormData] = useState({
     ownerAdminId: "129ewrd-32323-323",
     ownerInstituteId: "",
     title: "",
     description: "",
     level: "",
+    visibility: "",
     venue: "",
     deadline: "",
     time: "",
@@ -58,6 +61,7 @@ export default function CreateEvents() {
     formData.append("ownerInstituteId", eventFormData.ownerInstituteId);
     formData.append("title", eventFormData.title);
     formData.append("venue", eventFormData.venue);
+    formData.append("visibility", eventFormData.visibility);
     formData.append("description", eventFormData.description);
     formData.append("deadline", eventFormData.deadline);
     formData.append("time", eventFormData.time);
@@ -245,6 +249,32 @@ export default function CreateEvents() {
                   </select>
                 </div>
               </div>
+              <div className="sm:col-span-2">
+                  <label
+                    htmlFor="job-status"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    Visibility
+                  </label>
+                  <div className="mt-2">
+                    <select
+                      value={eventFormData.visibility}
+                      onChange={(e) =>
+                        setEventFormData({
+                          ...eventFormData,
+                          visibility: e.target.value,
+                        })
+                      }
+                      className="mt-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-5 font-medium font-mono"
+                    >
+                      {VisibilityType.map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               <div className="sm:col-span-2">
                 <label
                   htmlFor="news-institute"
