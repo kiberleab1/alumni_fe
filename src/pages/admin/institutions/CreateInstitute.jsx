@@ -10,7 +10,7 @@ export default function CreateInstitutionPage() {
   const [disableInstitutionSection, setDisableInstitutionSection] =
     useState(true);
 
-  const [instituteTypes] = useState(["University", "College", "TVET"]);
+  const [instituteTypes] = useState(["University", "College", "TVET", "NGO"]);
 
   const [addressFields, setAddressFields] = useState({
     country: "",
