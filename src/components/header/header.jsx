@@ -1,6 +1,9 @@
+import { useTranslation } from "react-i18next";
 import { Button, Input, InputGroup } from "reactstrap";
+import LanguageSelectorDropDown from "src/components/header/LanguageSelector";
 
 const Header = () => {
+  const { t } = useTranslation();
   const links = [
     {
       name: "Home",
@@ -73,7 +76,9 @@ const Header = () => {
   ];
   return (
     <div className="flex flex-column z-10">
-      <div className="bg-green-400 flex justify-end">
+      <div className="bg-green-400 flex justify-between">
+        <LanguageSelectorDropDown />
+        <div className="text-red-600 text-3xl"> {t("counter_one")}</div>
         <InputGroup className="w-1/5 ">
           <Input />
           <Button>
