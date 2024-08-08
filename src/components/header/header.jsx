@@ -109,7 +109,7 @@ const Header = () => {
         {!inputControler && (
           <div className="flex items-center">
             <Button
-              className="md:hidden p-2 text-white bg-green-800 hover:bg-green-900 ml-2 transition duration-300 ease-in-out"
+              className="md:hidden p-2 text-white bg-green-800 hover:bg-green-900  transition duration-300 ease-in-out"
               onClick={navHandler}
             >
               {isActive ? (
@@ -123,7 +123,7 @@ const Header = () => {
         <div
           className={`transition duration-300 ease-in-out ${
             inputControler
-              ? "text-white hover:bg-green-900 p-2 text-left"
+              ? "text-white hover:bg-green-900 p-2 mr-2 text-left"
               : "text-right"
           }`}
         >
