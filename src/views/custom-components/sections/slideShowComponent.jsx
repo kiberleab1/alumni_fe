@@ -7,14 +7,14 @@ function SlideShowComponent({
   sliderControl = false,
 }) {
   return (
-    <div className="bg-fuchsia-600  min-w-full  h-full">
+    <div className="bg-fuchsia-600  min-w-full  h-full ">
       <TECarousel
         showControls={sliderControl}
         showIndicators
         ride="carousel"
         className="max-h-full h-full"
       >
-        <div className="w-full h-full after:clear-both after:block after:content-['']">
+        <div className="w-full h-full after:clear-both after:block after:content-[''] ">
           {images.map((img, idx) => {
             return (
               <TECarouselItem

@@ -25,7 +25,7 @@ function LandingEventsPage() {
       });
     });
 
-    console.log(listNews[0].link);
+    console.log(listNews[0]?.link);
     setMewsList(listNews);
     return allNews;
   });

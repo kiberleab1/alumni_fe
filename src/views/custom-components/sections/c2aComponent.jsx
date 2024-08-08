@@ -1,12 +1,19 @@
 import { Col, Container, Row } from "reactstrap";
-
+import {
+  FaFacebook,
+  FaTwitter,
+  FaLinkedin,
+  FaInstagram,
+  FaApple,
+  FaGooglePlay,
+} from "react-icons/fa";
 import img1 from "../../../assets/images/features/feature48/app-store.png";
 import img2 from "../../../assets/images/features/feature48/play-store.png";
 
 const C2aComponent = () => {
   return (
     <div>
-      <div className="spacer bg-light">
+      {/* <div className="spacer bg-light">
         <Container>
           <Row className="justify-content-center">
             <Col md="7" className="text-center">
@@ -19,8 +26,8 @@ const C2aComponent = () => {
             </Col>
           </Row>
         </Container>
-      </div>
-      <div className="mini-spacer bg-info text-white c2a7">
+      </div> */}
+      {/* <div className="mini-spacer bg-info text-white c2a7">
         <Container>
           <div className="d-flex justify-content-between">
             <div className="display-7 align-self-center">
@@ -33,28 +40,100 @@ const C2aComponent = () => {
             </div>
           </div>
         </Container>
-      </div>
-      <div className="spacer feature42 bg-success-gradiant">
+      </div> */}
+      <div className="bg-gray-800 text-white py-6">
         <Container>
-          <Row className="justify-content-center wrap-feature49-box">
-            <Col lg="7" md="10" className="text-center">
-              <h2 className="title text-white">
-                Grab our IOS or Android App from Stores
-              </h2>
-              <h6 className="subtitle text-white op-7 m-b-20">
-                You can relay on our amazing features list and also our customer
-                services will be great experience for you without doubt and in
-                no-time.
-              </h6>
-              <a href="#" className="m-b-20">
-                <img src={img1} alt="img" />
-              </a>
-              <a href="#" className="m-b-20">
-                <img src={img2} alt="img" />
-              </a>
+          <Row className="flex flex-col md:flex-row justify-between">
+            <Col md="3" className="mb-4 md:mb-0">
+              <h5 className="font-bold text-lg mb-2">Contact Us</h5>
+              <p className="text-sm md:text-base">
+                123 Main Street, City, Country
+              </p>
+              <p className="text-sm md:text-base">Phone: (123) 456-7890</p>
+              <p className="text-sm md:text-base">Email: info@example.com</p>
+            </Col>
+
+            <Col md="3" className="mb-4 md:mb-0">
+              <h5 className="font-bold text-lg mb-2">Quick Links</h5>
+              <ul className="text-sm md:text-base">
+                <li>
+                  <a href="/landing" className="hover:underline">
+                    Home
+                  </a>
+                </li>
+                <li>
+                  <a href="/landing/aboutus" className="hover:underline">
+                    About Us
+                  </a>
+                </li>
+
+                <li>
+                  <a href="/landing/events" className="hover:underline">
+                    Program & Events
+                  </a>
+                </li>
+              </ul>
+            </Col>
+
+            <Col md="3" className="mb-4 md:mb-0">
+              <h5 className="font-bold text-lg mb-2">Follow Us</h5>
+              <div className="flex space-x-4">
+                <a
+                  href="#"
+                  className="text-white hover:text-gray-400 text-xl md:text-2xl"
+                >
+                  <FaFacebook />
+                </a>
+                <a
+                  href="#"
+                  className="text-white hover:text-gray-400 text-xl md:text-2xl"
+                >
+                  <FaTwitter />
+                </a>
+                <a
+                  href="#"
+                  className="text-white hover:text-gray-400 text-xl md:text-2xl"
+                >
+                  <FaLinkedin />
+                </a>
+                <a
+                  href="#"
+                  className="text-white hover:text-gray-400 text-xl md:text-2xl"
+                >
+                  <FaInstagram />
+                </a>
+              </div>
+            </Col>
+
+            <Col md="3" className="mb-4 md:mb-0">
+              <h5 className="font-bold text-lg mb-2">Download Our App</h5>
+              <div className="flex flex-col items-start space-y-2">
+                <a href="#" className="flex items-center space-x-2">
+                  <FaApple className="text-white text-2xl" />
+                  <span className="hidden md:inline">
+                    Download on the App Store
+                  </span>
+                </a>
+                <a
+                  href="#"
+                  className="flex items-center justify-center text-center space-x-2"
+                >
+                  <FaGooglePlay className="text-white items-center justify-center text-center text-2xl" />
+                  <span className="hidden md:inline">
+                    Get it on Google Play
+                  </span>
+                </a>
+              </div>
             </Col>
           </Row>
-        </Container>
+
+          <div className="text-center mt-4 text-sm md:text-base">
+            <p>
+              &copy; {new Date().getFullYear()} Your Company. All rights
+              reserved.
+            </p>
+          </div>
+        </Container>{" "}
       </div>
     </div>
   );

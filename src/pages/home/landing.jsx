@@ -26,14 +26,18 @@ function LandingPage() {
       });
     });
     setSlider({
-      header: data.data[0].title,
-      subheader: data.data[0].description,
+      header: data?.data[0].title,
+      subheader: data?.data[0].description,
       imagesList: imgArray,
     });
 
     return data;
   });
-
+  {
+    {
+      console.log(data);
+    }
+  }
   return (
     <>
       <QueryResult isError={isError} isLoading={isLoading} data={data}>
@@ -50,6 +54,7 @@ function LandingPage() {
       <AboutUsPage />
       <LandingEventsPage />
       <TeamComponent />
+      <TestimonialComponent />
       <ContactComponent />
       {/* <div className="w-full bg-black h-[80vh]">
       </div> */}
@@ -59,7 +64,7 @@ function LandingPage() {
 <PortfolioComponent />
 <FeatureComponent />
 <Outlet /> */}
-      <TestimonialComponent />
+
       <C2aComponent />
     </>
   );

@@ -8,6 +8,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import FormErrorMessage from "src/components/utils/formErrorMessage";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import { FaLongArrowAltRight, FaLongArrowAltLeft } from "react-icons/fa";
 
 export default function SignupPage() {
   return (
@@ -23,6 +25,10 @@ const SignupForm = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [errorMsg, setErrorMsg] = useState("");
+  const [addressError, setAddressError] = useState("");
+  const [stepTwo, setstepTwo] = useState(false);
+  const [stepOne, setstepOne] = useState(true);
+  const [stepThree, setstepThree] = useState(false);
   const mutation = useMutation(signup, {
     onSuccess: () => {
       queryClient.invalidateQueries("signup");
@@ -40,8 +46,505 @@ const SignupForm = () => {
     mutation.mutate(values);
   };
 
+  const birthFormFields = {
+    birthCountry: {
+      label: "Country",
+      placeholder: "Country",
+    },
+    birthRegion: {
+      label: "Region",
+      placeholder: "Region",
+    },
+    birthCity: {
+      label: "City",
+      placeholder: "City",
+    },
+    birthHouseNumber: {
+      label: "House Number",
+      placeholder: "House Number",
+    },
+  };
+  const userInformationFields = {
+    firstName: {
+      label: "First Name",
+      placeholder: "First Name",
+      type: "text",
+    },
+    middleName: {
+      label: "MiddleName",
+      placeholder: "Middle Name",
+      type: "text",
+    },
+    lastName: {
+      label: "Last Name",
+      placeholder: "Last Name",
+      type: "text",
+    },
+    email: {
+      label: "Email",
+      placeholder: "Email",
+      type: "email",
+    },
+
+    phoneNumber: {
+      label: "Phone Number",
+      placeholder: "Phone Number",
+      type: "number",
+    },
+    password: {
+      label: "Password",
+      placeholder: "Password",
+    },
+    gender: {
+      label: "Gender",
+      options: [
+        { value: "male", label: "Male" },
+        { value: "female", label: "Female" },
+      ],
+    },
+    dateOfBirth: {
+      label: "Date of Birth",
+      placeholder: "Date of Birth",
+      type: "date",
+    },
+    // role: {
+    //   label: "Role",
+    //   placeholder: "Role",
+    //   type: "text",
+    // },
+    // institute: {
+    //   label: "Institute",
+    //   placeholder: "Institute",
+    //   type: "text",
+    // },
+  };
+  const addressFormFields = {
+    country: {
+      label: "Country",
+      placeholder: "Country",
+    },
+    region: {
+      label: "Region",
+      placeholder: "Region",
+    },
+    city: {
+      label: "City",
+      placeholder: "City",
+    },
+    houseNumber: {
+      label: "House Number",
+      placeholder: "House Number",
+    },
+  };
+  const addressFormValueAndImplmentation = useFormik({
+    initialValues: Object.keys(addressFormFields).reduce((acc, key) => {
+      acc[key] = "";
+      return acc;
+    }, {}),
+    validationSchema: Yup.object(
+      Object.keys(addressFormFields).reduce((acc, key) => {
+        acc[key] = Yup.string().required(
+          `${addressFormFields[key].label} is required`
+        );
+        return acc;
+      }, {})
+    ),
+    onSubmit: (values) => {
+      console.log("Form values address:", values);
+      // submit here
+      setstepOne(false);
+      setstepTwo(true);
+      setstepThree(false);
+    },
+  });
+  const birthFormValueAndImplmentation = useFormik({
+    initialValues: Object.keys(birthFormFields).reduce((acc, key) => {
+      acc[key] = "";
+      return acc;
+    }, {}),
+    validationSchema: Yup.object(
+      Object.keys(birthFormFields).reduce((acc, key) => {
+        acc[key] = Yup.string().required(
+          `${birthFormFields[key].label} is required`
+        );
+        return acc;
+      }, {})
+    ),
+    onSubmit: (values) => {
+      console.log("Form values birth:", values);
+      // submit here
+      setstepOne(false);
+      setstepTwo(false);
+      setstepThree(true);
+    },
+  });
+  const userInFoValueAndImplmentation = useFormik({
+    initialValues: Object.keys(userInformationFields).reduce((acc, key) => {
+      acc[key] = "";
+      return acc;
+    }, {}),
+    validationSchema: Yup.object(
+      Object.keys(userInformationFields).reduce((acc, key) => {
+        acc[key] = Yup.string().required(
+          `${userInformationFields[key].label} is required`
+        );
+        return acc;
+      }, {})
+    ),
+    onSubmit: (values) => {
+      console.log("Form values user info:", values);
+      // submit here
+      navigate("/landing/program/login");
+    },
+  });
+  const calculateProgress = () => {
+    const totalFields = 16;
+
+    const mergedObj = {
+      ...addressFormValueAndImplmentation.values,
+      ...birthFormValueAndImplmentation.values,
+      ...userInFoValueAndImplmentation.values,
+    };
+    const filledFields = Object.values(mergedObj).filter(
+      (value) => value !== ""
+    ).length;
+    return (filledFields / totalFields) * 100;
+  };
+  const toPrevForm = (bool, str) => {
+    switch (str) {
+      case "stepTwo":
+        setstepTwo(!bool);
+        setstepOne(true);
+        break;
+      case "stepThree":
+        setstepThree(!bool);
+        setstepTwo(true);
+        setstepOne(false);
+      default:
+        break;
+    }
+  };
   return (
     <div>
+      <div>
+        <div className=" p-8 max-w-2xl mt-16 mx-auto border border-sky-500 transition-all duration-700">
+          <div className="sticky top-2 mt-2 z-0 w-90 bg-gray-200 rounded-full h-2.5 mb-4 overflow-hidden">
+            <div
+              className="bg-green-900 h-2.5 z-0 rounded-full transition-all duration-700 "
+              style={{ width: `${calculateProgress()}%` }}
+            ></div>
+          </div>
+          {stepOne && (
+            <div className="transition-all duration-700">
+              <div>
+                <h1 className="text-xl text-left font-bold">
+                  Address Information
+                </h1>
+                <div className="flex items-center justify-between mb-4 ">
+                  <p className="mt-1 text-sm leading-6 text-gray-600 font-mono text-left">
+                    Please provide updated and accurate information
+                  </p>
+                  <span className="ml-7 text-sm font-semibold text-gray-800">
+                    Step 1/3
+                  </span>
+                </div>
+
+                <form
+                  onSubmit={addressFormValueAndImplmentation.handleSubmit}
+                  className="space-y-4"
+                >
+                  <div className="flex flex-wrap -mx-2">
+                    {Object.keys(addressFormFields).map((field, index) => (
+                      <div
+                        key={field}
+                        className={`px-2 ${
+                          index < 2 ? "w-full md:w-1/2" : "w-full"
+                        }`}
+                      >
+                        <label
+                          htmlFor={field}
+                          className="block text-left text-black mb-2 font-medium"
+                        >
+                          {addressFormFields[field].label}
+                        </label>
+                        <input
+                          id={field}
+                          name={field}
+                          type="text"
+                          {...addressFormValueAndImplmentation.getFieldProps(
+                            field
+                          )}
+                          placeholder={addressFormFields[field].placeholder}
+                          className="form-input w-full px-3 py-2 placeholder-gray-400 text-black border rounded bg-white"
+                        />
+                        {addressFormValueAndImplmentation.touched[field] &&
+                        addressFormValueAndImplmentation.errors[field] ? (
+                          <div className="text-red-500 text-sm">
+                            {addressFormValueAndImplmentation.errors[field]}
+                          </div>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex justify-between w-full">
+                    <button
+                      type="button"
+                      className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-red-900 hover:bg-red-700 active:bg-red-400 text-white py-2 px-4 rounded"
+                      onClick={() =>
+                        addressFormValueAndImplmentation.resetForm()
+                      }
+                    >
+                      Clear
+                    </button>
+                    <button
+                      type="submit"
+                      className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-gray-800 hover:bg-gray-600 active:bg-green-400 "
+                    >
+                      <span className=" ">Next</span>
+                      <span className="hidden absolute ml-9 group-hover:inline pl-2">
+                        <FaLongArrowAltRight />
+                      </span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+          {stepTwo && (
+            <div className="transition-all duration-700">
+              <div>
+                <div className="flex items-center">
+                  <FaLongArrowAltLeft
+                    onClick={() => toPrevForm(stepTwo, "stepTwo")}
+                    className="mr-2 text-5xl text-green-800 transition ease-in-out delay-150 transform hover:-translate-y-1 hover:scale-110 hover:bg-green-900 hover:text-white duration-300 p-1 rounded"
+                  />
+
+                  <h1 className="text-xl font-bold">
+                    User Place Of Birth Information
+                  </h1>
+                </div>
+
+                <div className="flex items-center justify-between mb-4">
+                  <p className="mt-1 text-sm leading-6 text-gray-600 font-mono text-left">
+                    Please provide updated and accurate information
+                  </p>
+
+                  <span className="ml-7 text-sm font-semibold text-gray-800">
+                    Step 2/3
+                  </span>
+                </div>
+
+                <form
+                  onSubmit={birthFormValueAndImplmentation.handleSubmit}
+                  className="space-y-4"
+                >
+                  <div className="flex flex-wrap -mx-2">
+                    {Object.keys(birthFormFields).map((field, index) => (
+                      <div
+                        key={field}
+                        className={`px-2 ${
+                          index < 2 ? "w-full md:w-1/2" : "w-full"
+                        }`}
+                      >
+                        <label
+                          htmlFor={field}
+                          className="block text-left text-black mb-2 font-medium"
+                        >
+                          {birthFormFields[field].label}
+                        </label>
+                        <input
+                          id={field}
+                          name={field}
+                          type="text"
+                          {...birthFormValueAndImplmentation.getFieldProps(
+                            field
+                          )}
+                          placeholder={birthFormFields[field].placeholder}
+                          className="form-input w-full px-3 py-2 placeholder-gray-400 text-black border rounded bg-white"
+                        />
+                        {birthFormValueAndImplmentation.touched[field] &&
+                        birthFormValueAndImplmentation.errors[field] ? (
+                          <div className="text-red-500 text-sm">
+                            {birthFormValueAndImplmentation.errors[field]}
+                          </div>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex justify-between w-full">
+                    <button
+                      type="button"
+                      className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-red-900 hover:bg-red-700 active:bg-red-400 text-white py-2 px-4 rounded"
+                      onClick={() => birthFormValueAndImplmentation.resetForm()}
+                    >
+                      Clear
+                    </button>
+                    <button
+                      type="submit"
+                      className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-gray-800 hover:bg-gray-600 active:bg-green-400 "
+                    >
+                      <span className=" ">Next</span>
+                      <span className="hidden absolute ml-9 group-hover:inline pl-2">
+                        <FaLongArrowAltRight />
+                      </span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}{" "}
+          {stepThree && (
+            <div>
+              <div>
+                <div>
+                  <div className="flex items-center">
+                    <FaLongArrowAltLeft
+                      onClick={() => toPrevForm(stepThree, "stepThree")}
+                      className="mr-2 text-5xl text-green-800 transition ease-in-out delay-150 transform hover:-translate-y-1 hover:scale-110 hover:bg-green-900 hover:text-white duration-300 p-1 rounded"
+                    />
+
+                    <h1 className="text-xl font-bold">User Information</h1>
+                  </div>
+
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="mt-1 text-sm leading-6 text-gray-600 font-mono text-left">
+                      Please provide updated and accurate information
+                    </p>
+
+                    <span className="ml-7 text-sm font-semibold text-gray-800">
+                      Step 3/3
+                    </span>
+                  </div>
+                  <form
+                    onSubmit={userInFoValueAndImplmentation.handleSubmit}
+                    className="space-y-4"
+                  >
+                    <div className="flex flex-wrap -mx-2">
+                      {Object.keys(userInformationFields).map(
+                        (field, index) => (
+                          <div
+                            key={field}
+                            className={
+                              index < 3
+                                ? "w-1/3  space-x-2"
+                                : "w-full" && index == 3
+                                ? "w-1/2  space-x-2"
+                                : "w-full" && index == 4
+                                ? "w-1/2  space-x-2"
+                                : "w-full"
+                            }
+                          >
+                            <label
+                              htmlFor={field}
+                              className="block text-left text-black mb-2 font-medium "
+                            >
+                              {userInformationFields[field].label}
+                            </label>
+                            {field === "gender" ? (
+                              <select
+                                id={field}
+                                name={field}
+                                {...userInFoValueAndImplmentation.getFieldProps(
+                                  field
+                                )}
+                                className="form-select w-full px-2 py-2 placeholder-gray-400 text-black border rounded bg-white"
+                              >
+                                <option value="" label="Select Gender" />
+                                {userInformationFields[field].options.map(
+                                  (option) => (
+                                    <option
+                                      key={option.value}
+                                      value={option.value}
+                                    >
+                                      {option.label}
+                                    </option>
+                                  )
+                                )}
+                              </select>
+                            ) : field === "dateOfBirth" ? (
+                              <DatePicker
+                                openToDate={new Date()}
+                                maxDate={new Date()}
+                                showIcon={true}
+                                toggleCalendarOnIconClick
+                                dateFormat="dd-MM-yyyy"
+                                id={field}
+                                name={field}
+                                selected={
+                                  userInFoValueAndImplmentation.values[field]
+                                    ? new Date(
+                                        userInFoValueAndImplmentation.values[
+                                          field
+                                        ]
+                                      )
+                                    : null
+                                }
+                                onChange={(date) =>
+                                  userInFoValueAndImplmentation.setFieldValue(
+                                    field,
+                                    date
+                                  )
+                                }
+                                className="form-input w-full px-5 py-2 pl-7 placeholder-gray-400 text-black border rounded bg-white justify:center item-center "
+                                placeholderText={
+                                  userInformationFields[field].placeholder
+                                }
+                                icon={
+                                  <i
+                                    className="fa fa-calendar  "
+                                    aria-hidden="true"
+                                  ></i>
+                                }
+                              />
+                            ) : (
+                              <input
+                                id={field}
+                                name={field}
+                                type="text"
+                                {...userInFoValueAndImplmentation.getFieldProps(
+                                  field
+                                )}
+                                placeholder={
+                                  userInformationFields[field].placeholder
+                                }
+                                className="form-input w-full px-3 py-2 placeholder-gray-400 text-black border rounded bg-white"
+                              />
+                            )}
+                            {userInFoValueAndImplmentation.touched[field] &&
+                            userInFoValueAndImplmentation.errors[field] ? (
+                              <div className="text-red-500 text-sm">
+                                {userInFoValueAndImplmentation.errors[field]}
+                              </div>
+                            ) : null}
+                          </div>
+                        )
+                      )}
+                    </div>
+                    <div className="flex justify-between w-full">
+                      <button
+                        type="button"
+                        className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-red-900 hover:bg-red-700 active:bg-red-400 text-white py-2 px-4 rounded"
+                        onClick={() =>
+                          userInFoValueAndImplmentation.resetForm()
+                        }
+                      >
+                        Clear
+                      </button>
+                      <button
+                        type="submit"
+                        className="ml-auto text-white rounded transition duration-300 ease-in-out  bg-gray-800 hover:bg-gray-600 active:bg-green-400"
+                      >
+                        Sumbit
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
       <div className="spacer" id="forms-component">
         <Container>
           <Row className="justify-content-center">
@@ -95,14 +598,17 @@ const SignupForm = () => {
                     <Row>
                       <FormGroup>
                         <Col>
-                          <Row className="">
-                            <div className="flex justify-end items-center mt-2">
-                              <Label htmlFor="email" className="m-2 w-1/3">
+                          <Row className="mb-0 ">
+                            <div className="block lg:flex lg:justify-end lg:items-center mt-2 ">
+                              <Label
+                                htmlFor="email"
+                                className="block text-gray-700 text-left pl-6  mb-2 lg:mb-0 text-black text-lg"
+                              >
                                 Email
                               </Label>
                               <Field
                                 type="text"
-                                className="form-control w-2/3"
+                                class="form-control w-2/3 px-3 py-2 ml-4 placeholder-gray-400 border rounded"
                                 id="email"
                                 value={formik.values.email}
                                 onChange={formik.handleChange}
@@ -112,7 +618,7 @@ const SignupForm = () => {
                               <ErrorMessage
                                 name="email"
                                 component="div"
-                                className="error text-danger"
+                                className="error text-danger absolute  pl-6"
                               />
                             </div>
                           </Row>
@@ -124,16 +630,16 @@ const SignupForm = () => {
                       <FormGroup>
                         <Col>
                           <Row>
-                            <div className="flex justify-between items-center mt-2">
+                            <div className="block lg:flex lg:justify-end lg:items-center mt-0  ">
                               <Label
                                 htmlFor="first_name"
-                                className="text-nowrap w-1/3 w-1/3"
+                                className="block text-gray-700 text-left pl-6  mb-2 lg:mb-0 text-black text-lg"
                               >
                                 First Name
                               </Label>
                               <Field
                                 type="text"
-                                className="form-control w-2/3 w-2/3"
+                                className="form-control w-2/3 px-3 py-2 ml-4 placeholder-gray-400 border rounded"
                                 id="first_name"
                                 value={formik.values.first_name}
                                 onChange={formik.handleChange}
@@ -143,7 +649,7 @@ const SignupForm = () => {
                               <ErrorMessage
                                 name="first_name"
                                 component="div"
-                                className="error text-danger"
+                                className="error text-danger absolute  pl-6"
                               />
                             </div>
                           </Row>
@@ -153,16 +659,16 @@ const SignupForm = () => {
                     <Row>
                       <FormGroup>
                         <Row>
-                          <div className="flex justify-between items-center mt-2">
+                          <div className="block lg:flex lg:justify-end lg:items-center mt-2 ">
                             <Label
                               htmlFor="middle_name"
-                              className="text-nowrap w-1/3"
+                              className="block text-gray-700 text-left pl-6  mb-2 lg:mb-0 text-black text-lg"
                             >
                               Middle Name
                             </Label>
                             <Field
                               type="text"
-                              className="form-control w-2/3"
+                              className="form-control w-2/3 px-3 py-2 ml-4 placeholder-gray-400 border rounded"
                               id="middle_name"
                               value={formik.values.middle_name}
                               onChange={formik.handleChange}
@@ -172,7 +678,7 @@ const SignupForm = () => {
                             <ErrorMessage
                               name="middle_name"
                               component="div"
-                              className="error text-danger"
+                              className="error text-danger absolute  pl-6"
                             />
                           </div>
                         </Row>
@@ -181,16 +687,16 @@ const SignupForm = () => {
                     <Row>
                       <FormGroup>
                         <Row>
-                          <div className="flex justify-end items-center mt-2">
+                          <div className="block lg:flex lg:justify-end lg:items-center mt-2 ">
                             <Label
                               htmlFor="last_name"
-                              className="text-nowrap w-1/3"
+                              className="block text-gray-700 text-left pl-6  mb-2 lg:mb-0 text-black text-lg"
                             >
                               Last Name
                             </Label>
                             <Field
                               type="text"
-                              className="form-control w-2/3"
+                              className="form-control w-2/3 px-3 py-2 ml-4 placeholder-gray-400 border rounded"
                               id="last_name"
                               value={formik.values.last_name}
                               onChange={formik.handleChange}
@@ -200,7 +706,7 @@ const SignupForm = () => {
                             <ErrorMessage
                               name="last_name"
                               component="div"
-                              className="error text-danger"
+                              className="error text-danger absolute  pl-6"
                             />
                           </div>
                         </Row>
@@ -209,16 +715,16 @@ const SignupForm = () => {
                     <Row>
                       <FormGroup>
                         <Row>
-                          <div className="flex justify-end items-center mt-2">
+                          <div className="block lg:flex lg:justify-end lg:items-center mt-2 ">
                             <Label
                               htmlFor="phone_number"
-                              className="text-nowrap w-1/3"
+                              className="block text-gray-700 text-left pl-6  mb-2 lg:mb-0 text-black text-lg"
                             >
                               Phone Number
                             </Label>
                             <Field
                               type="text"
-                              className="form-control w-2/3"
+                              className="form-control w-2/3 px-3 py-2 ml-4 placeholder-gray-400 border rounded"
                               id="phone_number"
                               value={formik.values.phone_number}
                               onChange={formik.handleChange}
@@ -228,7 +734,7 @@ const SignupForm = () => {
                             <ErrorMessage
                               name="phone_number"
                               component="div"
-                              className="error text-danger"
+                              className="error text-danger absolute  pl-6"
                             />
                           </div>
                         </Row>
@@ -237,16 +743,16 @@ const SignupForm = () => {
                     <Row>
                       <FormGroup>
                         <Row>
-                          <div className="flex justify-end items-center mt-2">
+                          <div className="block lg:flex lg:justify-end lg:items-center mt-2 ">
                             <Label
                               htmlFor="password"
-                              className="text-nowrap w-1/3"
+                              className="block text-gray-700 text-left bg:blue-500 pl-6  mb-2 lg:mb-0 text-black text-lg"
                             >
                               Password
                             </Label>
                             <Field
                               type="password"
-                              className="form-control w-2/3"
+                              className="form-control w-2/3 px-3 py-2 ml-4 placeholder-gray-400 border rounded"
                               id="password"
                               value={formik.values.password}
                               onChange={formik.handleChange}
@@ -256,7 +762,7 @@ const SignupForm = () => {
                             <ErrorMessage
                               name="password"
                               component="div"
-                              className="error text-danger"
+                              className="error text-danger absolute  pl-6"
                             />
                           </div>
                         </Row>
@@ -264,16 +770,16 @@ const SignupForm = () => {
                     </Row>
                     <Row>
                       <FormGroup>
-                        <Row>
-                          <div className="flex justify-end items-center mt-2">
+                        <Row className="  ">
+                          <div className="block lg:flex lg:justify-end items-center mt-2 ">
                             <Label
                               htmlFor="gender"
-                              className="text-nowrap w-1/3"
+                              className="block text-gray-700 text-left pl-6  mb-2 lg:mb-0 text-black text-lg"
                             >
                               Gender
                             </Label>
                             <select
-                              className="form-control w-2/3"
+                              className="form-control w-2/3 px-3 py-2 ml-4 placeholder-gray-400 border rounded"
                               id="gender"
                               name="gender"
                               value={formik.values.gender}
@@ -285,20 +791,20 @@ const SignupForm = () => {
                             <ErrorMessage
                               name="gender"
                               component="div"
-                              className="error text-danger"
+                              className="error text-danger absolute  pl-6"
                             />
                           </div>
                         </Row>
                       </FormGroup>
                     </Row>
 
-                    <Row>
-                      <FormGroup>
-                        <Row>
-                          <div className="flex justify-right items-center mt-2">
+                    <Row className="">
+                      <FormGroup className="">
+                        <Row className=" w-2/3 justify:center ml-14 ">
+                          <div className="block lg:flex lg:justify-center lg:items-center mt-2 ">
                             <Label
                               htmlFor="date_of_birth"
-                              className="text-nowrap w-1/3"
+                              className="block text-gray-700 text-left pl-6  mb-2 lg:mb-0 text-black text-lg"
                             >
                               Date of Birth
                             </Label>
@@ -311,10 +817,11 @@ const SignupForm = () => {
                               maxDate={new Date()}
                               showIcon={true}
                               toggleCalendarOnIconClick
+                              className="form-control w-2/3 ml-4 lg:justify-start text-red-500  border rounded "
                               // eslint-disable-next-line react/jsx-no-undef
                               icon={
                                 <i
-                                  className="fa fa-calendar  ml-24 "
+                                  className="fa fa-calendar  ml-5  text:center justify:center"
                                   aria-hidden="true"
                                 ></i>
                               }
@@ -322,12 +829,11 @@ const SignupForm = () => {
                               onChange={(date) =>
                                 formik.setFieldValue("date_of_birth", date)
                               }
-                              className="form-control w-2/3 "
                             />
                             <ErrorMessage
                               name="date_of_birth"
                               component="div"
-                              className="error text-danger"
+                              className="error text-danger absolute  pl-6"
                             />
                           </div>
                         </Row>
@@ -468,10 +974,15 @@ const SignupForm = () => {
                       color="primary"
                       // onClick={handleSubmit(e)}get
                       type="submit"
+                      className="text-nowrap mr-4 bg-blue-500 hover:bg-blue-500 hover:text-green-400   hover:shadow-lg hover:shadow-blue-500/30"
                     >
                       Signup
                     </Button>
-                    <Button color="secondary" onClick={formik.handleReset}>
+                    <Button
+                      color="secondary"
+                      onClick={formik.handleReset}
+                      className="text-nowrap hover:text-red-500 hover:bg-gray-500   hover:shadow-lg hover:shadow-red-500/30"
+                    >
                       Reset
                     </Button>
                   </div>

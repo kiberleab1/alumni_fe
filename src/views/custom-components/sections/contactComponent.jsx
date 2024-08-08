@@ -1,4 +1,3 @@
-
 import {
   Row,
   Col,
@@ -30,10 +29,10 @@ const ContactComponent = () => {
         <Container>
           <Row>
             <div className="spacer">
-              <Row className="m-0">
-                <Col lg="8">
+              <Row className="m-0 justify-content-center">
+                <Col lg="8 ">
                   <div className="contact-box p-r-40">
-                    <h4 className="title">Quick Contact</h4>
+                    <h4 className="title text-black">Quick Contact</h4>
                     <Form>
                       <Row>
                         <Col lg="6">
@@ -58,7 +57,7 @@ const ContactComponent = () => {
                         <Col lg="12">
                           <Button
                             type="submit"
-                            className="btn btn-danger-gradiant m-t-20 btn-arrow"
+                            className="btn bg-gray-900 m-t-20 btn-arrow"
                           >
                             <span>
                               {" "}
@@ -70,7 +69,7 @@ const ContactComponent = () => {
                     </Form>
                   </div>
                 </Col>
-                <Col lg="4">
+                {/* <Col lg="4">
                   <div className="detail-box p-40 bg-info">
                     <h2 className="text-white">Wrappixel Headquarters</h2>
                     <p className="text-white m-t-30 op-8">
@@ -82,7 +81,7 @@ const ContactComponent = () => {
                       <br /> San Bernandino, CA 92404
                     </p>
                   </div>
-                </Col>
+                </Col> */}
               </Row>
             </div>
           </Row>
