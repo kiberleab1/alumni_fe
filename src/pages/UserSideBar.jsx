@@ -30,11 +30,21 @@ import CreateAdminPage from "./admin/admins/createAdmin";
 
 const navigation = [
   {
-    name: "Profile", href: "#", icon: HomeIcon, current: false, comp: CreateAdminPage, },
+    name: "Profile",
+    href: "#",
+    icon: HomeIcon,
+    current: false,
+    comp: CreateAdminPage,
+  },
   { name: "Alumni", href: "#", icon: AcademicCapIcon, current: false },
   { name: "Jobs", href: "#", icon: BriefcaseIcon, current: false },
   { name: "Jobs History", href: "#", icon: BriefcaseIcon, current: false },
-  { name: "Document Verification", href: "#", icon: ClipboardDocumentCheckIcon,current: false, },
+  {
+    name: "Document Verification",
+    href: "#",
+    icon: ClipboardDocumentCheckIcon,
+    current: false,
+  },
   { name: "Events", href: "#", icon: CalendarIcon, current: false },
   { name: "News", href: "#", icon: NewspaperIcon, current: false },
 ];
@@ -59,8 +69,8 @@ function UserSideBar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarOpenMain, setSidebarOpenMain] = useState(true);
   const [componentClicked, setComponentClicked] = useState({
-    name: "Admins",
-    href: "/admin",
+    name: "Profile",
+    href: "/Profile",
     current: true,
   });
 

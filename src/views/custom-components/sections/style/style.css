@@ -1,0 +1,60 @@
+.text-content {
+  position: relative;
+  color: black;
+  overflow: hidden;
+  transition: color 0.3s ease, transform 0.3s ease;
+  padding: 1rem;
+  z-index: 1;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  transform-origin: left;
+  transform: scaleX(0);
+  z-index: 0; 
+  pointer-events: none; 
+  transition: transform 0.3s ease;
+}
+
+.text-content:hover .overlay {
+  transform: scaleX(1);
+}
+
+
+.text-content h6,
+.text-content .line-clamp-3,
+.text-content a {
+  color: rgba(0, 0, 0, 0.322); 
+  transition: color 0.3s ease;
+}
+.text-content h5 a{
+  color: rgb(68, 226, 247);
+}
+.text-content:hover h5 a{
+  color: rgb(0, 153, 255);
+}
+.text-content:hover h6,
+.text-content:hover .line-clamp-3 {
+  color: white; 
+}
+
+.text-content a {
+  display: inline-block;
+  margin-top: 1rem;
+  font-weight: bold;
+  position: relative;
+  text-decoration: none;
+  color: #007bff;
+}
+
+.text-content a:hover {
+  color: #ff9800; 
+}
+.card-spacing {
+  margin: 0 10px; 
+}

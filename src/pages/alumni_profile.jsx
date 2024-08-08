@@ -7,10 +7,16 @@ const AlumniProfile = () => {
       <img
         src="../../public/profile_pic.jpg"
         alt="profile picture"
-        className="w-48 h-48 rounded-full mt-4"
+        className="w-48 h-48  rounded-full mt-4 transform transition-transform duration-300 hover:scale-2 hover:translate-y-2 shadow-2xl shadow-green-500/50 transform transition-transform duration-300 hover:scale-110"
       />
       <h2 className="text-4xl font-semibold mt-4">Helen Getachew</h2>
-      <h3 className="text-lg font-extralight">helengetachew@gmail.com</h3>
+      <a
+        className="text-lg font-extraligh"
+        href="mailto:helengetachew@gmail.com"
+      >
+        helengetachew@gmail.com
+      </a>
+      {/* <h3 className="text-lg font-extralight">helengetachew@gmail.com</h3> */}
       <div className="flex items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -26,7 +32,10 @@ const AlumniProfile = () => {
             d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
           />
         </svg>
-        <p>+251 900 000 000 </p>
+
+        <a href="tel:+251 900 000 000" className="text-blue-500 underline ml-2">
+          +251 900 000 000
+        </a>
       </div>
       <div className="border-b w-1/2 my-4"></div>
       <div className="">
@@ -36,39 +45,47 @@ const AlumniProfile = () => {
               <th className="w-1/4">Degree</th>
             </tr>
             <tr>
-              <td>Sociology</td>
+              <td className="transform transition-transform duration-300 hover:translate-x-5 bg-blue-500 ">
+                Sociology
+              </td>
             </tr>
             <tr>
               <th className="w-1/4">Graduation Date</th>
             </tr>
             <tr>
-              <td>2022-10-15</td>
+              <td className="transform transition-transform duration-300 hover:translate-x-5 bg-blue-500 ">
+                2022-10-15
+              </td>
             </tr>
             <tr>
               <th className="w-1/4">Location</th>
             </tr>
             <tr>
-              <td>Shashamane</td>
+              <td className="transform transition-transform duration-300 hover:translate-x-5 bg-blue-500 ">
+                Shashamane
+              </td>
             </tr>
             <tr>
               <th className="w-1/4">Department</th>
             </tr>
             <tr>
-              <td>Human behaviour and development studies</td>
+              <td className="transform transition-transform duration-300 hover:translate-x-5 bg-blue-500 ">
+                Human behaviour and development studies
+              </td>
             </tr>
             <tr>
               <th className="w-1/4">Skills</th>
             </tr>
             <tr>
-              <td>
-                Communication, Leadership, Listening, Team-work,
-                Negotiation, Speaking
+              <td className="transform transition-transform duration-300 hover:translate-x-5 bg-blue-500 ">
+                Communication, Leadership, Listening, Team-work, Negotiation,
+                Speaking
               </td>
             </tr>
             <tr>
-              <th className="w-1/4">Language</th>
+              <th className="w-1/4 ">Language</th>
             </tr>
-            <tr>
+            <tr className="transform transition-transform duration-300 hover:translate-x-5 bg-blue-500 ">
               <td>English, Swahili, French</td>
             </tr>
             <tr>
@@ -95,6 +112,7 @@ const AlumniProfile = () => {
             href="https://drive.google.com/file/d/1mXg4b5xI9XsGnqg0wQHb2K5JgUy5UxP6/view?usp=sharing"
             target="_blank"
             rel="noreferrer"
+            className="hover:text-blue-400"
           >
             View Resume
           </a>

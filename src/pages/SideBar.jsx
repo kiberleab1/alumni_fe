@@ -127,6 +127,8 @@ function classNames(...classes) {
 }
 
 function SideBar() {
+  const [childUrl, setchildUrl] = useState("");
+  const [parentUrl, setparentUrl] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarOpenMain, setSidebarOpenMain] = useState(true);
   const [componentClicked, setComponentClicked] = useState({
@@ -161,6 +163,8 @@ function SideBar() {
       current: true,
     });
     console.log(itemName);
+    setchildUrl(itemName);
+    findParentByName(itemName);
   };
 
   // const location = useLocation();
@@ -178,7 +182,10 @@ function SideBar() {
       current: true,
     });
   };
-
+  const findParentByName = (name) => {
+    const item = subNavigation.find((entry) => entry.name === name);
+    return setparentUrl(item ? item.parent : null);
+  };
   return (
     <>
       <div>
@@ -262,6 +269,7 @@ function SideBar() {
                                     className="h-6 w-6 shrink-0"
                                     aria-hidden="true"
                                   />
+
                                   {item.name}
                                   <ChevronDownIcon
                                     className="-mr-1 h-5 w-5 text-gray-400"
@@ -509,8 +517,9 @@ function SideBar() {
                           aria-current={
                             componentClicked.current ? "page" : undefined
                           }
+                          onClick={() => handleNavigationItemClick(parentUrl)}
                         >
-                          {componentClicked.name}
+                          {parentUrl}/ {componentClicked.name}
                         </a>
                       </div>
                     </li>
