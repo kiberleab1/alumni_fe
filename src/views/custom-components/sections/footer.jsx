@@ -7,10 +7,8 @@ import {
   FaApple,
   FaGooglePlay,
 } from "react-icons/fa";
-import img1 from "../../../assets/images/features/feature48/app-store.png";
-import img2 from "../../../assets/images/features/feature48/play-store.png";
 
-const C2aComponent = () => {
+const Footer = () => {
   return (
     <div>
       {/* <div className="spacer bg-light">
@@ -66,7 +64,6 @@ const C2aComponent = () => {
                     About Us
                   </a>
                 </li>
-
                 <li>
                   <a href="/landing/events" className="hover:underline">
                     Program & Events
@@ -77,7 +74,7 @@ const C2aComponent = () => {
 
             <Col md="3" className="mb-4 md:mb-0">
               <h5 className="font-bold text-lg mb-2">Follow Us</h5>
-              <div className="flex space-x-4">
+              <div className="flex space-x-4 justify-center">
                 <a
                   href="#"
                   className="text-white hover:text-gray-400 text-xl md:text-2xl"
@@ -105,12 +102,12 @@ const C2aComponent = () => {
               </div>
             </Col>
 
-            <Col md="3" className="mb-4 md:mb-0">
+            <Col md="3" className="mb-4 md:mb-0 text-center">
               <h5 className="font-bold text-lg mb-2">Download Our App</h5>
-              <div className="flex flex-col items-start space-y-2">
+              <div className="flex flex-col items-center space-y-2">
                 <a href="#" className="flex items-center space-x-2">
                   <FaApple className="text-white text-2xl" />
-                  <span className="hidden md:inline">
+                  <span className=" sm:inline-block">
                     Download on the App Store
                   </span>
                 </a>
@@ -118,8 +115,8 @@ const C2aComponent = () => {
                   href="#"
                   className="flex items-center justify-center text-center space-x-2"
                 >
-                  <FaGooglePlay className="text-white items-center justify-center text-center text-2xl" />
-                  <span className="hidden md:inline">
+                  <FaGooglePlay className="text-white text-2xl" />
+                  <span className=" sm:inline-block">
                     Get it on Google Play
                   </span>
                 </a>
@@ -133,10 +130,10 @@ const C2aComponent = () => {
               reserved.
             </p>
           </div>
-        </Container>{" "}
+        </Container>
       </div>
     </div>
   );
 };
 
-export default C2aComponent;
+export default Footer;

@@ -56,7 +56,7 @@ const ContentCatalogComponent = ({ newsArray }) => {
                   className="card-spacing"
                   data-aos="fade-up"
                 >
-                  <Card className="relative overflow-hidden ml-8 shadow-lg rounded-lg ">
+                  <Card className="relative overflow-hidden shadow-lg rounded-lg ">
                     {" "}
                     <a
                       href={news.link}

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "react-query";
 import { getImageBaseUrl, getWebContentByComonent } from "src/api";
 import QueryResult from "src/components/utils/queryResults";
-import C2aComponent from "src/views/custom-components/sections/c2aComponent";
+
 import ContactComponent from "src/views/custom-components/sections/contactComponent";
 import SlideShowComponent from "src/views/custom-components/sections/slideShowComponent";
 import TeamComponent from "src/views/custom-components/sections/teamComponent";
@@ -64,8 +64,6 @@ function LandingPage() {
 <PortfolioComponent />
 <FeatureComponent />
 <Outlet /> */}
-
-      <C2aComponent />
     </>
   );
 }

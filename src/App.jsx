@@ -32,7 +32,7 @@ import LandingProfile from "./pages/home/program/profile";
 import LandingMembersPage from "./pages/home/program/members";
 import { Navigate } from "react-router-dom";
 import NotFoundComponent from "./components/utils/notFound";
-
+import Footer from "./views/custom-components/sections/footer";
 // const hist = createBrowserHistory();
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -101,6 +101,7 @@ function App() {
             <Route path="/" element={<Navigate to="/landing" replace />} />
             <Route path="*" element={<NotFoundComponent />} />
           </Routes>
+          <Footer />
         </div>
       </BrowserRouter>
     </QueryClientProvider>

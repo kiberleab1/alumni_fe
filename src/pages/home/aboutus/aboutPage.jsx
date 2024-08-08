@@ -39,8 +39,6 @@ function AboutUsComponent({ title, body, images }) {
     ? images.findIndex((img) => img === selectedImage)
     : -1;
 
-  console.log("Selected Image:", selectedImage);
-  console.log("Index of Selected Image:", selectedIndex);
   useEffect(() => {
     AOS.init({
       duration: 1000,
@@ -51,7 +49,10 @@ function AboutUsComponent({ title, body, images }) {
   return (
     <>
       <div className="bg-gray-100 dark:bg-gray-800 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="container mx-auto flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16">
+        <div
+          className="container mx-auto flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16 "
+          data-aos="zoom-in"
+        >
           <div
             className="w-full lg:w-6/12 flex flex-col space-y-6 lg:space-y-8"
             data-aos="fade-up"
@@ -85,7 +86,8 @@ function AboutUsComponent({ title, body, images }) {
                     }`}
                     key={imgLink}
                     onClick={() => setSelectedImage(imgLink)}
-                    data-aos="fade-up"
+
+                    // data-aos="fade-up"
                   >
                     <img
                       className="w-full h-full object-cover rounded-lg shadow-sm"

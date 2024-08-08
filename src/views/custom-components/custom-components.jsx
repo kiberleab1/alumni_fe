@@ -15,7 +15,7 @@ import TeamComponent from "./sections/teamComponent.jsx";
 import TestimonialComponent from "./sections/testimonialComponent.jsx";
 // import ConentCatalogCompnent from "./sections/conentCatalogComponent.jsx";
 import ComingSoonComponent from "../../components/call-to-action/ComingSoonComponent.jsx";
-import C2aComponent from "./sections/c2aComponent.jsx";
+import C2aComponent from "./sections/footer.jsx";
 import ContactComponent from "./sections/contactComponent.jsx";
 
 const CustomComponents = () => {
