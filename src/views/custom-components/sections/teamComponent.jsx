@@ -55,17 +55,24 @@ const TeamComponent = () => {
   return (
     <QueryResult isLoading={isLoading} isError={isError} data={data}>
       <div>
-        <div className="spacer justify-content-center">
+        <div className=" justify-content-center">
           <Container>
             <Row className="justify-content-center">
-              <Col md="7" className="text-center justiyf-center">
-                <h1 className="title font-bold">Meet the Team</h1>
-                <h2 className="title">Experienced & Professional Team</h2>
-                <h6 className="subtitle">
-                  You can relay on our amazing features list and also our
-                  {/* customer services will be great experience for you without
-                  doubt and in no-time */}
-                </h6>
+              <Col className="text-center m justiyf-center">
+                <div className="text-center py-8 px-4 lg:px-32">
+                  <h1 className="title font-medium text-3xl sm:text-4xl md:text-5xl lg:text-5xl">
+                    Meet the Team
+                  </h1>
+                  <h2 className="title font-sm text-2xl sm:text-3xl md:text-4xl lg:text-5xl mt-4">
+                    Experienced & Professional Team
+                  </h2>
+                  <h6 className="subtitle text-base sm:text-lg md:text-xl lg:text-2xl mt-4">
+                    You can rely on our amazing features list and also our
+                    customer services will be a great experience for you without
+                    doubt and in no time
+                  </h6>
+                </div>
+
                 {/* <h6 className="subtitle">
                   Here you can check Demos we created based on . Its quite easy
                   to Create your own dream
@@ -86,18 +93,14 @@ const TeamComponent = () => {
                   {data?.data?.staff.map((staff) => {
                     const contactInfo = parseData(staff.contact_info);
                     return (
-                      <div
-                        className="p-2"
-                        key={staff.id}
-                        data-aos="fade-up" // AOS animation type
-                      >
+                      <div className="p-2" key={staff.id} data-aos="fade-up">
                         <div className="block rounded-lg bg-slate-100 shadow-lg dark:bg-surface-dark">
                           <a href="/landing/program/profile">
                             <img
                               className="rounded-t-lg w-full object-cover h-48 transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300"
                               src={getImageBaseUrl(staff.photo)}
                               alt={staff.title}
-                              data-aos="zoom-in" // AOS animation type
+                              data-aos="zoom-in"
                             />
                           </a>
                           <div className="p-6 text-surface dark:text-white flex flex-col justify-center items-center transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-95 hover:bg-gray-300 duration-300">

@@ -44,27 +44,27 @@ const ContentCatalogComponent = ({ newsArray }) => {
   };
   return (
     <div>
-      <div className="blog-home2 spacer">
+      <div className="blog-home2 spacer  bg-light">
         <Container>
-          <Row className="m-t-0 justify-content-center">
+          <Row className="flex flex-wrap justify-center">
             <Slider {...settings}>
               {newsArray.map((news, idx) => (
                 <Col
                   lg="4"
                   md="6"
+                  sm="12"
                   key={idx}
-                  className="card-spacing"
+                  className="p-4 shadow-xl "
                   data-aos="fade-up"
                 >
-                  <Card className="relative overflow-hidden shadow-lg rounded-lg ">
-                    {" "}
+                  <Card className="relative overflow-hidden shadow-[0_0_0_-15px_rgba(0,0,0,0.2)] bg-white">
                     <a
                       href={news.link}
-                      className="transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110  duration-300 "
+                      className="transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300"
                     >
                       <img
-                        className="card-img-top object-cover "
-                        style={{ width: "100%", height: "200px" }}
+                        className="card-img-top object-cover rounded "
+                        style={{ width: "100%", height: "300px" }}
                         src={news.thumbnails}
                         alt="news-thumbnail"
                       />
@@ -74,13 +74,13 @@ const ContentCatalogComponent = ({ newsArray }) => {
                       <span>{news.date.getDate()}</span>
                     </div>
                     <div
-                      className="text-content text-center flex flex-col justify-items-center justify-center p-2  relative"
+                      className="text-content text-center flex flex-col justify-items-center justify-center p-2 relative bg-gray-100"
                       data-aos="fade-up"
                       style={{ height: "200px" }}
                     >
                       <div className="overlay"></div>
-                      <h5 className="font-small flex justify-center flex-col ">
-                        <a className="link text-end  text-themecolor">
+                      <h5 className="font-small flex justify-center text-center flex-col">
+                        <a className="link text-end text-themecolor">
                           {news?.avenue ? news.avenue : ""}
                         </a>
                       </h5>
@@ -95,7 +95,7 @@ const ContentCatalogComponent = ({ newsArray }) => {
                       ></div>
                       <a
                         href={news.link}
-                        className="linking text-themecolor mt-10 pb-4"
+                        className="linking text-themecolor text-start p-2 mt-10 pb-4"
                       >
                         See More <i className="ti-arrow-right"></i>
                       </a>

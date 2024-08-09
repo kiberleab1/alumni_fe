@@ -18,7 +18,7 @@ const Mission = () => {
   }, []);
   return (
     //bg-[url('../../../../../public/gallery/ab.png')] bg-cover
-    <div className="bg-gray-300 min-h-screen w-full flex flex-col items-center justify-center p-4 space-y-6">
+    <div className="bg-gray-100 min-h-screen w-full flex flex-col items-center justify-center p-4 space-y-6">
       <div className="flex flex-wrap justify-center w-full space-y-6 md:space-y-0 md:space-x-6">
         {[
           {
@@ -41,11 +41,11 @@ const Mission = () => {
             data-aos-duration="1000"
             data-aos-offset="200"
           >
-            <div className="transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 hover:bg-gray-100 duration-300 rounded flex flex-col items-center justify-center h-full p-4">
+            <div className="transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 hover:bg-gray-100 duration-300 rounded flex flex-col items-center justify-center h-full ">
               <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 rounded-full shadow-md">
                 {card.icon}
               </div>
-              <div className="mt-12">
+              <div className="mt-12 ">
                 <h1 className="text-black text-2xl font-bold text-center mb-4">
                   {card.title}
                 </h1>
@@ -72,7 +72,7 @@ const Mission = () => {
               <h1 className="text-black text-2xl font-bold text-center mb-4">
                 Core Values
               </h1>
-              <ul className="list-disc list-inside text-black text-left space-y-4">
+              <ul className="list-disc list-inside text-black text-left space-y-4 ">
                 <li>
                   <strong>Excellence</strong> - Committed to advancing the
                   highest standards in all endeavors.

@@ -30,10 +30,13 @@ function LandingEventsPage() {
     return allNews;
   });
   return (
-    <QueryResult isError={isError} isLoading={isLoading} data={data}>
-      <SectionHolderComponent title={section.title} body={section.body} />
-      <ContentCatalogComponent newsArray={newsList} />
-    </QueryResult>
+    <div className="h-full">
+      {" "}
+      <QueryResult isError={isError} isLoading={isLoading} data={data}>
+        <SectionHolderComponent title={section.title} body={section.body} />
+        <ContentCatalogComponent newsArray={newsList} />
+      </QueryResult>
+    </div>
   );
 }
 export default LandingEventsPage;

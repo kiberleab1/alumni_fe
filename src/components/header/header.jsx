@@ -3,16 +3,25 @@ import { useEffect, useState } from "react";
 import _ from "lodash";
 import { Button, Input, InputGroup } from "reactstrap";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-
+import { Link, useLocation } from "react-router-dom";
 const Header = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const location = useLocation();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [controlNavColor, setNavColor] = useState(false);
   const [isActive, setisActive] = useState(false);
   const [meanNav, setmeanNav] = useState(true);
   const [inputControler, setinputControler] = useState(false);
+  const toggleSidebar = () => {
+    setIsSidebarOpen((prev) => !prev);
+    setisActive(false);
+  };
   const navHandler = () => {
     setisActive((prev) => !prev);
+    setIsSidebarOpen(true);
   };
+  console.log(isActive, isSidebarOpen);
+
   const handleResize = _.debounce(() => {
     setWindowWidth(window.innerWidth);
   }, 300);
@@ -105,7 +114,7 @@ const Header = () => {
   ];
   return (
     <>
-      <div className="bg-green-800 flex items-center justify-between text-white px-2 min-h-16">
+      <div className="bg-green-800 flex items-center justify-between text-white px-2 min-h-16 ">
         {!inputControler && (
           <div className="flex items-center">
             <Button
@@ -160,8 +169,8 @@ const Header = () => {
       <div
         className={`absolute top-0 transition-all duration-500 ease-in-out ${
           meanNav
-            ? "sticky top-0 flex flex-col opacity-100"
-            : "opacity-0 -translate-y-4 pointer-events-none hidden"
+            ? "sticky top-0 flex flex-col opacity-100 z-40"
+            : "opacity-0 -translate-y-4 pointer-events-none hidden z-40"
         } z-10`}
       >
         <div
@@ -178,7 +187,7 @@ const Header = () => {
           >
             <ul
               className={`transition duration-300 ease-in-out ${
-                isActive
+                isActive && isSidebarOpen
                   ? "absolute right-0 top-0 text-left bg-gray-800 p-1 w-full"
                   : "hidden md:flex z-50 p-1"
               }`}
@@ -186,7 +195,7 @@ const Header = () => {
               {links.map((mainLink, idx) => (
                 <li
                   className={`relative group transition-transform duration-300 ease-in-out ${
-                    isActive
+                    isActive && isSidebarOpen
                       ? "justify-start hover:translate-x-1 hover:scale-70"
                       : "hover:translate-y-1 hover:scale-70 transition ease-in delay-300 text-xl w-fit block after:block after:content-[''] after:absolute after:h-[4px] after:bg-green-800 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
                   }`}
@@ -195,27 +204,36 @@ const Header = () => {
                   <a
                     href={mainLink.link}
                     className={`transition-colors duration-500 ease-in-out ${
-                      isActive
+                      location.pathname === mainLink.link
+                        ? " text-yellow-600"
+                        : ""
+                    } ${
+                      isActive && isSidebarOpen
                         ? "uppercase block py-2 px-1 text-gray-200 hover:text-yellow-400 transition ease-in delay-300 text-xl w-fit block after:block after:content-[''] after:absolute after:h-[4px] after:bg-green-800 after:w-1/5 after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
                         : "text-lg md:text-xl uppercase block py-2 px-4 text-gray-200 hover:text-yellow-400"
                     }`}
+                    onClick={toggleSidebar}
                   >
                     {mainLink.name}
                   </a>
 
                   <div
                     className={`transition-transform duration-300 ease-in-out ${
-                      isActive
+                      isActive && isSidebarOpen
                         ? "hidden group-hover:block relative right-15 bg-gray-700 m-0 p-0"
                         : "hidden transition ease-in delay-300 group-hover:block absolute right-15 bg-gray-800 py-2 p-0"
                     }`}
                   >
                     {mainLink.subLink.map((subLink, idx) => (
                       <a
-                        onMouseOver={dropOptionsControl}
                         href={subLink.link}
                         key={idx + subLink.name}
-                        className="uppercase block transition delay-300 hover:translate-x-1 px-4 py-2 text-yellow-100 hover:text-yellow-400 transition-colors duration-500"
+                        className={`uppercase block transition delay-300 hover:translate-x-1 px-4 py-2 text-yellow-100 hover:text-yellow-400 transition-colors duration-500 ${
+                          location.pathname === subLink.link
+                            ? "text-yellow-600"
+                            : ""
+                        }`}
+                        onClick={toggleSidebar}
                       >
                         {subLink.name}
                       </a>

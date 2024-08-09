@@ -29,8 +29,8 @@ function SlideShowComponent({
                     alt="Slide image"
                   />
 
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black opacity-90"></div>
-                  <div className="absolute inset-x-20 bottom-5 py-4 text-center text-white md:block">
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black opacity-60"></div>
+                  <div className="absolute inset-x-0 bottom-5 py-4 text-center text-white md:block">
                     <p className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl mb-4 font-bold">
                       {header}
                     </p>

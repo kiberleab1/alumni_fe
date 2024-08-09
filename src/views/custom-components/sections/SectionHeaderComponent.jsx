@@ -6,9 +6,13 @@ function SectionHolderComponent({ title, body }) {
       <Container>
         <Row className="justify-content-center">
           <Col md="7" className="text-center">
-            <h1 className="title font-bold">{title}</h1>
+            <h1 className="title font-medium text-3xl sm:text-4xl md:text-5xl lg:text-5xl">
+              {title}
+            </h1>
 
-            <h6 className="subtitle">{body}</h6>
+            <h6 className="subtitle text-lg sm:text-xl md:text-2xl lg:text-3xl">
+              {body}
+            </h6>
           </Col>
         </Row>
       </Container>

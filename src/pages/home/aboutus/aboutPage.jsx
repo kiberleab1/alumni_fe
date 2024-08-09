@@ -47,10 +47,10 @@ function AboutUsComponent({ title, body, images }) {
     });
   }, []);
   return (
-    <>
-      <div className="bg-gray-100 dark:bg-gray-800 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen  flex items-center justify-center bg-gray-100">
+      <div className="container bg-gray-100 dark:bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 h-full">
         <div
-          className="container mx-auto flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16 "
+          className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16 mx-auto"
           data-aos="zoom-in"
         >
           <div
@@ -66,7 +66,7 @@ function AboutUsComponent({ title, body, images }) {
             </p>
           </div>
 
-          <div className="w-full lg:w-6/12 flex flex-col items-center">
+          <div className="w-full lg:w-6/12 flex flex-col items-center justify-center">
             <div className="relative w-full max-w-2xl h-80" data-aos="zoom-in">
               <img
                 className="w-full h-full object-cover rounded-lg shadow-xl transition-transform duration-500 ease-in-out transform hover:scale-105"
@@ -86,8 +86,6 @@ function AboutUsComponent({ title, body, images }) {
                     }`}
                     key={imgLink}
                     onClick={() => setSelectedImage(imgLink)}
-
-                    // data-aos="fade-up"
                   >
                     <img
                       className="w-full h-full object-cover rounded-lg shadow-sm"
@@ -101,6 +99,6 @@ function AboutUsComponent({ title, body, images }) {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
