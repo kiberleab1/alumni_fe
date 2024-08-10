@@ -46,7 +46,7 @@ const Mission = () => {
                 {card.icon}
               </div>
               <div className="mt-12 ">
-                <h1 className="text-black text-2xl font-bold text-center mb-4">
+                <h1 className="text-black text-2xl font-bold text-center mb-4 font-sans">
                   {card.title}
                 </h1>
                 <p className="text-black text-center">{card.description}</p>
@@ -59,7 +59,7 @@ const Mission = () => {
       <div className="w-full flex justify-center mt-6">
         <div
           key={2}
-          className="zoom-card relative w-full sm:w-[90%] md:w-[60%] lg:w-[70%] h-96 rounded-2xl bg-gray-200 bg-opacity-70 p-8 shadow-lg transition-transform duration-300 ease-in-out"
+          className="zoom-card  bg-gray-100 relative w-full sm:w-[90%] md:w-[60%] lg:w-[70%] h-96 rounded-2xl bg-gray-200 bg-opacity-70 p-8 shadow-lg transition-transform duration-300 ease-in-out"
           data-aos="zoom-in"
           data-aos-duration="1000"
           data-aos-offset="200"
@@ -69,11 +69,11 @@ const Mission = () => {
               <GiFlagObjective className="text-black text-4xl" />
             </div>
             <div className="mt-16 overflow-auto flex-1">
-              <h1 className="text-black text-2xl font-bold text-center mb-4">
+              <h1 className="text-black text-2xl  font-bold text-center mb-4 font-sans">
                 Core Values
               </h1>
-              <ul className="list-disc list-inside text-black text-left space-y-4 ">
-                <li>
+              <ul className="list-disc list-inside text-black text-left space-y-4 font-sans-serif">
+                <li className="">
                   <strong>Excellence</strong> - Committed to advancing the
                   highest standards in all endeavors.
                 </li>

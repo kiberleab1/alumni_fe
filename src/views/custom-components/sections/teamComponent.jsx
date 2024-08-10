@@ -54,19 +54,19 @@ const TeamComponent = () => {
   };
   return (
     <QueryResult isLoading={isLoading} isError={isError} data={data}>
-      <div>
+      <div className=" bg-gray-50">
         <div className=" justify-content-center">
           <Container>
             <Row className="justify-content-center">
               <Col className="text-center m justiyf-center">
                 <div className="text-center py-8 px-4 lg:px-32">
-                  <h1 className="title font-medium text-3xl sm:text-4xl md:text-5xl lg:text-5xl">
+                  <h1 className="title font-small text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-sans">
                     Meet the Team
                   </h1>
-                  <h2 className="title font-sm text-2xl sm:text-3xl md:text-4xl lg:text-5xl mt-4">
+                  <h3 className="title font-sm text-2xl sm:text-3xl md:text-4xl lg:text-5xl mt-4 font-sans-serif">
                     Experienced & Professional Team
-                  </h2>
-                  <h6 className="subtitle text-base sm:text-lg md:text-xl lg:text-2xl mt-4">
+                  </h3>
+                  <h6 className="subtitle text-base sm:text-lg md:text-xl lg:text-2xl mt-4 font-sans-serif">
                     You can rely on our amazing features list and also our
                     customer services will be a great experience for you without
                     doubt and in no time
@@ -104,10 +104,10 @@ const TeamComponent = () => {
                             />
                           </a>
                           <div className="p-6 text-surface dark:text-white flex flex-col justify-center items-center transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-95 hover:bg-gray-300 duration-300">
-                            <h5 className="mb-2 text-xl font-medium leading-tight text-center">
+                            <h5 className="mb-2 text-xl font-medium leading-tight text-center font-sans">
                               {staff.title}
                             </h5>
-                            <p className="mb-4 text-base text-center">
+                            <p className="mb-4 text-base text-center font-sans-serif">
                               {staff.description}
                             </p>
                             <ul className="list-inline flex justify-center space-x-4">

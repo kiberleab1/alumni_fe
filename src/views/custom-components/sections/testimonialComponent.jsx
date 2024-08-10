@@ -36,24 +36,19 @@ const TestimonialComponent = () => {
     });
   }, []);
   return (
-    <div>
+    <div className="bg-light">
       <div className="spacer">
         <Container>
           <Row className="justify-content-center">
             <Col md="7" className="text-center">
-              <h1 className="title text-[1.5rem] sm:text-[2rem] md:text-[2.5rem] lg:text-[3rem]">
+              <h1 className="title text-[1.5rem] sm:text-[2rem] md:text-[2.5rem] lg:text-[3rem] font-sans">
                 Testimonial{" "}
               </h1>
-              <h6 className="subtitle">
-                Here you can check Demos we created based on WrapKit. Its quite
-                easy to Create your own dream website &amp; dashboard in
-                No-time.
-              </h6>
             </Col>
           </Row>
         </Container>
       </div>
-      <div className="testimonial3 spacer bg-light">
+      <div className="testimonial3 spacer ">
         <Container>
           <Row className="justify-content-center">
             <Col md="7" className="text-center">
@@ -76,7 +71,7 @@ const TestimonialComponent = () => {
               >
                 <Card className="card-shadow transition-transform duration-300 hover:scale-105 hover:shadow-xl h-full">
                   <CardBody className="flex flex-col justify-between h-full">
-                    <h6 className="font-light m-b-30 text-base h-20 overflow-hidden">
+                    <h6 className="font-light m-b-30 text-base h-20 overflow-hiddencfont-sans-serif">
                       {testimonial.text}
                     </h6>
                     <div className="d-flex no-block align-items-center">

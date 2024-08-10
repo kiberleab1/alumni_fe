@@ -47,7 +47,7 @@ function AboutUsComponent({ title, body, images }) {
     });
   }, []);
   return (
-    <div className="min-h-screen  flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen  flex items-center justify-center bg-gray-100                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 0">
       <div className="container bg-gray-100 dark:bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 h-full">
         <div
           className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16 mx-auto"
@@ -57,10 +57,10 @@ function AboutUsComponent({ title, body, images }) {
             className="w-full lg:w-6/12 flex flex-col space-y-6 lg:space-y-8"
             data-aos="fade-up"
           >
-            <h1 className="text-3xl lg:text-4xl font-extrabold text-gray-900 dark:text-white">
+            <h1 className="text-3xl lg:text-4xl  text-gray-900 dark:text-white font-sans">
               {title || "Our Story"}
             </h1>
-            <p className="text-lg text-gray-700 dark:text-gray-300">
+            <p className="text-lg text-gray-700 dark:text-gray-300 font-sans-serif">
               {body ||
                 "Welcome to [Your Company]. We are dedicated to [your mission statement]. Our journey began in [Year] when [founder's name] decided to [reason for founding]. Since then, we've achieved [mention any achievements or milestones]."}
             </p>

@@ -44,7 +44,7 @@ const ContentCatalogComponent = ({ newsArray }) => {
   };
   return (
     <div>
-      <div className="blog-home2 spacer  bg-light">
+      <div className="blog-home2 spacer">
         <Container>
           <Row className="flex flex-wrap justify-center w-full">
             <Slider {...settings}>
@@ -57,7 +57,7 @@ const ContentCatalogComponent = ({ newsArray }) => {
                   className="p-4 shadow-xl "
                   data-aos="fade-up"
                 >
-                  <Card className="relative overflow-hidden shadow-[0_0_0_-15px_rgba(0,0,0,0.2)] bg-white">
+                  <Card className="relative overflow-hidden border">
                     <a
                       href={news.link}
                       className="transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300"
@@ -84,14 +84,14 @@ const ContentCatalogComponent = ({ newsArray }) => {
                           {news?.avenue ? news.avenue : ""}
                         </a>
                       </h5>
-                      <h6 className="text-start p-2 flex justify-center flex-col">
+                      <h6 className="text-start pl-2 flex justify-center flex-col">
                         <a href={news.link} className="link text-xl">
                           {news.header}
                         </a>
                       </h6>
                       <div
                         dangerouslySetInnerHTML={{ __html: news.details }}
-                        className="font-medium text-start flex justify-center flex-col p-2"
+                        className="font-medium text-start flex justify-center flex-col pl-2"
                       ></div>
                       <a
                         href={news.link}
