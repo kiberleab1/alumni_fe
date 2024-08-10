@@ -30,7 +30,7 @@ function LandingEventsPage() {
     return allNews;
   });
   return (
-    <div className="h-full bg-light">
+    <div className="h-full bg-gray-100">
       {" "}
       <QueryResult isError={isError} isLoading={isLoading} data={data}>
         <SectionHolderComponent title={section.title} body={section.body} />

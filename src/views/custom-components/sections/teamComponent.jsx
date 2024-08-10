@@ -54,7 +54,7 @@ const TeamComponent = () => {
   };
   return (
     <QueryResult isLoading={isLoading} isError={isError} data={data}>
-      <div className=" bg-gray-50">
+      <div className=" bg-gray-100">
         <div className=" justify-content-center">
           <Container>
             <Row className="justify-content-center">

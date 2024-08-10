@@ -2,7 +2,7 @@ import { Container, Row, Col } from "reactstrap";
 
 function SectionHolderComponent({ title, body }) {
   return (
-    <div className="spacer bg-light">
+    <div className="spacer  bg-gray-100">
       <Container>
         <Row className="justify-content-center">
           <Col md="7" className="text-center">
