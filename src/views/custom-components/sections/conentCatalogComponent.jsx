@@ -46,7 +46,7 @@ const ContentCatalogComponent = ({ newsArray }) => {
     <div>
       <div className="blog-home2 spacer  bg-light">
         <Container>
-          <Row className="flex flex-wrap justify-center">
+          <Row className="flex flex-wrap justify-center w-full">
             <Slider {...settings}>
               {newsArray.map((news, idx) => (
                 <Col

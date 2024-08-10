@@ -49,64 +49,64 @@ const Header = () => {
       subLink: [],
     },
     {
-      name: "about us",
+      name: "About us",
       link: "/landing/aboutus",
       subLink: [
         {
-          name: "contact",
+          name: "Contact",
           link: "/landing/aboutus/contact",
         },
         {
-          name: "directory",
+          name: "Directory",
           link: "/landing/aboutus/directory",
         },
         {
-          name: "gallery",
+          name: "Gallery",
           link: "/landing/aboutus/gallery",
         },
         {
-          name: "news",
+          name: "News",
           link: "/landing/aboutus/news",
         },
       ],
     },
     {
-      name: "program & events",
+      name: "Program & events",
       link: "/landing/events",
       subLink: [
         {
-          name: "upcoming events",
+          name: "Upcoming events",
           link: "/landing/events",
         },
         {
-          name: "latest members",
+          name: "Latest members",
           link: "/landing/program/members",
         },
         {
-          name: "alumni profile",
+          name: "Alumni profile",
           link: "/landing/program/profile",
         },
         {
-          name: "alumni login",
+          name: "Alumni login",
           link: "/landing/program/login",
         },
         {
-          name: "alumni register",
+          name: "Alumni register",
           link: "/landing/program/register",
         },
       ],
     },
     {
-      name: "alumni stories",
+      name: "Alumni stories",
       link: "/landing/alumni",
       subLink: [],
     },
     {
-      name: "career opportunities",
+      name: "Career opportunities",
       link: "/landing/career",
       subLink: [
         {
-          name: "apply to job",
+          name: "Apply to job",
           link: "/landing/career/apply",
         },
       ],
@@ -186,61 +186,67 @@ const Header = () => {
             }`}
           >
             <ul
-              className={`transition duration-300 ease-in-out ${
+              className={`transition duration-300 ease-in-out font-serif  ${
                 isActive && isSidebarOpen
                   ? "absolute right-0 top-0 text-left bg-gray-800 p-1 w-full"
                   : "hidden md:flex z-50 p-1"
               }`}
             >
-              {links.map((mainLink, idx) => (
-                <li
-                  className={`relative group transition-transform duration-300 ease-in-out ${
-                    isActive && isSidebarOpen
-                      ? "justify-start hover:translate-x-1 hover:scale-70"
-                      : "hover:translate-y-1 hover:scale-70 transition ease-in delay-300 text-xl w-fit block after:block after:content-[''] after:absolute after:h-[4px] after:bg-green-800 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
-                  }`}
-                  key={idx}
-                >
-                  <a
-                    href={mainLink.link}
-                    className={`transition-colors duration-500 ease-in-out ${
-                      location.pathname === mainLink.link
-                        ? " text-yellow-600"
-                        : ""
-                    } ${
-                      isActive && isSidebarOpen
-                        ? "uppercase block py-2 px-1 text-gray-200 hover:text-yellow-400 transition ease-in delay-300 text-xl w-fit block after:block after:content-[''] after:absolute after:h-[4px] after:bg-green-800 after:w-1/5 after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
-                        : "text-lg md:text-xl uppercase block py-2 px-4 text-gray-200 hover:text-yellow-400"
-                    }`}
-                    onClick={toggleSidebar}
-                  >
-                    {mainLink.name}
-                  </a>
+              {links.map((mainLink, idx) => {
+                const isSubLinkActive = mainLink.subLink.some(
+                  (subLink) => location.pathname === subLink.link
+                );
 
-                  <div
-                    className={`transition-transform duration-300 ease-in-out ${
+                return (
+                  <li
+                    className={`relative group transition-transform duration-300 ease-in-out ${
                       isActive && isSidebarOpen
-                        ? "hidden group-hover:block relative right-15 bg-gray-700 m-0 p-0"
-                        : "hidden transition ease-in delay-300 group-hover:block absolute right-15 bg-gray-800 py-2 p-0"
+                        ? "justify-start hover:translate-x-1 hover:scale-70"
+                        : "hover:translate-y-1 hover:scale-70 transition ease-in delay-300 text-xl w-fit block after:block after:content-[''] after:absolute after:h-[4px] after:bg-green-800 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
                     }`}
+                    key={idx}
                   >
-                    {mainLink.subLink.map((subLink, idx) => (
-                      <a
-                        href={subLink.link}
-                        key={idx + subLink.name}
-                        className={`uppercase block transition delay-300 hover:translate-x-1 px-4 py-2 text-yellow-100 hover:text-yellow-400 transition-colors duration-500 ${
-                          location.pathname === subLink.link
-                            ? "text-yellow-600"
-                            : ""
-                        }`}
-                        onClick={toggleSidebar}
-                      >
-                        {subLink.name}
-                      </a>
-                    ))}
-                  </div>
-                </li>
-              ))}
+                    <a
+                      href={mainLink.link}
+                      className={`transition-colors duration-500 ease-in-out ${
+                        location.pathname === mainLink.link || isSubLinkActive
+                          ? "text-yellow-600"
+                          : ""
+                      } ${
+                        isActive && isSidebarOpen
+                          ? " block py-2 px-1 text-gray-200 hover:text-yellow-400 transition ease-in delay-300 text-xl w-fit block after:block after:content-[''] after:absolute after:h-[4px] after:bg-green-800 after:w-1/5 after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
+                          : "text-lg md:text-xl  block py-2 px-4 text-gray-200 hover:text-yellow-400"
+                      }`}
+                      onClick={toggleSidebar}
+                    >
+                      {mainLink.name}
+                    </a>
+
+                    <div
+                      className={`transition-transform duration-300 ease-in-out ${
+                        isActive && isSidebarOpen
+                          ? "hidden group-hover:block relative right-15 bg-gray-700 m-0 p-0"
+                          : "hidden transition ease-in delay-300 group-hover:block absolute right-15 bg-gray-800 py-2 p-0"
+                      }`}
+                    >
+                      {mainLink.subLink.map((subLink, idx) => (
+                        <a
+                          href={subLink.link}
+                          key={idx + subLink.name}
+                          className={` text-start block transition delay-300 hover:translate-x-1 px-4 py-2 text-yellow-100 hover:text-yellow-400 transition-colors duration-500 ${
+                            location.pathname === subLink.link
+                              ? "text-yellow-600"
+                              : ""
+                          }`}
+                          onClick={toggleSidebar}
+                        >
+                          {subLink.name}
+                        </a>
+                      ))}
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
         </div>
