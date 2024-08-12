@@ -10,9 +10,12 @@ export default function DocumentVerificationPage({
   onCreateDocumentVerificationClick,
   onEditDocumentVerififcationClick,
 }) {
-  const { isError, data, isLoading } = useQuery("getAllVerificationRequest", async () => {
-    return await getAllVerificationRequest({ pageNumber: 1, pageSize: 10 });
-  });
+  const { isError, data, isLoading } = useQuery(
+    "getAllVerificationRequest",
+    async () => {
+      return await getAllVerificationRequest({ pageNumber: 1, pageSize: 10 });
+    }
+  );
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
@@ -84,7 +87,7 @@ function ListDepartment({
       deleteDept(selectedItem);
     }
   };
-
+  useEffect;
   return (
     <div className="flex flex-col">
       <div className="sm:flex sm:items-center">
@@ -93,8 +96,8 @@ function ListDepartment({
             Document Verification Requests
           </h1>
           <p className="mt-2 text-sm text-gray-500 font-mono">
-            A list of all the document verification in the system including their name,
-            description, start date.
+            A list of all the document verification in the system including
+            their name, description, start date.
           </p>
         </div>
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -157,34 +160,45 @@ function ListDepartment({
                     <tr key={document.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm font-medium text-gray-900">
-                          {document.requesting_user_email ? document.requesting_user_email : "" }
+                          {document.requesting_user_email
+                            ? document.requesting_user_email
+                            : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {document.requesting_institute_name ? document.requesting_institute_name : "" }
+                          {document.requesting_institute_name
+                            ? document.requesting_institute_name
+                            : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {document.user_email ? document.user_email : "" }
+                          {document.user_email ? document.user_email : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {document.user_email ? document.user_first_name  : "" } {document.user_last_name ? document.user_last_name  : "" }
+                          {document.user_email ? document.user_first_name : ""}{" "}
+                          {document.user_last_name
+                            ? document.user_last_name
+                            : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {document.user_institute ? document.user_institute : "" }
+                          {document.user_institute
+                            ? document.user_institute
+                            : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium">
                         <a
                           href="#"
                           className="text-indigo-600 hover:text-green-900"
-                          onClick={() => onEditDocumentVerififcationClick(document)}
+                          onClick={() =>
+                            onEditDocumentVerififcationClick(document)
+                          }
                         >
                           Edit
                         </a>

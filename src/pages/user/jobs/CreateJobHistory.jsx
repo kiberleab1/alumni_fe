@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import useAOS from "../aos";
 import {
   createAddress,
   createJobHistory,
@@ -73,19 +74,22 @@ export default function CreateJobHistory() {
       setJobHistoryError(error);
     }
   };
-
+  useAOS({
+    duration: 1200,
+    once: true,
+  });
   return (
-    <div className="space-y-10 divide-y divide-gray-900/10">
+    <div className="space-y-10 divide-y divide-gray-900/10 min-h-screen">
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 pl-10 pr-10 pt-10 md:grid-cols-2">
         <form className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-3">
           <div className="px-4 sm:px-0">
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
+            <h2 className="text-2xl font-semibold leading-7 text-gray-900 font-sans">
               Job History Information
             </h2>
           </div>
           <div className="px-4 py-6 sm:p-8">
             <div className="grid max-w-full grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div className="sm:col-span-2">
+              <div className="sm:col-span-2" data-aos="fade-up">
                 <label
                   htmlFor="job-title"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -136,7 +140,7 @@ export default function CreateJobHistory() {
                   />
                 </div>
               </div>
-              <div className="sm:col-span-2">
+              <div className="sm:col-span-2" data-aos="fade-left">
                 <label
                   htmlFor="job-status"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -161,7 +165,7 @@ export default function CreateJobHistory() {
                   />
                 </div>
               </div>
-              <div className="sm:col-span-2">
+              <div className="sm:col-span-2" data-aos="fade-up">
                 <label
                   htmlFor="job-status"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -212,7 +216,7 @@ export default function CreateJobHistory() {
                 </div>
               </div>
 
-              <div className="sm:col-span-6">
+              <div className="sm:col-span-6" data-aos="fade-left">
                 <label
                   htmlFor="department-description"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -241,20 +245,28 @@ export default function CreateJobHistory() {
             {johHistoryError && (
               <p className="text-red-600 font-mono">{johHistoryError}</p>
             )}
-            <button
-              type="button"
-              className="text-sm font-semibold leading-6 text-gray-100"
+
+            <a
+              href="#_"
+              className="rounded-2xl px-3.5 py-2 m-1 overflow-hidden relative group cursor-pointer border-2 font-medium border-red-200 text-indigo-600 text-white bg-red-900"
               onClick={handleJobHistoryClear}
             >
-              Clear
-            </button>
-            <button
-              type="button"
-              className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              <span className="absolute w-64 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-red-200 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease"></span>
+              <span className="relative text-indigo-200 transition duration-300 group-hover:text-black ease ">
+                Clear
+              </span>
+            </a>
+
+            <a
+              href="#_"
+              className="rounded-2xl px-3.5 py-2 m-1 overflow-hidden relative group cursor-pointer border-2 font-medium border-indigo-200 text-indigo-600 text-white bg-indigo-600"
               onClick={handleJobHistorySubmit}
             >
-              Save
-            </button>
+              <span className="absolute w-64 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-indigo-200 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease"></span>
+              <span className="relative text-indigo-100 transition duration-300 group-hover:text-black ease">
+                Save
+              </span>
+            </a>
           </div>
         </form>
       </div>

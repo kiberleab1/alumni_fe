@@ -8,6 +8,12 @@ import NewsCard from "src/components/utils/NewsCard";
 import QueryResult from "src/components/utils/queryResults";
 import { formatDate } from "src/utils/utils";
 
+import { CiLocationOn } from "react-icons/ci";
+import { TbArrowZigZag } from "react-icons/tb";
+import { SlCalender } from "react-icons/sl";
+import image1 from "../../../assets/images/testimonial/2.jpg";
+import image2 from "../../../assets/images/testimonial/3.jpg";
+import { Button } from "reactstrap";
 export default function EventsPage({ onCreateEventClick, onEditEventClick }) {
   const { isError, data, isLoading } = useQuery("getAllEvents", async () => {
     return await getAllEvents({ pageNumber: 1, pageSize: 10 });
@@ -37,6 +43,29 @@ function ListEvent({ eventsData, onCreateEventClick, onEditEventClick }) {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = eventsData.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(eventsData.length / itemsPerPage);
+  const cardData = [
+    {
+      image: image1,
+      name: "Alex",
+      location: "New York City",
+      date: "August 11, 2024",
+      type: "Conference",
+    },
+    {
+      image: image2,
+      name: "John Doe",
+      location: "New York City",
+      date: "August 11, 2024",
+      type: "Conference",
+    },
+    {
+      image: image1,
+      name: "John Doe",
+      location: "New York City",
+      date: "August 11, 2024",
+      type: "Conference",
+    },
+  ];
 
   const paginate = (pageNumber) => {
     if (pageNumber < 1 || pageNumber > totalPages) return;
@@ -76,10 +105,10 @@ function ListEvent({ eventsData, onCreateEventClick, onEditEventClick }) {
   });
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col min-h-screen">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto mb-10">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">
+          <h1 className="text-2xl font-semibold leading-6 text-gray-900 font-sans">
             Events
           </h1>
           <p className="mt-2 text-sm text-gray-700">
@@ -88,7 +117,7 @@ function ListEvent({ eventsData, onCreateEventClick, onEditEventClick }) {
         </div>
       </div>
       <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-        <div className="min-w-full">
+        {/* <div className="min-w-full">
           <div className="overflow-x-auto">
             <div className="table-container">
               <div className="max-w-5xl mx-auto">
@@ -98,8 +127,46 @@ function ListEvent({ eventsData, onCreateEventClick, onEditEventClick }) {
                   </div>
                 ))}
               </div>
-
             </div>
+          </div>
+        </div> */}
+
+        <div className="container mx-auto px-7 py-2 sm:px-10 md:px-20 lg:px-32 lg:pt-12  min-h-screen bg-red-50 pt-4 ">
+          <div className="-m-1 flex flex-wrap md:-m-2 justify-center">
+            {cardData.map((val, idx) => {
+              return (
+                <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/4 bg-white rounded-lg shadow-md overflow-hidden transform transition duration-500 hover:scale-105 mx-6 my-4">
+                  <div
+                    className="h-48 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${val.image})` }}
+                  ></div>
+                  <div className="p-4">
+                    <h2 className="text-xl text-start font-bold mb-3">
+                      {" "}
+                      {val.name}
+                    </h2>
+                    <div className="flex items-center text-gray-600 mb-2 space-x-2">
+                      <SlCalender />
+                      <span>September 5-28, 2024</span>
+                    </div>
+                    <div className="flex items-center text-gray-600 mb-2 space-x-2">
+                      <CiLocationOn />
+                      <span>Chicago</span>
+                    </div>
+
+                    <div className="flex items-center text-gray-600 space-x-2">
+                      <TbArrowZigZag />
+                      <span>Class</span>
+                    </div>
+                    <div className="flex items-center  space-x-2 ">
+                      <button className="bg-white text-black hover:bg-gray-700 mt-4">
+                        Learn More
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
