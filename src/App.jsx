@@ -101,7 +101,7 @@ function App() {
             <Route path="/" element={<Navigate to="/landing" replace />} />
             <Route path="*" element={<NotFoundComponent />} />
           </Routes>
-          <Footer />
+          {/* <Footer /> */}
         </div>
       </BrowserRouter>
     </QueryClientProvider>

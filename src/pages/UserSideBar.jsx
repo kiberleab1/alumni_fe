@@ -23,9 +23,11 @@ import {
   UsersIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import ComponentRender from "../pages/UserComponentRender";
 import CreateAdminPage from "./admin/admins/createAdmin";
+import { useQuery } from "react-query";
+import { getAllSettings, getImageBaseUrl } from "src/api";
 // import { useLocation } from "react-router-dom";
 
 const navigation = [
@@ -102,6 +104,46 @@ function UserSideBar() {
     console.log(itemName);
   };
 
+  const [logo, setLogo] = useState({});
+  const [sideBarBackground, setSideBarBackground] = useState({});
+  const [sideBarTextColor, setSideBarTextColor] = useState({});
+  const [sidebarHoverBG, setSidebarHoverBG] = useState({});
+  const [sideBarHoverTextColor, setSideBarHOverTextColor] = useState({});
+  const [sideBarActuveTextColor, setSideBarActiveTextColor] = useState({});
+  const [sidebarActiveBG, setSidebarActiveBG] = useState({});
+
+
+  const { isError, data, isLoading } = useQuery("getAllSettings", async () => {
+    return await getAllSettings({ pageNumber: 0, pageSize: 20 });
+  });
+
+  useEffect(() => {
+    if (!isError && !isLoading && data) {
+      const settingsData = data.data.settings;
+      console.log(settingsData);
+      if (settingsData) {
+        settingsData.forEach(setting => {
+          const { setting_name, setting_value } = setting;
+          if (setting_name == "sidebarBackground") {
+            setSideBarBackground(setting_value);
+          } else if (setting_name == "sidebarText") {
+            setSideBarTextColor(setting_value);
+          } else if (setting_name == "logo") {
+            setLogo(getImageBaseUrl(setting_value));
+          } else if (setting_name == "sideBarHoverBackgroundColor") {
+            setSidebarHoverBG(setting_value);
+          } else if (setting_name == "sideBarHoverTextColor") {
+            setSideBarHOverTextColor(setting_value);
+          } else if (setting_name == "sideBarActiveBackgroundColor") {
+            setSidebarActiveBG(setting_value);
+          } else if (setting_name == "sideBarActiveTextColor") {
+            setSideBarActiveTextColor(setting_value);
+          }
+        });
+      }
+    }
+  }, [isError, isLoading, data]);
+
   // const location = useLocation();
   // useEffect(() => {
   //   const item = navigation.find((item) => {
@@ -173,7 +215,7 @@ function UserSideBar() {
                       </button>
                     </div>
                   </Transition.Child>
-                  <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4 ring-1 ring-white/10">
+                  <div className="flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-4 ring-1 ring-white/10" style={{ backgroundColor: sideBarBackground || '#cc0000' }}>
                     <div className="flex h-16 shrink-0 items-center">
                       <span className="text-2xl text-gray-50 font-bold font-mono">
                         X Alumni
@@ -188,14 +230,24 @@ function UserSideBar() {
                                 <a
                                   href={item.href}
                                   className={classNames(
-                                    componentClicked.name == item.name
-                                      ? "bg-gray-800 text-white"
-                                      : "text-gray-400 hover:text-white hover:bg-gray-800",
+                                    componentClicked.name === item.name
+                                      ? "ring-1 ring-inset"
+                                      : "",
                                     "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                                   )}
-                                  onClick={() =>
-                                    handleNavigationItemClick(item.name)
-                                  }
+                                  style={{
+                                    color: componentClicked.name === item.name ? sideBarActuveTextColor || '#FFFFFF' : sideBarTextColor || '#ccc',
+                                    backgroundColor: componentClicked.name === item.name ? sidebarActiveBG || '#4B5563' : 'transparent',
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.currentTarget.style.color = sideBarHoverTextColor || '#FFFFFF';
+                                    e.currentTarget.style.backgroundColor = sidebarHoverBG || '#4B5563';
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.style.color = componentClicked.name === item.name ? sideBarActuveTextColor || '#FFFFFF' : sideBarTextColor || '#ccc';
+                                    e.currentTarget.style.backgroundColor = componentClicked.name === item.name ? sidebarActiveBG || '#4B5563' : 'transparent';
+                                  }}
+                                  onClick={() => handleNavigationItemClick(item.name)}
                                 >
                                   <item.icon
                                     className="h-6 w-6 shrink-0"
@@ -228,22 +280,6 @@ function UserSideBar() {
                                 Logout
                               </a>
                             </li>
-
-                            <li>
-                              <a
-                                href="#"
-                                className={classNames(
-                                  "text-gray-400 hover:text-white hover:bg-gray-800",
-                                  "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                                )}
-                              >
-                                <Cog6ToothIcon
-                                  className="h-6 w-6 shrink-0"
-                                  aria-hidden="true"
-                                />
-                                Settings
-                              </a>
-                            </li>
                           </ul>
                         </li>
                       </ul>
@@ -255,13 +291,12 @@ function UserSideBar() {
           </Dialog>
         </Transition.Root>
         <div
-          className={`${
-            sidebarOpenMain
-              ? "hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col"
-              : "hidden"
-          }`}
+          className={`${sidebarOpenMain
+            ? "hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col"
+            : "hidden"
+            }`}
         >
-          <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
+          <div className="flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-4" style={{ backgroundColor: sideBarBackground || '#cc0000' }}>
             <div className="flex h-16 shrink-0 items-center">
               <span className="text-2xl text-gray-50 font-bold font-mono mr-4">
                 X Alumni
@@ -288,10 +323,22 @@ function UserSideBar() {
                           href={item.href}
                           className={classNames(
                             componentClicked.name === item.name
-                              ? "bg-gray-800 text-white"
-                              : "text-gray-400 hover:text-white hover:bg-gray-800",
+                              ? "ring-1 ring-inset"
+                              : "",
                             "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                           )}
+                          style={{
+                            color: componentClicked.name === item.name ? sideBarActuveTextColor || '#FFFFFF' : sideBarTextColor || '#ccc',
+                            backgroundColor: componentClicked.name === item.name ? sidebarActiveBG || '#4B5563' : 'transparent',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.color = sideBarHoverTextColor || '#FFFFFF';
+                            e.currentTarget.style.backgroundColor = sidebarHoverBG || '#4B5563';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.color = componentClicked.name === item.name ? sideBarActuveTextColor || '#FFFFFF' : sideBarTextColor || '#ccc';
+                            e.currentTarget.style.backgroundColor = componentClicked.name === item.name ? sidebarActiveBG || '#4B5563' : 'transparent';
+                          }}
                           onClick={() => handleNavigationItemClick(item.name)}
                         >
                           <item.icon
@@ -326,13 +373,23 @@ function UserSideBar() {
                                       href={subItem.href}
                                       className={classNames(
                                         componentClicked.name === subItem.name
-                                          ? "bg-gray-800 text-white"
-                                          : "text-gray-400 hover:text-white hover:bg-gray-800",
+                                          ? "ring-1 ring-inset"
+                                          : "",
                                         "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                                       )}
-                                      onClick={() =>
-                                        handleNavigationItemClick(subItem.name)
-                                      }
+                                      style={{
+                                        color: componentClicked.name === subItem.name ? sideBarActuveTextColor || '#FFFFFF' : sideBarTextColor || '#ccc',
+                                        backgroundColor: componentClicked.name === subItem.name ? sidebarActiveBG || '#4B5563' : 'transparent',
+                                      }}
+                                      onMouseEnter={(e) => {
+                                        e.currentTarget.style.color = sideBarHoverTextColor || '#FFFFFF';
+                                        e.currentTarget.style.backgroundColor = sidebarHoverBG || '#4B5563';
+                                      }}
+                                      onMouseLeave={(e) => {
+                                        e.currentTarget.style.color = componentClicked.name === item.name ? sideBarActuveTextColor || '#FFFFFF' : sideBarTextColor || '#ccc';
+                                        e.currentTarget.style.backgroundColor = componentClicked.name === item.name ? sidebarActiveBG || '#4B5563' : 'transparent';
+                                      }}
+                                      onClick={() => handleNavigationItemClick(subItem.name)}
                                     >
                                       <subItem.icon
                                         className="h-6 w-6 shrink-0"
@@ -368,21 +425,6 @@ function UserSideBar() {
                       </a>
                     </li>
 
-                    <li>
-                      <a
-                        href="#"
-                        className={classNames(
-                          "text-gray-400 hover:text-white hover:bg-gray-800",
-                          "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                        )}
-                      >
-                        <Cog6ToothIcon
-                          className="h-6 w-6 shrink-0"
-                          aria-hidden="true"
-                        />
-                        Settings
-                      </a>
-                    </li>
                   </ul>
                 </li>
               </ul>

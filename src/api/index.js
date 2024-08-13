@@ -638,3 +638,19 @@ export async function createAlumniProfile(alumni) {
   console.log(alumni);
   return await axios.post(`${API_BASE_URl}/createAlumniProfile`, alumni);
 }
+
+export async function createSettings(settings) {
+  const response = await axios.post(`${API_BASE_URl}/createSetting`, settings, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response;
+}
+
+export async function getAllSettings({ pageNumber, pageSize }) {
+  const result = await axios.get(
+    `${API_BASE_URl}/getAllSettings?pageNumber=${pageNumber}&pageSize=${pageSize}`
+  );
+  return result;
+}

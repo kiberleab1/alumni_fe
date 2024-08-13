@@ -155,13 +155,13 @@ function ListEvent({ eventsData, onCreateEventClick, onEditEventClick }) {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {event.ownerAdminId ? event.ownerAdminId : "N/A"}
+                          {event.adminName ? event.adminName : "N/A"}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {event.ownerInstituteId
-                            ? event.ownerInstituteId
+                          {event.instituteName
+                            ? event.instituteName
                             : "N/A"}
                         </div>
                       </td>

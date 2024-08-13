@@ -36,9 +36,11 @@ import CreateGallaryPage from "./admin/webcontent/CreateGallaryPage";
 import AlumniPage from "./admin/alumni/AlumniPage";
 import DocumentVerificationPage from "./admin/documentVerification/DocumentVerificationPage";
 import ComposeEmail from "./admin/emails/compose";
+import SettingsPage from "./admin/settings/settings";
 
 const componentsMap = {
   Dashboard: AdminsPage,
+  Settings: SettingsPage,
   Admins: AdminsPage,
   "Create Admin": CreateAdmin,
   "Edit Admin": EditAdmin,
