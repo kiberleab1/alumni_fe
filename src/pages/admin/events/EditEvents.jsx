@@ -342,6 +342,20 @@ export default function EditEvents({ event }) {
         <div>
           <ToastContainer />
         </div>
+        <div className="max-w-xs mx-auto bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-500 hover:scale-105 hover:shadow-2xl">
+          <div className="relative">
+            <img className="w-full h-48 object-cover" />
+            <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
+              <button className="bg-white text-black py-2 px-4 rounded-full">
+                Learn More
+              </button>
+            </div>
+          </div>
+          <div className="p-4">
+            <h2 className="text-2xl font-bold mb-2">{"title"}</h2>
+            <p className="text-gray-700">{"description"}</p>
+          </div>
+        </div>
       </div>
     </QueryResult>
   );

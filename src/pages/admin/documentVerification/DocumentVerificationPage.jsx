@@ -5,14 +5,20 @@ import { formatDate, parseContactInfo } from "../../../utils/utils";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import Modal from "../../../components/utils/DeleteModal";
 import QueryResult from "src/components/utils/queryResults";
+import useAOS from "src/pages/user/aos";
+import { BsPersonWorkspace } from "react-icons/bs";
+import { IoDocumentsOutline } from "react-icons/io5";
 
 export default function DocumentVerificationPage({
   onCreateDocumentVerificationClick,
   onEditDocumentVerififcationClick,
 }) {
-  const { isError, data, isLoading } = useQuery("getAllVerificationRequest", async () => {
-    return await getAllVerificationRequest({ pageNumber: 1, pageSize: 10 });
-  });
+  const { isError, data, isLoading } = useQuery(
+    "getAllVerificationRequest",
+    async () => {
+      return await getAllVerificationRequest({ pageNumber: 1, pageSize: 10 });
+    }
+  );
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
@@ -84,31 +90,47 @@ function ListDepartment({
       deleteDept(selectedItem);
     }
   };
-
+  useAOS({
+    duration: 1200,
+    once: true,
+  });
   return (
-    <div className="flex flex-col">
-      <div className="sm:flex sm:items-center">
-        <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900 font-mono">
+    <div className="flex flex-col min-h-screen">
+      <div className="sm:flex sm:items-center mb-4">
+        <div className="sm:flex-auto" data-aos="fade-right">
+          <h1 className="text-2xl font-semibold leading-6 text-gray-900 font-sans">
             Document Verification Requests
           </h1>
-          <p className="mt-2 text-sm text-gray-500 font-mono">
-            A list of all the document verification in the system including their name,
-            description, start date.
+          <p className="mt-2 text-lg text-gray-500 font-sans-serif">
+            A list of all the document verification in the system including
+            their name, description, start date.
           </p>
         </div>
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-          <button
-            type="button"
-            className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          <a
+            href="#_"
+            className="relative inline-block text-lg group "
             onClick={onCreateDocumentVerificationClick}
           >
-            Add New Document Verification
-          </button>
+            <span className="relative z-10 block px-4 py-2 overflow-hidden font-medium leading-tight text-gray-800 transition-colors duration-300 ease-out border-2 border-gray-900 rounded-lg group-hover:text-white">
+              <span className="absolute inset-0 w-full h-full px-5 py-3 rounded-lg bg-gray-50"></span>
+              <span className="absolute left-0 w-48 h-48 -ml-2 transition-all duration-300 origin-top-right -rotate-90 -translate-x-full translate-y-12 bg-gray-900 group-hover:-rotate-180 ease"></span>
+              <span className="relative flex ">
+                <IoDocumentsOutline className="mr-2 text-xl" /> Document
+              </span>
+            </span>
+            <span
+              className="absolute bottom-0 right-0 w-full h-12 -mb-1 -mr-1 transition-all duration-200 ease-linear bg-gray-900 rounded-lg group-hover:mb-0 group-hover:mr-0"
+              data-rounded="rounded-lg"
+            ></span>
+          </a>
         </div>
       </div>
-      <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-        <div className="min-w-full">
+      <div
+        data-aos="fade-left"
+        className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg"
+      >
+        <div className="min-w-full ">
           <div className="overflow-x-auto">
             <div className="table-container" style={{ maxHeight: "500px" }}>
               <table className="min-w-full divide-y divide-gray-200">
@@ -157,34 +179,45 @@ function ListDepartment({
                     <tr key={document.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm font-medium text-gray-900">
-                          {document.requesting_user_email ? document.requesting_user_email : "" }
+                          {document.requesting_user_email
+                            ? document.requesting_user_email
+                            : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {document.requesting_institute_name ? document.requesting_institute_name : "" }
+                          {document.requesting_institute_name
+                            ? document.requesting_institute_name
+                            : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {document.user_email ? document.user_email : "" }
+                          {document.user_email ? document.user_email : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {document.user_email ? document.user_first_name  : "" } {document.user_last_name ? document.user_last_name  : "" }
+                          {document.user_email ? document.user_first_name : ""}{" "}
+                          {document.user_last_name
+                            ? document.user_last_name
+                            : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {document.user_institute ? document.user_institute : "" }
+                          {document.user_institute
+                            ? document.user_institute
+                            : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium">
                         <a
                           href="#"
                           className="text-indigo-600 hover:text-green-900"
-                          onClick={() => onEditDocumentVerififcationClick(document)}
+                          onClick={() =>
+                            onEditDocumentVerififcationClick(document)
+                          }
                         >
                           Edit
                         </a>

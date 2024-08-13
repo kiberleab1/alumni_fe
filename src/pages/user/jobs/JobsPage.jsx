@@ -1,5 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -7,7 +7,8 @@ import QueryResult from "src/components/utils/queryResults";
 import { deleteJob, getAllJobs } from "src/api";
 import Modal from "src/components/utils/DeleteModal";
 import { formatDate } from "src/utils/utils";
-
+import useAOS from "../aos";
+import { BsPersonWorkspace } from "react-icons/bs";
 export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
   const [jobs, setJobs] = useState([]);
   const itemsPerPage = 5;
@@ -31,7 +32,10 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
   //     queryClient.invalidateQueries("getAllJobs");
   //   },
   // });
-
+  useAOS({
+    duration: 1200,
+    once: true,
+  });
   const { mutate: deleteAdminModalAction } = useMutation(deleteJob, {
     onSuccess: () => {
       queryClient.invalidateQueries("getAllJobs");
@@ -75,23 +79,45 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
-      <div className="flex flex-col">
-        <div className="sm:flex sm:items-center">
+      <div className="flex flex-col min-h-screen">
+        <div className="sm:flex sm:items-center mb-4" data-aos="fade-down">
           <div className="sm:flex-auto">
-            <h1 className="text-base font-semibold leading-6 text-gray-900">
+            <h1 className="text-2xl font-semibold leading-6 text-gray-900 font-sans">
               Jobs
             </h1>
-            <p className="mt-2 text-sm text-gray-700">
+            <p className="mt-2 text-lg text-gray-500 font-sans-serif">
               A list of all the jobs in the system.
             </p>
           </div>
+          <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+            <a
+              href="#_"
+              className="relative inline-block text-lg group "
+              onClick={onCreateJobClick}
+            >
+              <span className="relative z-10 block px-4 py-2 overflow-hidden font-medium leading-tight text-gray-800 transition-colors duration-300 ease-out border-2 border-gray-900 rounded-lg group-hover:text-white">
+                <span className="absolute inset-0 w-full h-full px-5 py-3 rounded-lg bg-gray-50"></span>
+                <span className="absolute left-0 w-48 h-48 -ml-2 transition-all duration-300 origin-top-right -rotate-90 -translate-x-full translate-y-12 bg-gray-900 group-hover:-rotate-180 ease"></span>
+                <span className="relative flex ">
+                  <BsPersonWorkspace className="mr-2 text-xl" /> New Jobs
+                </span>
+              </span>
+              <span
+                className="absolute bottom-0 right-0 w-full h-12 -mb-1 -mr-1 transition-all duration-200 ease-linear bg-gray-900 rounded-lg group-hover:mb-0 group-hover:mr-0"
+                data-rounded="rounded-lg"
+              ></span>
+            </a>
+          </div>
         </div>
-        <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+        <div
+          data-aos="fade-right"
+          className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg"
+        >
           <div className="min-w-full">
             <div className="overflow-x-auto">
               <div className="table-container" style={{ maxHeight: "500px" }}>
                 <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="sticky top-0 bg-gray-50 z-10">
+                  <thead className="sticky top-0 bg-gray-200 z-10">
                     <tr>
                       <th
                         scope="col"
@@ -171,8 +197,9 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
               <button
                 onClick={() => paginate(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${currentPage === 1 ? "cursor-not-allowed" : ""
-                  }`}
+                className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${
+                  currentPage === 1 ? "cursor-not-allowed" : ""
+                }`}
               >
                 <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
                 <span className="ml-2">Previous</span>
@@ -180,8 +207,9 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
               <button
                 onClick={() => paginate(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${currentPage === totalPages ? "cursor-not-allowed" : ""
-                  }`}
+                className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${
+                  currentPage === totalPages ? "cursor-not-allowed" : ""
+                }`}
               >
                 <span className="mr-2">Next</span>
                 <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
@@ -206,8 +234,9 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
                   <button
                     onClick={() => paginate(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className={`mr-2 ml-2 relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${currentPage === 1 ? "cursor-not-allowed" : ""
-                      }`}
+                    className={`mr-2 ml-2 relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${
+                      currentPage === 1 ? "cursor-not-allowed" : ""
+                    }`}
                   >
                     <span className="sr-only">Previous</span>
                     <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
@@ -219,10 +248,11 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
                     <button
                       key={pageNumber}
                       onClick={() => paginate(pageNumber)}
-                      className={`relative ${currentPage === pageNumber
+                      className={`relative ${
+                        currentPage === pageNumber
                           ? "z-10 bg-indigo-600 text-white"
                           : "text-gray-900 bg-white hover:bg-gray-50"
-                        } inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus:outline-offset-0`}
+                      } inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus:outline-offset-0`}
                     >
                       {pageNumber}
                     </button>
@@ -230,8 +260,9 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
                   <button
                     onClick={() => paginate(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className={`relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-100 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${currentPage === totalPages ? "cursor-not-allowed" : ""
-                      }`}
+                    className={`relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-100 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${
+                      currentPage === totalPages ? "cursor-not-allowed" : ""
+                    }`}
                   >
                     <span className="sr-only">Next</span>
                     <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />

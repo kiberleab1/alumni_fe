@@ -9,6 +9,7 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useQuery } from "react-query";
+import useAOS from "../aos";
 
 export default function EditJobHistory({ jobHistory }) {
   console.log(jobHistory);
@@ -66,17 +67,20 @@ export default function EditJobHistory({ jobHistory }) {
       setDepartmentError(error);
     }
   };
-
+  useAOS({
+    duration: 1200,
+    once: true,
+  });
   return (
-    <div className="space-y-10 divide-y divide-gray-900/10">
+    <div className="space-y-10 divide-y divide-gray-900/10 min-h-screen">
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
         <form className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-3">
-          <div className="px-4 sm:px-0">
+          <div className="px-4 sm:px-0" data-aos="fade-up">
             <h2 className="text-base font-semibold leading-7 text-gray-900">
               Job History Information
             </h2>
           </div>
-          <div className="px-4 py-6 sm:p-8">
+          <div className="px-4 py-6 sm:p-8" data-aos="fade-up">
             <div className="grid max-w-full grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-2">
                 <label
@@ -208,7 +212,7 @@ export default function EditJobHistory({ jobHistory }) {
                   <textarea
                     id="jobHistory-description"
                     title="jobHistory-description"
-                    rows="3"
+                    // rows="3"
                     required
                     value={jobHistoryFields.description}
                     onChange={(e) =>
@@ -223,7 +227,10 @@ export default function EditJobHistory({ jobHistory }) {
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
+          <div
+            data-aos="fade-down"
+            className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8"
+          >
             {departmentError && (
               <p className="text-red-600 font-mono">{departmentError}</p>
             )}
