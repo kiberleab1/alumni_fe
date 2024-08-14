@@ -41,7 +41,7 @@ function LandingPage() {
   return (
     <>
       <QueryResult isError={isError} isLoading={isLoading} data={data}>
-        <div className="h-[80svh] -z-10">
+        <div className="h-screen -z-10">
           {" "}
           <SlideShowComponent
             images={slider.imagesList}

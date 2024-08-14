@@ -65,6 +65,27 @@ function ListEvent({ eventsData, onCreateEventClick, onEditEventClick }) {
       date: "August 11, 2024",
       type: "Conference",
     },
+    {
+      image: image1,
+      name: "Alex",
+      location: "New York City",
+      date: "August 11, 2024",
+      type: "Conference",
+    },
+    {
+      image: image2,
+      name: "John Doe",
+      location: "New York City",
+      date: "August 11, 2024",
+      type: "Conference",
+    },
+    {
+      image: image1,
+      name: "John Doe",
+      location: "New York City",
+      date: "August 11, 2024",
+      type: "Conference",
+    },
   ];
 
   const paginate = (pageNumber) => {
@@ -105,18 +126,18 @@ function ListEvent({ eventsData, onCreateEventClick, onEditEventClick }) {
   });
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col  bg-gray-20 rounded-lg min-w-[100%] ">
       <div className="sm:flex sm:items-center">
-        <div className="sm:flex-auto mb-10">
-          <h1 className="text-2xl font-semibold leading-6 text-gray-900 font-sans">
+        <div className="sm:flex-auto ">
+          <h1 className="text-2xl font-semibold  text-gray-900 font-sans ">
             Events
           </h1>
-          <p className="mt-2 text-sm text-gray-700">
+          {/* <p className="mt-2 text-sm text-gray-700">
             A list of all the evnets in the system.
-          </p>
+          </p> */}
         </div>
       </div>
-      <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+      <div className=" ">
         {/* <div className="min-w-full">
           <div className="overflow-x-auto">
             <div className="table-container">
@@ -131,42 +152,49 @@ function ListEvent({ eventsData, onCreateEventClick, onEditEventClick }) {
           </div>
         </div> */}
 
-        <div className="container mx-auto px-7 py-2 sm:px-10 md:px-20 lg:px-32 lg:pt-12  min-h-screen bg-red-50 pt-4 ">
-          <div className="-m-1 flex flex-wrap md:-m-2 justify-center">
-            {cardData.map((val, idx) => {
-              return (
-                <div className="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/4 bg-white rounded-lg shadow-md overflow-hidden transform transition duration-500 hover:scale-105 mx-6 my-4">
-                  <div
-                    className="h-48 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${val.image})` }}
-                  ></div>
-                  <div className="p-4">
-                    <h2 className="text-xl text-start font-bold mb-3">
-                      {" "}
-                      {val.name}
-                    </h2>
-                    <div className="flex items-center text-gray-600 mb-2 space-x-2">
-                      <SlCalender />
-                      <span>September 5-28, 2024</span>
-                    </div>
-                    <div className="flex items-center text-gray-600 mb-2 space-x-2">
-                      <CiLocationOn />
-                      <span>Chicago</span>
-                    </div>
-
-                    <div className="flex items-center text-gray-600 space-x-2">
-                      <TbArrowZigZag />
-                      <span>Class</span>
-                    </div>
-                    <div className="flex items-center  space-x-2 ">
-                      <button className="bg-white text-black hover:bg-gray-700 mt-4">
+        <div className="spacer container  w-[100%] ">
+          <div className=" flex flex-wrap md:-m-2 justify-center h-[500px] overflow-y-scroll ">
+            {cardData.map((val, idx) => (
+              <div
+                className="w-[100%] shadow-lg sm:w-[80%] md:w-1/3 lg:w-1/3 xl:w-[22%] bg-white rounded-lg shadow-sm overflow-hidden transform transition duration-500 hover:scale-105 mx-3 md:mx-4 my-4"
+                key={idx}
+              >
+                <div
+                  className=" bg-cover bg-center"
+                  style={{ backgroundImage: `url(${val.image})` }}
+                ></div>
+                <div className="p-4">
+                  <h2 className="text-xl text-start font-bold mb-3">
+                    {val.name}
+                  </h2>
+                  <div className="flex items-center text-gray-600 mb-2 space-x-2">
+                    <SlCalender />
+                    <span>September 5-28, 2024</span>
+                  </div>
+                  <div className="flex items-center text-gray-600 mb-2 space-x-2">
+                    <CiLocationOn />
+                    <span>Chicago</span>
+                  </div>
+                  <div className="flex items-center text-gray-600 space-x-2">
+                    <TbArrowZigZag />
+                    <span>Class</span>
+                  </div>
+                  <div className="flex items-center space-x-2 mb-2 mt-4">
+                    <a
+                      href="#_"
+                      className="relative inline-flex items-center justify-center px-3 py-2 text-lg font-medium tracking-tighter text-white bg-gray-800 rounded-md group"
+                    >
+                      <span className="absolute inset-0 w-full h-full mt-1 ml-1 transition-all duration-300 ease-in-out bg-gray-600 rounded-md group-hover:mt-0 group-hover:ml-0"></span>
+                      <span className="absolute inset-0 w-full h-full bg-white rounded-md"></span>
+                      <span className="absolute inset-0 w-full h-full transition-all duration-200 ease-in-out delay-100 bg-purple-600 rounded-md opacity-0 group-hover:opacity-100"></span>
+                      <span className="relative text-yellow-600 transition-colors duration-200 ease-in-out delay-100 group-hover:text-black">
                         Learn More
-                      </button>
-                    </div>
+                      </span>
+                    </a>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </div>
       </div>

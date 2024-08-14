@@ -37,20 +37,21 @@ const TestimonialComponent = () => {
   }, []);
   return (
     <div className="bg-light">
-      <div className="spacer">
+      <div className="">
         <Container>
           <Row className="justify-content-center">
             <Col md="7" className="text-center">
               <h1 className="title text-[1.5rem] sm:text-[2rem] md:text-[2.5rem] lg:text-[3rem] font-sans">
                 Testimonial{" "}
               </h1>
+              <h2 className="title">Check what our Customers are Saying</h2>
             </Col>
           </Row>
         </Container>
       </div>
-      <div className="testimonial3 spacer ">
+      <div className="testimonial3  ">
         <Container>
-          <Row className="justify-content-center">
+          {/* <Row className="justify-content-center">
             <Col md="7" className="text-center">
               <h2 className="title">Check what our Customers are Saying</h2>
               <h6 className="subtitle">
@@ -59,7 +60,7 @@ const TestimonialComponent = () => {
                 no-time
               </h6>
             </Col>
-          </Row>
+          </Row> */}
           <Row className="testi3 m-t-40 justify-content-center">
             {testimonialData.map((testimonial) => (
               <Col
@@ -69,7 +70,7 @@ const TestimonialComponent = () => {
                 data-aos="fade-up"
                 data-aos-duration="1000"
               >
-                <Card className="card-shadow transition-transform duration-300 hover:scale-105 hover:shadow-xl h-full">
+                <Card className="card-shadow transition-transform duration-300 hover:scale-105 hover:shadow-xl h-full m-2">
                   <CardBody className="flex flex-col justify-between h-full">
                     <h6 className="font-light m-b-30 text-base h-20 overflow-hiddencfont-sans-serif">
                       {testimonial.text}

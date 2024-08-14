@@ -54,23 +54,23 @@ const TeamComponent = () => {
   };
   return (
     <QueryResult isLoading={isLoading} isError={isError} data={data}>
-      <div className=" bg-gray-100">
+      <div className=" bg-gray-150">
         <div className=" justify-content-center">
           <Container>
             <Row className="justify-content-center">
               <Col className="text-center m justiyf-center">
                 <div className="text-center py-8 px-4 lg:px-32">
-                  <h1 className="title font-small text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-sans">
+                  <h1 className="title font-small text-xl sm:text-2xl md:text-3xl lg:text-4xl font-sans">
                     Meet the Team
                   </h1>
-                  <h3 className="title font-sm text-2xl sm:text-3xl md:text-4xl lg:text-5xl mt-4 font-sans-serif">
+                  {/* <h3 className="title font-sm text-2xl sm:text-3xl md:text-4xl lg:text-5xl mt-4 font-sans-serif">
                     Experienced & Professional Team
-                  </h3>
-                  <h6 className="subtitle text-base sm:text-lg md:text-xl lg:text-2xl mt-4 font-sans-serif">
+                  </h3> */}
+                  {/* <h6 className="subtitle text-base sm:text-lg md:text-xl lg:text-2xl mt-4 font-sans-serif">
                     You can rely on our amazing features list and also our
                     customer services will be a great experience for you without
                     doubt and in no time
-                  </h6>
+                  </h6> */}
                 </div>
 
                 {/* <h6 className="subtitle">
@@ -82,7 +82,7 @@ const TeamComponent = () => {
           </Container>
         </div>
 
-        <div className="spacer team2">
+        <div className="mt-4 mb-4 team2">
           <Container>
             <Row className="justify-content-center">
               <Col md="7" className="text-center"></Col>

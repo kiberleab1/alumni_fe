@@ -10,7 +10,37 @@ import "react-toastify/dist/ReactToastify.css";
 import QueryResult from "src/components/utils/queryResults";
 import useAOS from "../aos";
 import { GrHistory } from "react-icons/gr";
-
+import { MdMessage } from "react-icons/md";
+import { LuPlus } from "react-icons/lu";
+import image1 from "../../../assets/images/testimonial/2.jpg";
+import image2 from "../../../assets/images/testimonial/3.jpg";
+import image3 from "../../../assets/images/testimonial/4.jpg";
+const users = [
+  {
+    id: 1,
+    name: "Joe Doe",
+    Department: "Senior Software Engineer",
+    img: image1,
+  },
+  {
+    id: 2,
+    name: "Joe Doe2",
+    Department: "Senior Software Engineer",
+    img: image2,
+  },
+  {
+    id: 3,
+    name: "Joe Doe3",
+    Department: "Senior Software Engineer",
+    img: image3,
+  },
+  {
+    id: 4,
+    name: "Joe Doe3",
+    Department: "Senior Software Engineer",
+    img: image3,
+  },
+];
 export default function JobHistoryPage({
   onCreateJobHistoryClick,
   onEditJobHistoryClick,
@@ -20,8 +50,15 @@ export default function JobHistoryPage({
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedJobHistory, setSelectedJobHistory] = useState(null);
+  const [jobHistory, setjobHistory] = useState(false);
+
+  const [getId, setgetId] = useState("");
   const queryClient = useQueryClient();
 
+  const displayHistory = (getId) => {
+    console.log(getId);
+    setjobHistory(!jobHistory);
+  };
   const { isError, data, isLoading } = useQuery(
     ["getAllJobHistory"],
     async () => {
@@ -88,8 +125,8 @@ export default function JobHistoryPage({
   });
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
-      <div className="flex flex-col min-h-screen">
-        <div className="sm:flex sm:items-center mb-4" data-aos="fade-down">
+      <div className="flex flex-col min-h-screen bg-gray-50">
+        <div className="sm:flex sm:items-center mb-4 mt-4" data-aos="fade-down">
           <div className="sm:flex-auto">
             <h1 className="text-2xl font-semibold leading-6 text-gray-900 font-sans">
               Jobs History
@@ -108,8 +145,7 @@ export default function JobHistoryPage({
                 <span className="absolute inset-0 w-full h-full px-5 py-3 rounded-lg bg-gray-50"></span>
                 <span className="absolute left-0 w-48 h-48 -ml-2 transition-all duration-300 origin-top-right -rotate-90 -translate-x-full translate-y-12 bg-gray-900 group-hover:-rotate-180 ease"></span>
                 <span className="relative flex ">
-                  <GrHistory className="mr-2 text-xl" />
-                  JobHistory
+                  <GrHistory className="mr-2 text-xl" /> JobHistory
                 </span>
               </span>
               <span
@@ -119,9 +155,126 @@ export default function JobHistoryPage({
             </a>
           </div>
         </div>
+        {/* /////// */}
+
         <div
+          className=" max-w-8xl flex flex-col md:flex-row items-center justify-center space-x-6 p-4 "
           data-aos="fade-right"
-          className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg"
+        >
+          <div className=" w-full h-auto justify-top  bg-gray-100 shadow-md rounded-lg overflow-hidden">
+            <div className="p-4 border-b">
+              <h2 className="text-xl font-bold text-left text-gray-800">
+                Users
+              </h2>
+            </div>
+            {users.map((val, index) => {
+              return (
+                <div
+                  className="flex items-center p-4 hover:bg-gray-200"
+                  onClick={() => displayHistory(`${val.id}`)}
+                >
+                  <img
+                    src={val.img}
+                    alt="User"
+                    className="w-16 h-16 rounded-full object-cover mr-4"
+                  />
+                  <div className="flex-grow text-left">
+                    <p className="text-lg font-semibold text-gray-800 block">
+                      {val.name}
+                    </p>
+                    <p className="text-sm text-gray-600 block">
+                      {val.Department}
+                    </p>
+                  </div>
+                  <div className="flex-shrink-0 flex items-center space-x-4">
+                    <MdMessage className="text-blue-500 hover:text-blue-900 bg-gray-100" />
+
+                    <LuPlus className="text-green-500 hover:text-green-900 bg-gray-100" />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {jobHistory && (
+            <div className=" w-full shadow-md rounded-lg overflow-hidden bg-gray-200 ">
+              <div className="p-4 border-b">
+                <h2 className="text-xl font-bold text-left text-gray-800">
+                  Job History
+                </h2>
+              </div>
+
+              <div>
+                <div className="flex items-center p-2">
+                  <div className="flex-grow text-left">
+                    <p className="text-lg font-semibold text-gray-800 block">
+                      Senior Software Engineer
+                    </p>
+                    <i className="text-sm text-gray-600 block">Acme lnc.</i>
+                  </div>
+
+                  <div className="flex-shrink-0 flex items-center space-x-4">
+                    Jan 2020 - Present
+                  </div>
+                </div>
+                <div>
+                  <p className="text-left p-2">
+                    Integrated your provided card structure for Senior Software
+                    Engineer as the second card, maintaining its original
+                    styling.
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center p-2">
+                  <div className="flex-grow text-left">
+                    <p className="text-lg font-semibold text-gray-800 block">
+                      Front-End Developer
+                    </p>
+                    <i className="text-sm text-gray-600 block">XYZ Corp.</i>
+                  </div>
+
+                  <div className="flex-shrink-0 flex items-center space-x-4">
+                    Jun 2018 - Dec 2019
+                  </div>
+                </div>
+                <div>
+                  <p className="text-left p-2">
+                    Integrated your provided card structure for Senior Software
+                    Engineer as the second card, maintaining its original
+                    styling.
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center p-2">
+                  <div className="flex-grow text-left">
+                    <p className="text-lg font-semibold text-gray-800 block">
+                      Intern
+                    </p>
+                    <i className="text-sm text-gray-600 block">startup lnc..</i>
+                  </div>
+
+                  <div className="flex-shrink-0 flex items-center space-x-4">
+                    May 2017 - Aug 2017
+                  </div>
+                </div>
+                <div>
+                  <p className="text-left p-2">
+                    Integrated your provided card structure for Senior Software
+                    Engineer as the second card, maintaining its original
+                    styling.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+        {/* //////////// */}
+        {/* <div
+          data-aos="fade-right"
+          className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg mt-14"
         >
           <div className="min-w-full">
             <div className="overflow-x-auto">
@@ -280,7 +433,7 @@ export default function JobHistoryPage({
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
         {selectedJobHistory && (
           <Modal
             isOpen={isModalOpen}

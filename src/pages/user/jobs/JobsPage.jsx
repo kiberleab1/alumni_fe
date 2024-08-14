@@ -9,6 +9,119 @@ import Modal from "src/components/utils/DeleteModal";
 import { formatDate } from "src/utils/utils";
 import useAOS from "../aos";
 import { BsPersonWorkspace } from "react-icons/bs";
+import { MdMessage } from "react-icons/md";
+import { LuPlus } from "react-icons/lu";
+const jobData = [
+  {
+    department: " Senior Software Engineer",
+    insitute: "Acme inc.",
+    city: "San Francosco, CA",
+    description:
+      "Description of the position including details about the role expectations, and any other relevant information.",
+    condition: "Full-time",
+    salary: "120,000 - 150,000",
+  },
+  {
+    department: "Senior Software Engineer",
+    insitute: "Acme inc.",
+    city: "New York, NY",
+    description:
+      "Description of the position including details about the role expectations, and any other relevant information.",
+    condition: "Part-time",
+    salary: "80,000 - 100,000",
+  },
+  {
+    department: "Senior Software Engineer",
+    insitute: "Acme inc.",
+    city: "New York, NY",
+    description:
+      "Description of the position including details about the role expectations, and any other relevant information.",
+    condition: "Part-time",
+    salary: "80,000 - 100,000",
+  },
+  {
+    department: "Senior Software Engineer",
+    insitute: "Acme inc.",
+    city: "New York, NY",
+    description:
+      "Description of the position including details about the role expectations, and any other relevant information.",
+    condition: "Part-time",
+    salary: "80,000 - 100,000",
+  },
+
+  {
+    department: "Senior Software Engineer",
+    insitute: "Acme inc.",
+    city: "New York, NY",
+    description:
+      "Description of the position including details about the role expectations, and any other relevant information.",
+    condition: "Part-time",
+    salary: "80,000 - 100,000",
+  },
+  {
+    department: "Senior Software Engineer",
+    insitute: "Acme inc.",
+    city: "New York, NY",
+    description:
+      "Description of the position including details about the role expectations, and any other relevant information.",
+    condition: "Part-time",
+    salary: "80,000 - 100,000",
+  },
+  {
+    department: "Senior Software Engineer",
+    insitute: "Acme inc.",
+    city: "New York, NY",
+    description:
+      "Description of the position including details about the role expectations, and any other relevant information.",
+    condition: "Part-time",
+    salary: "80,000 - 100,000",
+  },
+  {
+    department: "Senior Software Engineer",
+    insitute: "Acme inc.",
+    city: "New York, NY",
+    description:
+      "Description of the position including details about the role expectations, and any other relevant information.",
+    condition: "Part-time",
+    salary: "80,000 - 100,000",
+  },
+  {
+    department: "Senior Software Engineer",
+    insitute: "Acme inc.",
+    city: "New York, NY",
+    description:
+      "Description of the position including details about the role expectations, and any other relevant information.",
+    condition: "Part-time",
+    salary: "80,000 - 100,000",
+  },
+  {
+    department: "Senior Software Engineer",
+    insitute: "Acme inc.",
+    city: "New York, NY",
+    description:
+      "Description of the position including details about the role expectations, and any other relevant information.",
+    condition: "Part-time",
+    salary: "80,000 - 100,000",
+  },
+  {
+    department: "Senior Software Engineer",
+    insitute: "Acme inc.",
+    city: "New York, NY",
+    description:
+      "Description of the position including details about the role expectations, and any other relevant information.",
+    condition: "Part-time",
+    salary: "80,000 - 100,000",
+  },
+  {
+    department: "Senior Software Engineer",
+    insitute: "Acme inc.",
+    city: "New York, NY",
+    description:
+      "Description of the position including details about the role expectations, and any other relevant information.",
+    condition: "Part-time",
+    salary: "80,000 - 100,000",
+  },
+];
 export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
   const [jobs, setJobs] = useState([]);
   const itemsPerPage = 5;
@@ -79,9 +192,9 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
-      <div className="flex flex-col min-h-screen">
-        <div className="sm:flex sm:items-center mb-4" data-aos="fade-down">
-          <div className="sm:flex-auto">
+      <div className="flex flex-col  bg-gray-50 ">
+        <div className="sm:flex sm:items-center " data-aos="fade-down">
+          <div className="sm:flex-auto mt-4 mb-4">
             <h1 className="text-2xl font-semibold leading-6 text-gray-900 font-sans">
               Jobs
             </h1>
@@ -109,7 +222,40 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
             </a>
           </div>
         </div>
-        <div
+
+        <div className=" flex flex-wrap  justify-center item-center h-[500px]  overflow-y-scroll">
+          {jobData.map((val, idx) => {
+            return (
+              <div className="max-w-sm w-full h-[250px] shadow-sm bg-white rounded-lg overflow-hidden p-2 m-3">
+                <div className=" ">
+                  <h2 className="text-lg text-left font-bold text-gray-800">
+                    {val.department}
+                  </h2>
+
+                  <p className="text-gray-600 mt-1 text-left ">
+                    {val.insitute}
+                  </p>
+
+                  <p className="text-gray-600 text-left ">{val.city}</p>
+
+                  <div className="mt-3">
+                    <p className="text-gray-700 text-left font-semibold">
+                      {val.description}
+                    </p>
+                  </div>
+
+                  <div className="mt-4 flex justify-between items-center">
+                    <span className="text-gray-600">{val.condition}</span>
+                    <span className="text-gray-600 font-bold">
+                      ${val.salary}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        {/* <div
           data-aos="fade-right"
           className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg"
         >
@@ -271,7 +417,8 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
+
         {selectedJob && (
           <Modal
             isOpen={isModalOpen}

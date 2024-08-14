@@ -47,10 +47,10 @@ function AboutUsComponent({ title, body, images }) {
     });
   }, []);
   return (
-    <div className="min-h-screen  flex items-center justify-center bg-gray-100                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 0">
-      <div className="container bg-gray-100 dark:bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 h-full">
+    <div className=" min-h-screen  flex items-center justify-center bg-blue-100                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  0">
+      <div className="container py-12 px-4 sm:px-6 lg:px-8 max-h-full">
         <div
-          className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16 mx-auto"
+          className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16 mx-auto "
           data-aos="zoom-in"
         >
           <div

@@ -105,13 +105,12 @@ function UserSideBar() {
   };
 
   const [logo, setLogo] = useState({});
-  const [sideBarBackground, setSideBarBackground] = useState({});
-  const [sideBarTextColor, setSideBarTextColor] = useState({});
-  const [sidebarHoverBG, setSidebarHoverBG] = useState({});
-  const [sideBarHoverTextColor, setSideBarHOverTextColor] = useState({});
-  const [sideBarActuveTextColor, setSideBarActiveTextColor] = useState({});
-  const [sidebarActiveBG, setSidebarActiveBG] = useState({});
-
+  const [sideBarBackground, setSideBarBackground] = useState(null);
+  const [sideBarTextColor, setSideBarTextColor] = useState(null);
+  const [sidebarHoverBG, setSidebarHoverBG] = useState(null);
+  const [sideBarHoverTextColor, setSideBarHOverTextColor] = useState(null);
+  const [sideBarActuveTextColor, setSideBarActiveTextColor] = useState(null);
+  const [sidebarActiveBG, setSidebarActiveBG] = useState(null);
 
   const { isError, data, isLoading } = useQuery("getAllSettings", async () => {
     return await getAllSettings({ pageNumber: 0, pageSize: 20 });
@@ -122,7 +121,7 @@ function UserSideBar() {
       const settingsData = data.data.settings;
       console.log(settingsData);
       if (settingsData) {
-        settingsData.forEach(setting => {
+        settingsData.forEach((setting) => {
           const { setting_name, setting_value } = setting;
           if (setting_name == "sidebarBackground") {
             setSideBarBackground(setting_value);
@@ -215,7 +214,10 @@ function UserSideBar() {
                       </button>
                     </div>
                   </Transition.Child>
-                  <div className="flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-4 ring-1 ring-white/10" style={{ backgroundColor: sideBarBackground || '#cc0000' }}>
+                  <div
+                    className="flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-4 ring-1 ring-white/10"
+                    style={{ backgroundColor: sideBarBackground || "#000000" }}
+                  >
                     <div className="flex h-16 shrink-0 items-center">
                       <span className="text-2xl text-gray-50 font-bold font-mono">
                         X Alumni
@@ -236,18 +238,34 @@ function UserSideBar() {
                                     "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                                   )}
                                   style={{
-                                    color: componentClicked.name === item.name ? sideBarActuveTextColor || '#FFFFFF' : sideBarTextColor || '#ccc',
-                                    backgroundColor: componentClicked.name === item.name ? sidebarActiveBG || '#4B5563' : 'transparent',
+                                    color:
+                                      componentClicked.name === item.name
+                                        ? sideBarActuveTextColor || "#FFFFFF"
+                                        : sideBarTextColor || "#ccc",
+                                    backgroundColor:
+                                      componentClicked.name === item.name
+                                        ? sidebarActiveBG || "#4B5563"
+                                        : "transparent",
                                   }}
                                   onMouseEnter={(e) => {
-                                    e.currentTarget.style.color = sideBarHoverTextColor || '#FFFFFF';
-                                    e.currentTarget.style.backgroundColor = sidebarHoverBG || '#4B5563';
+                                    e.currentTarget.style.color =
+                                      sideBarHoverTextColor || "#FFFFFF";
+                                    e.currentTarget.style.backgroundColor =
+                                      sidebarHoverBG || "#4B5563";
                                   }}
                                   onMouseLeave={(e) => {
-                                    e.currentTarget.style.color = componentClicked.name === item.name ? sideBarActuveTextColor || '#FFFFFF' : sideBarTextColor || '#ccc';
-                                    e.currentTarget.style.backgroundColor = componentClicked.name === item.name ? sidebarActiveBG || '#4B5563' : 'transparent';
+                                    e.currentTarget.style.color =
+                                      componentClicked.name === item.name
+                                        ? sideBarActuveTextColor || "#FFFFFF"
+                                        : sideBarTextColor || "#ccc";
+                                    e.currentTarget.style.backgroundColor =
+                                      componentClicked.name === item.name
+                                        ? sidebarActiveBG || "#4B5563"
+                                        : "transparent";
                                   }}
-                                  onClick={() => handleNavigationItemClick(item.name)}
+                                  onClick={() =>
+                                    handleNavigationItemClick(item.name)
+                                  }
                                 >
                                   <item.icon
                                     className="h-6 w-6 shrink-0"
@@ -291,12 +309,16 @@ function UserSideBar() {
           </Dialog>
         </Transition.Root>
         <div
-          className={`${sidebarOpenMain
-            ? "hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col"
-            : "hidden"
-            }`}
+          className={`${
+            sidebarOpenMain
+              ? "hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col"
+              : "hidden"
+          }`}
         >
-          <div className="flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-4" style={{ backgroundColor: sideBarBackground || '#cc0000' }}>
+          <div
+            className="flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-4"
+            style={{ backgroundColor: sideBarBackground || "#000000" }}
+          >
             <div className="flex h-16 shrink-0 items-center">
               <span className="text-2xl text-gray-50 font-bold font-mono mr-4">
                 X Alumni
@@ -328,16 +350,30 @@ function UserSideBar() {
                             "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                           )}
                           style={{
-                            color: componentClicked.name === item.name ? sideBarActuveTextColor || '#FFFFFF' : sideBarTextColor || '#ccc',
-                            backgroundColor: componentClicked.name === item.name ? sidebarActiveBG || '#4B5563' : 'transparent',
+                            color:
+                              componentClicked.name === item.name
+                                ? sideBarActuveTextColor || "#FFFFFF"
+                                : sideBarTextColor || "#FFFFFF",
+                            backgroundColor:
+                              componentClicked.name === item.name
+                                ? sidebarActiveBG || "#4B5563"
+                                : "transparent",
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.color = sideBarHoverTextColor || '#FFFFFF';
-                            e.currentTarget.style.backgroundColor = sidebarHoverBG || '#4B5563';
+                            e.currentTarget.style.color =
+                              sideBarHoverTextColor || "#FFFFFF";
+                            e.currentTarget.style.backgroundColor =
+                              sidebarHoverBG || "#4B5563";
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.color = componentClicked.name === item.name ? sideBarActuveTextColor || '#FFFFFF' : sideBarTextColor || '#ccc';
-                            e.currentTarget.style.backgroundColor = componentClicked.name === item.name ? sidebarActiveBG || '#4B5563' : 'transparent';
+                            e.currentTarget.style.color =
+                              componentClicked.name === item.name
+                                ? sideBarActuveTextColor || "#FFFFFF"
+                                : sideBarTextColor || "#ccc";
+                            e.currentTarget.style.backgroundColor =
+                              componentClicked.name === item.name
+                                ? sidebarActiveBG || "#4B5563"
+                                : "transparent";
                           }}
                           onClick={() => handleNavigationItemClick(item.name)}
                         >
@@ -378,18 +414,36 @@ function UserSideBar() {
                                         "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                                       )}
                                       style={{
-                                        color: componentClicked.name === subItem.name ? sideBarActuveTextColor || '#FFFFFF' : sideBarTextColor || '#ccc',
-                                        backgroundColor: componentClicked.name === subItem.name ? sidebarActiveBG || '#4B5563' : 'transparent',
+                                        color:
+                                          componentClicked.name === subItem.name
+                                            ? sideBarActuveTextColor ||
+                                              "#FFFFFF"
+                                            : sideBarTextColor || "#ccc",
+                                        backgroundColor:
+                                          componentClicked.name === subItem.name
+                                            ? sidebarActiveBG || "#4B5563"
+                                            : "transparent",
                                       }}
                                       onMouseEnter={(e) => {
-                                        e.currentTarget.style.color = sideBarHoverTextColor || '#FFFFFF';
-                                        e.currentTarget.style.backgroundColor = sidebarHoverBG || '#4B5563';
+                                        e.currentTarget.style.color =
+                                          sideBarHoverTextColor || "#FFFFFF";
+                                        e.currentTarget.style.backgroundColor =
+                                          sidebarHoverBG || "#4B5563";
                                       }}
                                       onMouseLeave={(e) => {
-                                        e.currentTarget.style.color = componentClicked.name === item.name ? sideBarActuveTextColor || '#FFFFFF' : sideBarTextColor || '#ccc';
-                                        e.currentTarget.style.backgroundColor = componentClicked.name === item.name ? sidebarActiveBG || '#4B5563' : 'transparent';
+                                        e.currentTarget.style.color =
+                                          componentClicked.name === item.name
+                                            ? sideBarActuveTextColor ||
+                                              "#FFFFFF"
+                                            : sideBarTextColor || "#ccc";
+                                        e.currentTarget.style.backgroundColor =
+                                          componentClicked.name === item.name
+                                            ? sidebarActiveBG || "#4B5563"
+                                            : "transparent";
                                       }}
-                                      onClick={() => handleNavigationItemClick(subItem.name)}
+                                      onClick={() =>
+                                        handleNavigationItemClick(subItem.name)
+                                      }
                                     >
                                       <subItem.icon
                                         className="h-6 w-6 shrink-0"
@@ -424,7 +478,6 @@ function UserSideBar() {
                         Logout
                       </a>
                     </li>
-
                   </ul>
                 </li>
               </ul>

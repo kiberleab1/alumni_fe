@@ -55,7 +55,26 @@ function ListDepartment({ alumnus, onCreateAlumniClick, onEditAlumniClick }) {
     },
     {
       id: 2,
-      image: img,
+      image:
+        "https://s3-us-west-2.amazonaws.com/s.cdpn.io/331810/pr-sample16.jpg",
+      name: "John Doe2",
+      department: "Electrical Engineering",
+      graduationYear: 2022,
+      link: "https://via.placeholder.com/50",
+    },
+    {
+      id: 2,
+      image:
+        "https://s3-us-west-2.amazonaws.com/s.cdpn.io/331810/pr-sample17.jpg",
+      name: "John Doe2",
+      department: "Electrical Engineering",
+      graduationYear: 2022,
+      link: "https://via.placeholder.com/50",
+    },
+    {
+      id: 2,
+      image:
+        "https://s3-us-west-2.amazonaws.com/s.cdpn.io/331810/pr-sample18.jpg",
       name: "John Doe2",
       department: "Electrical Engineering",
       graduationYear: 2022,
@@ -105,10 +124,10 @@ function ListDepartment({ alumnus, onCreateAlumniClick, onEditAlumniClick }) {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col  bg-gray-50 ">
       <div className="sm:flex sm:items-center mb-4" data-aos="fade-down">
         <div className="sm:flex-auto">
-          <h1 className="leading-6 text-3xl text-black font-sans">Alumni</h1>
+          <h1 className=" text-xl text-black font-sans">Alumni</h1>
           <p className="mt-2 text-lg text-gray-500 font-sans-serif">
             A list of your all the alumnus in the system including their name,
             description, start date.
@@ -321,23 +340,19 @@ function ListDepartment({ alumnus, onCreateAlumniClick, onEditAlumniClick }) {
           </div>
         </div>
       </div> */}
-      <div className="container mx-auto px-5 py-2 sm:px-10 md:px-20 lg:px-32 lg:pt-12  min-h-screen">
+      <div className="container mx-auto px-5 py-2 sm:px-10 md:px-20 lg:px-32 lg:pt-12  ">
         <div className="-m-1 flex flex-wrap md:-m-2 justify-center">
           {data.map((val, idx) => {
             return (
-              <figure className="snip1369 green">
-                <img
-                  src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/331810/pr-sample15.jpg"
-                  alt="pr-sample15"
-                />
+              <figure className="snip1369 green rounded-lg shadow-lg ">
+                <img src={val.image} alt="pr-sample15" />
                 <div className="image">
-                  <img
-                    src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/331810/pr-sample15.jpg"
-                    alt="pr-sample15"
-                  />
+                  <img src={val.image} alt="pr-sample15" />
                 </div>
                 <figcaption>
-                  <h3 className="text-yellow-400">{val.name}</h3>
+                  <h3 className="text-black font-semibold [text-shadow:_0_1px_0_rgb(255_255_255_/_30%)]">
+                    {val.name}
+                  </h3>
                   <span>Graduation Year</span> -{" "}
                   <span>{val.graduationYear} </span>
                   <p>

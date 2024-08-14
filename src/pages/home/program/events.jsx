@@ -12,7 +12,7 @@ function LandingEventsPage() {
   const [newsList, setMewsList] = useState([]);
   const { isError, data, isLoading } = useQuery(["events"], async () => {
     const allNews = await getAllEvents({ pageNumber: 1, pageSize: 10 });
-    console.log(allNews);
+
     const listNews = [];
     allNews.data.events.map((news) => {
       listNews.push({
@@ -30,7 +30,7 @@ function LandingEventsPage() {
     return allNews;
   });
   return (
-    <div className="h-full bg-gray-100">
+    <div className="h-full bg-gray-50">
       {" "}
       <QueryResult isError={isError} isLoading={isLoading} data={data}>
         <SectionHolderComponent title={section.title} body={section.body} />

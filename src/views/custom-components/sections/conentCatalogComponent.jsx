@@ -46,30 +46,23 @@ const ContentCatalogComponent = ({ newsArray }) => {
     <div>
       <div className="blog-home2 spacer">
         <Container>
-          <Row className="flex flex-wrap justify-center w-full">
+          <Row className="flex flex-wrap justify-center w-full ">
             <Slider {...settings}>
               {newsArray.map((news, idx) => (
-                <Col
-                  lg="4"
-                  md="6"
-                  sm="12"
-                  key={idx}
-                  className="p-4 shadow-xl "
-                  data-aos="fade-up"
-                >
-                  <Card className="relative overflow-hidden border">
+                <Col lg="4" md="6" sm="12" key={idx} data-aos="fade-up">
+                  <Card className="relative overflow-hidden rounded-t-lg shadow-lg m-3">
                     <a
                       href={news.link}
                       className="transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300"
                     >
                       <img
-                        className="card-img-top object-cover rounded "
-                        style={{ width: "100%", height: "300px" }}
+                        className="card-img-top object-cover rounded-t"
+                        style={{ width: "100%", height: "250px" }}
                         src={news.thumbnails}
                         alt="news-thumbnail"
                       />
                     </a>
-                    <div className="date-pos bg-info-gradiant">
+                    <div className="date-pos bg-blue-700">
                       {news.date.toLocaleString("default", { month: "short" })}
                       <span>{news.date.getDate()}</span>
                     </div>
