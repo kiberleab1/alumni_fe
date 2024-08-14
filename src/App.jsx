@@ -32,7 +32,9 @@ import LandingProfile from "./pages/home/program/profile";
 import LandingMembersPage from "./pages/home/program/members";
 import { Navigate } from "react-router-dom";
 import NotFoundComponent from "./components/utils/notFound";
+import { useLocation } from "react-router-dom";
 import Footer from "./views/custom-components/sections/footer";
+import { useState } from "react";
 // const hist = createBrowserHistory();
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -45,6 +47,13 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  const [url, seturl] = useState(false);
+  const activeUrl = window.location.pathname;
+  // if (activeUrl != '/user') {
+  //   seturl(true)
+  // }
+  console.log(window.location.pathname);
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
@@ -59,6 +68,7 @@ function App() {
             <Route path="/custom-components" element={<CustomComponents />} />
             <Route path="/home" element={<Components />} />
             <Route path="/roles" element={<RolePage />} />
+
             <Route path="/admin/email/compose" element={<ComposeEmail />} />
             <Route path="/admin/*" element={<SideBar />} />
             <Route path="/user/*" element={<UserSideBar />} />
@@ -101,7 +111,7 @@ function App() {
             <Route path="/" element={<Navigate to="/landing" replace />} />
             <Route path="*" element={<NotFoundComponent />} />
           </Routes>
-          {/* <Footer /> */}
+          {activeUrl != "/user" && <Footer />}
         </div>
       </BrowserRouter>
     </QueryClientProvider>
