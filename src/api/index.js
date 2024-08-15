@@ -21,32 +21,31 @@ axios.interceptors.response.use(
       // alert("Connection Error");
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 axios.interceptors.request.use(
   (config) => {
-    try {
-      //   const authToken = localStorage.getItem("authToken");
-      //   console.log(authToken);
-      //   if (authToken) {
-      //     config.headers.Authorization = `Bearer ${authToken}`;
-      //   }
-    } catch (error) {
-      console.log(error);
+    const authToken = localStorage.getItem("authToken");
+    const userType = localStorage.getItem("user-type") || "GUEST";
+    console.log({ authToken });
+    if (authToken) {
+      config.headers.Authorization = `Bearer ${authToken}`;
     }
+    config.headers.UserType = userType;
+
     //TODO dev
-    config.headers.Authorization = "Bearer dev";
+    // config.headers.Authorization = "Bearer dev";
 
     return config;
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 export async function getDepartments({ pageNumber, pageSize }) {
   return await axios.get(
-    `${API_BASE_URl}/getDepartments?pageNumber=${pageNumber}&pageSize=${pageSize}`
+    `${API_BASE_URl}/getDepartments?pageNumber=${pageNumber}&pageSize=${pageSize}`,
   );
 }
 
@@ -79,7 +78,7 @@ export async function editDepartent(department) {
 
 export async function deleteDepartment(department) {
   return await axios.get(
-    `${API_BASE_URl}/deleteDepartment?id=${department.id}`
+    `${API_BASE_URl}/deleteDepartment?id=${department.id}`,
   );
 }
 
@@ -326,7 +325,7 @@ export async function deleteInstitute(instituteData) {
   console.log(response);
 
   return await axios.get(
-    `${API_BASE_URl}/deleteInstitute?id=${instituteData.institute_id}`
+    `${API_BASE_URl}/deleteInstitute?id=${instituteData.institute_id}`,
   );
 }
 
@@ -348,7 +347,7 @@ export async function deleteAdmin(adminData) {
 export async function getAllEvents({ pageNumber, pageSize }) {
   try {
     return await axios.get(
-      `${API_BASE_URl}/getAllEvents?pageNumber=${pageNumber}&pageSize=${pageSize}`
+      `${API_BASE_URl}/getAllEvents?pageNumber=${pageNumber}&pageSize=${pageSize}`,
     );
   } catch (error) {
     console.error("Error fetching events:", error);
@@ -359,7 +358,7 @@ export async function getAllEvents({ pageNumber, pageSize }) {
 export async function getInstituteEvents({ institute_id, max_count }) {
   try {
     return await axios.get(
-      `${API_BASE_URl}/getInstituteEvents?max_count=${max_count}&institute_id=${institute_id}`
+      `${API_BASE_URl}/getInstituteEvents?max_count=${max_count}&institute_id=${institute_id}`,
     );
   } catch (error) {
     console.log("Error fetching institute events ", error);
@@ -401,14 +400,14 @@ export async function filterEvents() {}
 
 export async function getEventsStatByDate(institute_id, max_count) {
   return await axios.get(
-    `${API_BASE_URl}/getEventsStatByDate?institute_id=${institute_id}&max_count=${max_count}`
+    `${API_BASE_URl}/getEventsStatByDate?institute_id=${institute_id}&max_count=${max_count}`,
   );
 }
 
 export async function getAllNews({ pageNumber, pageSize }) {
   // try {
   return await axios.get(
-    `${API_BASE_URl}/getAllNews?pageNumber=${pageNumber}&pageSize=${pageSize}`
+    `${API_BASE_URl}/getAllNews?pageNumber=${pageNumber}&pageSize=${pageSize}`,
   );
   // } catch (error) {
   //   console.error("Error fetching news:", error);
@@ -451,14 +450,14 @@ export async function getNewsByID(news_id) {
 export async function getAllPremissions({ pageNumber, pageSize }) {
   console.log(pageNumber, pageSize);
   const result = await axios.get(
-    `${API_BASE_URl}/getAllPermission?pageNumber=${pageNumber}&pageSize=${pageSize}`
+    `${API_BASE_URl}/getAllPermission?pageNumber=${pageNumber}&pageSize=${pageSize}`,
   );
   return result;
 }
 
 export async function getPermissionById(permission_id) {
   const result = await axios.get(
-    `${API_BASE_URl}/getPermissionById?id=${permission_id}`
+    `${API_BASE_URl}/getPermissionById?id=${permission_id}`,
   );
   return result;
 }
@@ -476,7 +475,7 @@ export async function deletePermission(permissionData) {
   // console.log(result)
   // return result;
   return await axios.get(
-    `${API_BASE_URl}/deletePermission?id=${permissionData.id}`
+    `${API_BASE_URl}/deletePermission?id=${permissionData.id}`,
   );
 }
 
@@ -484,7 +483,7 @@ export async function updatePermission(permissionData) {
   console.log(permissionData);
   const result = await axios.put(
     `${API_BASE_URl}/updatePermission`,
-    permissionData
+    permissionData,
   );
   return result;
 }
@@ -493,7 +492,7 @@ export async function updatePermission(permissionData) {
 
 export async function getAllJobs({ pageNumber, pageSize }) {
   const result = await axios.get(
-    `${API_BASE_URl}/getAllJobs?pageNumber=${pageNumber}&pageSize=${pageSize}`
+    `${API_BASE_URl}/getAllJobs?pageNumber=${pageNumber}&pageSize=${pageSize}`,
   );
   return result;
 }
@@ -527,7 +526,7 @@ export async function deleteJob(jobs_id) {
 
 export async function getAllStaff({ pageNumber, pageSize }) {
   const result = await axios.get(
-    `${API_BASE_URl}/getAllStaff?pageNumber=${pageNumber}&pageSize=${pageSize}`
+    `${API_BASE_URl}/getAllStaff?pageNumber=${pageNumber}&pageSize=${pageSize}`,
   );
   return result;
 }
@@ -558,7 +557,7 @@ export async function deleteStaff(staffData) {
 
 export async function getAllJobHistory({ pageNumber, pageSize }) {
   const result = await axios.get(
-    `${API_BASE_URl}/getAllJobHistory?pageNumber=${pageNumber}&pageSize=${pageSize}`
+    `${API_BASE_URl}/getAllJobHistory?pageNumber=${pageNumber}&pageSize=${pageSize}`,
   );
   return result;
 }
@@ -575,7 +574,7 @@ export async function updateJobHistory(jobHistoryData) {
 
 export async function deleteJobHistory(jobHistoryData) {
   return await axios.get(
-    `${API_BASE_URl}/deleteJobHistory?id=${jobHistoryData.id}`
+    `${API_BASE_URl}/deleteJobHistory?id=${jobHistoryData.id}`,
   );
 }
 
@@ -622,14 +621,14 @@ export function buildEventsUrl(id) {
 
 export async function getAllAlumni({ pageNumber, pageSize }) {
   const result = await axios.get(
-    `${API_BASE_URl}/getAllAlumniProfile?pageNumber=${pageNumber}&pageSize=${pageSize}`
+    `${API_BASE_URl}/getAllAlumniProfile?pageNumber=${pageNumber}&pageSize=${pageSize}`,
   );
   return result;
 }
 
 export async function getAllVerificationRequest({ pageNumber, pageSize }) {
   const result = await axios.get(
-    `${API_BASE_URl}/getAllVerificationRequest?pageNumber=${pageNumber}&pageSize=${pageSize}`
+    `${API_BASE_URl}/getAllVerificationRequest?pageNumber=${pageNumber}&pageSize=${pageSize}`,
   );
   return result;
 }
