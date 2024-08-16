@@ -22,8 +22,44 @@ const FeatureComponent = () => {
           </Row>
         </Container>
       </div>
-      3
-      <div className="spacer feature4">
+      <div className="min-h-screen flex flex-wrap gap-[8%] items-center justify-center text-black bg-red-300">
+        <div className="h-auto w-auto"></div>
+        <div className="relative flex md:flex  lg:items-start min-h-[300px] bg-gray-800 rounded-xl max-w-md md:max-w-2xl  ">
+          <div className="md:shrink-0 m-auto md:bg-red-500">
+            <img
+              src={img1}
+              className="object-cover absolute h-full left-[-70px] top-1/2 transform -translate-y-1/2 h-[150px] lg:h-[200px] w-[150px] lg:w-[200px] rounded-xl bg-red-400 lg:mb-4 mb-4"
+            />
+          </div>
+
+          <div className=" w-[80%] text-start p-3 mt-4 text-white ">
+            <h2 className="text-xl font-bold text-white ">Alumni Podcast</h2>
+            <h5 className="subtitle mb-3">phd</h5>
+            <p className="text-gray-50">
+              This is some descriptive text that goes next to the image. The
+              text will remain inline and will not overlap with the image.
+            </p>
+          </div>
+        </div>
+        <div className="relative flex md:flex  lg:items-start min-h-[300px] bg-gray-800 rounded-xl max-w-md md:max-w-2xl  ">
+          <div className="md:shrink-0 m-auto md:bg-red-500">
+            <img
+              src={img1}
+              className="object-cover absolute h-full left-[-70px] top-1/2 transform -translate-y-1/2 h-[150px] lg:h-[200px] w-[150px] lg:w-[200px] rounded-xl bg-red-400 lg:mb-4 mb-4"
+            />
+          </div>
+
+          <div className=" w-[80%] text-start p-3 mt-4 text-white ">
+            <h2 className="text-xl font-bold text-white ">Alumni Podcast</h2>
+            <h5 className="subtitle mb-3">phd</h5>
+            <p className="text-gray-50">
+              This is some descriptive text that goes next to the image. The
+              text will remain inline and will not overlap with the image.
+            </p>
+          </div>
+        </div>
+      </div>
+      {/* <div className="spacer feature4">
         <Container>
           <Row className="justify-content-center">
             <Col md="7" className="text-center">
@@ -217,7 +253,7 @@ const FeatureComponent = () => {
             </Col>
           </Row>
         </Container>
-      </div>
+      </div> */}
     </div>
   );
 };

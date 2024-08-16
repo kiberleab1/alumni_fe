@@ -4,6 +4,7 @@ import _ from "lodash";
 import { Button, Input, InputGroup } from "reactstrap";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "react-router-dom";
+import { RiArrowDropDownLine } from "react-icons/ri";
 const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
@@ -99,7 +100,7 @@ const Header = () => {
     {
       name: "Alumni stories",
       link: "/landing/alumni",
-      subLink: [],
+      subLink: [{ name: "Alumni podcast", link: "/landing/alumni/podcast" }],
     },
     {
       name: "Career opportunities",
@@ -199,7 +200,7 @@ const Header = () => {
 
                 return (
                   <li
-                    className={`relative group transition-transform duration-300 ease-in-out ${
+                    className={`relative group transition-transform duration-300 ease-in-out mr-2 ml-2  ${
                       isActive && isSidebarOpen
                         ? "justify-start hover:translate-x-1 hover:scale-70"
                         : "hover:translate-y-1 hover:scale-70 transition ease-in delay-300 text-xl w-fit block after:block after:content-[''] after:absolute after:h-[4px] after:bg-green-800 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
@@ -208,32 +209,36 @@ const Header = () => {
                   >
                     <a
                       href={mainLink.link}
-                      className={`transition-colors duration-500 ease-in-out ${
+                      className={`flex flex-inline transition-colors duration-500 ease-in-out justify-center text-center ${
                         location.pathname === mainLink.link || isSubLinkActive
-                          ? "text-yellow-600"
+                          ? "text-yellow-600 "
                           : ""
                       } ${
                         isActive && isSidebarOpen
-                          ? " block py-2 px-1 text-gray-200 hover:text-yellow-400 transition ease-in delay-300 text-xl w-fit block after:block after:content-[''] after:absolute after:h-[4px] after:bg-green-800 after:w-1/5 after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
-                          : "text-lg md:text-xl  block py-2 px-4 text-gray-200 hover:text-yellow-400"
+                          ? " block py-2  text-gray-200 hover:text-yellow-400 transition ease-in delay-300 text-xl w-fit block after:block after:content-[''] after:absolute after:h-[4px] after:bg-green-800 after:w-1/5 after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
+                          : "text-lg md:text-xl  block py-1 px-2 text-gray-200 hover:text-yellow-400"
                       }`}
                       onClick={toggleSidebar}
                     >
-                      {mainLink.name}
+                      {mainLink.name}{" "}
+                      {mainLink.subLink.length > 0 ? (
+                        <RiArrowDropDownLine className=" m-auto group-hover:rotate-180 duration-500 pt-1 pb-1 text-3xl " />
+                      ) : (
+                        ""
+                      )}
                     </a>
-
                     <div
-                      className={`transition-transform duration-300 ease-in-out ${
+                      className={`transition-all duration-1000 delay-200 ease-in-out max-h-0  overflow-hidden bg-opacity-0 group-hover:opacity-80  ${
                         isActive && isSidebarOpen
-                          ? "hidden group-hover:block relative right-15 bg-gray-700 m-0 p-0"
-                          : "hidden transition ease-in delay-300 group-hover:block absolute right-15 bg-gray-800 py-2 p-0"
+                          ? " group-hover:max-h-56 min-w-48 group-hover:block relative right-15 bg-opacity-50 m-0 p-0 rounded-b group-hover:bg-green-500"
+                          : "group-hover:max-h-56 min-w-48 group-hover:opacity-100 group-hover:block absolute right-15 bg-opacity-80 rounded-b group-hover:bg-green-500"
                       }`}
                     >
                       {mainLink.subLink.map((subLink, idx) => (
                         <a
                           href={subLink.link}
                           key={idx + subLink.name}
-                          className={` text-start block transition delay-300 hover:translate-x-1 px-4 py-2 text-yellow-100 hover:text-yellow-400 transition-colors duration-500 ${
+                          className={`drop-shadow-sm text-start rounded-b group-hover:bg-gray-600 hover:text-gray-700  group-hover:bg-opacity-80 block transition delay-300 hover:translate-x-1 px-2 py-2 text-white transition-colors duration-500 ${
                             location.pathname === subLink.link
                               ? "text-yellow-600"
                               : ""

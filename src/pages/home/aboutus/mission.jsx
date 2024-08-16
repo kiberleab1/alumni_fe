@@ -1,5 +1,5 @@
 import React from "react";
-import "./style/style.css";
+
 import { FaRocket } from "react-icons/fa";
 import { GiFlagObjective } from "react-icons/gi";
 import { BiSolidLowVision } from "react-icons/bi";
@@ -19,10 +19,7 @@ const Mission = () => {
   return (
     //bg-[url('../../../../../public/gallery/ab.png')] bg-cover
     <div className="relative bg-blue-50 min-h-screen w-full flex flex-col items-center justify-center p-4 space-y-6">
-      <div className="flex flex-inline">
-        <div className="absolute bottom-0 right-0  bg-blue-100 w-[25%] h-[20%]"></div>
-        <div className="absolute bottom-0 left-0  bg-blue-100 w-[25%] h-[20%]"></div>
-      </div>
+      <div className="flex flex-inline "></div>
       <div className="flex flex-wrap justify-center w-full space-y-6 md:space-y-0 md:space-x-6">
         {[
           {
@@ -70,15 +67,15 @@ const Mission = () => {
           data-aos-duration="1000"
           data-aos-offset="200"
         >
-          <div className="z-50 flex flex-col bg-white items-center justify-center h-full p-4 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 hover:bg-gray-100 duration-300 rounded">
+          <div className="relative z-50 flex flex-col bg-white items-center justify-center h-full p-4 transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 hover:bg-gray-100 duration-300 rounded">
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 rounded-full shadow-md ">
               <GiFlagObjective className="text-black text-4xl" />
             </div>
-            <div className="mt-16 overflow-auto flex-1">
+            <div className="relative mt-16 overflow-auto flex-1 z-100 ">
               <h1 className="text-black text-2xl  font-bold text-center mb-4 font-sans">
                 Core Values
               </h1>
-              <ul className="list-disc list-inside text-gray-900 text-left space-y-4 font-sans-serif ">
+              <ul className="list-disc list-inside text-gray-900 text-left space-y-4 font-sans-serif  ">
                 <li className="">
                   <strong>Excellence</strong> - Committed to advancing the
                   highest standards in all endeavors.
@@ -94,6 +91,10 @@ const Mission = () => {
               </ul>
             </div>
           </div>
+          <div className="absolute top-0 right-0  bg-blue-100 w-[25%] h-[100%] z-10"></div>
+          <div className="absolute top-0 left-0  bg-blue-100 w-[25%] h-[100%] z-10"></div>
+          {/* <div className="absolute bottom-0 right-0  bg-blue-100 w-[25%] h-[20%] z-10"></div>
+          <div className="absolute bottom-0 left-0  bg-blue-100 w-[25%] h-[20%] z-10"></div> */}
         </div>
       </div>
     </div>
