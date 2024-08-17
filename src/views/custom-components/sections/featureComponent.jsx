@@ -9,10 +9,10 @@ import img4 from "src/assets/images/features/feature13/img4.jpg";
 const FeatureComponent = () => {
   return (
     <div>
-      <div className=" bg-light">
+      <div className="min-h-screen  bg-light">
         <Container>
           <Row className="justify-content-center">
-            <Col md="7" className="text-center">
+            <Col className="text-center">
               <h1 className="title font-bold">Trending Stories</h1>
               {/* <h6 className="subtitle">
                 Here you can check Demos we created based on WrapKit. Its quite
@@ -22,9 +22,7 @@ const FeatureComponent = () => {
             </Col>
           </Row>
         </Container>
-      </div>
-      <div className="min-h-screen flex flex-wrap gap-[8%] items-center justify-center text-black">
-        <div className="relative flex   md:items-start min-h-[300px] bg-red-800 rounded-xl max-w-md md:max-w-2xl  ">
+        <div className="flex flex-wrap items-center justify-center text-black">
           <div className="blog-slider">
             <div className="blog-slider__wrp swiper-wrapper">
               <div className="blog-slider__item swiper-slide">
@@ -45,14 +43,38 @@ const FeatureComponent = () => {
               </div>
             </div>
           </div>
+          <div className="blog-slider">
+            <div className="blog-slider__wrp swiper-wrapper">
+              <div className="blog-slider__item swiper-slide">
+                <div className="blog-slider__img">
+                  <img src={img1} alt="" />
+                </div>
+                <div className="__content">
+                  <span className="blog-slider__code">26 December 2019</span>
+                  <div className="blog-slider__title">Lorem Ipsum Dolor</div>
+                  <div className="blog-slider__text">
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+                    Recusandae voluptate repellendus magni illo ea animi?
+                  </div>
+                  <a href="#" className="blog-slider__button">
+                    READ MORE
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-          {/* <div className="absolute w-[250px] h-full md:relative h-24 md:flex-block top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2  md:left-[-0px] md:top-1/2 md:translate-y-[60%]  ">
+      {/* <div className="relative flex   md:items-start min-h-[300px] bg-red-800 rounded-xl max-w-md md:max-w-2xl  "> */}
+
+      {/* <div className="absolute w-[250px] h-full md:relative h-24 md:flex-block top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2  md:left-[-0px] md:top-1/2 md:translate-y-[60%]  ">
             <img src={img1} className="object-cover rounded-xl " />
           </div> */}
-          {/* <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4  ">
+      {/* <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4  ">
             <img src={img1} />
           </div> */}
-          {/* <div className="  flex flex-col ml-[-130px] w-[80%] md:justify- text-start  text-white  bg-yellow-900 items-start">
+      {/* <div className="  flex flex-col ml-[-130px] w-[80%] md:justify- text-start  text-white  bg-yellow-900 items-start">
             <h2 className="text-xl font-bold text-white ">Alumni Podcast</h2>
             <h5 className="subtitle mb-3">phd</h5>
             <p className="text-gray-50">
@@ -60,8 +82,8 @@ const FeatureComponent = () => {
               text will remain inline and will not overlap with the image.
             </p>
           </div> */}
-        </div>
-        {/* <div className="relative flex md:flex  lg:items-start min-h-[300px] bg-gray-800 rounded-xl max-w-md md:max-w-2xl  ">
+      {/* </div> */}
+      {/* <div className="relative flex md:flex  lg:items-start min-h-[300px] bg-gray-800 rounded-xl max-w-md md:max-w-2xl  ">
           <div className="md:shrink-0 m-auto md:bg-red-500">
             <img
               src={img1}
@@ -78,7 +100,7 @@ const FeatureComponent = () => {
             </p>
           </div>
         </div> */}
-      </div>
+      {/* </div> */}
 
       {/* <div className="spacer feature4">
         <Container>
