@@ -8,22 +8,21 @@ import img4 from "src/assets/images/features/feature13/img4.jpg";
 const FeatureComponent = () => {
   return (
     <div>
-      <div className="spacer bg-light">
+      <div className=" bg-light">
         <Container>
           <Row className="justify-content-center">
             <Col md="7" className="text-center">
               <h1 className="title font-bold">Trending Stories</h1>
-              <h6 className="subtitle">
+              {/* <h6 className="subtitle">
                 Here you can check Demos we created based on WrapKit. Its quite
                 easy to Create your own dream website &amp; dashboard in
                 No-time.
-              </h6>
+              </h6> */}
             </Col>
           </Row>
         </Container>
       </div>
-      <div className="min-h-screen flex flex-wrap gap-[8%] items-center justify-center text-black bg-red-300">
-        <div className="h-auto w-auto"></div>
+      <div className="min-h-screen flex flex-wrap gap-[8%] items-center justify-center text-black">
         <div className="relative flex md:flex  lg:items-start min-h-[300px] bg-gray-800 rounded-xl max-w-md md:max-w-2xl  ">
           <div className="md:shrink-0 m-auto md:bg-red-500">
             <img

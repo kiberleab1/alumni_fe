@@ -192,9 +192,9 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
-      <div className="flex flex-col  bg-gray-50 ">
-        <div className="sm:flex sm:items-center " data-aos="fade-down">
-          <div className="sm:flex-auto mt-4 mb-4">
+      <div className="flex flex-col min-h-screen">
+        <div className="sm:flex sm:items-center mb-4" data-aos="fade-down">
+          <div className="sm:flex-auto">
             <h1 className="text-2xl font-semibold leading-6 text-gray-900 font-sans">
               Jobs
             </h1>

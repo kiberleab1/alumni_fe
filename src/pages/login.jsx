@@ -76,12 +76,13 @@ const LoginForm = () => {
     },
   });
   return (
-    <div>
+    <div className="min-h-screen">
       <div
         className="
+        
         p-8
         max-w-xl
-        mt-16
+        mt-[10%]
         mx-auto
         border-sky-500
         transition-all
@@ -89,7 +90,7 @@ const LoginForm = () => {
       >
         <div className="transition-all duration-700">
           <div>
-            <h1 className="text-2xl text-center font-bold">Login Form</h1>
+            <h1 className="text-2xl text-center font-bold">Login </h1>
             <div className="flex items-center justify-between mb-4 "></div>
 
             <form
@@ -140,7 +141,7 @@ const LoginForm = () => {
         </div>
       </div>
 
-      <div className="spacer" id="forms-component">
+      {/* <div className="spacer" id="forms-component">
         <Container>
           <Row className="justify-content-center">
             <Col md="10" className="text-center">
@@ -150,8 +151,8 @@ const LoginForm = () => {
           </Row>
           <FormErrorMessage errorText={errorMes} />
         </Container>
-      </div>
-      <Container>
+      </div> */}
+      {/* <Container>
         <Row>
           <Col md="12">
             <Formik
@@ -239,7 +240,7 @@ const LoginForm = () => {
             </Formik>
           </Col>
         </Row>
-      </Container>
+      </Container> */}
     </div>
   );
 };
