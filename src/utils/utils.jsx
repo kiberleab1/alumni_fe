@@ -1,12 +1,16 @@
 
 
-export const truncateDescription = (description, maxLength = 50) => {
-	if (description.length > maxLength) {
-	  return description.substring(0, maxLength) + '...';
+export const truncateDescription = (description, maxLength = 50, removeEmbadedHtml = true) => {
+    let truncatedDescription = removeHtmlTags(description);
+	if (truncatedDescription.length > maxLength) {
+	  return truncatedDescription.substring(0, maxLength) + '...';
 	}
-	return description;
+	return truncatedDescription;
 }
 
+const removeHtmlTags = (str) => {
+    return str.replace(/<[^>]*>/g, '');
+};
 
 export const formatDate = (dateString) => {
     const date = new Date(dateString);

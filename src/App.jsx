@@ -36,6 +36,7 @@ import { useLocation } from "react-router-dom";
 import Footer from "./views/custom-components/sections/footer";
 import { useState } from "react";
 import AlumniPodcast from "./pages/home/podcast/AlumniPodcast";
+import UserMenuBar from "./pages/UserMenuBar";
 // const hist = createBrowserHistory();
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -111,7 +112,7 @@ function App() {
             <Route path="/" element={<Navigate to="/landing" replace />} />
             <Route path="*" element={<NotFoundComponent />} />
           </Routes>
-          {activeUrl != "/user" && <Footer />}
+          {activeUrl != "/user" && activeUrl != "/admin"  && <Footer />}
         </div>
       </BrowserRouter>
     </QueryClientProvider>
