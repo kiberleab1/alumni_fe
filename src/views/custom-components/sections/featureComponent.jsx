@@ -5,15 +5,24 @@ import img1 from "src/assets/images/features/feature13/img1.jpg";
 import img2 from "src/assets/images/features/feature13/img2.jpg";
 import img3 from "src/assets/images/features/feature13/img3.jpg";
 import img4 from "src/assets/images/features/feature13/img4.jpg";
-
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { useEffect } from "react";
 const FeatureComponent = () => {
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      easing: "ease-in-out",
+      once: false,
+    });
+  }, []);
   return (
     <div>
       <div className="min-h-screen  bg-light">
         <Container>
           <Row className="justify-content-center">
             <Col className="text-center">
-              <h1 className="title font-bold">Trending Stories</h1>
+              <h1 className="title font-sans">Trending Stories</h1>
               {/* <h6 className="subtitle">
                 Here you can check Demos we created based on WrapKit. Its quite
                 easy to Create your own dream website &amp; dashboard in
@@ -22,7 +31,10 @@ const FeatureComponent = () => {
             </Col>
           </Row>
         </Container>
-        <div className="flex flex-wrap items-center justify-center text-black">
+        <div
+          className="flex flex-wrap items-center justify-center text-black"
+          data-aos="zoom-in"
+        >
           <div className="blog-slider">
             <div className="blog-slider__wrp swiper-wrapper">
               <div className="blog-slider__item swiper-slide">

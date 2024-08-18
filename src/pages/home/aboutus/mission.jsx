@@ -1,10 +1,13 @@
 import React from "react";
-
+import { FcReading } from "react-icons/fc";
+import { PiStudentDuotone } from "react-icons/pi";
+import { MdOutlineScience } from "react-icons/md";
 import { FaRocket } from "react-icons/fa";
 import { GiFlagObjective } from "react-icons/gi";
 import { BiSolidLowVision } from "react-icons/bi";
 
 import AOS from "aos";
+import "./css.css";
 import "aos/dist/aos.css";
 import { useEffect } from "react";
 
@@ -18,8 +21,17 @@ const Mission = () => {
   }, []);
   return (
     //bg-[url('../../../../../public/gallery/ab.png')] bg-cover
-    <div className="relative bg-blue-50 min-h-screen w-full flex flex-col items-center justify-center p-4 space-y-6">
-      <div className="flex flex-inline "></div>
+    <div className="relative bg-blue-50 min-h-screen w-full flex flex-col items-center justify-center p-4 space-y-6 overflow-hidden z-0">
+      <div className="absolute top-0 left-0 w-[150px] h-[150px] rounded-full opacity-30 animate-randomMovement1 flex items-center justify-center">
+        <PiStudentDuotone className="w-[50%] h-[50%] text-black" />
+      </div>
+
+      <div className="absolute top-0 right-0 w-[150px] h-[150px] rounded-full opacity-20 animate-randomMovement2 flex items-center justify-center">
+        <FcReading className="w-[50%] h-[50%] text-black" />
+      </div>
+
+      {/* <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-green-500 rounded-full opacity-25 animate-randomMovement3"></div> */}
+      {/* <div className="absolute bottom-0 right-0 w-[100px] h-[100px] bg-yellow-500 rounded-full opacity-30 animate-randomMovement4"></div> */}
       <div className="flex flex-wrap justify-center w-full space-y-6 md:space-y-0 md:space-x-6">
         {[
           {
@@ -81,8 +93,8 @@ const Mission = () => {
                   highest standards in all endeavors.
                 </li>
                 <li>
-                  <strong>Academic Freedom</strong> - Upholds the rights to open
-                  expression and diverse perspectives.
+                  <strong>Academicabsolute Freedom</strong> - Upholds the rights
+                  to open expression and diverse perspectives.
                 </li>
                 <li>
                   <strong>Integrity and Accountability</strong> - Adheres to
