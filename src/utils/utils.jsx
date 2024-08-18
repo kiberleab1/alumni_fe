@@ -63,3 +63,23 @@ export const formatInputDate = (date) => {
 
     return formattedDate;
 }
+
+export const convertDate = (dateString) => {
+    const date = new Date(dateString);
+    
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = date.toLocaleDateString('en-US', options);
+  
+    const day = date.getDate();
+    const daySuffix = (day) => {
+      if (day > 3 && day < 21) return 'th';
+      switch (day % 10) {
+        case 1:  return "st";
+        case 2:  return "nd";
+        case 3:  return "rd";
+        default: return "th";
+      }
+    };
+  
+    return formattedDate.replace(/\d+/, day + daySuffix(day));
+  };
