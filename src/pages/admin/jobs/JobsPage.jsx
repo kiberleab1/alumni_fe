@@ -10,7 +10,7 @@ import { formatDate } from "src/utils/utils";
 
 export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
   const [jobs, setJobs] = useState([]);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
@@ -156,13 +156,13 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm text-gray-900">
-                            {job.ownerAdminId ? job.ownerAdminId : "N/A"}
+                            {job.adminName ? job.adminName : "N/A"}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm text-gray-900">
-                            {job.ownerInstituteId
-                              ? job.ownerInstituteId
+                            {job.instituteName
+                              ? job.instituteName
                               : "N/A"}
                           </div>
                         </td>

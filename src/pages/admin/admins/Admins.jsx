@@ -190,7 +190,7 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm text-gray-900">
-                            {admin.institute_id}
+                            {admin.institute_name}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">

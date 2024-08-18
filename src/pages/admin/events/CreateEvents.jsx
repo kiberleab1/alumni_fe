@@ -12,7 +12,7 @@ export default function CreateEvents() {
   const [VisibilityType] = useState(["All Alumni", "My alumni"]);
 
   const [eventFormData, setEventFormData] = useState({
-    ownerAdminId: "129ewrd-32323-323",
+    ownerAdminId: "804323f3-fbe1-480d-88cf-37c4c680a71b",
     ownerInstituteId: "",
     title: "",
     description: "",
@@ -344,13 +344,14 @@ export default function CreateEvents() {
               className="text-sm font-semibold leading-6 text-gray-100"
               onClick={() =>
                 setEventFormData({
-                  ownerAdminId: "129ewrd-32323-323",
+                  ownerAdminId: "804323f3-fbe1-480d-88cf-37c4c680a71b",
                   ownerInstituteId: "",
                   title: "",
                   description: "",
                   level: "",
                   venue: "",
                   deadline: "",
+                  visibility: "",
                   time: "",
                   image: null,
                 })
