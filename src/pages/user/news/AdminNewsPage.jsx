@@ -8,7 +8,6 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import QueryResult from "src/components/utils/queryResults";
 
-
 export default function NewsPage({ onCreateNewsClick, onNewsEditClick }) {
   const [newsList, setNewsList] = useState([]);
   const itemsPerPage = 10;
@@ -21,7 +20,10 @@ export default function NewsPage({ onCreateNewsClick, onNewsEditClick }) {
   const { isError, data, isLoading } = useQuery(
     ["getAllNews", currentPage],
     async () => {
-      const news_data = await getAllNews({ pageNumber: currentPage, pageSize: itemsPerPage });
+      const news_data = await getAllNews({
+        pageNumber: currentPage,
+        pageSize: itemsPerPage,
+      });
       setNewsList(news_data.data.news);
       setTotalItems(news_data.data.total_items);
       return news_data;
@@ -31,7 +33,7 @@ export default function NewsPage({ onCreateNewsClick, onNewsEditClick }) {
 
   useEffect(() => {
     if (!isError && !isLoading && data) {
-      console.log(data)
+      console.log(data);
 
       setNewsList(data.data.news);
     }
@@ -47,12 +49,12 @@ export default function NewsPage({ onCreateNewsClick, onNewsEditClick }) {
   const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
   const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalItems);
 
-  console.log(currentPage)
-  console.log(itemsPerPage)
-  console.log(indexOfFirstItem)
-  console.log(indexOfLastItem)
-  console.log(totalItems)
-  console.log(newsList)
+  console.log(currentPage);
+  console.log(itemsPerPage);
+  console.log(indexOfFirstItem);
+  console.log(indexOfLastItem);
+  console.log(totalItems);
+  console.log(newsList);
   return (
     <QueryResult isLoading={isLoading} isError={isError} data={data}>
       <div className="flex flex-col  bg-gray-20  w-[100%]">
@@ -105,16 +107,9 @@ export default function NewsPage({ onCreateNewsClick, onNewsEditClick }) {
         <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
           <div>
             <p className="text-sm text-gray-700">
-              Showing{" "}
-              <span className="font-medium">{indexOfFirstItem}</span> to{" "}
-              <span className="font-medium">
-                {indexOfLastItem}
-              </span>{" "}
-              of{" "}
-              <span className="font-medium">
-                {totalItems}
-              </span>{" "}
-              results
+              Showing <span className="font-medium">{indexOfFirstItem}</span> to{" "}
+              <span className="font-medium">{indexOfLastItem}</span> of{" "}
+              <span className="font-medium">{totalItems}</span> results
             </p>
           </div>
           <div>
@@ -125,7 +120,9 @@ export default function NewsPage({ onCreateNewsClick, onNewsEditClick }) {
               <button
                 onClick={() => paginate(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border border-gray-300 ${currentPage === 1 ? "cursor-not-allowed" : "hover:bg-gray-50"}`}
+                className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border border-gray-300 ${
+                  currentPage === 1 ? "cursor-not-allowed" : "hover:bg-gray-50"
+                }`}
               >
                 Previous
               </button>
@@ -134,10 +131,11 @@ export default function NewsPage({ onCreateNewsClick, onNewsEditClick }) {
                   <button
                     key={pageNumber}
                     onClick={() => paginate(pageNumber)}
-                    className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold border ${currentPage === pageNumber
-                      ? "bg-indigo-600 text-white border-indigo-600"
-                      : "text-gray-900 bg-white border-gray-300 hover:bg-gray-50"
-                      }`}
+                    className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold border ${
+                      currentPage === pageNumber
+                        ? "bg-indigo-600 text-white border-indigo-600"
+                        : "text-gray-900 bg-white border-gray-300 hover:bg-gray-50"
+                    }`}
                   >
                     {pageNumber}
                   </button>
@@ -146,7 +144,11 @@ export default function NewsPage({ onCreateNewsClick, onNewsEditClick }) {
               <button
                 onClick={() => paginate(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border border-gray-300 ${currentPage === totalPages ? "cursor-not-allowed" : "hover:bg-gray-50"}`}
+                className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border border-gray-300 ${
+                  currentPage === totalPages
+                    ? "cursor-not-allowed"
+                    : "hover:bg-gray-50"
+                }`}
               >
                 Next
               </button>

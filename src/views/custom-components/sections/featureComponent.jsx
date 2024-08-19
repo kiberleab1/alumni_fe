@@ -35,42 +35,29 @@ const FeatureComponent = () => {
           className="flex flex-wrap items-center justify-center text-black"
           data-aos="zoom-in"
         >
-          <div className="blog-slider">
+          <div className="blog-slider ">
             <div className="blog-slider__wrp swiper-wrapper">
               <div className="blog-slider__item swiper-slide">
                 <div className="blog-slider__img">
                   <img src={img1} alt="" />
                 </div>
                 <div className="__content">
-                  <span className="blog-slider__code">26 December 2019</span>
-                  <div className="blog-slider__title">Lorem Ipsum Dolor</div>
-                  <div className="blog-slider__text">
+                  <span className="blog-slider__code text-end">
+                    26 December 2019
+                  </span>
+                  <div className="blog-slider__title text-start">
+                    Lorem Ipsum Dolor
+                  </div>
+                  <div className="blog-slider__text text-start">
                     Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                     Recusandae voluptate repellendus magni illo ea animi?
                   </div>
-                  <a href="#" className="blog-slider__button">
-                    READ MORE
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="blog-slider">
-            <div className="blog-slider__wrp swiper-wrapper">
-              <div className="blog-slider__item swiper-slide">
-                <div className="blog-slider__img">
-                  <img src={img1} alt="" />
-                </div>
-                <div className="__content">
-                  <span className="blog-slider__code">26 December 2019</span>
-                  <div className="blog-slider__title">Lorem Ipsum Dolor</div>
-                  <div className="blog-slider__text">
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                    Recusandae voluptate repellendus magni illo ea animi?
+                  <div className="text-start mt-4">
+                    {" "}
+                    <a href="#" className="blog-slider__button text-start ">
+                      READ MORE
+                    </a>
                   </div>
-                  <a href="#" className="blog-slider__button">
-                    READ MORE
-                  </a>
                 </div>
               </div>
             </div>

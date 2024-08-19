@@ -37,7 +37,7 @@ const AlumniPodcast = () => {
     <>
       <div className="min-h-screen">
         <div className="flex justify-center mt-4 ">
-          <h1 className="title font-sans"> playlist</h1>
+          <h1 className="title font-sans"> Playlist</h1>
         </div>
 
         <div className=" flex  space-x-18  flex-wrap gap-4 space-x-8  items-center justify-center text-black  mt-8 mb-8">
@@ -49,11 +49,11 @@ const AlumniPodcast = () => {
               >
                 <div
                   className="flex  max-w-sm rounded-xl m-10 "
-                  style={{ boxShadow: "-50px 30px #ebf0f0" }}
+                  style={{ boxShadow: "-50px 30px #ebfcf8" }}
                 >
                   <div
                     className="max-h-lg  rounded-xl max-w-lg bg-gray-900 p-2"
-                    style={{ boxShadow: "60px -40px #7c7d7c " }}
+                    style={{ boxShadow: "30px -20px #a4b0ad" }}
                   >
                     <iframe
                       // width="500"
