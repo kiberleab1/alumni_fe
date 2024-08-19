@@ -1,73 +1,35 @@
 import { Dialog, Transition } from "@headlessui/react";
 import {
-  AcademicCapIcon,
   ArrowLongLeftIcon,
   Bars3Icon,
-  BriefcaseIcon,
-  BuildingLibraryIcon,
-  CalendarIcon,
   ChevronDownIcon,
   ChevronUpIcon,
-  ClipboardDocumentCheckIcon,
   Cog6ToothIcon,
-  EllipsisHorizontalCircleIcon,
-  EllipsisVerticalIcon,
   HomeIcon,
-  InboxArrowDownIcon,
-  NewspaperIcon,
   PlusCircleIcon,
   PlusIcon,
-  StarIcon,
-  TagIcon,
   UserPlusIcon,
-  UsersIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
 import ComponentRender from "./PageRender";
-import CreateAdminPage from "./admin/admins/createAdmin";
+import { getUserToken } from "src/helpers/globalStorage";
+import { useNavigate } from "react-router-dom";
+import { possibleNavigationMenus } from "src/helpers/role_maaping";
 // import { useLocation } from "react-router-dom";
-
-const navigation = [
-  {
-    name: "Dashboard",
-    href: "#",
-    icon: HomeIcon,
-    current: false,
-    comp: CreateAdminPage,
-  },
-  { name: "Admins", href: "#", icon: UsersIcon, current: true },
-  {
-    name: "Institutions",
-    href: "#",
-    icon: BuildingLibraryIcon,
-    current: false,
-  },
-  { name: "Departments", href: "#", icon: TagIcon, current: false },
-  { name: "Users", href: "#", icon: AcademicCapIcon, current: false },
-  {
-    name: "Roles",
-    href: "#",
-    icon: EllipsisHorizontalCircleIcon,
-    current: false,
-  },
-  { name: "Permission", href: "#", icon: EllipsisVerticalIcon, current: false },
-  { name: "Jobs", href: "#", icon: BriefcaseIcon, current: false },
-  { name: "Staff", href: "#", icon: UsersIcon, current: false },
-  { name: "Jobs History", href: "#", icon: BriefcaseIcon, current: false },
-  { name: "Alumni", href: "#", icon: AcademicCapIcon, current: false },
-  {
-    name: "Document Verification",
-    href: "#",
-    icon: ClipboardDocumentCheckIcon,
-    current: false,
-  },
-  { name: "Events", href: "#", icon: CalendarIcon, current: false },
-  { name: "News", href: "#", icon: NewspaperIcon, current: false },
-  { name: "Email", href: "#", icon: InboxArrowDownIcon, current: false },
-  { name: "WebContent", href: "#", icon: StarIcon, current: false },
+const navigationWithNoSubNavigation = [
+  "Dashboard",
+  "Roles",
+  "Events",
+  "News",
+  "Email",
+  "Permission",
+  "Jobs",
+  "Staff",
+  "Jobs History",
+  "Alumni",
+  "Document Verification",
 ];
-
 const subNavigation = [
   {
     name: "Create Admin",
@@ -108,26 +70,12 @@ const subNavigation = [
   },
 ];
 
-const navigationWithNoSubNavigation = [
-  "Dashboard",
-  "Roles",
-  "Events",
-  "News",
-  "Email",
-  "Permission",
-  "Jobs",
-  "Staff",
-  "Jobs History",
-  "Alumni",
-  "Document Verification",
-];
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 function SideBar() {
-  const [childUrl, setchildUrl] = useState("");
+  const [, setchildUrl] = useState("");
   const [parentUrl, setparentUrl] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarOpenMain, setSidebarOpenMain] = useState(true);
@@ -136,7 +84,15 @@ function SideBar() {
     href: "/admin",
     current: true,
   });
+  const navigate = useNavigate();
 
+  const userToken = getUserToken();
+  if (!userToken) {
+    navigate("/landing/program/login");
+  }
+  console.log({ userToken });
+  const role_name = userToken.user.role_name;
+  const navigation = possibleNavigationMenus(role_name);
   const [navigationItems, setNavigationItems] = useState(navigation);
   const [openDropDown, setOpenDropDown] = useState({});
 
@@ -186,6 +142,7 @@ function SideBar() {
     const item = subNavigation.find((entry) => entry.name === name);
     return setparentUrl(item ? item.parent : null);
   };
+
   return (
     <>
       <div>
@@ -444,8 +401,7 @@ function SideBar() {
                           "text-gray-400 hover:text-white hover:bg-gray-800",
                           "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                         )}
-                        onClick={() =>
-                          handleNavigationItemClick("Settings")}
+                        onClick={() => handleNavigationItemClick("Settings")}
                       >
                         <Cog6ToothIcon
                           className="h-6 w-6 shrink-0"

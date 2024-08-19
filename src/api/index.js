@@ -1,9 +1,32 @@
 // @ts-nocheck
 import axios from "axios";
+import { getUserToken } from "src/helpers/globalStorage";
 
 const API_BASE_URl = import.meta.env.VITE_BASE_URL;
 const IMAGE_API_URL = import.meta.env?.VITE_IMAGE_BASE_URL;
 const BASE_URL = import.meta.env?.VITE_BASE_FE_URL;
+
+axios.interceptors.request.use(
+  (config) => {
+    try {
+      const { token, user } = getUserToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+
+      config.headers.User = JSON.stringify(user);
+    } catch (error) {
+      //TODO dev
+      // config.headers.Authorization = "Bearer dev";
+
+      return config;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 axios.interceptors.response.use(
   (response) => {
@@ -24,26 +47,6 @@ axios.interceptors.response.use(
   }
 );
 
-axios.interceptors.request.use(
-  (config) => {
-    try {
-      //   const authToken = localStorage.getItem("authToken");
-      //   console.log(authToken);
-      //   if (authToken) {
-      //     config.headers.Authorization = `Bearer ${authToken}`;
-      //   }
-    } catch (error) {
-      console.log(error);
-    }
-    //TODO dev
-    config.headers.Authorization = "Bearer dev";
-
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 export async function getDepartments({ pageNumber, pageSize }) {
   return await axios.get(
     `${API_BASE_URl}/getDepartments?pageNumber=${pageNumber}&pageSize=${pageSize}`

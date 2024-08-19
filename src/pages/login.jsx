@@ -1,20 +1,10 @@
-import { Form, Formik, useFormik } from "formik";
+import { useFormik } from "formik";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
-import {
-  Button,
-  Col,
-  Container,
-  FormFeedback,
-  FormGroup,
-  Input,
-  Label,
-  Row,
-} from "reactstrap";
 import { login } from "src/api";
 import * as Yup from "yup";
-import FormErrorMessage from "src/components/utils/formErrorMessage";
 import { useNavigate } from "react-router-dom";
+import { storeUserToken as storeUserToken } from "src/helpers/globalStorage";
 
 export default function LoginPage() {
   return (
@@ -30,20 +20,19 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const mutation = useMutation(login, {
-    onSuccess: () => {
+    onSuccess: (res) => {
       queryClient.invalidateQueries("login");
-      navigate("/landing/program/profile");
+
+      const data = storeUserToken(res.data);
+      if (data) navigate("/landing/program/profile");
+      else throw new Error("Something went wrong");
     },
     onError: () => {
       setErrorMessage("Failed to Login,please retry .....");
     },
   });
   const [errorMes, setErrorMessage] = useState("");
-  const handleSubmit = (values) => {
-    values.ip_address = "";
-    console.log({ values });
-    mutation.mutate(values);
-  };
+
   const loginFormFields = {
     email: {
       label: "Email",
@@ -57,29 +46,27 @@ const LoginForm = () => {
     },
   };
   const loginFormValueAndImplmentation = useFormik({
-    initialValues: Object.keys(loginFormFields).reduce((acc, key) => {
-      acc[key] = "";
-      return acc;
-    }, {}),
-    validationSchema: Yup.object(
-      Object.keys(loginFormFields).reduce((acc, key) => {
-        acc[key] = Yup.string().required(
-          `${loginFormFields[key].label} is required`
-        );
-        return acc;
-      }, {})
-    ),
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string().required("Required").email("Invalid email"),
+      password: Yup.string()
+        .required("Required")
+        .min(8, "Too Short! must be at least 8 characters"),
+    }),
     onSubmit: (values) => {
-      console.log("Form values login:", values);
-      // submit here
-      navigate("/user");
+      let data = { ...values, ip_address: "" };
+      mutation.mutate(data);
     },
   });
+
   return (
     <div className="min-h-screen">
       <div
         className="
-        
+
         p-8
         max-w-xl
         mt-[10%]
@@ -98,7 +85,7 @@ const LoginForm = () => {
               className="space-y-4"
             >
               <div className="flex flex-wrap -mx-2">
-                {Object.keys(loginFormFields).map((field, index) => (
+                {Object.keys(loginFormFields).map((field) => (
                   <div key={field} className="px-2 w-full pb-2">
                     <label
                       htmlFor={field}
@@ -132,8 +119,8 @@ const LoginForm = () => {
                 </button>
 
                 <p className="mt-1 text-sm leading-6 text-gray-600 font-mono text-left">
-                  <a href="/landing/program/register">Register</a> if you don't
-                  have an account
+                  <a href="/landing/program/register">Register</a>
+                  {"if you don't have an account"}
                 </p>
               </div>
             </form>
