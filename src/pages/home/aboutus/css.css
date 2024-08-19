@@ -1,3 +1,49 @@
-.circular{
-    margin-right: 7;
-}
+@keyframes randomMovement1 {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(50px, -100px); }
+    50% { transform: translate(-100px, 75px); }
+    75% { transform: translate(75px, 100px); }
+    100% { transform: translate(0, 0); }
+  }
+  
+  @keyframes randomMovement2 {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(-50px, 100px); }
+    50% { transform: translate(100px, -75px); }
+    75% { transform: translate(-75px, -100px); }
+    100% { transform: translate(0, 0); }
+  }
+  
+  @keyframes randomMovement3 {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(100px, 50px); }
+    50% { transform: translate(-75px, -100px); }
+    75% { transform: translate(50px, -50px); }
+    100% { transform: translate(0, 0); }
+  }
+  
+  @keyframes randomMovement4 {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(-100px, -50px); }
+    50% { transform: translate(75px, 100px); }
+    75% { transform: translate(-50px, 50px); }
+    100% { transform: translate(0, 0); }
+  }
+  
+ 
+  .animate-randomMovement1 {
+    animation: randomMovement1 12s ease-in-out infinite;
+  }
+  
+  .animate-randomMovement2 {
+    animation: randomMovement2 14s ease-in-out infinite;
+  }
+  
+  .animate-randomMovement3 {
+    animation: randomMovement3 16s ease-in-out infinite;
+  }
+  
+  .animate-randomMovement4 {
+    animation: randomMovement4 18s ease-in-out infinite;
+  }
+  

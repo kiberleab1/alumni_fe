@@ -60,6 +60,7 @@ const ContentCatalogComponent = ({ newsArray }) => {
                         style={{ width: "100%", height: "250px" }}
                         src={news.thumbnails}
                         alt="news-thumbnail"
+                        data-aos="fade-down"
                       />
                     </a>
                     <div className="date-pos bg-blue-700">
