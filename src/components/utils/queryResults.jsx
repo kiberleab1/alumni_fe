@@ -3,7 +3,7 @@ import LoadingSpinnerComponent from "./loading";
 import NotFoundComponent from "./notFound";
 
 function QueryResult({ isError, isLoading, data, children }) {
-  console.log({ data });
+  console.log({ data, isError });
   if (isError) {
     return <InternalErrorComponent />;
   }

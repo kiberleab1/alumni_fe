@@ -21,6 +21,7 @@ export default function CreateInstitutionPage() {
 
   const [instituteFields, setInstituteFields] = useState({
     instituteName: "",
+    sub_url: "",
     instituteStartingYear: "",
     instituteDescription: "",
     website: "",
@@ -53,6 +54,7 @@ export default function CreateInstitutionPage() {
       instituteDescription: "",
       website: "",
       type: "",
+      sub_url: "",
       accreditations: "",
       number_of_students: "",
       number_of_alumni: "",
@@ -150,6 +152,7 @@ export default function CreateInstitutionPage() {
     console.log(instituteFields);
     const institute = {
       name: instituteFields.instituteName,
+      sub_url: instituteFields.sub_url,
       phone_number: instituteFields.phone,
       email: instituteFields.email,
       website: instituteFields.website,
@@ -376,6 +379,30 @@ export default function CreateInstitutionPage() {
                     }
                     className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
                     placeholder="Email Address"
+                  />
+                </div>
+              </div>
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="institute-name"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Institute Sub url
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    name="sub_url"
+                    id="sub_url"
+                    value={instituteFields.sub_url}
+                    onChange={(e) =>
+                      setInstituteFields({
+                        ...instituteFields,
+                        sub_url: e.target.value,
+                      })
+                    }
+                    className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                    placeholder="Phone Number"
                   />
                 </div>
               </div>
