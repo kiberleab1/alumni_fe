@@ -68,7 +68,7 @@ const AlumniPodcast = () => {
                     ></iframe>
                     <div className="flex flex-col text-left pl-4 text-gray-50 ">
                       <h2 className="title text-xl text-white">{val.topic}</h2>
-                      <p className="text-left over flow scroll ">
+                      <p className="text-left over flow scrol mb-2 ">
                         {val.discription}
                       </p>
                     </div>
