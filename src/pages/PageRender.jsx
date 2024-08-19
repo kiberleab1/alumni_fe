@@ -37,6 +37,9 @@ import AlumniPage from "./admin/alumni/AlumniPage";
 import DocumentVerificationPage from "./admin/documentVerification/DocumentVerificationPage";
 import ComposeEmail from "./admin/emails/compose";
 import SettingsPage from "./admin/settings/settings";
+import CreateOurStoryForm from "./admin/webcontent/CreateOurStoryPage";
+import PodcastPage from "./admin/podcast/ListPodcat";
+import CreatePodcastComp from "./admin/podcast/podcast";
 
 const componentsMap = {
   Dashboard: AdminsPage,
@@ -76,6 +79,9 @@ const componentsMap = {
   "Create About us": CreateWebContent,
   "Create Slide Show": CreateSlideShowPage,
   "Create Gallery Show": CreateGallaryPage,
+  "Create Our Story Page": CreateOurStoryForm,
+  Podcast: PodcastPage,
+  "Create Podcast": CreatePodcastComp,
 };
 
 export default function ComponentRender({ page, onPageSet }) {
@@ -155,6 +161,8 @@ export default function ComponentRender({ page, onPageSet }) {
         setSelectedDocumentVerificationRequest(document);
         onPageSet("Edit Document Verification");
       }}
+      onCreatePodcastClick={() => onPageSet("Create Podcast")}
+      onEditPodcastClick={() => {}}
       institute={selectedInstitute}
       admin={selectedAdmin}
       user={selecteduser}

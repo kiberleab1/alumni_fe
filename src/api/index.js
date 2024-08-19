@@ -657,3 +657,15 @@ export async function getAllSettings({ pageNumber, pageSize }) {
   );
   return result;
 }
+
+export async function createPodcast({ name, description, url }) {
+  const data = { title: name, description, url };
+  const result = await axios.post(`${API_BASE_URl}/createPodcast`, data);
+  return result;
+}
+
+export async function getAllPodcast({ pageNumber, pageSize }) {
+  const data = { pageNumber, pageSize };
+  const result = await axios.post(`${API_BASE_URl}/getAllPodcast`, data);
+  return result;
+}

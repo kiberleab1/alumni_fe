@@ -87,7 +87,6 @@ const Header = () => {
         });
       }
     }
-
   }, [isError, isLoading, data]);
 
   const links = [
@@ -162,7 +161,10 @@ const Header = () => {
   ];
   return (
     <>
-      <div className="bg-green-800 flex items-center justify-between text-white px-2 min-h-16 " style={{ backgroundColor: headerBackground || "#276749" }}>
+      <div
+        className="bg-green-800 flex items-center justify-between text-white px-2 min-h-16 "
+        style={{ backgroundColor: headerBackground || "#276749" }}
+      >
         {!inputControler && (
           <div className="flex items-center">
             <Button
@@ -178,18 +180,20 @@ const Header = () => {
           </div>
         )}
         <div
-          className={`transition duration-300 ease-in-out ${inputControler
+          className={`transition duration-300 ease-in-out ${
+            inputControler
               ? "text-white hover:bg-green-900 p-2 mr-2 text-left"
               : "text-right"
-            }`}
+          }`}
         >
-          Logo
+          <img src="https://kefeta.et/wp-content/uploads/2023/01/cropped-Kefeta-Logo-English-Colors-2048x1479-1-120x87.png" />
         </div>
 
         {inputControler && (
           <InputGroup
-            className={`transition duration-300 ease-in-out ${!controlNavColor ? "w-1/2 max-w-md" : "max-w-80"
-              }`}
+            className={`transition duration-300 ease-in-out ${
+              !controlNavColor ? "w-1/2 max-w-md" : "max-w-80"
+            }`}
           >
             <Input className="rounded-l-lg border-green-800 ml-6" />
             <Button className="rounded-r-lg p-2 bg-green-800 h-13 transition-colors duration-300 ease-in-out hover:bg-green-900">
@@ -213,27 +217,31 @@ const Header = () => {
       </div>
 
       <div
-        className={`absolute top-0 transition-all duration-500 ease-in-out ${meanNav
+        className={`absolute top-0 transition-all duration-500 ease-in-out ${
+          meanNav
             ? "sticky top-0 flex flex-col opacity-100 z-40"
             : "opacity-0 -translate-y-4 pointer-events-none hidden z-40"
-          } z-10`}
+        } z-10`}
       >
         <div
-          className={`transition duration-300 ease-in-out ${!controlNavColor && !isActive ? "hidden" : "block bg-gray-800"
-            }`}
+          className={`transition duration-300 ease-in-out ${
+            !controlNavColor && !isActive ? "hidden" : "block bg-gray-800"
+          }`}
           style={{ backgroundColor: menuBarBackground || "#50d71e" }}
         >
           <nav
-            className={`transition duration-300 ease-in-out ${isActive
+            className={`transition duration-300 ease-in-out ${
+              isActive
                 ? "flex space-x-8 justify-start pb-2 pt-8 relative z-50"
                 : "flex justify-center space-x-8 pb-2 pt-8"
-              }`}
+            }`}
           >
             <ul
-              className={`transition duration-300 ease-in-out font-serif  ${isActive && isSidebarOpen
+              className={`transition duration-300 ease-in-out font-serif  ${
+                isActive && isSidebarOpen
                   ? "absolute right-0 top-0 text-left bg-gray-800 p-1 w-full"
                   : "hidden md:flex z-50 p-1"
-                }`}
+              }`}
             >
               {links.map((mainLink, idx) => {
                 const isSubLinkActive = mainLink.subLink.some(
@@ -246,10 +254,12 @@ const Header = () => {
                       isActive && isSidebarOpen
                         ? "justify-start hover:translate-x-1 hover:scale-70"
                         : "hover:translate-y-1 hover:scale-70 transition ease-in delay-300 text-xl w-fit block after:block after:content-[''] after:absolute after:h-[4px] after:bg-green-800 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
-                      }`}
+                    }`}
                     key={idx}
                     style={{
-                      color: isActive ? menuBarActiveTextColor : menuBarTextColor || "#eeeeec",
+                      color: isActive
+                        ? menuBarActiveTextColor
+                        : menuBarTextColor || "#eeeeec",
                     }}
                   >
                     <a
@@ -273,7 +283,8 @@ const Header = () => {
                       )}
                     </a>
                     <div
-                      className={`transition-all duration-1000 delay-200 ease-in-out max-h-0  overflow-hidden bg-opacity-0 group-hover:opacity-80  ${isActive && isSidebarOpen
+                      className={`transition-all duration-1000 delay-200 ease-in-out max-h-0  overflow-hidden bg-opacity-0 group-hover:opacity-80  ${
+                        isActive && isSidebarOpen
                           ? " group-hover:max-h-56 min-w-48 group-hover:block relative right-15 bg-opacity-50 m-0 p-0 rounded-b group-hover:bg-green-500"
                           : "group-hover:max-h-56 min-w-48 group-hover:opacity-100 group-hover:block absolute right-15 bg-opacity-80 rounded-b group-hover:bg-green-500"
                       }`}
@@ -294,7 +305,6 @@ const Header = () => {
                       ))}
                     </div>
                   </li>
-
                 );
               })}
             </ul>

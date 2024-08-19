@@ -33,7 +33,10 @@ const componentsMap = {
 export default function ComponentRender({ page, onPageSet }) {
   const [selectedJobHistory, setSelectedJobHistory] = useState(null);
   const [selectedAlumni, setSelectedAlumni] = useState(null);
-  const [selectedDocumentVerificationRequest, setSelectedDocumentVerificationRequest,] = useState(null);
+  const [
+    selectedDocumentVerificationRequest,
+    setSelectedDocumentVerificationRequest,
+  ] = useState(null);
   const ComponentToRender =
     componentsMap[page] || (() => <div>Page not found</div>);
 
@@ -41,26 +44,26 @@ export default function ComponentRender({ page, onPageSet }) {
     <ComponentToRender
       onCreateJobHistoryClick={() => onPageSet("Create JobHistory")}
       onCreateAlumniClick={() => onPageSet("Create Alumni")}
-      onCreateDocumentVerificationClick={()=> onPageSet("Create Document Verification")}
-
+      onCreateDocumentVerificationClick={() =>
+        onPageSet("Create Document Verification")
+      }
       onEditJobHistoryClick={(jobHistory) => {
         setSelectedJobHistory(jobHistory);
         onPageSet("Edit JobHistory");
       }}
-
       onEditAlumniClick={(alumni) => {
         setSelectedAlumni(alumni);
         onPageSet("Edit Alumni");
       }}
-
       onEditDocumentVerififcationClick={(document) => {
         setSelectedDocumentVerificationRequest(document);
         onPageSet("Edit Document Verification");
       }}
-
       jobHistory={selectedJobHistory}
       alumni={selectedAlumni}
       document={selectedDocumentVerificationRequest}
+      onCreatePodcastClick={() => onPageSet("Create Alumni")}
+      onEditPodcastClick={() => {}}
     />
   );
 }

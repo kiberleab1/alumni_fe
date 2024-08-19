@@ -16,6 +16,7 @@ import ComponentRender from "./PageRender";
 import { getUserToken } from "src/helpers/globalStorage";
 import { useNavigate } from "react-router-dom";
 import { possibleNavigationMenus } from "src/helpers/role_maaping";
+import { useEffect } from "react";
 // import { useLocation } from "react-router-dom";
 const navigationWithNoSubNavigation = [
   "Dashboard",
@@ -29,6 +30,7 @@ const navigationWithNoSubNavigation = [
   "Jobs History",
   "Alumni",
   "Document Verification",
+  "Podcast",
 ];
 const subNavigation = [
   {
@@ -63,6 +65,12 @@ const subNavigation = [
     current: false,
   },
   {
+    name: "Create Our Story Page",
+    parent: "WebContent",
+    icon: PlusCircleIcon,
+    current: false,
+  },
+  {
     name: "Create Gallery Show",
     parent: "WebContent",
     icon: PlusCircleIcon,
@@ -84,15 +92,22 @@ function SideBar() {
     href: "/admin",
     current: true,
   });
+  const [navigation, setNavigation] = useState([]);
   const navigate = useNavigate();
-
-  const userToken = getUserToken();
-  if (!userToken) {
-    navigate("/landing/program/login");
-  }
-  console.log({ userToken });
-  const role_name = userToken.user.role_name;
-  const navigation = possibleNavigationMenus(role_name);
+  useEffect(() => {
+    const userToken = getUserToken();
+    if (!userToken) {
+      navigate("/landing/program/login");
+    }
+    console.log({ userToken });
+    const role_name = userToken.user.role_name;
+    const navigation = possibleNavigationMenus(role_name);
+    if (!navigation) {
+      navigate("/landing/program/login");
+      return;
+    }
+    setNavigation(navigation);
+  }, []);
   const [navigationItems, setNavigationItems] = useState(navigation);
   const [openDropDown, setOpenDropDown] = useState({});
 
