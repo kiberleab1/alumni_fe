@@ -47,7 +47,8 @@ function AboutUsComponent({ title, body, images }) {
     });
   }, []);
   return (
-    <div className=" min-h-screen  flex items-center justify-center bg-blue-100                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  0">
+    <div className="relative min-h-screen  flex items-center justify-center bg-blue-100 overflow-hidden                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 0">
+      <div className="absolute w-[90%] h-[200%] rounded-[50%] bg-blue-50 right-[-30%] top-[-80%] circular overflow-hidden"></div>
       <div className="container py-12 px-4 sm:px-6 lg:px-8 max-h-full">
         <div
           className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16 mx-auto "
@@ -57,10 +58,10 @@ function AboutUsComponent({ title, body, images }) {
             className="w-full lg:w-6/12 flex flex-col space-y-6 lg:space-y-8"
             data-aos="fade-up"
           >
-            <h1 className="text-3xl lg:text-4xl  text-gray-900 dark:text-white font-sans">
+            <h1 className="text-3xl lg:text-4xl text-start text-gray-900 dark:text-white font-sans">
               {title || "Our Story"}
             </h1>
-            <p className="text-lg text-gray-700 dark:text-gray-300 font-sans-serif">
+            <p className="text-lg text-start text-gray-700 dark:text-gray-300 font-sans-serif">
               {body ||
                 "Welcome to [Your Company]. We are dedicated to [your mission statement]. Our journey began in [Year] when [founder's name] decided to [reason for founding]. Since then, we've achieved [mention any achievements or milestones]."}
             </p>

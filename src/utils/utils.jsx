@@ -1,12 +1,16 @@
 
 
-export const truncateDescription = (description, maxLength = 50) => {
-	if (description.length > maxLength) {
-	  return description.substring(0, maxLength) + '...';
+export const truncateDescription = (description, maxLength = 50, removeEmbadedHtml = true) => {
+    let truncatedDescription = removeHtmlTags(description);
+	if (truncatedDescription.length > maxLength) {
+	  return truncatedDescription.substring(0, maxLength) + '...';
 	}
-	return description;
+	return truncatedDescription;
 }
 
+const removeHtmlTags = (str) => {
+    return str.replace(/<[^>]*>/g, '');
+};
 
 export const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -59,3 +63,23 @@ export const formatInputDate = (date) => {
 
     return formattedDate;
 }
+
+export const convertDate = (dateString) => {
+    const date = new Date(dateString);
+    
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = date.toLocaleDateString('en-US', options);
+  
+    const day = date.getDate();
+    const daySuffix = (day) => {
+      if (day > 3 && day < 21) return 'th';
+      switch (day % 10) {
+        case 1:  return "st";
+        case 2:  return "nd";
+        case 3:  return "rd";
+        default: return "th";
+      }
+    };
+  
+    return formattedDate.replace(/\d+/, day + daySuffix(day));
+  };

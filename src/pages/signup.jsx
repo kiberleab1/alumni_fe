@@ -225,8 +225,8 @@ const SignupForm = () => {
     }
   };
   return (
-    <div>
-      <div>
+    <div className="min-h-screen">
+      <div className="flex items-center  justify-center  my-[10%]">
         <div className=" p-8 max-w-2xl mt-16 mx-auto border border-sky-500 transition-all duration-700">
           <div className="sticky top-2 mt-2 z-0 w-90 bg-gray-200 rounded-full h-2.5 mb-4 overflow-hidden">
             <div
@@ -544,7 +544,7 @@ const SignupForm = () => {
           )}
         </div>
       </div>
-
+      {/* 
       <div className="spacer" id="forms-component">
         <Container>
           <Row className="justify-content-center">
@@ -838,8 +838,8 @@ const SignupForm = () => {
                           </div>
                         </Row>
                       </FormGroup>
-                    </Row>
-                    {/* <Row>
+                    </Row> */}
+      {/* <Row>
                       <FormGroup>
                         <Row>
                           <div className="flex justify-end items-center mt-2">
@@ -870,7 +870,7 @@ const SignupForm = () => {
                         </Row>
                       </FormGroup>
                     </Row> */}
-                    {/* <Row>
+      {/* <Row>
                       <FormGroup>
                         <Row>
                           <div className="flex justify-end items-center mt-2">
@@ -965,7 +965,7 @@ const SignupForm = () => {
                         </Row>
                       </FormGroup>
                     </Row> */}
-                  </Col>
+      {/* </Col>
                 </Row>
 
                 <Col md="12" className="text-center ">
@@ -990,8 +990,8 @@ const SignupForm = () => {
               </Form>
             )}
           </Formik>
-        </Container>
-      </div>
+        </Container> */}
+      {/* </div> */}
     </div>
   );
 };

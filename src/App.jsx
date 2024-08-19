@@ -35,6 +35,8 @@ import NotFoundComponent from "./components/utils/notFound";
 import { useLocation } from "react-router-dom";
 import Footer from "./views/custom-components/sections/footer";
 import { useState } from "react";
+import AlumniPodcast from "./pages/home/podcast/AlumniPodcast";
+import UserMenuBar from "./pages/UserMenuBar";
 // const hist = createBrowserHistory();
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,9 +51,7 @@ const queryClient = new QueryClient({
 function App() {
   const [url, seturl] = useState(false);
   const activeUrl = window.location.pathname;
-  // if (activeUrl != '/user') {
-  //   seturl(true)
-  // }
+
   console.log(window.location.pathname);
 
   return (
@@ -101,6 +101,7 @@ function App() {
               </Route>
               <Route path="alumni">
                 <Route index element={<LandingProfile />} />
+                <Route path="podcast" element={<AlumniPodcast />} />
               </Route>
               <Route path="career">
                 <Route index element={<CareerPage />} />
@@ -111,7 +112,7 @@ function App() {
             <Route path="/" element={<Navigate to="/landing" replace />} />
             <Route path="*" element={<NotFoundComponent />} />
           </Routes>
-          {activeUrl != "/user" && <Footer />}
+          {activeUrl != "/user" && activeUrl != "/admin"  && <Footer />}
         </div>
       </BrowserRouter>
     </QueryClientProvider>

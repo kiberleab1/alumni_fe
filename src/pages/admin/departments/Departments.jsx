@@ -177,7 +177,7 @@ function ListDepartment({
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {department.institute_id || "N/A"}
+                          {department.institute_name || "N/A"}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium">

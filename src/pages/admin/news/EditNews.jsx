@@ -18,7 +18,7 @@ export default function EditNews({ news }) {
   const formattedDate = `${year}-${month}-${day}`;
 
   const [newsFormFields, setNewsFormFields] = useState({
-    ownerAdminId: "129ewrd-32323-323",
+    ownerAdminId: "804323f3-fbe1-480d-88cf-37c4c680a71b",
     ownerInstituteId: news.ownerInstituteId ? news.ownerInstituteId : "",
     title: news.title ? news.title : "",
     description: news.description ? news.description : "",
@@ -270,7 +270,7 @@ export default function EditNews({ news }) {
               className="text-sm font-semibold leading-6 text-gray-100"
               onClick={() =>
                 setNewsFormFields({
-                  ownerAdminId: "129ewrd-32323-323",
+                  ownerAdminId: "804323f3-fbe1-480d-88cf-37c4c680a71b",
                   ownerInstituteId: "",
                   title: "",
                   description: "",

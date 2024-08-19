@@ -12,15 +12,19 @@ export default function EditJob({ job }) {
   console.log(job);
   const [institutions, setInstitutions] = useState([]);
   const [jobLevel] = useState(["High", "Medium", "Low"]);
+  const [jobHiringTypeLevel, setJobHiringTypeLevel] = useState(["Full-time", "Part-time", "Remote"]);
 
   const deadlineFormatedDate = formatInputDate(job.deadline);
 
   const [jobFormData, setJobFormData] = useState({
-    ownerAdminId: "129ewrd-32323-323",
+    ownerAdminId: "804323f3-fbe1-480d-88cf-37c4c680a71b",
     ownerInstituteId: job.ownerInstituteId ? job.ownerInstituteId : "",
     title: job.title ? job.title : "",
     description: job.description ? job.description : "",
     level: job.level ? job.level : "",
+    salary: job.salary ? job.salary : "",
+    address: job.address ? job.address : "",
+    hiring_type: job.hiring_type ? job.hiring_type : "",
     deadline: deadlineFormatedDate ? deadlineFormatedDate : "",
     image: null,
   });
@@ -62,6 +66,9 @@ export default function EditJob({ job }) {
     formData.append("description", jobFormData.description);
     formData.append("deadline", jobFormData.deadline);
     formData.append("level", jobFormData.level);
+    formData.append("salary", jobFormData.salary);
+    formData.append("address", jobFormData.address);
+    formData.append("hiring_type", jobFormData.hiring_type);
     if (jobFormData.image) {
       formData.append("image", jobFormData.image);
     }
@@ -77,7 +84,6 @@ export default function EditJob({ job }) {
   };
 
   return (
-    <QueryResult isError={isError} isLoading={isLoading} data={data}>
       <div className="space-y-10 divide-y divide-gray-900/10">
         <div className="grid grid-cols-1 gap-x-8 gap-y-8 pl-10 pr-10 pt-10 md:grid-cols-2">
           <form
@@ -116,6 +122,50 @@ export default function EditJob({ job }) {
                     />
                   </div>
                 </div>
+                <div className="sm:col-span-1">
+                <label
+                  htmlFor="news-title"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Salary
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    name="news-salary"
+                    id="news-salary"
+                    required
+                    value={jobFormData.salary}
+                    onChange={(e) =>
+                      setJobFormData({ ...jobFormData, salary: e.target.value })
+                    }
+                    placeholder="Job salary"
+                    className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                  />
+                </div>
+              </div>
+              <div className="sm:col-span-1">
+                <label
+                  htmlFor="news-title"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Address
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    name="news-address"
+                    id="news-address"
+                    required
+                    value={jobFormData.address}
+                    onChange={(e) =>
+                      setJobFormData({ ...jobFormData, address: e.target.value })
+                    }
+                    placeholder="Job salary"
+                    className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                  />
+                </div>
+              </div>
                 <div className="sm:col-span-2">
                   <label
                     htmlFor="news-deadline"
@@ -158,7 +208,7 @@ export default function EditJob({ job }) {
                     />
                   </div>
                 </div>
-                <div className="sm:col-span-2">
+                <div className="sm:col-span-1">
                   <label
                     htmlFor="news-level"
                     className="block text-sm font-medium leading-6 text-gray-900"
@@ -186,6 +236,31 @@ export default function EditJob({ job }) {
                     </select>
                   </div>
                 </div>
+                <div className="sm:col-span-1">
+                <label
+                  htmlFor="news-level"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Hiring Type
+                </label>
+                <div className="mt-2">
+                  <select
+                    id="news-level"
+                    name="news-level"
+                    value={jobFormData.hiring_type}
+                    onChange={(e) =>
+                      setJobFormData({ ...jobFormData, hiring_type: e.target.value })
+                    }
+                    className="mt-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-5 font-medium font-mono"
+                  >
+                    {jobHiringTypeLevel.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
                 <div className="sm:col-span-2">
                   <label
                     htmlFor="news-institute"
@@ -258,7 +333,7 @@ export default function EditJob({ job }) {
                 className="text-sm font-semibold leading-6 text-gray-100"
                 onClick={() =>
                   setJobFormData({
-                    ownerAdminId: "129ewrd-32323-323",
+                    ownerAdminId: "804323f3-fbe1-480d-88cf-37c4c680a71b",
                     ownerInstituteId: "",
                     title: "",
                     description: "",
@@ -284,6 +359,5 @@ export default function EditJob({ job }) {
           <ToastContainer />
         </div>
       </div>
-    </QueryResult>
   );
 }

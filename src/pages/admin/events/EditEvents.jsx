@@ -17,7 +17,7 @@ export default function EditEvents({ event }) {
   const eventTimeFormatedDate = formatInputDate(event.time);
 
   const [eventFormData, setEventFormData] = useState({
-    ownerAdminId: "129ewrd-32323-323",
+    ownerAdminId: "804323f3-fbe1-480d-88cf-37c4c680a71b",
     ownerInstituteId: event.ownerInstituteId ? event.ownerInstituteId : "",
     title: event.title ? event.title : "",
     description: event.description ? event.description : "",
@@ -315,7 +315,7 @@ export default function EditEvents({ event }) {
                 className="text-sm font-semibold leading-6 text-gray-100"
                 onClick={() =>
                   setEventFormData({
-                    ownerAdminId: "129ewrd-32323-323",
+                    ownerAdminId: "804323f3-fbe1-480d-88cf-37c4c680a71b",
                     ownerInstituteId: "",
                     title: "",
                     description: "",
