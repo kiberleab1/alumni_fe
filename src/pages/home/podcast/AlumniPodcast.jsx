@@ -3,6 +3,7 @@ import imgs from "../../../assets/images/testimonial/2.jpg";
 
 import AOS from "aos";
 import "aos/dist/aos.css";
+import H1Heading from "src/components/headerHs/header";
 const podcastList = [
   {
     topic: "Monetization - Episode 2",
@@ -37,7 +38,7 @@ const AlumniPodcast = () => {
     <>
       <div className="min-h-screen">
         <div className="flex justify-center mt-4 ">
-          <h1 className="title font-sans"> Playlist</h1>
+          <H1Heading title={"Playlist"} />
         </div>
 
         <div className=" flex  space-x-18  flex-wrap gap-4 space-x-8  items-center justify-center text-black  mt-8 mb-8">

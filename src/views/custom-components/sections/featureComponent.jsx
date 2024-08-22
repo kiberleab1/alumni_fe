@@ -8,6 +8,7 @@ import img4 from "src/assets/images/features/feature13/img4.jpg";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect } from "react";
+import H1Heading from "src/components/headerHs/header";
 const FeatureComponent = () => {
   useEffect(() => {
     AOS.init({
@@ -20,14 +21,9 @@ const FeatureComponent = () => {
     <div>
       <div className="min-h-screen  bg-light">
         <Container>
-          <Row className="justify-content-center">
-            <Col className="text-center">
-              <h1 className="title font-sans">Trending Stories</h1>
-              {/* <h6 className="subtitle">
-                Here you can check Demos we created based on WrapKit. Its quite
-                easy to Create your own dream website &amp; dashboard in
-                No-time.
-              </h6> */}
+          <Row className="justify-content-center mt-4">
+            <Col md="7" className="text-center mt-3  w-auto">
+              <H1Heading title={"Trending stories"} />
             </Col>
           </Row>
         </Container>

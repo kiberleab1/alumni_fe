@@ -7,6 +7,8 @@ import { Link, useLocation } from "react-router-dom";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { useQuery } from "react-query";
 import { getAllSettings, getImageBaseUrl } from "src/api";
+import { FaFacebookF, FaTwitter } from "react-icons/fa";
+import { CiInstagram } from "react-icons/ci";
 const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
@@ -87,7 +89,6 @@ const Header = () => {
         });
       }
     }
-
   }, [isError, isLoading, data]);
 
   const links = [
@@ -101,19 +102,19 @@ const Header = () => {
       link: "/landing/aboutus",
       subLink: [
         {
-          name: "Contact",
+          name: "Alumni Contact",
           link: "/landing/aboutus/contact",
         },
         {
-          name: "Directory",
+          name: "Alumni Directory",
           link: "/landing/aboutus/directory",
         },
         {
-          name: "Gallery",
+          name: "Alumni Gallery",
           link: "/landing/aboutus/gallery",
         },
         {
-          name: "News",
+          name: "Alumni News",
           link: "/landing/aboutus/news",
         },
       ],
@@ -162,7 +163,10 @@ const Header = () => {
   ];
   return (
     <>
-      <div className="bg-green-800 flex items-center justify-between text-white px-2 min-h-16 " style={{ backgroundColor: headerBackground || "#276749" }}>
+      <div
+        className="bg-green-800 flex items-center justify-between text-white px-2 min-h-16 "
+        style={{ backgroundColor: headerBackground || "#276749" }}
+      >
         {!inputControler && (
           <div className="flex items-center">
             <Button
@@ -177,63 +181,81 @@ const Header = () => {
             </Button>
           </div>
         )}
+
+        {/* <div className="flex flex-row w-[80%] justify-between mx-auto items-center my-auto mt-4 ">
+          <h3 className="text-black text-xl">Welcome to the [name] alumni</h3>
+          <div className="flex gap-8 text-2xl mr-[10%] text-black">
+            <FaFacebookF />
+            <FaTwitter />
+            <CiInstagram />
+          </div>
+        </div> */}
+
         <div
-          className={`transition duration-300 ease-in-out ${inputControler
+          className={`transition duration-300 ease-in-out ${
+            inputControler
               ? "text-white hover:bg-green-900 p-2 mr-2 text-left"
               : "text-right"
-            }`}
+          }`}
         >
           Logo
         </div>
 
         {inputControler && (
           <InputGroup
-            className={`transition duration-300 ease-in-out ${!controlNavColor ? "w-1/2 max-w-md" : "max-w-80"
-              }`}
+            className={`transition duration-300 ease-in-out justify-end ${
+              !controlNavColor ? "w-1/2 max-w-xs md:max-w-md" : "max-w-[320px]"
+            }`}
           >
-            <Input className="rounded-l-lg border-green-800 ml-6" />
-            <Button className="rounded-r-lg p-2 bg-green-800 h-13 transition-colors duration-300 ease-in-out hover:bg-green-900">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-                />
-              </svg>
-            </Button>
+            <div className="flex flex-rows">
+              <Input className="  h-10" />
+              <Button className=" p-2 bg-green-800 h-full transition-colors duration-300 ease-in-out hover:bg-green-900">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-5 h-5 justify-center items-center m-auto"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                  />
+                </svg>
+              </Button>
+            </div>
           </InputGroup>
         )}
       </div>
 
       <div
-        className={`absolute top-0 transition-all duration-500 ease-in-out ${meanNav
+        className={`absolute top-0 transition-all duration-500 ease-in-out ${
+          meanNav
             ? "sticky top-0 flex flex-col opacity-100 z-40"
             : "opacity-0 -translate-y-4 pointer-events-none hidden z-40"
-          } z-10`}
+        } z-10`}
       >
         <div
-          className={`transition duration-300 ease-in-out ${!controlNavColor && !isActive ? "hidden" : "block bg-gray-800"
-            }`}
+          className={`transition duration-300 ease-in-out ${
+            !controlNavColor && !isActive ? "hidden" : "block bg-gray-800"
+          }`}
           style={{ backgroundColor: menuBarBackground || "#50d71e" }}
         >
           <nav
-            className={`transition duration-300 ease-in-out ${isActive
+            className={`transition duration-300 ease-in-out ${
+              isActive
                 ? "flex space-x-8 justify-start pb-2 pt-8 relative z-50"
                 : "flex justify-center space-x-8 pb-2 pt-8"
-              }`}
+            }`}
           >
             <ul
-              className={`transition duration-300 ease-in-out font-serif  ${isActive && isSidebarOpen
+              className={`transition duration-300 ease-in-out font-serif  ${
+                isActive && isSidebarOpen
                   ? "absolute right-0 top-0 text-left bg-gray-800 p-1 w-full"
                   : "hidden md:flex z-50 p-1"
-                }`}
+              }`}
             >
               {links.map((mainLink, idx) => {
                 const isSubLinkActive = mainLink.subLink.some(
@@ -245,23 +267,25 @@ const Header = () => {
                     className={`relative group transition-transform duration-300 ease-in-out mr-2 ml-2  ${
                       isActive && isSidebarOpen
                         ? "justify-start hover:translate-x-1 hover:scale-70"
-                        : "hover:translate-y-1 hover:scale-70 transition ease-in delay-300 text-xl w-fit block after:block after:content-[''] after:absolute after:h-[4px] after:bg-green-800 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
-                      }`}
+                        : "hover:translate-y-1 hover:scale-70 transition ease-in delay-300 text-xl w-fit block after:block after:content-[''] after:absolute after:h-[4px] after:bg-white after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
+                    }`}
                     key={idx}
                     style={{
-                      color: isActive ? menuBarActiveTextColor : menuBarTextColor || "#eeeeec",
+                      color: isActive
+                        ? menuBarActiveTextColor
+                        : menuBarTextColor || "#eeeeec",
                     }}
                   >
                     <a
                       href={mainLink.link}
                       className={`flex flex-inline transition-colors duration-500 ease-in-out justify-center text-center ${
                         location.pathname === mainLink.link || isSubLinkActive
-                          ? "text-yellow-600 "
+                          ? "text-green-600 "
                           : ""
                       } ${
                         isActive && isSidebarOpen
-                          ? " block py-2  text-gray-200 hover:text-yellow-400 transition ease-in delay-300 text-xl w-fit block after:block after:content-[''] after:absolute after:h-[4px] after:bg-green-800 after:w-1/5 after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
-                          : "text-lg md:text-xl  block py-1 px-2 text-gray-200 hover:text-yellow-400"
+                          ? " block py-2  text-gray-200 hover:text-green-400 transition ease-in delay-300 text-xl w-fit block after:block after:content-[''] after:absolute after:h-[4px] after:bg-green-800 after:w-1/5 after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
+                          : "text-lg md:text-xl  block py-1 px-2 text-gray-200 hover:text-green-400"
                       }`}
                       onClick={toggleSidebar}
                     >
@@ -273,7 +297,8 @@ const Header = () => {
                       )}
                     </a>
                     <div
-                      className={`transition-all duration-1000 delay-200 ease-in-out max-h-0  overflow-hidden bg-opacity-0 group-hover:opacity-80  ${isActive && isSidebarOpen
+                      className={`transition-all duration-1000 delay-200 ease-in-out max-h-0  overflow-hidden bg-opacity-0 group-hover:opacity-80  ${
+                        isActive && isSidebarOpen
                           ? " group-hover:max-h-56 min-w-48 group-hover:block relative right-15 bg-opacity-50 m-0 p-0 rounded-b group-hover:bg-green-500"
                           : "group-hover:max-h-56 min-w-48 group-hover:opacity-100 group-hover:block absolute right-15 bg-opacity-80 rounded-b group-hover:bg-green-500"
                       }`}
@@ -282,9 +307,9 @@ const Header = () => {
                         <a
                           href={subLink.link}
                           key={idx + subLink.name}
-                          className={`drop-shadow-sm text-start rounded-b group-hover:bg-gray-600 hover:text-gray-700  group-hover:bg-opacity-80 block transition delay-300 hover:translate-x-1 px-2 py-2 text-white transition-colors duration-500 ${
+                          className={`drop-shadow-sm text-start  group-hover:bg-gray-600 hover:text-gray-700  group-hover:bg-opacity-80 block transition delay-300 hover:translate-x-1 px-2 py-2 text-white transition-colors duration-500 ${
                             location.pathname === subLink.link
-                              ? "text-yellow-600"
+                              ? "text-green-600"
                               : ""
                           }`}
                           onClick={toggleSidebar}
@@ -294,10 +319,40 @@ const Header = () => {
                       ))}
                     </div>
                   </li>
-
                 );
               })}
             </ul>
+            {/* <div className="flex items-center justify-end ">
+              {inputControler && (
+                <InputGroup
+                  className={`transition duration-300 ease-in-out ${
+                    !controlNavColor
+                      ? "w-1/2 max-w-xs md:max-w-md"
+                      : "max-w-[320px]"
+                  }`}
+                >
+                  <div className="flex flex-rows">
+                    <Input className="  h-10" />
+                    <Button className=" p-2 bg-green-800 h-full transition-colors duration-300 ease-in-out hover:bg-green-900">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-5 h-5 justify-center items-center m-auto"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                        />
+                      </svg>
+                    </Button>
+                  </div>
+                </InputGroup>
+              )}
+            </div> */}
           </nav>
         </div>
       </div>

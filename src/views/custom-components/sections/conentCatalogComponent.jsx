@@ -44,7 +44,7 @@ const ContentCatalogComponent = ({ newsArray }) => {
   };
   return (
     <div>
-      <div className="blog-home2 spacer">
+      <div className="blog-home2 spacer min-h-screen">
         <Container>
           <Row className="flex flex-wrap justify-center w-full ">
             <Slider {...settings}>
@@ -63,7 +63,7 @@ const ContentCatalogComponent = ({ newsArray }) => {
                         data-aos="fade-down"
                       />
                     </a>
-                    <div className="date-pos bg-blue-700">
+                    <div className="date-pos bg-green-900">
                       {news.date.toLocaleString("default", { month: "short" })}
                       <span>{news.date.getDate()}</span>
                     </div>

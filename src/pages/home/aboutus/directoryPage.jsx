@@ -29,7 +29,7 @@ export default DirectoryPage;
 
 function DirectoryLists({ directories }) {
   return (
-    <div className="flex justify-center px-4">
+    <div className="flex justify-center px-4 min-h-screen spacer">
       <ul
         role="list"
         className="grid grid-cols-1 gap-x-6 gap-y-8 mt-5 m-4 sm:m-6 lg:grid-cols-2 xl:grid-cols-3 xl:gap-x-8 xl:m-12"
@@ -38,7 +38,7 @@ function DirectoryLists({ directories }) {
           return (
             <li
               key={directory.id}
-              className="overflow-hidden rounded-xl border border-gray-200"
+              className="overflow-hidden rounded-xl border border-gray-200 max-h-[400px]"
             >
               <div className="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
                 <BuildingLibraryIcon className="h-12 w-12 flex-none rounded-lg bg-white text-green-900 object-cover ring-1 ring-gray-100/10" />
