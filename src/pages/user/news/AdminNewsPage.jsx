@@ -7,6 +7,7 @@ import { convertDate, formatDate, truncateDescription } from "src/utils/utils";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import QueryResult from "src/components/utils/queryResults";
+import img from "../../../assets/images/testimonial/2.jpg";
 
 export default function NewsPage({ onCreateNewsClick, onNewsEditClick }) {
   const [newsList, setNewsList] = useState([]);
@@ -49,11 +50,11 @@ export default function NewsPage({ onCreateNewsClick, onNewsEditClick }) {
   const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
   const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalItems);
 
-  console.log(currentPage);
-  console.log(itemsPerPage);
-  console.log(indexOfFirstItem);
-  console.log(indexOfLastItem);
-  console.log(totalItems);
+  // console.log(currentPage);
+  // console.log(itemsPerPage);
+  // console.log(indexOfFirstItem);
+  // console.log(indexOfLastItem);
+  // console.log(totalItems);
   console.log(newsList);
   return (
     <QueryResult isLoading={isLoading} isError={isError} data={data}>
@@ -65,42 +66,77 @@ export default function NewsPage({ onCreateNewsClick, onNewsEditClick }) {
             </h1>
           </div>
         </div>
-        <div className="container mx-auto px-1 py-2 sm:px-10 md:px-20 lg:px-52 lg:pt-12 h-full overflow-y-scroll min-w-[100%] ">
-          <div className="m-1 flex flex-wrap md:-m-2 justify-center">
+        <div className="container mx-auto sm:px-10 md:px-20 lg:px-52 lg:pt-12 h-full overflow-y-scroll min-w-[100%] ">
+          <div className="m-1 flex flex-wrap gap-8 md:-m-2 ">
             {newsList.map((val, idx) => (
-              <figure
-                key={idx}
-                className="snip1347 rounded-xl relative overflow-hidden m-4 min-w-[250px] max-w-[300px] w-full text-white text-left leading-relaxed bg-[#141414] font-roboto group sm:min-w-[300px] shadow-lg md:min-w-[340px]"
-              >
-                <div className="relative w-full overflow-hidden">
-                  <img
-                    src={val.images}
-                    alt="sample87"
-                    className="transform rotate-5 scale-90 transition-transform duration-300 ease-in-out origin-center group-hover:scale-110 group-hover:rotate-0 w-full h-[300px]"
-                  />
-                  <div className="absolute bottom-0 left-0 w-full text-left px-6 pt-3 tracking-wide bg-[black] group-hover:opacity-25">
-                    <div className="absolute bottom-full right-0 w-0 h-0 border-t-0 border-l-[400px] border-t-[40px] border-r-0 border-b-transparent border-l-[black] border-t-transparent border-r-transparent group-hover:opacity-25"></div>
+              // <figure
+              //   key={idx}
+              //   className="snip1347 rounded-xl relative overflow-hidden m-4 min-w-[300px] max-w-[350px] w-full text-white text-left leading-relaxed bg-[#141414] font-roboto group sm:min-w-[300px] shadow-lg md:min-w-[340px]"
+              // >
+              //   <div className="relative w-full overflow-hidden">
+              //     <img
+              //       src={val.images}
+              //       alt="sample87"
+              //       className="transform rotate-5 scale-90 transition-transform duration-300 ease-in-out origin-center group-hover:scale-110 group-hover:rotate-0 w-full h-[300px]"
+              //     />
+              //     <div className="absolute bottom-0 left-0 w-full text-left px-6 pt-3 tracking-wide bg-[black] group-hover:opacity-25">
+              //       <div className="absolute bottom-full right-0 w-0 h-0 border-t-0 border-l-[400px] border-t-[40px] border-r-0 border-b-transparent border-l-[black] border-t-transparent border-r-transparent group-hover:opacity-25"></div>
+              //     </div>
+              //   </div>
+              //   <div className="date absolute bg-gray-900 top-0 right-0 w-full px-6 pt-3 text-right text-xs uppercase bg-[#1e1e1e] text-white group-hover:bg-[#141414] transition-colors duration-300 ease-in-out">
+              //     {convertDate(val.deadline)}
+              //     <div className="absolute top-full left-0 w-0 h-0 border-t-0 border-r-[400px] border-b-[40px] border-l-0 border-r-[#1e1e1e] border-b-transparent group-hover:opacity-25"></div>
+              //   </div>
+              //   <figcaption className="w-full p-6 bg-gray-800 group-hover:bg-gray-800 transition-colors duration-300 ease-in-out">
+              //     <div className="h-auto line-clamp-2">
+              //       {" "}
+              //       <h2 className="font-light text-2xl leading-snug mb-2 text-gray-400 group-hover:text-white transition-colors duration-300 ease-in-out line-clamp-3 ">
+              //         {val.title}
+              //       </h2>
+              //     </div>
+              // <p className="text-sm pt-2 tracking-wide mb-2 opacity-90 group-hover:opacity-100 group-hover:text-white transition-opacity duration-300 ease-in-out  line-clamp-2">
+              //   {val.description}
+              // </p>
+              //     <a
+              //       href="#"
+              //       className="inline-block mt-4 p-2 mx-0 my-2 w-[47%] text-center border border-white text-white hover:text-gray-500 text-xs uppercase tracking-wide font-semibold opacity-65 transition-opacity duration-300 hover:opacity-100"
+              //     >
+              //       Read More
+              //     </a>
+              //   </figcaption>
+              // </figure>
+              <div className="group relative w-full max-w-lg max-h-80 overflow-hidden rounded-lg shadow-lg ">
+                <img
+                  src={img}
+                  alt="Card Image"
+                  className="w-full h-full min-h-72 object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+                />
+
+                <div className="absolute bottom-0 left-0 w-full p-4 text-white bg-black bg-opacity-50 group-hover:bg-opacity-70 transition-opacity duration-300 ease-in-out">
+                  <div className="space-y-">
+                    <h3 className="text-xl font-semibold text-start text-white">
+                      {val.title}
+                    </h3>
+                    <p className="text-sm transition-opacity duration-500 ease-in-out mt-4 text-start line-clamp-1 truncate">
+                      {convertDate(val.deadline)}
+                    </p>
+                  </div>
+
+                  <div className="max-h-0 overflow-hidden transition-all duration-500 ease-in-out group-hover:max-h-32">
+                    <div
+                      dangerouslySetInnerHTML={{ __html: val.description }}
+                      className="text-sm transition-opacity duration-500 ease-in-out mt-4 text-start truncate text-white"
+                    ></div>
+
+                    {/* Button placed at the bottom right */}
+                    <div className="flex justify-end ">
+                      <button className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition-colors duration-300">
+                        Read more
+                      </button>
+                    </div>
                   </div>
                 </div>
-                <div className="date absolute bg-gray-900 top-0 right-0 w-full px-6 pt-3 text-right text-xs uppercase bg-[#1e1e1e] text-white group-hover:bg-[#141414] transition-colors duration-300 ease-in-out">
-                  {convertDate(val.deadline)}
-                  <div className="absolute top-full left-0 w-0 h-0 border-t-0 border-r-[400px] border-b-[40px] border-l-0 border-r-[#1e1e1e] border-b-transparent group-hover:opacity-25"></div>
-                </div>
-                <figcaption className="w-full p-6 bg-gray-800 group-hover:bg-gray-800 transition-colors duration-300 ease-in-out">
-                  <h2 className="font-light text-2xl leading-snug mb-2 text-gray-400 group-hover:text-white transition-colors duration-300 ease-in-out">
-                    {val.title}
-                  </h2>
-                  <p className="text-sm pt-2 tracking-wide mb-2 opacity-90 group-hover:opacity-100 group-hover:text-white transition-opacity duration-300 ease-in-out">
-                    {truncateDescription(val.description, 150)}
-                  </p>
-                  <a
-                    href="#"
-                    className="inline-block mt-4 p-2 mx-0 my-2 w-[47%] text-center border border-white text-white hover:text-gray-500 text-xs uppercase tracking-wide font-semibold opacity-65 transition-opacity duration-300 hover:opacity-100"
-                  >
-                    Read More
-                  </a>
-                </figcaption>
-              </figure>
+              </div>
             ))}
           </div>
         </div>

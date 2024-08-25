@@ -21,7 +21,7 @@ const FeatureComponent = () => {
     <div>
       <div className="min-h-screen  bg-light">
         <Container>
-          <Row className="justify-content-center mt-4">
+          <Row className="justify-content-center mt-4s">
             <Col md="7" className="text-center mt-3  w-auto">
               <H1Heading title={"Trending stories"} />
             </Col>

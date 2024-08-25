@@ -107,6 +107,8 @@ export async function getInstitutes({ pageNumber, pageSize }) {
 
 export async function createEmailTemplates({ header, body }) {
   const data = { header, body };
+  console.log(data);
+
   return await axios.post(`${API_BASE_URl}/emailsTemplates`, data);
 }
 

@@ -53,7 +53,7 @@ const AlumniPodcast = () => {
                   style={{ boxShadow: "-50px 30px #ebfcf8" }}
                 >
                   <div
-                    className="max-h-lg  rounded-xl max-w-lg bg-gray-900 p-2"
+                    className="max-h-lg  rounded-xl max-w-lg bg-gray-900 p-2 "
                     style={{ boxShadow: "30px -20px #a4b0ad" }}
                   >
                     <iframe
@@ -65,7 +65,7 @@ const AlumniPodcast = () => {
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       referrerpolicy="strict-origin-when-cross-origin"
                       allowfullscreen="true"
-                      className="rounded-xl min-w-[100%]"
+                      className="rounded-xl min-w-[100%] aspect-auto"
                     ></iframe>
                     <div className="flex flex-col text-left pl-4 text-gray-50 ">
                       <h2 className="title text-xl text-white">{val.topic}</h2>

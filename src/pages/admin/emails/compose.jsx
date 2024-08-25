@@ -13,12 +13,14 @@ import {
 import QueryResult from "src/components/utils/queryResults";
 import { v4 as uuidv4 } from "uuid";
 import * as Yup from "yup";
+
 export default function ComposeEmail() {
   const [emailAddress, setEmailAddress] = useState({
     id: "",
     name: "",
     type: "",
   });
+
   const { isError, data, isLoading } = useQuery(
     "getEmailTemplates",
     async () => {
@@ -29,27 +31,33 @@ export default function ComposeEmail() {
   return (
     <QueryResult isLoading={isLoading} isError={isError} data={data}>
       <FlitteringOptions setEmailAddress={setEmailAddress} />
-      <ComposeNewEmail subject={""} body={""} emailAddress={emailAddress} />;
+      <ComposeNewEmail
+        subject={""}
+        body={""}
+        emailAddress={emailAddress}
+        setEmailAddress={setEmailAddress}
+      />
     </QueryResult>
   );
 }
 
-function ComposeNewEmail({ subject, body, emailAddress }) {
+function ComposeNewEmail({ subject, body, emailAddress, setEmailAddress }) {
   const [, setEmailTemplateId] = useState("");
   const mutation = useMutation(createEmailTemplates, {
     onSuccess: (data) => {
-      console.log(data.data.id);
+      console.log(data);
       setEmailTemplateId(data.data.id);
       sendEmailBlast.mutate({
         email_template_id: data.data.id,
         email_filtering_options: {
-          option_type: emailAddress.type,
-          option_value: emailAddress.id,
+          option_type: emailAddress.type || "institution",
+          option_value: emailAddress.id || "default",
           email_blast_option: "one_time",
         },
       });
     },
   });
+
   const sendEmailBlast = useMutation(sendEmail, {
     onSuccess: (data) => {
       console.log(data);
@@ -70,16 +78,43 @@ function ComposeNewEmail({ subject, body, emailAddress }) {
       ["clean"],
     ],
   };
+
   async function doSaveEmailTemplate({ subject, body }) {
     mutation.mutate({ header: subject, body: body });
   }
 
+  const emailValidationSchema = Yup.string()
+    .required("Email addresses are required")
+    .test(
+      "valid-emails",
+      "All inputs must be valid email addresses",
+      (value) => {
+        if (!value) return false;
+
+        const emails = value.split(",").map((email) => email.trim());
+
+        return emails.every((email) => Yup.string().email().isValidSync(email));
+      }
+    );
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
-  const handleSaveButton = (value) => {
+
+  const handleSaveButton = (value, { resetForm }) => {
+    value.emailAddress = Array.isArray(value.emailAddress)
+      ? value.emailAddress
+      : [value.emailAddress];
+
     console.log(value);
     doSaveEmailTemplate(value);
+    resetForm();
+    setEmailAddress({ id: "", name: "", type: "" });
+  };
+
+  const initialValues = {
+    subject: "",
+    body: "",
+    emailAddress: "",
   };
 
   return (
@@ -87,38 +122,45 @@ function ComposeNewEmail({ subject, body, emailAddress }) {
       <style>
         {`
           .ql-editor {
-            min-height: 24rem; /* Adjust the minHeight as needed */
+            min-height: 24rem;
           }
-          `}
+        `}
       </style>
       <Container>
         <Row>
           <Col md="12">
             <Formik
-              initialValues={{
-                subject: subject,
-                body: body,
-              }}
+              initialValues={initialValues}
               validationSchema={Yup.object({
                 subject: Yup.string().required("Required"),
                 body: Yup.string().required("Required"),
+                emailAddress: emailValidationSchema,
               })}
               onSubmit={handleSaveButton}
             >
-              {(formik) => (
-                <Form className="row justify-center">
+              {({ handleSubmit, handleReset, values, handleChange }) => (
+                <Form className="row justify-center" onSubmit={handleSubmit}>
                   <FormGroup className="col-md-12">
+                    <label htmlFor="EmailAddress " className="block">
+                      {capitalizeFirstLetter(emailAddress.type)}:
+                    </label>
                     <Field
                       type="text"
                       className="form-control"
                       id="EmailAddress"
-                      name="Sent to Email"
+                      name="emailAddress"
                       placeholder="Email Address"
-                      value={`${capitalizeFirstLetter(emailAddress.type)}:  ${
-                        emailAddress.name
-                      }`}
+                      value={`${emailAddress.name}`}
+                      onChange={(e) => {
+                        handleChange(e);
+                        setEmailAddress({
+                          ...emailAddress,
+                          name: e.target.value,
+                        });
+                      }}
                     />
                   </FormGroup>
+
                   <FormGroup className="col-md-12">
                     <Field
                       type="text"
@@ -139,9 +181,6 @@ function ComposeNewEmail({ subject, body, emailAddress }) {
                           className="h-full min-h-96"
                           modules={modules}
                           placeholder="Compose Your Email Here"
-                          // formats={formats}
-                          // preserveWhitespace={true}
-                          // scrollingContainer={true}
                         />
                       )}
                     </Field>
@@ -151,14 +190,13 @@ function ComposeNewEmail({ subject, body, emailAddress }) {
                     <Button
                       type="submit"
                       className="btn btn-success waves-effect waves-light m-r-10"
-                      // disabled={formik.isSubmitting}
                     >
                       Submit
                     </Button>
                     <Button
                       type="button"
                       className="btn btn-inverse waves-effect waves-light"
-                      onClick={formik.handleReset}
+                      onClick={handleReset}
                     >
                       Reset
                     </Button>
@@ -172,18 +210,14 @@ function ComposeNewEmail({ subject, body, emailAddress }) {
     </div>
   );
 }
-function sleep(time) {
-  return new Promise((resolve) => setTimeout(resolve, time));
-}
+
 function FlitteringOptions({ setEmailAddress }) {
-  const { isError, data, error, isFetching } = useQuery(
+  const { isError, data, isFetching } = useQuery(
     ["getInstitutions", "getDepartments"],
     async () => {
-      await sleep(10);
       return await getEmailFetchingOptions();
     }
   );
-  console.log({ asd: error });
 
   return (
     <div className="flex">
@@ -191,7 +225,7 @@ function FlitteringOptions({ setEmailAddress }) {
         <Row>
           <div className="flex min-w-full ">
             <div className="flex flex-col justify-start justify-items-start min-w-full">
-              <div className=" text-start px-3">
+              <div className="text-start px-3">
                 <h2 className="p">Filtering Options</h2>
                 <Loading isLoading={isFetching} />
                 <ErrorComponent isError={isError} />
@@ -207,18 +241,18 @@ function FlitteringOptions({ setEmailAddress }) {
     </div>
   );
 }
+
 function FlitteringOptionsComp({ data, setEmailAddress }) {
   return (
     <div className="flex flex-col min-w-full pl-4 ">
-      <div className="container  w-full min-w-full ">
+      <div className="container w-full min-w-full ">
         <CollapseComponent title="Filter By Institutions">
           <select
             className="form-control w-full"
             id="role_id"
-            // value={formik.values.role_id}
             onChange={(e) => {
               const inst = data.institutions.find(
-                (item) => item.id == e.target.value
+                (item) => item.id === e.target.value
               );
               setEmailAddress({
                 id: inst.id,
@@ -228,25 +262,23 @@ function FlitteringOptionsComp({ data, setEmailAddress }) {
             }}
             name="role_id"
           >
-            {data?.institutions?.map((institution) => {
-              return (
-                <option key={institution.id} value={institution.id}>
-                  {institution.name}
-                </option>
-              );
-            })}
+            {data?.institutions?.map((institution) => (
+              <option key={institution.id} value={institution.id}>
+                {institution.name}
+              </option>
+            ))}
           </select>
         </CollapseComponent>
       </div>
-      <div className="container  w-full min-w-full pt-2">
+
+      <div className="container w-full min-w-full pt-2">
         <CollapseComponent title="Filter By Departments">
           <select
             className="form-control w-full"
             id="role_id"
-            // value={formik.values.role_id}
             onChange={(e) => {
               const inst = data.departments.find(
-                (item) => item.id == e.target.value
+                (item) => item.id === e.target.value
               );
               setEmailAddress({
                 id: inst.id,
@@ -256,22 +288,22 @@ function FlitteringOptionsComp({ data, setEmailAddress }) {
             }}
             name="role_id"
           >
-            {data?.departments?.map((institution) => {
-              return (
-                <option key={institution.id + uuidv4()} value={institution.id}>
-                  {institution.name}
-                </option>
-              );
-            })}
+            {data?.departments?.map((department) => (
+              <option key={department.id + uuidv4()} value={department.id}>
+                {department.name}
+              </option>
+            ))}
           </select>
         </CollapseComponent>
       </div>
     </div>
   );
 }
+
 function Loading({ isLoading }) {
   if (isLoading) return <div>Loading...</div>;
 }
+
 function ErrorComponent({ isError }) {
   if (isError) return <div>Error Loading filtering</div>;
 }
@@ -284,9 +316,9 @@ const CollapseComponent = ({ title, children }) => {
   };
 
   return (
-    <div className="border rounded-lg w-2/3 ">
+    <div className="border rounded-lg w-2/3">
       <div
-        className="flex items-center justify-between  cursor-pointer pl-2"
+        className="flex items-center justify-between cursor-pointer pl-2"
         onClick={toggleCollapse}
       >
         <h2 className="text-lg font-semibold">{title}</h2>
