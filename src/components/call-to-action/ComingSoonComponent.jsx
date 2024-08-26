@@ -8,7 +8,7 @@ const ComingSoonComponent = () => {
   return (
     <>
       <SectionHolderComponent title={headerMessage} body={bodyMessage} />
-      <div className="min-h-screen">
+      <div className="flex flex-col min-h-screen">
         {" "}
         <div className="coming-soon " id="coming">
           <Container className="py-5 mt-5">

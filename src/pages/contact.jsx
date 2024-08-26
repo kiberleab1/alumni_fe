@@ -126,7 +126,7 @@ const Contact = () => {
                     disabled={isSubmitting}
                     className="bg-yellow-500 hover:bg-yellow-200 hover:text-black hover:font-semibold"
                   >
-                    {isSubmitting ? "Submitting..." : "Submit"}
+                    {isSubmitting ? "Submitting..." : "Submit...."}
                   </Button>
                 </Form>
               )}

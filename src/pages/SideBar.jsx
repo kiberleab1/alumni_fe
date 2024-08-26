@@ -110,7 +110,6 @@ function SideBar() {
   }, []);
   const [navigationItems, setNavigationItems] = useState(navigation);
   const [openDropDown, setOpenDropDown] = useState({});
-
   const handleOpenDropDown = (itemName) => {
     setOpenDropDown((prevState) => ({
       ...prevState,

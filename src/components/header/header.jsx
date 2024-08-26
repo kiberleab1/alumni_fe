@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import _ from "lodash";
 import { Button, Input, InputGroup } from "reactstrap";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { useQuery } from "react-query";
 import { getAllSettings, getImageBaseUrl } from "src/api";
@@ -100,19 +100,19 @@ const Header = () => {
       link: "/landing/aboutus",
       subLink: [
         {
-          name: "Contact",
+          name: "Alumni Contact",
           link: "/landing/aboutus/contact",
         },
         {
-          name: "Directory",
+          name: "Alumni Directory",
           link: "/landing/aboutus/directory",
         },
         {
-          name: "Gallery",
+          name: "Alumni Gallery",
           link: "/landing/aboutus/gallery",
         },
         {
-          name: "News",
+          name: "Alumni News",
           link: "/landing/aboutus/news",
         },
       ],
@@ -179,6 +179,16 @@ const Header = () => {
             </Button>
           </div>
         )}
+
+        {/* <div className="flex flex-row w-[80%] justify-between mx-auto items-center my-auto mt-4 ">
+          <h3 className="text-black text-xl">Welcome to the [name] alumni</h3>
+          <div className="flex gap-8 text-2xl mr-[10%] text-black">
+            <FaFacebookF />
+            <FaTwitter />
+            <CiInstagram />
+          </div>
+        </div> */}
+
         <div
           className={`transition duration-300 ease-in-out ${
             inputControler
@@ -191,27 +201,29 @@ const Header = () => {
 
         {inputControler && (
           <InputGroup
-            className={`transition duration-300 ease-in-out ${
-              !controlNavColor ? "w-1/2 max-w-md" : "max-w-80"
+            className={`transition duration-300 ease-in-out justify-end ${
+              !controlNavColor ? "w-1/2 max-w-xs md:max-w-md" : "max-w-[320px]"
             }`}
           >
-            <Input className="rounded-l-lg border-green-800 ml-6" />
-            <Button className="rounded-r-lg p-2 bg-green-800 h-13 transition-colors duration-300 ease-in-out hover:bg-green-900">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-                />
-              </svg>
-            </Button>
+            <div className="flex flex-rows">
+              <Input className="  h-10" />
+              <Button className=" p-2 bg-green-800 h-full transition-colors duration-300 ease-in-out hover:bg-green-900">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-5 h-5 justify-center items-center m-auto"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                  />
+                </svg>
+              </Button>
+            </div>
           </InputGroup>
         )}
       </div>
@@ -253,7 +265,7 @@ const Header = () => {
                     className={`relative group transition-transform duration-300 ease-in-out mr-2 ml-2  ${
                       isActive && isSidebarOpen
                         ? "justify-start hover:translate-x-1 hover:scale-70"
-                        : "hover:translate-y-1 hover:scale-70 transition ease-in delay-300 text-xl w-fit block after:block after:content-[''] after:absolute after:h-[4px] after:bg-green-800 after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
+                        : "hover:translate-y-1 hover:scale-70 transition ease-in delay-300 text-xl w-fit block after:block after:content-[''] after:absolute after:h-[4px] after:bg-white after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
                     }`}
                     key={idx}
                     style={{
@@ -266,12 +278,12 @@ const Header = () => {
                       href={mainLink.link}
                       className={`flex flex-inline transition-colors duration-500 ease-in-out justify-center text-center ${
                         location.pathname === mainLink.link || isSubLinkActive
-                          ? "text-yellow-600 "
+                          ? "text-green-600 "
                           : ""
                       } ${
                         isActive && isSidebarOpen
-                          ? " block py-2  text-gray-200 hover:text-yellow-400 transition ease-in delay-300 text-xl w-fit block after:block after:content-[''] after:absolute after:h-[4px] after:bg-green-800 after:w-1/5 after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
-                          : "text-lg md:text-xl  block py-1 px-2 text-gray-200 hover:text-yellow-400"
+                          ? " block py-2  text-gray-200 hover:text-green-400 transition ease-in delay-300 text-xl w-fit block after:block after:content-[''] after:absolute after:h-[4px] after:bg-green-800 after:w-1/5 after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center"
+                          : "text-lg md:text-xl  block py-1 px-2 text-gray-200 hover:text-green-400"
                       }`}
                       onClick={toggleSidebar}
                     >
@@ -293,9 +305,9 @@ const Header = () => {
                         <a
                           href={subLink.link}
                           key={idx + subLink.name}
-                          className={`drop-shadow-sm text-start rounded-b group-hover:bg-gray-600 hover:text-gray-700  group-hover:bg-opacity-80 block transition delay-300 hover:translate-x-1 px-2 py-2 text-white transition-colors duration-500 ${
+                          className={`drop-shadow-sm text-start  group-hover:bg-gray-600 hover:text-gray-700  group-hover:bg-opacity-80 block transition delay-300 hover:translate-x-1 px-2 py-2 text-white transition-colors duration-500 ${
                             location.pathname === subLink.link
-                              ? "text-yellow-600"
+                              ? "text-green-600"
                               : ""
                           }`}
                           onClick={toggleSidebar}
@@ -308,6 +320,37 @@ const Header = () => {
                 );
               })}
             </ul>
+            {/* <div className="flex items-center justify-end ">
+              {inputControler && (
+                <InputGroup
+                  className={`transition duration-300 ease-in-out ${
+                    !controlNavColor
+                      ? "w-1/2 max-w-xs md:max-w-md"
+                      : "max-w-[320px]"
+                  }`}
+                >
+                  <div className="flex flex-rows">
+                    <Input className="  h-10" />
+                    <Button className=" p-2 bg-green-800 h-full transition-colors duration-300 ease-in-out hover:bg-green-900">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-5 h-5 justify-center items-center m-auto"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                        />
+                      </svg>
+                    </Button>
+                  </div>
+                </InputGroup>
+              )}
+            </div> */}
           </nav>
         </div>
       </div>

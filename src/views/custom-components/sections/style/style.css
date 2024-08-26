@@ -33,10 +33,10 @@
   transition: color 0.3s ease;
 }
 .text-content h5 a{
-  color: rgb(68, 226, 247);
+  color: rgb(46, 48, 48);
 }
 .text-content:hover h5 a{
-  color: rgb(0, 153, 255);
+  color: rgb(47, 47, 48);
 }
 .text-content:hover h6,
 .text-content:hover .line-clamp-3 {

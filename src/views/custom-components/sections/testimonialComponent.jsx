@@ -6,6 +6,7 @@ import img3 from "../../../assets/images/testimonial/3.jpg";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect } from "react";
+import H1Heading from "src/components/headerHs/header";
 const TestimonialComponent = () => {
   const testimonialData = [
     {
@@ -36,20 +37,21 @@ const TestimonialComponent = () => {
     });
   }, []);
   return (
-    <div className="bg-light">
+    <div className="bg-light max-h-screen py-6 spacer">
       <div className="">
         <Container>
-          <Row className="justify-content-center">
-            <Col md="7" className="text-center">
-              <h1 className="title text-[1.5rem] sm:text-[2rem] md:text-[2.5rem] lg:text-[3rem] font-sans">
-                Testimonial{" "}
-              </h1>
-              <h2 className="title">Check what our Customers are Saying</h2>
+          <Row className="justify-content-center ">
+            <Col md="7" className="w-auto mt-4">
+              {/* <h1 className="title text-[1.5rem] sm:text-[2rem] md:text-[2.5rem] lg:text-[3rem] font-sans">
+                Testimonial
+              </h1> */}
+              <H1Heading title={"Testimonial"} />
             </Col>
+            <h2 className="title">Check what our Customers are Saying</h2>
           </Row>
         </Container>
       </div>
-      <div className="testimonial3  ">
+      <div className="testimonial3 ">
         <Container>
           {/* <Row className="justify-content-center">
             <Col md="7" className="text-center">
