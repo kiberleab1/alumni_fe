@@ -50,7 +50,7 @@ function CreateOurStorageForm() {
   });
   const handleSubmit = (values) => {
     mutation.mutate({
-      component: "ourStory",
+      component: "aboutus",
       title: values.title,
       description: values.description,
       images: values.images,

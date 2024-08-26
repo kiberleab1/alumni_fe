@@ -7,7 +7,6 @@ import { getAllStaff, getImageBaseUrl } from "src/api";
 import QueryResult from "src/components/utils/queryResults";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import H1Heading from "src/components/headerHs/header";
 const TeamComponent = () => {
   const { isLoading, data, isError } = useQuery("team", async () => {
     return await getAllStaff({ pageNumber: 1, pageSize: 4 });
@@ -55,32 +54,33 @@ const TeamComponent = () => {
   };
   return (
     <QueryResult isLoading={isLoading} isError={isError} data={data}>
-      <div className=" ">
-        <Container>
-          <Row className="justify-content-center">
-            <Col md="7" className="text-center mt-3  w-auto">
-              <H1Heading title={"Meet the team"} />
-            </Col>
-          </Row>
-          {/* <div className="text-center py-8 px-4 lg:px-32"> */}
-          {/* <h1 className="title font-small text-xl sm:text-2xl md:text-3xl lg:text-4xl font-sans"></h1> */}
-
-          {/* <h3 className="title font-sm text-2xl sm:text-3xl md:text-4xl lg:text-5xl mt-4 font-sans-serif">
+      <div className=" bg-gray-150">
+        <div className=" justify-content-center">
+          <Container>
+            <Row className="justify-content-center">
+              <Col className="text-center m justiyf-center">
+                <div className="text-center py-8 px-4 lg:px-32">
+                  <h1 className="title font-small text-xl sm:text-2xl md:text-3xl lg:text-4xl font-sans">
+                    Meet the Team
+                  </h1>
+                  {/* <h3 className="title font-sm text-2xl sm:text-3xl md:text-4xl lg:text-5xl mt-4 font-sans-serif">
                     Experienced & Professional Team
                   </h3> */}
-          {/* <h6 className="subtitle text-base sm:text-lg md:text-xl lg:text-2xl mt-4 font-sans-serif">
+                  {/* <h6 className="subtitle text-base sm:text-lg md:text-xl lg:text-2xl mt-4 font-sans-serif">
                     You can rely on our amazing features list and also our
                     customer services will be a great experience for you without
                     doubt and in no time
                   </h6> */}
-          {/* </div> */}
+                </div>
 
-          {/* <h6 className="subtitle">
+                {/* <h6 className="subtitle">
                   Here you can check Demos we created based on . Its quite easy
                   to Create your own dream
                 </h6> */}
-        </Container>
-        {/* </div> */}
+              </Col>
+            </Row>
+          </Container>
+        </div>
 
         <div className="mt-4 mb-4 team2">
           <Container>
@@ -88,34 +88,36 @@ const TeamComponent = () => {
               <Col md="7" className="text-center"></Col>
             </Row>
             <Row>
-              <div className="p-4 mb-2">
-                <Slider {...settings}>
-                  {data?.data?.staff.map((staff) => {
+              <div className="p-4 ">
+                <Slider {...settings} className="">
+                  {data?.data?.staff.map((staff, index) => {
+                    if (index != 0) {
+                      return <></>;
+                    }
                     const contactInfo = parseData(staff.contact_info);
                     return (
                       <div
-                        className="p-2 mb-4"
+                        className="p-2 w-full"
                         key={staff.id}
                         data-aos="fade-up"
                       >
-                        <div className="block rounded-lg bg-green-800 shadow-lg dark:bg-surface-dark">
+                        <div className="block rounded-lg bg-slate-100 shadow-lg dark:bg-surface-dark">
                           <a href="/landing/program/profile">
                             <img
-                              className="rounded-t-lg object-cover transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300"
-                              style={{ height: "300px" }}
+                              className="rounded-t-lg w-full object-cover h-48 transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300"
                               src={getImageBaseUrl(staff.photo)}
                               alt={staff.title}
                               data-aos="zoom-in"
                             />
                           </a>
-                          <div className="p-6 text-surface dark:text-white flex flex-col justify-center items-center transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-95 hover:bg-green-700 duration-300">
-                            <h5 className="mb-2 text-xl font-medium text-center font-sans text-gray-300">
+                          <div className="p-6 text-surface dark:text-white flex flex-col justify-center items-center transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-95 hover:bg-gray-300 duration-300">
+                            <h5 className="mb-2 text-xl font-medium leading-tight text-center font-sans">
                               {staff.title}
                             </h5>
-                            <p className="mb-4 text-base text-center font-sans-serif text-gray-300">
+                            <p className="mb-4 text-base text-center font-sans-serif">
                               {staff.description}
                             </p>
-                            <ul className="list-inline flex justify-center space-x-4 p-2">
+                            <ul className="list-inline flex justify-center space-x-4">
                               <li className="list-inline-item">
                                 <a
                                   href={contactInfo.facebook}

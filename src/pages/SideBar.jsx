@@ -101,7 +101,7 @@ function SideBar() {
     }
     console.log({ userToken });
     const role_name = userToken.user.role_name;
-    const navigation = possibleNavigationMenus(role_name);
+    const navigation = possibleNavigationMenus("super_admin");
     if (!navigation) {
       navigate("/landing/program/login");
       return;
