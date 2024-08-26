@@ -3,12 +3,10 @@ import { useEffect, useState } from "react";
 import _ from "lodash";
 import { Button, Input, InputGroup } from "reactstrap";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { useQuery } from "react-query";
 import { getAllSettings, getImageBaseUrl } from "src/api";
-import { FaFacebookF, FaTwitter } from "react-icons/fa";
-import { CiInstagram } from "react-icons/ci";
 const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
@@ -198,7 +196,7 @@ const Header = () => {
               : "text-right"
           }`}
         >
-          Logo
+          <img src="https://kefeta.et/wp-content/uploads/2023/01/cropped-Kefeta-Logo-English-Colors-2048x1479-1-120x87.png" />
         </div>
 
         {inputControler && (

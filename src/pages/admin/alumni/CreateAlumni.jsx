@@ -71,7 +71,7 @@ export default function CreateAlumni() {
       !alumniFields.description ||
       !alumniFields.institute_id
     ) {
-      setAluniError("Please fill in all required fields!");
+      setAlumniError("Please fill in all required fields!");
       return;
     }
 

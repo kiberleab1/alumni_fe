@@ -24,13 +24,28 @@ const LoginForm = () => {
       queryClient.invalidateQueries("login");
 
       const data = storeUserToken(res.data);
-      if (data) navigate("/landing/program/profile");
-      else throw new Error("Something went wrong");
+      if (data) {
+        switch (data.user.role_name) {
+          case "super_admin":
+            navigate("/admin");
+            break;
+          case "admin":
+            navigate("/admin");
+            break;
+          case "alumni":
+            navigate("/user");
+            break;
+          default:
+            navigate("/landing");
+        }
+      } else throw new Error("Something went wrong");
     },
     onError: () => {
       setErrorMessage("Failed to Login,please retry .....");
     },
   });
+  // @ts-ignore
+  // eslint-disable-next-line no-unused-vars
   const [errorMes, setErrorMessage] = useState("");
 
   const loginFormFields = {

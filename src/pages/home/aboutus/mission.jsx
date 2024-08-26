@@ -37,14 +37,27 @@ const Mission = () => {
           {
             title: "Mission",
             icon: <FaRocket className="text-black text-4xl" />,
-            description:
-              "Our mission is to innovate and lead the industry by providing cutting-edge solutions and services that empower our clients to achieve their goals and drive success.",
+            description: (
+              <ul className="list-disc list-outside  p-0 m-0 text-start">
+                <li className="pl-0">
+                  Expand youth access to essential services that are more youth
+                  friendly
+                </li>
+                <li className="pl-0">
+                  Create new economic opportunities for youth
+                </li>
+                <li className="pl-0">
+                  Expand youth access to essential services that are more youth
+                  friendly
+                </li>
+              </ul>
+            ),
           },
           {
             title: "Vision",
             icon: <BiSolidLowVision className="text-black text-4xl" />,
             description:
-              "Our vision is to revolutionize the industry with transformative solutions, fostering growth and success for our clients.",
+              "Ethiopian youth who are game changers: empowered to advance their own economic, civic, and social development; resilient in the face of shocks; actively promoting development within their communities and contributing to the country’s peace and prosperity.",
           },
         ].map((card, index) => (
           <div
@@ -89,16 +102,40 @@ const Mission = () => {
               </h1>
               <ul className="list-disc list-inside text-gray-900 text-left space-y-4 font-sans-serif  ">
                 <li className="">
-                  <strong>Excellence</strong> - Committed to advancing the
+                  <strong>Empowerment</strong> - Equip youth with the skills and
+                  resources to lead their own development.
+                </li>
+                <li>
+                  <strong>Resilience</strong> - Foster the ability to overcome
+                  challenges and adapt to change.
+                </li>
+                <li>
+                  <strong>Youth Leadership</strong> - Prioritize youth-led
+                  initiatives in decision-making and community development.
+                </li>
+                <li className="">
+                  <strong>Collaboration</strong> - Build partnerships that drive
+                  impactful change.
+                </li>
+                <li>
+                  <strong>Innovation</strong> - Encourage creative solutions for
+                  economic and social progress.
+                </li>
+                <li>
+                  <strong>Inclusivity</strong> - Ensure all youth have access to
+                  opportunities and support.
+                </li>
+                <li className="">
+                  <strong>Civic Engagement</strong> - Committed to advancing the
                   highest standards in all endeavors.
                 </li>
                 <li>
-                  <strong>Academicabsolute Freedom</strong> - Upholds the rights
-                  to open expression and diverse perspectives.
+                  <strong>Academicabsolute Freedom</strong> - Amplify youth
+                  voices in governance and civic affairs.
                 </li>
                 <li>
-                  <strong>Integrity and Accountability</strong> - Adheres to
-                  ethical principles with transparency.
+                  <strong>Sustainability</strong> - Create lasting impacts
+                  through youth-led enterprises and community engagement.
                 </li>
               </ul>
             </div>

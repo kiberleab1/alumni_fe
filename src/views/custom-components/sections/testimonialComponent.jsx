@@ -11,19 +11,19 @@ const TestimonialComponent = () => {
   const testimonialData = [
     {
       id: 1,
-      text: "“Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras venenatis vel velit vestibulum.”",
-      name: "Michelle Anderson",
+      text: "“Kefeta's campus training focused on life skills, work habits, and job search strategies. Eyob, a trainee, says, “I learned to actively search for jobs and strategize my future. This training feels as important as my degree.””",
+      name: "Eyob Addisu",
       image: img1,
     },
     {
       id: 2,
-      text: "“Phasellus scelerisque neque et libero volutpat, nec iaculis justo fringilla. Integer nec nisi lorem.”",
-      name: "John Doe",
+      text: "“Kefeta's campus training focused on life skills, work habits, and job search strategies. Eyob, a trainee, says, “I learned to actively search for jobs and strategize my future. This training feels as important as my degree.””",
+      name: "Nur Eshete",
       image: img2,
     },
     {
       id: 3,
-      text: "“Donec sit amet mauris nec augue eleifend vulputate. Aliquam erat volutpat.”",
+      text: "“Kefeta's campus training focused on life skills, work habits, and job search strategies. Eyob, a trainee, says, “I learned to actively search for jobs and strategize my future. This training feels as important as my degree.””",
       name: "Jane Smith",
       image: img3,
     },

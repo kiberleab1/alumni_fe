@@ -12,8 +12,10 @@ import {
   NewspaperIcon,
   InboxArrowDownIcon,
   StarIcon,
+  MicrophoneIcon,
 } from "@heroicons/react/24/outline";
 import CreateAdminPage from "src/pages/admin/admins/createAdmin";
+import CreatePodcast from "src/pages/admin/podcast/podcast";
 
 const role_maps = {
   super_admin: [
@@ -59,6 +61,13 @@ const role_maps = {
     { name: "News", href: "#", icon: NewspaperIcon, current: false },
     { name: "Email", href: "#", icon: InboxArrowDownIcon, current: false },
     { name: "WebContent", href: "#", icon: StarIcon, current: false },
+    {
+      name: "Podcast",
+      href: "#",
+      icon: MicrophoneIcon,
+      current: false,
+      comp: CreatePodcast,
+    },
   ],
   admin: [
     {
@@ -103,6 +112,13 @@ const role_maps = {
     { name: "News", href: "#", icon: NewspaperIcon, current: false },
     { name: "Email", href: "#", icon: InboxArrowDownIcon, current: false },
     { name: "WebContent", href: "#", icon: StarIcon, current: false },
+    {
+      name: "Podcast",
+      href: "#",
+      icon: MicrophoneIcon,
+      current: false,
+      comp: CreatePodcast,
+    },
   ],
   aumni: [
     {
@@ -147,10 +163,17 @@ const role_maps = {
     { name: "News", href: "#", icon: NewspaperIcon, current: false },
     { name: "Email", href: "#", icon: InboxArrowDownIcon, current: false },
     { name: "WebContent", href: "#", icon: StarIcon, current: false },
+    {
+      name: "Podcast",
+      href: "#",
+      icon: MicrophoneIcon,
+      current: false,
+      comp: CreatePodcast,
+    },
   ],
   Guest: [],
 };
 
 export function possibleNavigationMenus(role_name) {
-  return role_maps[role_name];
+  return role_maps[role_name] ? role_maps[role_name] : null;
 }
