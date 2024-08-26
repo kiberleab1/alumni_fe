@@ -15,7 +15,10 @@ export default function EventsPage({ onCreateEventClick, onEditEventClick }) {
   const { isError, data, isLoading } = useQuery(
     ["getAllEvents", currentPage],
     async () => {
-      return await getAllEvents({ pageNumber: currentPage, pageSize: itemsPerPage });
+      return await getAllEvents({
+        pageNumber: currentPage,
+        pageSize: itemsPerPage,
+      });
     },
     { keepPreviousData: true }
   );
@@ -93,7 +96,9 @@ function ListEvent({
     <div className="flex flex-col bg-gray-20 rounded-lg w-full">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h1 className="text-2xl font-semibold text-gray-900">Upcoming Events</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">
+            Upcoming Events
+          </h1>
         </div>
       </div>
       <div className="mt-6 container w-full">
@@ -108,7 +113,9 @@ function ListEvent({
                 style={{ backgroundImage: `url(${val.image})` }}
               ></div>
               <div className="p-4">
-                <h2 className="text-xl text-start font-bold mb-3">{val.title}</h2>
+                <h2 className="text-xl text-start font-bold mb-3">
+                  {val.title}
+                </h2>
                 <div className="flex items-center text-gray-600 mb-2 space-x-2">
                   <SlCalender />
                   <span>{val.time}</span>
@@ -145,7 +152,10 @@ function ListEvent({
           <span className="font-medium">{indexOfLastItem}</span> of{" "}
           <span className="font-medium">{totalItems}</span> results
         </p>
-        <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+        <nav
+          className="isolate inline-flex -space-x-px rounded-md shadow-sm"
+          aria-label="Pagination"
+        >
           <button
             onClick={() => handlePagination(currentPage - 1)}
             disabled={currentPage === 1}
@@ -174,7 +184,9 @@ function ListEvent({
             onClick={() => handlePagination(currentPage + 1)}
             disabled={currentPage === totalPages}
             className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border border-gray-300 ${
-              currentPage === totalPages ? "cursor-not-allowed" : "hover:bg-gray-50"
+              currentPage === totalPages
+                ? "cursor-not-allowed"
+                : "hover:bg-gray-50"
             }`}
           >
             Next

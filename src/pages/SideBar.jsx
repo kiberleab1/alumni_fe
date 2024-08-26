@@ -95,7 +95,6 @@ function SideBar() {
   const navigation = possibleNavigationMenus(role_name);
   const [navigationItems, setNavigationItems] = useState(navigation);
   const [openDropDown, setOpenDropDown] = useState({});
-
   const handleOpenDropDown = (itemName) => {
     setOpenDropDown((prevState) => ({
       ...prevState,

@@ -8,6 +8,7 @@ import img4 from "src/assets/images/features/feature13/img4.jpg";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect } from "react";
+import H1Heading from "src/components/headerHs/header";
 const FeatureComponent = () => {
   useEffect(() => {
     AOS.init({
@@ -20,14 +21,9 @@ const FeatureComponent = () => {
     <div>
       <div className="min-h-screen  bg-light">
         <Container>
-          <Row className="justify-content-center">
-            <Col className="text-center">
-              <h1 className="title font-sans">Trending Stories</h1>
-              {/* <h6 className="subtitle">
-                Here you can check Demos we created based on WrapKit. Its quite
-                easy to Create your own dream website &amp; dashboard in
-                No-time.
-              </h6> */}
+          <Row className="justify-content-center mt-4s">
+            <Col md="7" className="text-center mt-3  w-auto">
+              <H1Heading title={"Trending stories"} />
             </Col>
           </Row>
         </Container>
@@ -35,42 +31,29 @@ const FeatureComponent = () => {
           className="flex flex-wrap items-center justify-center text-black"
           data-aos="zoom-in"
         >
-          <div className="blog-slider">
+          <div className="blog-slider ">
             <div className="blog-slider__wrp swiper-wrapper">
               <div className="blog-slider__item swiper-slide">
                 <div className="blog-slider__img">
                   <img src={img1} alt="" />
                 </div>
                 <div className="__content">
-                  <span className="blog-slider__code">26 December 2019</span>
-                  <div className="blog-slider__title">Lorem Ipsum Dolor</div>
-                  <div className="blog-slider__text">
+                  <span className="blog-slider__code text-end">
+                    26 December 2019
+                  </span>
+                  <div className="blog-slider__title text-start">
+                    Lorem Ipsum Dolor
+                  </div>
+                  <div className="blog-slider__text text-start">
                     Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                     Recusandae voluptate repellendus magni illo ea animi?
                   </div>
-                  <a href="#" className="blog-slider__button">
-                    READ MORE
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="blog-slider">
-            <div className="blog-slider__wrp swiper-wrapper">
-              <div className="blog-slider__item swiper-slide">
-                <div className="blog-slider__img">
-                  <img src={img1} alt="" />
-                </div>
-                <div className="__content">
-                  <span className="blog-slider__code">26 December 2019</span>
-                  <div className="blog-slider__title">Lorem Ipsum Dolor</div>
-                  <div className="blog-slider__text">
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                    Recusandae voluptate repellendus magni illo ea animi?
+                  <div className="text-start mt-4">
+                    {" "}
+                    <a href="#" className="blog-slider__button text-start ">
+                      READ MORE
+                    </a>
                   </div>
-                  <a href="#" className="blog-slider__button">
-                    READ MORE
-                  </a>
                 </div>
               </div>
             </div>

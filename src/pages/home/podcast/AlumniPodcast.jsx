@@ -3,6 +3,7 @@ import imgs from "../../../assets/images/testimonial/2.jpg";
 
 import AOS from "aos";
 import "aos/dist/aos.css";
+import H1Heading from "src/components/headerHs/header";
 const podcastList = [
   {
     topic: "Monetization - Episode 2",
@@ -37,7 +38,7 @@ const AlumniPodcast = () => {
     <>
       <div className="min-h-screen">
         <div className="flex justify-center mt-4 ">
-          <h1 className="title font-sans"> playlist</h1>
+          <H1Heading title={"Playlist"} />
         </div>
 
         <div className=" flex  space-x-18  flex-wrap gap-4 space-x-8  items-center justify-center text-black  mt-8 mb-8">
@@ -49,11 +50,11 @@ const AlumniPodcast = () => {
               >
                 <div
                   className="flex  max-w-sm rounded-xl m-10 "
-                  style={{ boxShadow: "-50px 30px #ebf0f0" }}
+                  style={{ boxShadow: "-50px 30px #ebfcf8" }}
                 >
                   <div
-                    className="max-h-lg  rounded-xl max-w-lg bg-gray-900 p-2"
-                    style={{ boxShadow: "60px -40px #7c7d7c " }}
+                    className="max-h-lg  rounded-xl max-w-lg bg-gray-900 p-2 "
+                    style={{ boxShadow: "30px -20px #a4b0ad" }}
                   >
                     <iframe
                       // width="500"
@@ -64,11 +65,11 @@ const AlumniPodcast = () => {
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       referrerpolicy="strict-origin-when-cross-origin"
                       allowfullscreen="true"
-                      className="rounded-xl min-w-[100%]"
+                      className="rounded-xl min-w-[100%] aspect-auto"
                     ></iframe>
                     <div className="flex flex-col text-left pl-4 text-gray-50 ">
                       <h2 className="title text-xl text-white">{val.topic}</h2>
-                      <p className="text-left over flow scroll ">
+                      <p className="text-left over flow scrol mb-2 ">
                         {val.discription}
                       </p>
                     </div>

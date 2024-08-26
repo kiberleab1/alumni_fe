@@ -7,31 +7,33 @@ import {
   Input,
   Button,
 } from "reactstrap";
+import H1Heading from "src/components/headerHs/header";
 
 const ContactComponent = () => {
   return (
-    <div>
-      <div className="spacer bg-light">
+    <div className="min-h-screen">
+      <div className=" ">
         <Container>
           <Row className="justify-content-center">
-            <Col md="7" className="text-center">
-              <h1 className="title font-bold">Contact Form</h1>
-              <h6 className="subtitle">
+            <Col md="7" className="text-center w-auto mt-4">
+              {/* <h1 className="title font-bold">Contact Form</h1> */}
+              <H1Heading title={"Contact form"} />
+              {/* <h6 className="subtitle">
                 Here you can check Demos we created based on WrapKit. Its quite
                 easy to Create your own dream website &amp; dashboard in
                 No-time.
-              </h6>
+              </h6> */}
             </Col>
           </Row>
         </Container>
       </div>
-      <div className="contact1">
+      <div className="spacer contact1">
         <Container>
           <Row>
-            <div className="spacer">
+            <div className="my-8">
               <Row className="m-0 justify-content-center">
                 <Col lg="8 ">
-                  <div className="contact-box p-r-40">
+                  <div className="contact-box p-r-40 mb-4">
                     <h4 className="title text-black">Quick Contact</h4>
                     <Form>
                       <Row>
@@ -57,7 +59,7 @@ const ContactComponent = () => {
                         <Col lg="12">
                           <Button
                             type="submit"
-                            className="btn bg-gray-900 m-t-20 btn-arrow"
+                            className="btn bg-green-800 m-t-20 btn-arrow hover:bg-green-700"
                           >
                             <span>
                               {" "}
