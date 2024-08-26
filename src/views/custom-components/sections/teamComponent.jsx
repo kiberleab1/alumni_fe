@@ -5,6 +5,10 @@ import Slider from "react-slick";
 import { Col, Container, Row } from "reactstrap";
 import { getAllStaff, getImageBaseUrl } from "src/api";
 import QueryResult from "src/components/utils/queryResults";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
+import "./style/team.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
 const TeamComponent = () => {
@@ -25,36 +29,54 @@ const TeamComponent = () => {
       once: false,
     });
   }, []);
+  const PrevArrow = (props) => {
+    const { className, onClick } = props;
+    return (
+      <div className={className} onClick={onClick} style={{ color: "red" }}>
+        {/* Custom arrow icon or text */}
+        <span>‹</span>
+      </div>
+    );
+  };
+
+  const NextArrow = (props) => {
+    const { className, onClick } = props;
+    return (
+      <div className={className} onClick={onClick} style={{ color: "red" }}>
+        {/* Custom arrow icon or text */}
+        <span>›</span>
+      </div>
+    );
+  };
   const settings = {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 3,
+    slidesToShow: 3, // Show 3 cards at a time by default
     slidesToScroll: 1,
     responsive: [
       {
-        breakpoint: 1024,
+        breakpoint: 1024, // Adjust for medium screens
         settings: {
-          slidesToShow: 3,
+          slidesToShow: 2, // Show 2 cards at a time
+          slidesToScroll: 1,
+          infinite: true,
+          dots: true,
         },
       },
       {
-        breakpoint: 768,
+        breakpoint: 600, // Adjust for smaller screens
         settings: {
-          slidesToShow: 2,
-        },
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 1,
+          slidesToShow: 1, // Show 1 card at a time
+          slidesToScroll: 1,
         },
       },
     ],
   };
+
   return (
     <QueryResult isLoading={isLoading} isError={isError} data={data}>
-      <div className=" bg-gray-150">
+      <div className="bg-blue-50">
         <div className=" justify-content-center">
           <Container>
             <Row className="justify-content-center">
@@ -82,18 +104,17 @@ const TeamComponent = () => {
           </Container>
         </div>
 
-        <div className="mt-4 mb-4 team2">
+        <div className="mt-4 mb-4 team2 ">
           <Container>
             <Row className="justify-content-center">
-              <Col md="7" className="text-center"></Col>
+              <Col md="7" className="text-center">
+                {/* Optionally, place your heading or intro text here */}
+              </Col>
             </Row>
             <Row>
-              <div className="p-4 ">
-                <Slider {...settings} className="">
+              <Col className="p-4">
+                <Slider {...settings} className="flex flex-wrap">
                   {data?.data?.staff.map((staff, index) => {
-                    if (index != 0) {
-                      return <></>;
-                    }
                     const contactInfo = parseData(staff.contact_info);
                     return (
                       <div
@@ -161,52 +182,7 @@ const TeamComponent = () => {
                     );
                   })}
                 </Slider>
-              </div>
-              {/* {data?.data.staff.map((staff) => {
-                const contactInfo = parseData(staff.contact_info);
-                console.log(parseData(staff.contact_info));
-                return (
-                  <Col lg="3" md="6" className="m-b-30" key={staff.id}>
-                    <div className="block rounded-lg bg-slate-100 shadow-secondary-1 dark:bg-surface-dark">
-                      <a href={"/landing/program/profile"}>
-                        <img
-                          className="rounded-t-lg w-full"
-                          src={getImageBaseUrl(staff.photo)}
-                          alt=""
-                        />
-                      </a>
-                      <div className="p-6 text-surface dark:text-white flex flex-col justify-center justify-items-center">
-                        <h5 className="mb-2 text-xl font-medium leading-tight">
-                          {staff.title}
-                        </h5>
-                        <p className="mb-4 text-base">{staff.description}</p>
-                        <ul className="list-inline">
-                          <li className="list-inline-item">
-                            <a href={contactInfo.facebook}>
-                              <i className="fa fa-facebook"></i>
-                            </a>
-                          </li>
-                          <li className="list-inline-item">
-                            <a href={contactInfo.twitter}>
-                              <i className="fa fa-twitter"></i>
-                            </a>
-                          </li>
-                          <li className="list-inline-item">
-                            <a href={contactInfo.linkedin}>
-                              <i className="fa fa-linkedin"></i>
-                            </a>
-                          </li>
-                          <li className="list-inline-item">
-                            <a href={contactInfo.telegram}>
-                              <i className="fa fa-telegram"></i>
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </Col>
-                );
-              })} */}
+              </Col>
             </Row>
           </Container>
         </div>
