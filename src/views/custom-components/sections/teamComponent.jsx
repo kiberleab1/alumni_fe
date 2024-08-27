@@ -15,6 +15,8 @@ const TeamComponent = () => {
   const { isLoading, data, isError } = useQuery("team", async () => {
     return await getAllStaff({ pageNumber: 1, pageSize: 4 });
   });
+  console.log(data);
+
   const parseData = (data) =>
     data.split(", ").reduce((acc, item) => {
       const [key, value] = item.split(":");
@@ -29,45 +31,27 @@ const TeamComponent = () => {
       once: false,
     });
   }, []);
-  const PrevArrow = (props) => {
-    const { className, onClick } = props;
-    return (
-      <div className={className} onClick={onClick} style={{ color: "red" }}>
-        {/* Custom arrow icon or text */}
-        <span>‹</span>
-      </div>
-    );
-  };
 
-  const NextArrow = (props) => {
-    const { className, onClick } = props;
-    return (
-      <div className={className} onClick={onClick} style={{ color: "red" }}>
-        {/* Custom arrow icon or text */}
-        <span>›</span>
-      </div>
-    );
-  };
   const settings = {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 3, // Show 3 cards at a time by default
+    slidesToShow: 3,
     slidesToScroll: 1,
     responsive: [
       {
-        breakpoint: 1024, // Adjust for medium screens
+        breakpoint: 1024,
         settings: {
-          slidesToShow: 2, // Show 2 cards at a time
+          slidesToShow: 2,
           slidesToScroll: 1,
           infinite: true,
           dots: true,
         },
       },
       {
-        breakpoint: 600, // Adjust for smaller screens
+        breakpoint: 600,
         settings: {
-          slidesToShow: 1, // Show 1 card at a time
+          slidesToShow: 1,
           slidesToScroll: 1,
         },
       },
@@ -123,7 +107,11 @@ const TeamComponent = () => {
                         data-aos="fade-up"
                       >
                         <div className="block rounded-lg bg-slate-100 shadow-lg dark:bg-surface-dark">
-                          <a href="/landing/program/profile">
+                          {/* <a href="/landing/program/profile"> */}
+                          <a
+                            href={staff.link}
+                            className="transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300"
+                          >
                             <img
                               className="rounded-t-lg w-full object-cover h-48 transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300"
                               src={getImageBaseUrl(staff.photo)}
