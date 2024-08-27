@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient, useMutation } from "react-query";
-import { deleteDepartment, getAllPodcast } from "src/api";
+import { deletePodcast, getAllPodcast } from "src/api";
 import { useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import Modal from "../../../components/utils/DeleteModal";
@@ -19,7 +19,7 @@ export default function PodcastPage({
         <ListPodcast
           alumnus={data?.data}
           onCreatePodcastCLicked={onCreatePodcastClick}
-          onEditAlumniClick={(alumni) => onEditPodcastClick(alumni)}
+          onEditPodcastClick={(podcast) => onEditPodcastClick(podcast)}
         />
       </div>
     </QueryResult>
@@ -27,15 +27,15 @@ export default function PodcastPage({
 }
 
 // eslint-disable-next-line react/prop-types
-function ListPodcast({ alumnus, onCreatePodcastCLicked, onEditAlumniClick }) {
+function ListPodcast({ alumnus, onCreatePodcastCLicked, onEditPodcastClick }) {
   const itemsPerPage = 5; // Number of items to display per page
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedDepartment, setSelectedDepartment] = useState(null);
+  const [selectedPodcast, setSelectedPodcast] = useState(null);
   const queryClient = useQueryClient();
 
-  // Mutation for deleting a alumni
-  const { mutate: deleteDept } = useMutation(deleteDepartment, {
+  // Mutation for deleting a podcast
+  const { mutate: deleteDept } = useMutation(deletePodcast, {
     onSuccess: () => {
       queryClient.invalidateQueries("getAllPodcast");
       closeModal();
@@ -43,7 +43,7 @@ function ListPodcast({ alumnus, onCreatePodcastCLicked, onEditAlumniClick }) {
     onError: (error) => {
       closeModal();
       queryClient.invalidateQueries("getAllPodcast");
-      console.error("Error deleting alumni:", error);
+      console.error("Error deleting podcast:", error);
     },
   });
 
@@ -59,20 +59,20 @@ function ListPodcast({ alumnus, onCreatePodcastCLicked, onEditAlumniClick }) {
     }
   };
 
-  const openModal = (alumni) => {
-    setSelectedDepartment(alumni);
+  const openModal = (podcast) => {
+    setSelectedPodcast(podcast);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
-    setSelectedDepartment(null);
+    setSelectedPodcast(null);
     setIsModalOpen(false);
   };
 
   const confirmDeletion = () => {
-    console.log(selectedDepartment);
-    if (selectedDepartment) {
-      deleteDept(selectedDepartment);
+    console.log(selectedPodcast);
+    if (selectedPodcast) {
+      deleteDept(selectedPodcast);
     }
   };
 
@@ -139,35 +139,35 @@ function ListPodcast({ alumnus, onCreatePodcastCLicked, onEditAlumniClick }) {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {currentItems.map((alumni) => (
-                    <tr key={alumni.id}>
+                  {currentItems.map((podcast) => (
+                    <tr key={podcast.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm font-medium text-gray-900">
-                          {alumni.title ? alumni.title : ""}
+                          {podcast.title ? podcast.title : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {alumni.url ? alumni.url : ""}
+                          {podcast.url ? podcast.url : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900 line-clamp-1">
-                          {alumni.description ? alumni.description : ""}
+                          {podcast.description ? podcast.description : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium">
                         <a
                           href="#"
                           className="text-indigo-600 hover:text-green-900"
-                          onClick={() => onEditAlumniClick(alumni)}
+                          onClick={() => onEditPodcastClick(podcast)}
                         >
                           Edit
                         </a>
                         <a
                           href="#"
                           className="text-red-600 hover:text-red-900 pl-5"
-                          onClick={() => openModal(alumni)}
+                          onClick={() => openModal(podcast)}
                         >
                           Delete
                         </a>
@@ -259,13 +259,13 @@ function ListPodcast({ alumnus, onCreatePodcastCLicked, onEditAlumniClick }) {
           </div>
         </div>
       </div>
-      {selectedDepartment && (
+      {selectedPodcast && (
         <Modal
           isOpen={isModalOpen}
           closeModal={closeModal}
           confirmAction={confirmDeletion}
           title="Confirm Deletion"
-          message={`Are you sure you want to delete the alumni "${selectedDepartment.name}"? This action cannot be undone.`}
+          message={`Are you sure you want to delete the podcast "${selectedPodcast.title}"? This action cannot be undone.`}
         />
       )}
     </div>

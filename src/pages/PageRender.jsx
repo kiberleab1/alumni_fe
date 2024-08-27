@@ -95,6 +95,7 @@ export default function ComponentRender({ page, onPageSet }) {
   const [selectedJobHistory, setSelectedJobHistory] = useState(null);
   const [selectedStaff, setSelectedStaff] = useState(null);
   const [selectedAlumni, setSelectedAlumni] = useState(null);
+  const [args, setArgs] = useState(null);
   const [
     selectedDocumentVerificationRequest,
     setSelectedDocumentVerificationRequest,
@@ -162,7 +163,11 @@ export default function ComponentRender({ page, onPageSet }) {
         onPageSet("Edit Document Verification");
       }}
       onCreatePodcastClick={() => onPageSet("Create Podcast")}
-      onEditPodcastClick={() => {}}
+      onEditPodcastClick={(item) => {
+        console.log({ item });
+        setArgs(item);
+        onPageSet("Create Podcast");
+      }}
       institute={selectedInstitute}
       admin={selectedAdmin}
       user={selecteduser}
@@ -174,6 +179,7 @@ export default function ComponentRender({ page, onPageSet }) {
       jobHistory={selectedJobHistory}
       alumni={selectedAlumni}
       document={selectedDocumentVerificationRequest}
+      item={args}
     />
   );
 }

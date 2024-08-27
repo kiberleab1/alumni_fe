@@ -13,7 +13,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
 import ComponentRender from "./PageRender";
-import { getUserToken } from "src/helpers/globalStorage";
+import { deleteUserToken, getUserToken } from "src/helpers/globalStorage";
 import { useNavigate } from "react-router-dom";
 import { possibleNavigationMenus } from "src/helpers/role_maaping";
 import { useEffect } from "react";
@@ -260,12 +260,15 @@ function SideBar() {
                                   "text-gray-400 hover:text-white hover:bg-gray-800",
                                   "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                                 )}
+                                onClick={() => {
+                                  console.log("login redirect");
+                                  navigate("/landing/profile/login");
+                                }}
                               >
                                 <ArrowLongLeftIcon
                                   className="h-6 w-6 shrink-0"
                                   aria-hidden="true"
                                 />
-                                Logout
                               </a>
                             </li>
 
@@ -399,6 +402,10 @@ function SideBar() {
                           "text-gray-400 hover:text-white hover:bg-gray-800",
                           "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                         )}
+                        onClick={() => {
+                          deleteUserToken();
+                          navigate("/landing/program/login");
+                        }}
                       >
                         <ArrowLongLeftIcon
                           className="h-6 w-6 shrink-0"

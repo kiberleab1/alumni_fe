@@ -671,3 +671,15 @@ export async function getAllPodcast({ pageNumber, pageSize }) {
   const result = await axios.post(`${API_BASE_URl}/getAllPodcast`, data);
   return result;
 }
+
+export async function updatePodcast({ id, name, description, url }) {
+  const data = { id, title: name, description, url };
+  const result = await axios.post(`${API_BASE_URl}/updatePodcast`, data);
+  return result;
+}
+
+export async function deletePodcast({ id }) {
+  const data = { id };
+  const result = await axios.post(`${API_BASE_URl}/deletePodcast`, data);
+  return result;
+}

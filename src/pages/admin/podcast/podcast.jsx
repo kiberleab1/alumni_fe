@@ -1,9 +1,12 @@
+import { useEffect } from "react";
 import { useState } from "react";
 import { useQueryClient, useMutation } from "react-query";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { createPodcast } from "src/api";
-export default function CreatePodcastComp() {
+import { createPodcast, updatePodcast } from "src/api";
+export default function CreatePodcastComp({ item }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [podcastError, setPodcastError] = useState("");
   const [podcastFields, setPodcastFields] = useState({
     name: "",
@@ -11,6 +14,17 @@ export default function CreatePodcastComp() {
     url: "",
   });
 
+  useEffect(() => {
+    if (item) {
+      setPodcastFields({
+        name: item.title,
+        description: item.description,
+        url: item.url,
+      });
+      setIsEditing(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const clearPodcastFields = () => {
     setPodcastFields({
       name: "",
@@ -23,14 +37,24 @@ export default function CreatePodcastComp() {
     clearPodcastFields();
   };
   const queryClient = useQueryClient();
-  const mutation = useMutation(createPodcast, {
+  const crateMutation = useMutation(createPodcast, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("getPodcasts");
+    },
+  });
+  const updateMutation = useMutation(updatePodcast, {
     onSuccess: () => {
       queryClient.invalidateQueries("getPodcasts");
     },
   });
 
   const handlePodcastSubmit = async (e) => {
+    if (isSaving) {
+      return;
+    }
+    setIsSaving(true);
     console.log({ e });
+
     e.preventDefault();
     if (
       !podcastFields.name ||
@@ -38,11 +62,17 @@ export default function CreatePodcastComp() {
       !podcastFields.url
     ) {
       setPodcastError("Please fill in all required fields!");
+      setIsSaving(false);
       return;
     }
     setPodcastError("");
-    mutation.mutate(podcastFields);
-    console.log({ podcastFields });
+    if (!isEditing) {
+      crateMutation.mutate(podcastFields);
+    } else {
+      const data = { id: item.id, ...podcastFields };
+      updateMutation.mutate(data);
+    }
+    setIsSaving(false);
   };
 
   return (
@@ -50,7 +80,7 @@ export default function CreatePodcastComp() {
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3 justify-center justify-items-center ">
         <div className="px-4 sm:px-0">
           <h2 className="text-base font-semibold leading-7 text-gray-900">
-            Podcast Information
+            {isEditing ? "Edit" : "Add"} Podcast Information
           </h2>
           <p className="mt-1 text-sm leading-6 text-gray-600">
             Please make sure every input is correct and accurately describes the
@@ -158,7 +188,7 @@ export default function CreatePodcastComp() {
             className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             onClick={handlePodcastSubmit}
           >
-            Save
+            {isSaving ? "..." : "Save"}
           </button>
         </div>
       </form>

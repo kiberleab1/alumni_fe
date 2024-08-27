@@ -37,3 +37,7 @@ export function storeUserToken(data) {
   localStorage.setItem("userData", jsonData);
   return data;
 }
+
+export function deleteUserToken() {
+  localStorage.removeItem("userData");
+}
