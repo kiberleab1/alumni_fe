@@ -7,9 +7,10 @@ import { useQuery } from "react-query";
 import { getAllPodcast } from "src/api";
 import QueryResult from "src/components/utils/queryResults";
 import H1Heading from "src/components/headerHs/header";
-
 const AlumniPodcast = () => {
   const [podList, setPodList] = useState([]);
+  console.log(podList[0]);
+
   const { isError, data, isLoading } = useQuery(
     ["getAllPodcasts"],
     async () => {
@@ -56,8 +57,10 @@ const AlumniPodcast = () => {
                       className="rounded-xl min-w-[100%] aspect-auto"
                     ></iframe>
                     <div className="flex flex-col text-left pl-4 text-gray-50 ">
-                      <h2 className="title text-xl text-white">{pod.title}</h2>
-                      <p className="text-left over flow scrol mb-2 ">
+                      <h2 className="title text-xl text-white line-clamp-2">
+                        {pod.title}
+                      </h2>
+                      <p className="text-left over flow scrol mb-2 line-clamp-3">
                         {pod.description}
                       </p>
                     </div>

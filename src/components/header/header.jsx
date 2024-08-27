@@ -190,9 +190,9 @@ const Header = () => {
         </div> */}
 
         <div
-          className={`transition duration-300 ease-in-out ${
+          className={`transition duration-300 ease-in-out w-[90px] ${
             inputControler
-              ? "text-white hover:bg-green-900 p-2 mr-2 text-left"
+              ? "text-white hover:bg-green-900 p-1 mr-2 text-left "
               : "text-right"
           }`}
         >
@@ -206,8 +206,8 @@ const Header = () => {
             }`}
           >
             <div className="flex flex-rows">
-              <Input className="  h-10" />
-              <Button className=" p-2 bg-green-800 h-full transition-colors duration-300 ease-in-out hover:bg-green-900">
+              <Input className="bg-gray-200  h-10" />
+              <Button className=" p-2 bg-inherit h-full transition-colors duration-300 ease-in-out hover:bg-green-900">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"

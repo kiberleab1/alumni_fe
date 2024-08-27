@@ -107,6 +107,7 @@ function SideBar() {
       return;
     }
     setNavigation(navigation);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const [navigationItems, setNavigationItems] = useState(navigation);
   const [openDropDown, setOpenDropDown] = useState({});

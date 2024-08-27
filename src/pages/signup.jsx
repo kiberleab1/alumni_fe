@@ -194,6 +194,7 @@ const SignupForm = () => {
     onSubmit: (values) => {
       console.log("Form values user info:", values);
       // submit here
+      handleSubmit(values);
       navigate("/landing/program/login");
     },
   });

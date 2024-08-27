@@ -10,6 +10,7 @@ function AboutUsPage() {
   const { isError, data, isLoading } = useQuery("aboutUs", async () => {
     return await getWebContentByComonent({ component: "aboutus" });
   });
+  console.log(data);
 
   return (
     <>
