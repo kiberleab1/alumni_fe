@@ -40,6 +40,8 @@ import SettingsPage from "./admin/settings/settings";
 import CreateOurStoryForm from "./admin/webcontent/CreateOurStoryPage";
 import PodcastPage from "./admin/podcast/ListPodcat";
 import CreatePodcastComp from "./admin/podcast/podcast";
+import AdminTestimonialPage from "./admin/webcontent/testimonial/ListTestimonial";
+import CreateTestimonialComp from "./admin/webcontent/testimonial/CreateTestimonialPage";
 
 const componentsMap = {
   Dashboard: AdminsPage,
@@ -82,6 +84,8 @@ const componentsMap = {
   "Create Our Story Page": CreateOurStoryForm,
   Podcast: PodcastPage,
   "Create Podcast": CreatePodcastComp,
+  "Manage Testimony": AdminTestimonialPage,
+  "Create Testimony": CreateTestimonialComp,
 };
 
 export default function ComponentRender({ page, onPageSet }) {
@@ -167,6 +171,12 @@ export default function ComponentRender({ page, onPageSet }) {
         console.log({ item });
         setArgs(item);
         onPageSet("Create Podcast");
+      }}
+      onCreateTestimonyClick={() => onPageSet("Create Testimony")}
+      onEditTestimonyClick={(item) => {
+        console.log({ item });
+        setArgs(item);
+        onPageSet("Create Testimony");
       }}
       institute={selectedInstitute}
       admin={selectedAdmin}

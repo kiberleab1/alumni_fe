@@ -6,6 +6,7 @@ import {
   ChevronUpIcon,
   Cog6ToothIcon,
   HomeIcon,
+  PencilIcon,
   PlusCircleIcon,
   PlusIcon,
   UserPlusIcon,
@@ -74,6 +75,12 @@ const subNavigation = [
     name: "Create Gallery Show",
     parent: "WebContent",
     icon: PlusCircleIcon,
+    current: false,
+  },
+  {
+    name: "Manage Testimony",
+    parent: "WebContent",
+    icon: PencilIcon,
     current: false,
   },
 ];

@@ -99,13 +99,13 @@ export default function CreateAlumni() {
     try {
       const result = await createDepartment(newDepartmentInfo);
       toast.success("Department saved successfully!");
-      setAluniError("");
+      setAlumniError("");
       handleDepartmentClear();
       console.log("Create department result:", result.data);
     } catch (error) {
       toast.success("Error creating institute!");
       console.error("Error creating institute!", error);
-      setAluniError(error);
+      setAlumniError(error);
     }
   };
 

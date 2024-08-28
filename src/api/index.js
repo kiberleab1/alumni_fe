@@ -683,3 +683,31 @@ export async function deletePodcast({ id }) {
   const result = await axios.post(`${API_BASE_URl}/deletePodcast`, data);
   return result;
 }
+
+export async function getAllTestimonial({ pageNumber, pageSize }) {
+  const data = { pageNumber, pageSize };
+  const result = await axios.post(`${API_BASE_URl}/getAllTestimonial`, data);
+  return result;
+}
+
+export async function deleteTestimonial({ id }) {
+  const data = { id };
+  const result = await axios.post(`${API_BASE_URl}/deleteTestimony`, data);
+  return result;
+}
+
+export async function createTestimonial({ full_name, credentials, testimony }) {
+  const data = { full_name, credentials, testimony };
+  const result = await axios.post(`${API_BASE_URl}/createTestimony`, data);
+  return result;
+}
+export async function updateTestimonial({
+  id,
+  full_name,
+  credentials,
+  testimony,
+}) {
+  const data = { id, full_name, credentials, testimony };
+  const result = await axios.post(`${API_BASE_URl}/updateTestimony`, data);
+  return result;
+}
