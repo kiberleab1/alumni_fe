@@ -43,14 +43,11 @@ const TestimonialComponent = () => {
     });
   }, []);
   return (
-    <div
-      className="relative bg-light max-h-screen py-6 spacer "
-      data-aos="zoom-in"
-    >
+    <div className="relative bg-light max-h-auto py-6" data-aos="zoom-in">
       <div className="">
         <Container>
           <Row className="justify-content-center ">
-            <Col md="7" className="w-auto mt-4">
+            <Col md="7" className="w-auto ">
               {/* <h1 className="title text-[1.5rem] sm:text-[2rem] md:text-[2.5rem] lg:text-[3rem] font-sans">
                 Testimonial
               </h1> */}

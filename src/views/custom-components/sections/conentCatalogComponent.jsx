@@ -48,10 +48,10 @@ const ContentCatalogComponent = ({ newsArray }) => {
 
   return (
     <div>
-      <div className="blog-home2 spacer min-h-screen m-4 ">
-        <div className="flex flex-wrap gap-12 gap-y-3 justify-center ">
+      <div className="blog-home2 spacer  w-[90%] items-center  justify-content-center m-auto">
+        <div className="flex flex-wrap gap-12 gap-y-3  items-center ">
           {newsArray.map((news, idx) => (
-            <div className="group relative w-full max-w-lg max-h-80 overflow-hidden rounded-lg shadow-lg ">
+            <div className="group relative w-full max-w-lg max-h-80 overflow-hidden rounded-lg shadow-lg my-2 ">
               <a
                 href={news.link}
                 className="transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300"
