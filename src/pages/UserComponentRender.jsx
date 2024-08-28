@@ -13,6 +13,8 @@ import DocumentVerificationPage from "src/pages//admin/documentVerification/Docu
 import JobsPage from "src/pages/user/jobs/JobsPage";
 import AlumniProfile from "./user/AlumniProfile";
 import CreateAlumni from "src/pages/user/alumni/CreateAlumni";
+import EventDetailPage from "./user/events/EventDetailPage";
+import NewsDetailPage from "./user/news/NewsDetailPage";
 
 const componentsMap = {
   Profile: AlumniProfile,
@@ -28,11 +30,15 @@ const componentsMap = {
   Alumni: AlumniPage,
   "Create Alumni": CreateAlumni,
   "Document Verification": DocumentVerificationPage,
+  "Event Detail": EventDetailPage,
+  "News Detail": NewsDetailPage,
 };
 
 export default function ComponentRender({ page, onPageSet }) {
   const [selectedJobHistory, setSelectedJobHistory] = useState(null);
   const [selectedAlumni, setSelectedAlumni] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedNews, setSelectedNews] = useState(null);
   const [
     selectedDocumentVerificationRequest,
     setSelectedDocumentVerificationRequest,
@@ -59,9 +65,19 @@ export default function ComponentRender({ page, onPageSet }) {
         setSelectedDocumentVerificationRequest(document);
         onPageSet("Edit Document Verification");
       }}
+      onEventsDetailClick={(event) => {
+        setSelectedEvent(event);
+        onPageSet("Event Detail");
+      }}
+      onNewsDetailClick={(news) => {
+        setSelectedNews(news);
+        onPageSet("News Detail");
+      }}
       jobHistory={selectedJobHistory}
       alumni={selectedAlumni}
       document={selectedDocumentVerificationRequest}
+      event={selectedEvent}
+      news={selectedNews}
       onCreatePodcastClick={() => onPageSet("Create Alumni")}
       onEditPodcastClick={() => {}}
     />

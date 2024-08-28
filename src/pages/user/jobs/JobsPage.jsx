@@ -20,7 +20,7 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
       setTotalItems(jobsData.data.total_items);
       return jobsData;
     },
-    { keepPreviousData: true }
+    { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 
   useAOS({

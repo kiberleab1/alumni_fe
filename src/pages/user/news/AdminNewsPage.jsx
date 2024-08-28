@@ -9,9 +9,9 @@ import "react-toastify/dist/ReactToastify.css";
 import QueryResult from "src/components/utils/queryResults";
 import img from "../../../assets/images/testimonial/2.jpg";
 
-export default function NewsPage({ onCreateNewsClick, onNewsEditClick }) {
+export default function NewsPage({ onNewsDetailClick }) {
   const [newsList, setNewsList] = useState([]);
-  const itemsPerPage = 10;
+  const itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -130,7 +130,7 @@ export default function NewsPage({ onCreateNewsClick, onNewsEditClick }) {
 
                     {/* Button placed at the bottom right */}
                     <div className="flex justify-end ">
-                      <button className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition-colors duration-300">
+                      <button className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition-colors duration-300" onClick={() => onNewsDetailClick(val)}>
                         Read more
                       </button>
                     </div>

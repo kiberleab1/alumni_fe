@@ -8,7 +8,7 @@ import { CiLocationOn } from "react-icons/ci";
 import { TbArrowZigZag } from "react-icons/tb";
 import { SlCalender } from "react-icons/sl";
 
-export default function EventsPage({ onCreateEventClick, onEditEventClick }) {
+export default function EventsPage({ onEventsDetailClick }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
@@ -28,8 +28,7 @@ export default function EventsPage({ onCreateEventClick, onEditEventClick }) {
       <div>
         <ListEvent
           eventsData={data?.data?.events}
-          onCreateEventClick={onCreateEventClick}
-          onEditEventClick={onEditEventClick}
+          onEventsDetailClick={(event) => onEventsDetailClick(event)}
           totalItems={data?.data?.total_items}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
@@ -42,8 +41,7 @@ export default function EventsPage({ onCreateEventClick, onEditEventClick }) {
 
 function ListEvent({
   eventsData,
-  onCreateEventClick,
-  onEditEventClick,
+  onEventsDetailClick,
   totalItems,
   currentPage,
   setCurrentPage,
@@ -136,7 +134,7 @@ function ListEvent({
                     <span className="absolute inset-0 w-full h-full mt-1 ml-1 transition-all duration-300 ease-in-out bg-gray-600 rounded-md group-hover:mt-0 group-hover:ml-0"></span>
                     <span className="absolute inset-0 w-full h-full bg-white rounded-md"></span>
                     <span className="absolute inset-0 w-full h-full transition-all duration-200 ease-in-out delay-100 bg-purple-600 rounded-md opacity-0 group-hover:opacity-100"></span>
-                    <span className="relative text-yellow-600 transition-colors duration-200 ease-in-out delay-100 group-hover:text-black">
+                    <span className="relative text-yellow-600 transition-colors duration-200 ease-in-out delay-100 group-hover:text-black"  onClick={() => onEventsDetailClick(val)}>
                       Learn More
                     </span>
                   </a>
