@@ -20,11 +20,11 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
   const { isError, data, isLoading, refetch } = useQuery(
     ["filterAlumniProfile", currentPage],
     () =>
-    filterAlumniProfile({
+      filterAlumniProfile({
         pageNumber: currentPage,
         pageSize: itemsPerPage,
         filterKeyword: selectedFilter,
-        value: selectedFilter != 'all' ? searchQuery : 'all',
+        value: selectedFilter != "all" ? searchQuery : "all",
       }),
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
@@ -85,14 +85,17 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
           </select>
           <input
             type="text"
-            placeholder={`Search alumni by ${selectedFilter.replace("_", " ")}...`}
+            placeholder={`Search alumni by ${selectedFilter.replace(
+              "_",
+              " "
+            )}...`}
             className="w-full p-2 border bg-white text-black border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
             value={searchQuery}
             onChange={handleSearchChange}
           />
           <button
             className="bg-white text-black border border-black shadow-lg px-4 py-2 rounded-lg focus:outline-none w-full sm:w-auto"
-            onClick={refetch}
+            // onClick={refetch}
           >
             Apply Filter
           </button>
@@ -141,7 +144,11 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                         <FcBusinesswoman className="rounded-full object-cover w-full h-[130px] z-10" />
                       )}
                     </div>
-                    <h3 className="text-xl font-semibold">{alum?.user_data?.name ? alum?.user_data?.name : "Unknown Name"}</h3>
+                    <h3 className="text-xl font-semibold">
+                      {alum?.user_data?.name
+                        ? alum?.user_data?.name
+                        : "Unknown Name"}
+                    </h3>
                     <p className="text-gray-500">
                       Class of {new Date(alum.graduation_year).getFullYear()}
                     </p>
@@ -184,21 +191,22 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                 >
                   <IoIosArrowBack className="text-xl" />
                 </button>
-                {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-                  (pageNumber) => (
-                    <button
-                      key={pageNumber}
-                      onClick={() => paginate(pageNumber)}
-                      className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border transition-all duration-300 ${
-                        currentPage === pageNumber
-                          ? "bg-gray-200 text-black"
-                          : "text-black bg-white border-gray-300 hover:bg-gray-50"
-                      }`}
-                    >
-                      {pageNumber}
-                    </button>
-                  )
-                )}
+                {Array.from(
+                  { length: totalPages },
+                  (_, index) => index + 1
+                ).map((pageNumber) => (
+                  <button
+                    key={pageNumber}
+                    onClick={() => paginate(pageNumber)}
+                    className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border transition-all duration-300 ${
+                      currentPage === pageNumber
+                        ? "bg-gray-200 text-black"
+                        : "text-black bg-white border-gray-300 hover:bg-gray-50"
+                    }`}
+                  >
+                    {pageNumber}
+                  </button>
+                ))}
                 <button
                   onClick={() => paginate(currentPage + 1)}
                   disabled={currentPage === totalPages}
@@ -223,7 +231,8 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                 <IoIosArrowBack className="text-xl" />
               </button>
               <p className="text-sm text-gray-700">
-                Showing {indexOfFirstItem} to {indexOfLastItem} of {totalItems} results
+                Showing {indexOfFirstItem} to {indexOfLastItem} of {totalItems}{" "}
+                results
               </p>
               <button
                 onClick={() => paginate(currentPage + 1)}

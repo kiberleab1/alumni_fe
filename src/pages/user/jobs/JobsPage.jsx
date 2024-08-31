@@ -50,7 +50,6 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
   const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
   const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalItems);
 
-
   const openModal = (job) => {
     setSelectedJob(job);
     setIsModalOpen(true);
@@ -63,7 +62,7 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col max-h-screen">
         <div className="sm:flex sm:items-center mb-4" data-aos="fade-down">
           <div className="sm:flex-auto">
             <h1 className="text-2xl font-semibold leading-6 text-gray-900 font-sans">
@@ -74,7 +73,11 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
 
         <div className="flex flex-wrap justify-center item-center h-full overflow-y-scroll">
           {jobs.map((val, idx) => (
-            <div key={idx} className="max-w-sm w-full h-[250px] shadow-sm bg-white rounded-lg overflow-hidden p-2 m-3 flex flex-col justify-between" onClick={() => openModal(val)}>
+            <div
+              key={idx}
+              className="max-w-sm w-full h-[250px] shadow-sm bg-white rounded-lg overflow-hidden p-2 m-3 flex flex-col justify-between"
+              onClick={() => openModal(val)}
+            >
               <div>
                 <h2 className="text-lg text-left font-bold text-gray-800">
                   {val.title}
@@ -153,7 +156,7 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
             isOpen={isModalOpen}
             onClose={closeModal}
             job={selectedJob}
-            />
+          />
         )}
       </div>
     </QueryResult>
