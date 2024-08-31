@@ -1,22 +1,31 @@
 import React, { useState } from "react";
 import { useQuery } from "react-query";
 import useAOS from "../aos";
-import { getAllAlumni } from "src/api";
+import { filterAlumniProfile, getAllAlumni } from "src/api";
 import defaultImg from "../../../assets/images/testimonial/2.jpg";
 import QueryResult from "src/components/utils/queryResults";
 import AlumniModal from "./AlumniModal";
 import { IoPersonAddSharp } from "react-icons/io5";
-import { FcBusinessman } from "react-icons/fc";
-import { FcBusinesswoman } from "react-icons/fc";
+import { FcBusinessman, FcBusinesswoman } from "react-icons/fc";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+
 const AlumniGrid = ({ onCreateAlumniClick }) => {
   const itemsPerPage = 8;
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAlumni, setSelectedAlumni] = useState(null);
-  const { isError, data, isLoading } = useQuery(
-    ["getAllAlumni", currentPage],
-    () => getAllAlumni({ pageNumber: currentPage, pageSize: itemsPerPage }),
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("all");
+
+  const { isError, data, isLoading, refetch } = useQuery(
+    ["filterAlumniProfile", currentPage],
+    () =>
+    filterAlumniProfile({
+        pageNumber: currentPage,
+        pageSize: itemsPerPage,
+        filterKeyword: selectedFilter,
+        value: selectedFilter != 'all' ? searchQuery : 'all',
+      }),
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 
@@ -34,7 +43,6 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
     setCurrentPage(pageNumber);
   };
 
-
   const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
   const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalItems);
 
@@ -47,48 +55,46 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
     setSelectedAlumni(null);
     setIsModalOpen(false);
   };
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("name");
-  console.log(selectedFilter);
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
+
   const handleFilterChange = (event) => {
     setSelectedFilter(event.target.value);
+    setSearchQuery("");
+    console.log(event.target.value);
   };
 
-  const filteredAlumni = alumni.filter((alum) => {
-    if (selectedFilter === "name") {
-      return alum.degree.toLowerCase().includes(searchQuery.toLowerCase());
-    } else if (selectedFilter === "institute") {
-      console.log(alum.achievements);
-      return alum.achievements.includes(searchQuery.toLowerCase());
-    }
-    return false;
-  });
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
       <div className="container mx-auto">
         <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-6">
           <select
-            className="bg-black text-white px-4 py-2 rounded-lg focus:outline-none w-full sm:w-auto"
+            className="bg-white text-black border border-black shadow-lg px-4 py-2 rounded-lg focus:outline-none w-full sm:w-auto"
             value={selectedFilter}
             onChange={handleFilterChange}
           >
-            <option value="name">Filter by Name</option>
-            <option value="institute">Filter by Institute</option>
+            <option value="all">Filter options</option>
+            <option value="user_id">Filter by Name</option>
+            <option value="graduation_year">Filter by Graduation Year</option>
+            <option value="institution_id">Filter by Institution</option>
+            <option value="department_id">Filter by Department</option>
+            <option value="gender">Filter by Gender</option>
+            <option value="disability">Filter by Disability</option>
           </select>
           <input
             type="text"
-            placeholder="Search alumni by name..."
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+            placeholder={`Search alumni by ${selectedFilter.replace("_", " ")}...`}
+            className="w-full p-2 border bg-white text-black border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
             value={searchQuery}
             onChange={handleSearchChange}
           />
-
-          <button className="bg-black text-white px-4 py-2 rounded-lg focus:outline-none w-full sm:w-auto">
-            Filters
+          <button
+            className="bg-white text-black border border-black shadow-lg px-4 py-2 rounded-lg focus:outline-none w-full sm:w-auto"
+            onClick={refetch}
+          >
+            Apply Filter
           </button>
         </div>
 
@@ -118,8 +124,8 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
               </a>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-              {filteredAlumni.length > 0 ? (
-                filteredAlumni.map((alum, index) => (
+              {alumni.length > 0 ? (
+                alumni.map((alum) => (
                   <div
                     className="bg-white shadow-md rounded-lg p-6 text-center"
                     key={alum.id}
@@ -135,7 +141,7 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                         <FcBusinesswoman className="rounded-full object-cover w-full h-[130px] z-10" />
                       )}
                     </div>
-                    <h3 className="text-xl font-semibold">{alum.user_id}</h3>
+                    <h3 className="text-xl font-semibold">{alum?.user_data?.name ? alum?.user_data?.name : "Unknown Name"}</h3>
                     <p className="text-gray-500">
                       Class of {new Date(alum.graduation_year).getFullYear()}
                     </p>
@@ -151,40 +157,8 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                   </div>
                 ))
               ) : (
-                <li>No alumni found.</li>
+                <p>No alumni found.</p>
               )}
-
-              {/* {alumni.map((alum) => (
-                <div
-                  className="bg-white shadow-md rounded-lg p-6 text-center"
-                  key={alum.id}
-                >
-                  <div className="w-28 h-28 mx-auto rounded-full bg-gray-200 mb-4 z-10 overflow-hidden">
-                    {alum.user_photo ? (
-                      <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-0" />
-                    ) : alum.gender === "male" ? (
-                      <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-10" />
-                    ) : alum.gender === "female" ? (
-                      <FcBusinesswoman className="rounded-full object-cover w-full h-[130px] z-10" />
-                    ) : (
-                      <FcBusinesswoman className="rounded-full object-cover w-full h-[130px] z-10" />
-                    )}
-                  </div>
-                  <h3 className="text-xl font-semibold">{alum.user_id}</h3>
-                  <p className="text-gray-500">
-                    Class of {new Date(alum.graduation_year).getFullYear()}
-                  </p>
-                  <p className="mt-2 text-gray-700 line-clamp-1">
-                    {alum.degree}
-                  </p>
-                  <button
-                    className="mt-4 bg-black text-white px-4 py-2 rounded-lg w-full"
-                    onClick={() => openModal(alum)}
-                  >
-                    View Profile
-                  </button>
-                </div>
-              ))} */}
             </div>
             <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between mt-10">
               <div>
@@ -210,22 +184,21 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                 >
                   <IoIosArrowBack className="text-xl" />
                 </button>
-                {Array.from(
-                  { length: totalPages },
-                  (_, index) => index + 1
-                ).map((pageNumber) => (
-                  <button
-                    key={pageNumber}
-                    onClick={() => paginate(pageNumber)}
-                    className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border transition-all duration-300 ${
-                      currentPage === pageNumber
-                        ? "bg-gray-200 text-black"
-                        : "text-black bg-white border-gray-300 hover:bg-gray-50"
-                    }`}
-                  >
-                    {pageNumber}
-                  </button>
-                ))}
+                {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+                  (pageNumber) => (
+                    <button
+                      key={pageNumber}
+                      onClick={() => paginate(pageNumber)}
+                      className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border transition-all duration-300 ${
+                        currentPage === pageNumber
+                          ? "bg-gray-200 text-black"
+                          : "text-black bg-white border-gray-300 hover:bg-gray-50"
+                      }`}
+                    >
+                      {pageNumber}
+                    </button>
+                  )
+                )}
                 <button
                   onClick={() => paginate(currentPage + 1)}
                   disabled={currentPage === totalPages}
@@ -239,13 +212,36 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                 </button>
               </nav>
             </div>
+            <div className="flex sm:hidden justify-between items-center mt-10">
+              <button
+                onClick={() => paginate(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded-lg ${
+                  currentPage === 1 ? "cursor-not-allowed" : ""
+                }`}
+              >
+                <IoIosArrowBack className="text-xl" />
+              </button>
+              <p className="text-sm text-gray-700">
+                Showing {indexOfFirstItem} to {indexOfLastItem} of {totalItems} results
+              </p>
+              <button
+                onClick={() => paginate(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded-lg ${
+                  currentPage === totalPages ? "cursor-not-allowed" : ""
+                }`}
+              >
+                <IoIosArrowForward className="text-xl" />
+              </button>
+            </div>
           </div>
         )}
-        {selectedAlumni && (
+        {isModalOpen && selectedAlumni && (
           <AlumniModal
+            profile={selectedAlumni}
             isOpen={isModalOpen}
             onClose={closeModal}
-            profile={selectedAlumni}
           />
         )}
       </div>
