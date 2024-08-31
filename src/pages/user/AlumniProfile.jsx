@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Table } from "reactstrap";
-import { CiSaveDown1, CiSaveUp1 } from "react-icons/ci";
+import { CiEdit, CiSaveDown1, CiSaveUp1 } from "react-icons/ci";
 import { TfiEmail } from "react-icons/tfi";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -22,21 +22,26 @@ const AlumniProfile = () => {
       className="flex flex-col items-center min-h-screen"
       data-aos="fade-down"
     >
-      <h1 className="text-5xl font-normal pt-8">Alumni Profile</h1>
+      <div className="flex flex-row items-center space-x-4">
+        <h1 className="text-5xl font-normal">Alumni Profile</h1>
+        <div>
+          <CiEdit className="text-2xl " />
+        </div>
+      </div>
+
       <img
         src="../../public/profile_pic.jpg"
         alt="profile picture"
         className="w-48 h-48 rounded-full mt-4"
       />
-      <h2 className="text-4xl  mt-4 font-sans">Helen Getachew</h2>
-      <div className="flex items-center  hover:text-blue-700 mt-2">
-        <TfiEmail className="w-6 h-6 mr-2 mb-2 " />
 
+      <h2 className="text-4xl  mt-2 font-sans">Helen Getachew </h2>
+      <div className="flex items-center  hover:text-blue-700 mt-2">
         <a
           className="text-lg text-blue-500"
           href="mailto:helengetachew@gmail.com"
         >
-          helengetachew@gmail.com
+          helengetachew@gmail.com{" "}
         </a>
       </div>
 
@@ -59,6 +64,7 @@ const AlumniProfile = () => {
           +251 900 000 000
         </a>
       </div>
+
       <div className="border-b w-1/2 my-2 border-gray-300 "></div>
       <div className="">
         <div

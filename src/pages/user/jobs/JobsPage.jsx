@@ -4,6 +4,7 @@ import QueryResult from "src/components/utils/queryResults";
 import { getAllJobs } from "src/api";
 import useAOS from "../aos";
 import { truncateDescription } from "src/utils/utils";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
   const [jobs, setJobs] = useState([]);
@@ -15,7 +16,10 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
   const { isError, data, isLoading } = useQuery(
     ["getAllJobs", currentPage],
     async () => {
-      const jobsData = await getAllJobs({ pageNumber: currentPage, pageSize: itemsPerPage });
+      const jobsData = await getAllJobs({
+        pageNumber: currentPage,
+        pageSize: itemsPerPage,
+      });
       setJobs(jobsData.data.jobs);
       setTotalItems(jobsData.data.total_items);
       return jobsData;
@@ -57,12 +61,17 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
 
         <div className="flex flex-wrap justify-center item-center h-full overflow-y-scroll">
           {jobs.map((val, idx) => (
-            <div key={idx} className="max-w-sm w-full h-[250px] shadow-sm bg-white rounded-lg overflow-hidden p-2 m-3 flex flex-col justify-between">
+            <div
+              key={idx}
+              className="max-w-sm w-full h-[250px] shadow-sm bg-white rounded-lg overflow-hidden p-2 m-3 flex flex-col justify-between"
+            >
               <div>
                 <h2 className="text-lg text-left font-bold text-gray-800">
                   {val.title}
                 </h2>
-                <p className="text-gray-600 mt-1 text-left">{val.instituteName}</p>
+                <p className="text-gray-600 mt-1 text-left">
+                  {val.instituteName}
+                </p>
                 <p className="text-gray-600 text-left">{val.address}</p>
                 <div className="mt-3">
                   <p className="text-gray-700 text-left font-semibold">
@@ -81,16 +90,9 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
         <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
           <div>
             <p className="text-sm text-gray-700">
-              Showing{" "}
-              <span className="font-medium">{indexOfFirstItem}</span> to{" "}
-              <span className="font-medium">
-                {indexOfLastItem}
-              </span>{" "}
-              of{" "}
-              <span className="font-medium">
-                {totalItems}
-              </span>{" "}
-              results
+              Showing <span className="font-medium">{indexOfFirstItem}</span> to{" "}
+              <span className="font-medium">{indexOfLastItem}</span> of{" "}
+              <span className="font-medium">{totalItems}</span> results
             </p>
           </div>
           <div>
@@ -101,19 +103,22 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
               <button
                 onClick={() => paginate(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border border-gray-300 ${currentPage === 1 ? "cursor-not-allowed" : "hover:bg-gray-50"}`}
+                className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 ${
+                  currentPage === 1 ? "cursor-not-allowed" : "hover:bg-gray-50"
+                }`}
               >
-                Previous
+                <IoIosArrowBack className="text-xl" />
               </button>
               {Array.from({ length: totalPages }, (_, index) => index + 1).map(
                 (pageNumber) => (
                   <button
                     key={pageNumber}
                     onClick={() => paginate(pageNumber)}
-                    className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold border ${currentPage === pageNumber
-                      ? "bg-indigo-600 text-white border-indigo-600"
-                      : "text-gray-900 bg-white border-gray-300 hover:bg-gray-50"
-                      }`}
+                    className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border ${
+                      currentPage === pageNumber
+                        ? "bg-gray-200 text-black "
+                        : "text-black bg-white border-gray-300 hover:bg-gray-50"
+                    }`}
                   >
                     {pageNumber}
                   </button>
@@ -122,9 +127,13 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
               <button
                 onClick={() => paginate(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border border-gray-300 ${currentPage === totalPages ? "cursor-not-allowed" : "hover:bg-gray-50"}`}
+                className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 ${
+                  currentPage === totalPages
+                    ? "cursor-not-allowed"
+                    : "hover:bg-gray-50"
+                }`}
               >
-                Next
+                <IoIosArrowForward className="text-xl" />
               </button>
             </nav>
           </div>
