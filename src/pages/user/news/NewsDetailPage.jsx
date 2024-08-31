@@ -31,7 +31,7 @@ const NewsDetailPage = ({news}) => {
               {news.title}
             </h1>
             <p className="text-gray-500 text-justify mt-4 text-lg">
-              {formattedDeadline} - {news.ownerAdminId}
+              {formattedDeadline} - {news.adminName}
             </p>
             <p className="mt-4 text-justify font-serif text-lg text-gray-500" dangerouslySetInnerHTML={{ __html: news.description || "No Description" }}>
             </p>

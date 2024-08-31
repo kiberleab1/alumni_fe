@@ -4,6 +4,7 @@ import QueryResult from "src/components/utils/queryResults";
 import { getAllJobs } from "src/api";
 import useAOS from "../aos";
 import { truncateDescription } from "src/utils/utils";
+import JobDetailModal from "./JobDetailModal";
 
 export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
   const [jobs, setJobs] = useState([]);
@@ -11,7 +12,8 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const queryClient = useQueryClient();
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
   const { isError, data, isLoading } = useQuery(
     ["getAllJobs", currentPage],
     async () => {
@@ -44,6 +46,17 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
   const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
   const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalItems);
 
+
+  const openModal = (job) => {
+    setSelectedJob(job);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedJob(null);
+    setIsModalOpen(false);
+  };
+
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
       <div className="flex flex-col min-h-screen">
@@ -57,7 +70,7 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
 
         <div className="flex flex-wrap justify-center item-center h-full overflow-y-scroll">
           {jobs.map((val, idx) => (
-            <div key={idx} className="max-w-sm w-full h-[250px] shadow-sm bg-white rounded-lg overflow-hidden p-2 m-3 flex flex-col justify-between">
+            <div key={idx} className="max-w-sm w-full h-[250px] shadow-sm bg-white rounded-lg overflow-hidden p-2 m-3 flex flex-col justify-between" onClick={() => openModal(val)}>
               <div>
                 <h2 className="text-lg text-left font-bold text-gray-800">
                   {val.title}
@@ -129,6 +142,13 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
             </nav>
           </div>
         </div>
+        {selectedJob && (
+          <JobDetailModal
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            job={selectedJob}
+            />
+        )}
       </div>
     </QueryResult>
   );
