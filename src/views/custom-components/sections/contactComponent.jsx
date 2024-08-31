@@ -11,7 +11,7 @@ import H1Heading from "src/components/headerHs/header";
 
 const ContactComponent = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-auto">
       <div className=" ">
         <Container>
           <Row className="justify-content-center">
@@ -27,7 +27,7 @@ const ContactComponent = () => {
           </Row>
         </Container>
       </div>
-      <div className="spacer contact1">
+      <div className=" contact1">
         <Container>
           <Row>
             <div className="my-8">

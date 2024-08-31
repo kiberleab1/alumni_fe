@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Table } from "reactstrap";
-import { CiSaveDown1, CiSaveUp1 } from "react-icons/ci";
+import { CiEdit, CiSaveDown1, CiSaveUp1 } from "react-icons/ci";
 import { TfiEmail } from "react-icons/tfi";
 import AOS from "aos";
 import "aos/dist/aos.css";

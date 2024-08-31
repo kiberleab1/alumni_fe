@@ -48,10 +48,10 @@ const ContentCatalogComponent = ({ newsArray }) => {
 
   return (
     <div>
-      <div className="blog-home2 spacer min-h-screen m-4 ">
-        <div className="flex flex-wrap gap-12 gap-y-3 justify-center ">
+      <div className="blog-home2 spacer  w-[90%] items-center  justify-content-center m-auto">
+        <div className="flex flex-wrap gap-12 gap-y-3  items-center ">
           {newsArray.map((news, idx) => (
-            <div className="group relative w-full max-w-lg max-h-80 overflow-hidden rounded-lg shadow-lg ">
+            <div className="group relative w-full max-w-lg max-h-80 overflow-hidden rounded-lg shadow-lg my-2 ">
               <a
                 href={news.link}
                 className="transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300"
@@ -69,6 +69,19 @@ const ContentCatalogComponent = ({ newsArray }) => {
                   <h3 className="text-xl font-semibold text-start text-white">
                     {news.header}
                   </h3>
+                  {/* <div className="flex flex-rows justify-between">
+                    <p className="text-sm transition-opacity duration-500 ease-in-out mt-4 text-start line-clamp-1 truncate">
+                      {convertDate(news.date)}
+                    </p>
+                    <a
+                      href={news.link}
+                      className="transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300"
+                    >
+                      <button className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition-colors duration-300">
+                        Read more
+                      </button>
+                    </a>
+                  </div> */}
                   <p className="text-sm transition-opacity duration-500 ease-in-out mt-4 text-start line-clamp-1 truncate">
                     {convertDate(news.date)}
                   </p>
@@ -77,15 +90,14 @@ const ContentCatalogComponent = ({ newsArray }) => {
                 <div className="max-h-0 overflow-hidden transition-all duration-500 ease-in-out group-hover:max-h-32">
                   <div
                     dangerouslySetInnerHTML={{ __html: news.details }}
-                    className="text-sm transition-opacity duration-500 ease-in-out mt-4 text-start truncate text-white"
+                    className="text-sm transition-opacity duration-500 ease-in-out mt-4 text-start  text-white line-clamp-2 "
                   ></div>
 
-                  <div className="flex justify-end ">
+                  <div className=" flex justify-end">
                     <a
                       href={news.link}
                       className="transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300"
                     >
-                      {" "}
                       <button className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition-colors duration-300">
                         Read more
                       </button>

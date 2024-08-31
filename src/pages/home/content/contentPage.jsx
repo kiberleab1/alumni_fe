@@ -35,12 +35,12 @@ function ContentPage() {
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
-      <div className="flex flex-col justify-items-center w-full gap-y-3 min-h-screen">
+      <div className="flex flex-col justify-items-center w-full gap-y-3 min-h-screen bg-[#f5f5f5]">
         <div
           className={clsx("static-slider-head  w-full ")}
           style={{ backgroundImage: `url(${content.imgLink})` }}
         >
-          <Container className="relative inset-y-0 bottom-0  bg-gray-900 bg-opacity-30">
+          <Container className="relative inset-y-0 bottom-0  bg-gray-900 bg-opacity-30 ">
             <Row className="absolute inset-y-0 bottom-0 justify-content-center rounded">
               <Col className="align-self-center text-start p-6  bg-gray-900 bg-opacity-30">
                 <h1 className="text-white font-medium text-sm sm:text-5xl md:text-6xl lg:text-7xl">
@@ -53,7 +53,7 @@ function ContentPage() {
             </Row>
           </Container>
         </div>
-        <div className="flex flex-col w-full bg-light h-auto">
+        <div className="flex flex-col w-full   h-auto top-0">
           <Container>
             <Row className="justify-content-end">
               <Col lg="12" md="6" className="align-self-center text-center">
@@ -67,7 +67,8 @@ function ContentPage() {
           <div className="justify-center flex ql-snow">
             <div
               dangerouslySetInnerHTML={{ __html: content.content }}
-              className="ql-editor sm:w-3/4 lg:w-2/3 w-[80%] text-gray-700  justify-items-center justify-center flex flex-col"
+              className="ql-editor text-justify pb-12 sm:w-3/4 lg:w-2/3 w-[90%] text-gray-700  justify-items-center justify-center flex flex-col text-black "
+
               // className=" text-black w-4/5  justify-items-start justify-start flex flex-col"
             ></div>
           </div>

@@ -8,7 +8,8 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import QueryResult from "src/components/utils/queryResults";
 import img from "../../../assets/images/testimonial/2.jpg";
-
+import { IoIosArrowForward } from "react-icons/io";
+import { IoIosArrowBack } from "react-icons/io";
 export default function NewsPage({ onNewsDetailClick }) {
   const [newsList, setNewsList] = useState([]);
   const itemsPerPage = 6;
@@ -62,7 +63,7 @@ export default function NewsPage({ onNewsDetailClick }) {
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
             <h1 className="text-2xl mb-10 font-semibold text-gray-900 font-sans">
-              latest news
+              Latest news
             </h1>
           </div>
         </div>
@@ -156,21 +157,21 @@ export default function NewsPage({ onNewsDetailClick }) {
               <button
                 onClick={() => paginate(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border border-gray-300 ${
+                className={`relative border-0 inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white  ${
                   currentPage === 1 ? "cursor-not-allowed" : "hover:bg-gray-50"
                 }`}
               >
-                Previous
+                <IoIosArrowBack className="text-xl" />
               </button>
               {Array.from({ length: totalPages }, (_, index) => index + 1).map(
                 (pageNumber) => (
                   <button
                     key={pageNumber}
                     onClick={() => paginate(pageNumber)}
-                    className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold border ${
+                    className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border ${
                       currentPage === pageNumber
-                        ? "bg-indigo-600 text-white border-indigo-600"
-                        : "text-gray-900 bg-white border-gray-300 hover:bg-gray-50"
+                        ? "bg-gray-200 text-black "
+                        : "text-black bg-white border-gray-300 hover:bg-gray-50"
                     }`}
                   >
                     {pageNumber}
@@ -180,13 +181,13 @@ export default function NewsPage({ onNewsDetailClick }) {
               <button
                 onClick={() => paginate(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border border-gray-300 ${
+                className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0  ${
                   currentPage === totalPages
                     ? "cursor-not-allowed"
                     : "hover:bg-gray-50"
                 }`}
               >
-                Next
+                <IoIosArrowForward className="text-xl" />
               </button>
             </nav>
           </div>
