@@ -36,8 +36,8 @@ const AlumniProfile = () => {
       >
         <h1 className="text-5xl font-normal pt-8">Alumni Profile</h1>
         <img
-          src={data.data.user_photo}
-          alt={data.data.user_id}
+          src={data?.data?.user_photo}
+          alt={data?.data?.user_id}
           className="w-48 h-48 rounded-full mt-4"
         />
         <h2 className="text-4xl  mt-4 font-sans">{data?.data?.user_data?.name}</h2>

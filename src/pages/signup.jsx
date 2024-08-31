@@ -1,5 +1,5 @@
-import { useQueryClient, useMutation } from "react-query";
-import { signup } from "src/api";
+import { useQueryClient, useMutation, useQuery } from "react-query";
+import { createAddress, getInstitutes, getRoleByName, getRoles, signup } from "src/api";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Container, Row, Col, FormGroup, Label, Button } from "reactstrap";
@@ -26,13 +26,16 @@ const SignupForm = () => {
   const queryClient = useQueryClient();
   const [errorMsg, setErrorMsg] = useState("");
   const [addressError, setAddressError] = useState("");
+  const [roles, setRoles] = useState([]);
+  const [addressData, setAddressData] = useState(null);
+  const [birthPlaceAddress, setBirthPlaceAddress] = useState(null);
   const [stepTwo, setstepTwo] = useState(false);
   const [stepOne, setstepOne] = useState(true);
   const [stepThree, setstepThree] = useState(false);
   const mutation = useMutation(signup, {
     onSuccess: () => {
       queryClient.invalidateQueries("signup");
-      navigate("/landing/program/profile");
+      // navigate("/landing/program/profile");
     },
     onError: () => {
       setErrorMsg(
@@ -41,41 +44,52 @@ const SignupForm = () => {
     },
   });
 
+  const { isError, data, isLoading } = useQuery(
+    ["getRoleByName"],
+    async () => {
+      const roleData = await getRoleByName({ name: "user" });
+
+      setRoles(roleData.data.id);
+    },
+    { keepPreviousData: true }
+  );
+
   const handleSubmit = (values) => {
     console.log({ "new user": values });
     mutation.mutate(values);
   };
 
   const birthFormFields = {
-    birthCountry: {
+    country: {
       label: "Country",
       placeholder: "Country",
     },
-    birthRegion: {
+    region: {
       label: "Region",
       placeholder: "Region",
     },
-    birthCity: {
+    city: {
       label: "City",
       placeholder: "City",
     },
-    birthHouseNumber: {
+    house_number: {
       label: "House Number",
       placeholder: "House Number",
     },
   };
+  console.log(roles)
   const userInformationFields = {
-    firstName: {
+    first_name: {
       label: "First Name",
       placeholder: "First Name",
       type: "text",
     },
-    middleName: {
-      label: "MiddleName",
+    middle_name: {
+      label: "Middl eName",
       placeholder: "Middle Name",
       type: "text",
     },
-    lastName: {
+    last_name: {
       label: "Last Name",
       placeholder: "Last Name",
       type: "text",
@@ -86,7 +100,7 @@ const SignupForm = () => {
       type: "email",
     },
 
-    phoneNumber: {
+    phone_number: {
       label: "Phone Number",
       placeholder: "Phone Number",
       type: "number",
@@ -102,21 +116,11 @@ const SignupForm = () => {
         { value: "female", label: "Female" },
       ],
     },
-    dateOfBirth: {
+    date_of_birth: {
       label: "Date of Birth",
       placeholder: "Date of Birth",
       type: "date",
     },
-    // role: {
-    //   label: "Role",
-    //   placeholder: "Role",
-    //   type: "text",
-    // },
-    // institute: {
-    //   label: "Institute",
-    //   placeholder: "Institute",
-    //   type: "text",
-    // },
   };
   const addressFormFields = {
     country: {
@@ -131,7 +135,7 @@ const SignupForm = () => {
       label: "City",
       placeholder: "City",
     },
-    houseNumber: {
+    house_number: {
       label: "House Number",
       placeholder: "House Number",
     },
@@ -149,8 +153,12 @@ const SignupForm = () => {
         return acc;
       }, {})
     ),
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       console.log("Form values address:", values);
+      const result = await createAddress(values);
+      if(result.data){
+        setAddressData(result.data.id)        
+      }
       // submit here
       setstepOne(false);
       setstepTwo(true);
@@ -170,8 +178,12 @@ const SignupForm = () => {
         return acc;
       }, {})
     ),
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       console.log("Form values birth:", values);
+      const result = await createAddress(values);
+      if(result.data){
+        setBirthPlaceAddress(result.data.id)        
+      }
       // submit here
       setstepOne(false);
       setstepTwo(false);
@@ -191,10 +203,16 @@ const SignupForm = () => {
         return acc;
       }, {})
     ),
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
+      values['role_id'] =  roles;
+      values['address_id'] =  addressData;
+      values['birth_place_id'] =  birthPlaceAddress;
+      values['institute_id'] =  "714642fd-c7d5-4372-9c57-17858b4c1933";
+
       console.log("Form values user info:", values);
       // submit here
       handleSubmit(values);
+
       navigate("/landing/program/login");
     },
   });
