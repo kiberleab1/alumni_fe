@@ -12,7 +12,7 @@ export default function CreateAlumni() {
   const [departments, setDepartments] = useState([]);
   const [alumniError, setAlumniError] = useState("");
   const [alumniFields, setAlumniFields] = useState({
-    user_id: "test-test",
+    user_id: "92faa361-3246-4f11-acae-cdb599a0d200",
     institution_id: "",
     department_id: "",
     graduation_year: "",
@@ -79,7 +79,7 @@ export default function CreateAlumni() {
 
   const clearAlumniFields = () => {
     setAlumniFields({
-      user_id: "test-test",
+      user_id: "92faa361-3246-4f11-acae-cdb599a0d200",
       institution_id: "",
       department_id: "",
       graduation_year: "",

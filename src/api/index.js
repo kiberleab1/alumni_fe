@@ -632,6 +632,14 @@ export async function getAllAlumni({ pageNumber, pageSize }) {
   return result;
 }
 
+export async function getAlumniProfileById(user_id) {
+  const result = await axios.get(
+    `${API_BASE_URl}/getAlumniProfileById?id=${user_id}`
+  );
+  return result;
+}
+
+
 export async function getAllVerificationRequest({ pageNumber, pageSize }) {
   const result = await axios.get(
     `${API_BASE_URl}/getAllVerificationRequest?pageNumber=${pageNumber}&pageSize=${pageSize}`

@@ -65,7 +65,7 @@ const AlumniGrid = () => {
                       className="rounded-full object-cover w-full h-full"
                     />
                   </div>
-                  <h3 className="text-xl font-semibold">{alum.user_id}</h3>
+                  <h3 className="text-xl font-semibold">{alum?.user_data?.name ? alum?.user_data?.name : "Unknown Name"}</h3>
                   <p className="text-gray-500">Class of {new Date(alum.graduation_year).getFullYear()}</p>
                   <p className="mt-2 text-gray-700">{alum.degree}</p>
                   <button className="mt-4 bg-black text-white px-4 py-2 rounded-lg w-full" onClick={() => openModal(alum)}>
