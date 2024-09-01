@@ -8,6 +8,7 @@ import { CiLocationOn } from "react-icons/ci";
 import { TbArrowZigZag } from "react-icons/tb";
 import { SlCalender } from "react-icons/sl";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import useAOS from "../aos";
 
 export default function EventsPage({ onEventsDetailClick }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -90,7 +91,10 @@ function ListEvent({
       deleteEventModalAction(selectedEvent.id);
     }
   };
-
+  useAOS({
+    duration: 1200,
+    once: true,
+  });
   return (
     <div className="flex flex-col bg-gray-20 rounded-lg w-full">
       <div className="sm:flex sm:items-center">
@@ -106,6 +110,7 @@ function ListEvent({
             <div
               className="relative w-full sm:w-[80%] md:w-1/3 lg:w-1/3 xl:w-[22%] bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105 mx-3 md:mx-4 my-4"
               key={idx}
+              data-aos="fade-right"
             >
               <div className="h-[520px]">
                 <div

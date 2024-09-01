@@ -10,6 +10,7 @@ import QueryResult from "src/components/utils/queryResults";
 import img from "../../../assets/images/testimonial/2.jpg";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoIosArrowBack } from "react-icons/io";
+import useAOS from "../aos";
 export default function NewsPage({ onNewsDetailClick }) {
   const [newsList, setNewsList] = useState([]);
   const itemsPerPage = 6;
@@ -57,6 +58,10 @@ export default function NewsPage({ onNewsDetailClick }) {
   // console.log(indexOfLastItem);
   // console.log(totalItems);
   console.log(newsList);
+  useAOS({
+    duration: 1200,
+    once: true,
+  });
   return (
     <QueryResult isLoading={isLoading} isError={isError} data={data}>
       <div className="flex flex-col  bg-gray-20  w-[100%]">
@@ -106,7 +111,10 @@ export default function NewsPage({ onNewsDetailClick }) {
               //     </a>
               //   </figcaption>
               // </figure>
-              <div className="group relative w-full max-w-lg max-h-80 overflow-hidden rounded-lg shadow-lg ">
+              <div
+                className="group relative w-full max-w-lg max-h-80 overflow-hidden rounded-lg shadow-lg "
+                data-aos="fade-left"
+              >
                 <img
                   src={img}
                   alt="Card Image"
@@ -131,7 +139,10 @@ export default function NewsPage({ onNewsDetailClick }) {
 
                     {/* Button placed at the bottom right */}
                     <div className="flex justify-end ">
-                      <button className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition-colors duration-300" onClick={() => onNewsDetailClick(val)}>
+                      <button
+                        className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition-colors duration-300"
+                        onClick={() => onNewsDetailClick(val)}
+                      >
                         Read more
                       </button>
                     </div>
