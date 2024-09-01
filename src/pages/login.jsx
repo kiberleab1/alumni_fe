@@ -5,6 +5,7 @@ import { login } from "src/api";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { storeUserToken as storeUserToken } from "src/helpers/globalStorage";
+import { ToastContainer } from "react-toastify";
 
 export default function LoginPage() {
   return (
@@ -31,6 +32,9 @@ const LoginForm = () => {
             break;
           case "admin":
             navigate("/admin");
+            break;
+          case "user":
+            navigate("/user");
             break;
           case "alumni":
             navigate("/user");
@@ -243,6 +247,8 @@ const LoginForm = () => {
           </Col>
         </Row>
       </Container> */}
+      <ToastContainer />
+
     </div>
   );
 };

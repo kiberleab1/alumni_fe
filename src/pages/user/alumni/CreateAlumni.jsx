@@ -11,6 +11,8 @@ export default function CreateAlumni() {
   const [institutions, setInstitutions] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [alumniError, setAlumniError] = useState("");
+  const [disabilities, setDisabilities] = useState(["None", "vision Impairment", "deaf or hard of hearing", "mental health conditions",
+    "intellectual disability", "acquired brain injury", "autism spectrum disorder", "physical disability", "dyslexia"]);
   const [alumniFields, setAlumniFields] = useState({
     user_id: "92faa361-3246-4f11-acae-cdb599a0d200",
     institution_id: "",
@@ -26,6 +28,7 @@ export default function CreateAlumni() {
     degree: "",
     Skills: "",
     Language: "",
+    disability_status: "",
   });
   //scroll anima...
   useEffect(() => {
@@ -93,11 +96,16 @@ export default function CreateAlumni() {
       degree: "",
       Skills: "",
       Language: "",
+      disability_status: "",
     });
   };
 
   const handleDepartmentClear = () => {
     clearAlumniFields();
+  };
+
+  const handleImageChange = (e) => {
+    setAlumniFields({ ...alumniFields, user_photo: e.target.files[0] });
   };
 
   const handleDepartmentSubmit = async (e) => {
@@ -109,6 +117,26 @@ export default function CreateAlumni() {
     ) {
       setAlumniError("Please fill in all required fields!");
       return;
+    }
+
+    const formData = new FormData();
+    formData.append("user_id", alumniFields.user_id);
+    formData.append("institution_id", alumniFields.institution_id);
+    formData.append("department_id", alumniFields.department_id);
+    formData.append("graduation_year", alumniFields.graduation_year);
+    formData.append("graduation_institute", alumniFields.graduation_institute);
+    formData.append("social_media_links", alumniFields.social_media_links);
+    formData.append("certification_link", alumniFields.certification_link);
+    formData.append("certification_link", alumniFields.certification_link);
+    formData.append("description", alumniFields.description);
+    formData.append("status", alumniFields.status);
+    formData.append("achievements", alumniFields.achievements);
+    formData.append("degree", alumniFields.degree);
+    formData.append("Skills", alumniFields.Skills);
+    formData.append("Language", alumniFields.Language);
+    formData.append("disability_status", alumniFields.disability_status);
+    if (alumniFields.user_photo) {
+      formData.append("image", alumniFields.user_photo);
     }
 
     try {
@@ -391,6 +419,52 @@ export default function CreateAlumni() {
                         </option>
                       ))}
                     </select>
+                  </div>
+                </div>
+                <div className="sm:col-span-2">
+                  <label
+                    htmlFor="news-level"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    Disability Status
+                  </label>
+                  <div className="mt-2">
+                    <select
+                      id="news-level"
+                      name="news-level"
+                      value={alumniFields.disability_status}
+                      onChange={(e) =>
+                        setAlumniFields({
+                          ...alumniFields,
+                          disability_status: e.target.value,
+                        })
+                      }
+                      className="mt-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-5 font-medium font-mono"
+                    >
+                      {disabilities.map((level) => (
+                        <option key={level} value={level}>
+                          {level}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="sm:col-span-2">
+                  <label
+                    htmlFor="news-image"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    Profile Picture
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="file"
+                      name="news-image"
+                      id="news-image"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                    />
                   </div>
                 </div>
                 <div className="sm:col-span-6" data-aos="fade-left">

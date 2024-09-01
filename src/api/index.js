@@ -648,7 +648,20 @@ export async function getAllVerificationRequest({ pageNumber, pageSize }) {
 
 export async function createAlumniProfile(alumni) {
   console.log(alumni);
-  return await axios.post(`${API_BASE_URl}/createAlumniProfile`, alumni);
+  const response = await axios.post(`${API_BASE_URl}/createAlumniProfile`, alumni, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+}
+
+export async function updateAlumniProfile(alumni) {
+  console.log(alumni);
+  return await axios.put(`${API_BASE_URl}/updateAlumniProfile`, alumni, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 }
 
 export async function createSettings(settings) {
