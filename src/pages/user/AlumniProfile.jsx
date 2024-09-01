@@ -19,10 +19,10 @@ const AlumniProfile = () => {
   });
   return (
     <div
-      className="flex flex-col items-center min-h-screen"
+      className="flex flex-col items-center  min-h-screen"
       data-aos="fade-down"
     >
-      <div className="flex flex-row items-center gap-3 min-w-[80%]">
+      <div className="flex flex-row items-center justify-center gap-3 min-w-[80%]">
         <h1 className="text-5xl font-normal">Alumni Profile</h1>
         <div>
           <CiEdit className="text-2xl " />
