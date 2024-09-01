@@ -632,21 +632,12 @@ export async function getAllAlumni({ pageNumber, pageSize }) {
   return result;
 }
 
-export async function filterAlumniProfile({ pageNumber, pageSize, filterKeyword, value }) {
-  console.log(pageNumber, pageSize, filterKeyword, value);
-  const result = await axios.get(
-    `${API_BASE_URl}/filterAlumniProfile?pageNumber=${pageNumber}&pageSize=${pageSize}&filterKeyword=${filterKeyword}&value=${value}`
-  );
-  return result;
-}
-
 export async function getAlumniProfileById(user_id) {
   const result = await axios.get(
     `${API_BASE_URl}/getAlumniProfileById?id=${user_id}`
   );
   return result;
 }
-
 
 export async function getAllVerificationRequest({ pageNumber, pageSize }) {
   const result = await axios.get(
@@ -685,5 +676,18 @@ export async function createPodcast({ name, description, url }) {
 export async function getAllPodcast({ pageNumber, pageSize }) {
   const data = { pageNumber, pageSize };
   const result = await axios.post(`${API_BASE_URl}/getAllPodcast`, data);
+  return result;
+}
+
+export async function filterAlumniProfile({
+  pageNumber,
+  pageSize,
+  filterKeyword,
+  value,
+}) {
+  console.log(pageNumber, pageSize, filterKeyword, value);
+  const result = await axios.get(
+    `${API_BASE_URl}/filterAlumniProfile?pageNumber=${pageNumber}&pageSize=${pageSize}&filterKeyword=${filterKeyword}&value=${value}`
+  );
   return result;
 }
