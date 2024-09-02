@@ -15,7 +15,7 @@ const HTTP_CODES = {
 };
 const API_BASE_URl = import.meta.env.VITE_BASE_URL;
 const IMAGE_API_URL = import.meta.env?.VITE_IMAGE_BASE_URL;
-const BASE_URL = window.location.origin;
+const BASE_URL = window.location.origin + "/";
 
 axios.interceptors.request.use(
   (config) => {
@@ -666,11 +666,15 @@ export async function getAllVerificationRequest({ pageNumber, pageSize }) {
 
 export async function createAlumniProfile(alumni) {
   console.log(alumni);
-  const response = await axios.post(`${API_BASE_URl}/createAlumniProfile`, alumni, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  const response = await axios.post(
+    `${API_BASE_URl}/createAlumniProfile`,
+    alumni,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
 }
 
 export async function updateAlumniProfile(alumni) {
