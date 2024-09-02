@@ -2,6 +2,17 @@
 import axios from "axios";
 import { getUserToken } from "src/helpers/globalStorage";
 
+const HTTP_CODES = {
+  OK: 200,
+  CREATED: 201,
+  DELETED: 204,
+  BAD_REQUEST: 400,
+  PROHIBITED: 403,
+  NOT_FOUND: 404,
+  UNPROCESSABLE_REQUEST: 422,
+  INTERNAL_SERVER_ERROR: 500,
+  UNAUTHORIZED: 401,
+};
 const API_BASE_URl = import.meta.env.VITE_BASE_URL;
 const IMAGE_API_URL = import.meta.env?.VITE_IMAGE_BASE_URL;
 const BASE_URL = import.meta.env?.VITE_BASE_FE_URL;
@@ -31,7 +42,14 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   (response) => {
     // console.log(response);
-    return response;
+    if (
+      response.status === HTTP_CODES.OK ||
+      response.status === HTTP_CODES.CREATED ||
+      response.status === HTTP_CODES.DELETED
+    ) {
+      return response;
+    }
+    return Promise.reject(response);
   },
   (error) => {
     console.log(error);
