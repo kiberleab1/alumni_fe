@@ -94,9 +94,7 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
           />
           <button
             className="bg-white text-black border border-black shadow-lg px-4 py-2 rounded-lg focus:outline-none w-full sm:w-auto"
-            onClick={() => {
-              refetch;
-            }}
+            onClick={refetch}
           >
             Apply Filter
           </button>
