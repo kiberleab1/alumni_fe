@@ -10,6 +10,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { FaLongArrowAltRight, FaLongArrowAltLeft } from "react-icons/fa";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function SignupPage() {
   return (
@@ -35,7 +37,11 @@ const SignupForm = () => {
   const mutation = useMutation(signup, {
     onSuccess: () => {
       queryClient.invalidateQueries("signup");
-      // navigate("/landing/program/profile");
+      toast.success("Signup success. Welcome to the alumni system!");
+  
+      setTimeout(() => {
+        navigate("/landing/program/login");
+      }, 1000);
     },
     onError: () => {
       setErrorMsg(
@@ -213,7 +219,7 @@ const SignupForm = () => {
       // submit here
       handleSubmit(values);
 
-      navigate("/landing/program/login");
+      // navigate("/landing/program/login");
     },
   });
   const calculateProgress = () => {
@@ -1011,6 +1017,8 @@ const SignupForm = () => {
           </Formik>
         </Container> */}
       {/* </div> */}
+      <ToastContainer />
+
     </div>
   );
 };

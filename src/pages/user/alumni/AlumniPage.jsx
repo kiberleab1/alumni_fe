@@ -108,7 +108,7 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
           <p>Error loading alumni.</p>
         ) : (
           <div>
-            <div className="sm:ml-16 sm:mt-0 sm:flex-none text-end mb-2">
+            {/* <div className="sm:ml-16 sm:mt-0 sm:flex-none text-end mb-2">
               <a
                 href="#_"
                 className="relative inline-block text-lg group"
@@ -126,7 +126,7 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                   data-rounded="rounded-lg"
                 ></span>
               </a>
-            </div>
+            </div> */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
               {alumni.length > 0 ? (
                 alumni.map((alum) => (

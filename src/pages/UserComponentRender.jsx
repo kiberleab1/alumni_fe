@@ -15,6 +15,7 @@ import AlumniProfile from "./user/AlumniProfile";
 import CreateAlumni from "src/pages/user/alumni/CreateAlumni";
 import EventDetailPage from "./user/events/EventDetailPage";
 import NewsDetailPage from "./user/news/NewsDetailPage";
+import EditAlumni from "./user/alumni/EditAlumni";
 
 const componentsMap = {
   Profile: AlumniProfile,
@@ -29,6 +30,7 @@ const componentsMap = {
   "Edit JobHistory": EditJobHistory,
   Alumni: AlumniPage,
   "Create Alumni": CreateAlumni,
+  "Edit Alumni": EditAlumni,
   "Document Verification": DocumentVerificationPage,
   "Event Detail": EventDetailPage,
   "News Detail": NewsDetailPage,
