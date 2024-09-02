@@ -15,7 +15,7 @@ const HTTP_CODES = {
 };
 const API_BASE_URl = import.meta.env.VITE_BASE_URL;
 const IMAGE_API_URL = import.meta.env?.VITE_IMAGE_BASE_URL;
-const BASE_URL = import.meta.env?.VITE_BASE_FE_URL;
+const BASE_URL = window.location.origin;
 
 axios.interceptors.request.use(
   (config) => {
