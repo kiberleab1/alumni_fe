@@ -5,7 +5,7 @@ import { TfiEmail } from "react-icons/tfi";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useQuery } from "react-query";
-import { getAlumniProfileById } from "src/api";
+import { getAlumniProfileById, getImageBaseUrl } from "src/api";
 import QueryResult from "src/components/utils/queryResults";
 
 const AlumniProfile = ({onCreateAlumniClick, onEditAlumniClick}) => {
@@ -41,7 +41,7 @@ const AlumniProfile = ({onCreateAlumniClick, onEditAlumniClick}) => {
           </div>
 
           <img
-            src={data?.data?.user_photo}
+            src={ getImageBaseUrl( data?.data?.user_photo)}
             alt={data?.data?.user_id}
             className="w-48 h-48 rounded-full mt-4"
           />

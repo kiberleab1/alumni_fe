@@ -28,7 +28,7 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
             <FcBusinesswoman className="h-40 w-40 md:h-56 md:w-56" />
           </div>
           <h2 className="text-3xl md:text-4xl mt-4 font-sans">
-            Helen Getachew
+            {profile?.user_data?.name ? profile?.user_data?.name : "Helen Getachew"}
           </h2>
           <div className="flex items-center hover:text-blue-700 mt-2">
             <TfiEmail className="w-6 h-6 mr-2 mb-2" />
@@ -36,7 +36,7 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
               className="text-lg text-blue-500"
               href="mailto:helengetachew@gmail.com"
             >
-              helengetachew@gmail.com
+              {profile?.user_data?.email ? profile?.user_data?.email : "helengetachew@gmail.com"}
             </a>
           </div>
           <div className="flex items-center hover:text-blue-700">
@@ -58,7 +58,7 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
               href="tel:+251 900 000 000"
               className="text-blue-400 underline ml-2"
             >
-              +251 900 000 000
+              {profile?.user_data?.phone_number ? profile?.user_data?.phone_number : "+251 900 000 000"}
             </a>
           </div>
           <div className="border-b w-full my-2 border-gray-300"></div>

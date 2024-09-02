@@ -26,6 +26,9 @@ axios.interceptors.request.use(
       }
 
       config.headers.User = JSON.stringify(user);
+      if(user){
+        config.headers["user-type"]= user.role_name;
+      }
     } catch (error) {
       //TODO dev
       // config.headers.Authorization = "Bearer dev";
