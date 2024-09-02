@@ -103,14 +103,6 @@ const TestimonialComponent = () => {
                 Latin literature from 45 BC, making it over 2000 years old.
                 Richard McClintock, a Latin professor at Hampden-Sydney College
                 in Virginia, looked up one of the more obscure Latin words,
-                consectetur, from a Lorem Ipsum passage, and going through the
-                cites of the word in classical literature, discovered the
-                undoubtable source. Lorem Ipsum comes from sections 1.10.32 and
-                1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good
-                and Evil) by Cicero, written in 45 BC. This book is a treatise
-                on the theory of ethics, very popular during the Renaissance.
-                The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..",
-                comes from a line in section 1.10.32.
               </p>
             </div>
           </div>
@@ -129,7 +121,7 @@ const TestimonialComponent = () => {
               </h6>
             </Col>
           </Row> */}
-          <Row className="testi3 m-t-40 justify-content-center">
+          <Row className="testi3 m-t-40  flex gap-y-4">
             {testimonialData.map((testimonial) => (
               <Col
                 lg="4"
@@ -139,13 +131,13 @@ const TestimonialComponent = () => {
                 data-aos-duration="1000"
               >
                 <Card
-                  className="card-shadow transition-transform duration-300 hover:scale-105 hover:shadow-xl h-full m-2"
+                  className="card-shadow transition-transform duration-300 hover:scale-105 hover:shadow-xl h-full m-2 "
                   onClick={() => getID(testimonial.id)}
                 >
                   <CardBody className="flex flex-col justify-between h-full">
-                    <h6 className="font-light m-b-30 text-base h-20 overflow-hiddencfont-sans-serif">
+                    <p className=" m-b-30 text-base overflow-hiddencfont-sans-serif text-start text-gray-600 ">
                       {testimonial.text}
-                    </h6>
+                    </p>
                     <div className="d-flex no-block align-items-center">
                       <span className="thumb-img transition-transform duration-300 hover:scale-110">
                         <img
