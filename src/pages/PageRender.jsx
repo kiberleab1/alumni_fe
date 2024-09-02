@@ -40,6 +40,8 @@ import SettingsPage from "./admin/settings/settings";
 import CreateOurStoryForm from "./admin/webcontent/CreateOurStoryPage";
 import PodcastPage from "./admin/podcast/ListPodcat";
 import CreatePodcastComp from "./admin/podcast/podcast";
+import AdminTestimonialPage from "./admin/webcontent/testimonial/ListTestimonial";
+import CreateTestimonialComp from "./admin/webcontent/testimonial/CreateTestimonialPage";
 
 const componentsMap = {
   Dashboard: AdminsPage,
@@ -82,6 +84,8 @@ const componentsMap = {
   "Create Our Story Page": CreateOurStoryForm,
   Podcast: PodcastPage,
   "Create Podcast": CreatePodcastComp,
+  "Manage Testimony": AdminTestimonialPage,
+  "Create Testimony": CreateTestimonialComp,
 };
 
 export default function ComponentRender({ page, onPageSet }) {
@@ -95,6 +99,7 @@ export default function ComponentRender({ page, onPageSet }) {
   const [selectedJobHistory, setSelectedJobHistory] = useState(null);
   const [selectedStaff, setSelectedStaff] = useState(null);
   const [selectedAlumni, setSelectedAlumni] = useState(null);
+  const [args, setArgs] = useState(null);
   const [
     selectedDocumentVerificationRequest,
     setSelectedDocumentVerificationRequest,
@@ -162,7 +167,17 @@ export default function ComponentRender({ page, onPageSet }) {
         onPageSet("Edit Document Verification");
       }}
       onCreatePodcastClick={() => onPageSet("Create Podcast")}
-      onEditPodcastClick={() => {}}
+      onEditPodcastClick={(item) => {
+        console.log({ item });
+        setArgs(item);
+        onPageSet("Create Podcast");
+      }}
+      onCreateTestimonyClick={() => onPageSet("Create Testimony")}
+      onEditTestimonyClick={(item) => {
+        console.log({ item });
+        setArgs(item);
+        onPageSet("Create Testimony");
+      }}
       institute={selectedInstitute}
       admin={selectedAdmin}
       user={selecteduser}
@@ -174,6 +189,7 @@ export default function ComponentRender({ page, onPageSet }) {
       jobHistory={selectedJobHistory}
       alumni={selectedAlumni}
       document={selectedDocumentVerificationRequest}
+      item={args}
     />
   );
 }

@@ -6,7 +6,6 @@ import Mission from "./mission";
 import "aos/dist/aos.css";
 import AOS from "aos";
 import { useEffect } from "react";
-import H1Heading from "src/components/headerHs/header";
 function AboutUsPage() {
   const { isError, data, isLoading } = useQuery("aboutUs", async () => {
     return await getWebContentByComonent({ component: "aboutus" });

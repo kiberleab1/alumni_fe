@@ -3,52 +3,53 @@ import { useState } from "react";
 import { useQueryClient, useMutation } from "react-query";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { createPodcast, updatePodcast } from "src/api";
-export default function CreatePodcastComp({ item }) {
+import { createTestimonial, updateTestimonial } from "src/api";
+
+export default function CreateTestimonialComp({ item }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [podcastError, setPodcastError] = useState("");
-  const [podcastFields, setPodcastFields] = useState({
-    name: "",
-    description: "",
-    url: "",
+  const [testimonyError, setTestimonyError] = useState("");
+  const [testimonyFields, setTestimonyFields] = useState({
+    full_name: "",
+    credentials: "",
+    testimony: "",
   });
 
   useEffect(() => {
     if (item) {
-      setPodcastFields({
-        name: item.title,
-        description: item.description,
-        url: item.url,
+      setTestimonyFields({
+        full_name: item.full_name,
+        credentials: item.credentials,
+        testimony: item.testimony,
       });
       setIsEditing(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const clearPodcastFields = () => {
-    setPodcastFields({
-      name: "",
-      description: "",
-      url: "",
+  const clearTestimonyFields = () => {
+    setTestimonyFields({
+      full_name: "",
+      credentials: "",
+      testimony: "",
     });
   };
 
-  const handlePodcastClear = () => {
-    clearPodcastFields();
+  const handleTestimonyClear = () => {
+    clearTestimonyFields();
   };
   const queryClient = useQueryClient();
-  const crateMutation = useMutation(createPodcast, {
+  const crateMutation = useMutation(createTestimonial, {
     onSuccess: () => {
-      queryClient.invalidateQueries("getPodcasts");
+      queryClient.invalidateQueries("getAllTestimonial");
     },
   });
-  const updateMutation = useMutation(updatePodcast, {
+  const updateMutation = useMutation(updateTestimonial, {
     onSuccess: () => {
-      queryClient.invalidateQueries("getPodcasts");
+      queryClient.invalidateQueries("getAllTestimonial");
     },
   });
 
-  const handlePodcastSubmit = async (e) => {
+  const handleTestimonySubmit = async (e) => {
     if (isSaving) {
       return;
     }
@@ -57,19 +58,19 @@ export default function CreatePodcastComp({ item }) {
 
     e.preventDefault();
     if (
-      !podcastFields.name ||
-      !podcastFields.description ||
-      !podcastFields.url
+      !testimonyFields.full_name ||
+      !testimonyFields.credentials ||
+      !testimonyFields.testimony
     ) {
-      setPodcastError("Please fill in all required fields!");
+      setTestimonyError("Please fill in all required fields!");
       setIsSaving(false);
       return;
     }
-    setPodcastError("");
+    setTestimonyError("");
     if (!isEditing) {
-      crateMutation.mutate(podcastFields);
+      crateMutation.mutate(testimonyFields);
     } else {
-      const data = { id: item.id, ...podcastFields };
+      const data = { id: item.id, ...testimonyFields };
       updateMutation.mutate(data);
     }
     setIsSaving(false);
@@ -80,11 +81,11 @@ export default function CreatePodcastComp({ item }) {
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3 justify-center justify-items-center ">
         <div className="px-4 sm:px-0">
           <h2 className="text-base font-semibold leading-7 text-gray-900">
-            {isEditing ? "Edit" : "Add"} Podcast Information
+            {isEditing ? "Edit" : "Add"} Testimony Information
           </h2>
           <p className="mt-1 text-sm leading-6 text-gray-600">
             Please make sure every input is correct and accurately describes the
-            podcast.
+            testimony.
           </p>
         </div>
       </div>
@@ -97,23 +98,23 @@ export default function CreatePodcastComp({ item }) {
                 htmlFor="department-name"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                podcast Name
+                testimony Name
               </label>
               <div className="mt-2">
                 <input
                   type="text"
-                  name="podcast-name"
-                  id="podcast-name"
+                  name="testimony-name"
+                  id="testimony-name"
                   required
-                  value={podcastFields.name}
+                  value={testimonyFields.full_name}
                   onChange={(e) =>
-                    setPodcastFields({
-                      ...podcastFields,
-                      name: e.target.value,
+                    setTestimonyFields({
+                      ...testimonyFields,
+                      full_name: e.target.value,
                     })
                   }
-                  autoComplete="Podcast_name"
-                  placeholder="Podcast Name"
+                  autoComplete="Testimony_name"
+                  placeholder="Testimony Name"
                   className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
                 />
               </div>
@@ -125,23 +126,23 @@ export default function CreatePodcastComp({ item }) {
                 htmlFor="department-name"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                podcast url
+                testimony url
               </label>
               <div className="mt-2">
-                <input
-                  type="text"
-                  name="podcast-url"
-                  id="podcast-url"
+                <textarea
+                  rows={5}
+                  name="testimony-url"
+                  id="testimony-url"
                   required
-                  value={podcastFields.url}
+                  value={testimonyFields.testimony}
                   onChange={(e) =>
-                    setPodcastFields({
-                      ...podcastFields,
-                      url: e.target.value,
+                    setTestimonyFields({
+                      ...testimonyFields,
+                      testimony: e.target.value,
                     })
                   }
-                  autoComplete="Podcast_url"
-                  placeholder="Podcast url"
+                  autoComplete="Testimony_url"
+                  placeholder="Testimony url"
                   className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
                 />
               </div>
@@ -149,22 +150,22 @@ export default function CreatePodcastComp({ item }) {
           </div>
           <div className="sm:col-span-6">
             <label
-              htmlFor="podcast-description"
+              htmlFor="testimony-description"
               className="block text-sm font-medium leading-6 text-gray-900"
             >
-              podcast Description
+              testimony Description
             </label>
             <div className="mt-2">
               <textarea
-                id="podcast-description"
-                name="podcast-description"
+                id="testimony-description"
+                name="testimony-description"
                 rows={3}
                 required
-                value={podcastFields.description}
+                value={testimonyFields.credentials}
                 onChange={(e) =>
-                  setPodcastFields({
-                    ...podcastFields,
-                    description: e.target.value,
+                  setTestimonyFields({
+                    ...testimonyFields,
+                    credentials: e.target.value,
                   })
                 }
                 className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
@@ -173,20 +174,20 @@ export default function CreatePodcastComp({ item }) {
           </div>
         </div>
         <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
-          {podcastError && (
-            <p className="text-red-600 font-mono">{podcastError}</p>
+          {testimonyError && (
+            <p className="text-red-600 font-mono">{testimonyError}</p>
           )}
           <button
             type="button"
             className="text-sm font-semibold leading-6 text-gray-100"
-            onClick={handlePodcastClear}
+            onClick={handleTestimonyClear}
           >
             Clear
           </button>
           <button
             type="button"
             className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            onClick={handlePodcastSubmit}
+            onClick={handleTestimonySubmit}
           >
             {isSaving ? "..." : "Save"}
           </button>

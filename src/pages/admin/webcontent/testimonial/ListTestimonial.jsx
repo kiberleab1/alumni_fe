@@ -1,25 +1,30 @@
 import { useQuery, useQueryClient, useMutation } from "react-query";
-import { deletePodcast, getAllPodcast } from "src/api";
+import { deleteTestimonial, getAllTestimonial } from "src/api";
 import { useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import Modal from "../../../components/utils/DeleteModal";
+import Modal from "src/components/utils/DeleteModal";
 import QueryResult from "src/components/utils/queryResults";
 
-export default function PodcastPage({
-  onCreatePodcastClick,
-  onEditPodcastClick,
+export default function AdminTestimonialPage({
+  onCreateTestimonyClick,
+  onEditTestimonyClick,
 }) {
-  const { isError, data, isLoading } = useQuery("getAllPodcast", async () => {
-    return await getAllPodcast({ pageNumber: 1, pageSize: 10 });
-  });
+  const { isError, data, isLoading } = useQuery(
+    "getAllTestimonial",
+    async () => {
+      return await getAllTestimonial({ pageNumber: 1, pageSize: 10 });
+    }
+  );
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
       <div>
-        <ListPodcast
-          alumnus={data?.data}
-          onCreatePodcastCLicked={onCreatePodcastClick}
-          onEditPodcastClick={(podcast) => onEditPodcastClick(podcast)}
+        <ListTestimonial
+          testimony={data?.data}
+          onCreatePodcastCLicked={onCreateTestimonyClick}
+          onEditPodcastClick={(testimonial) =>
+            onEditTestimonyClick(testimonial)
+          }
         />
       </div>
     </QueryResult>
@@ -27,31 +32,35 @@ export default function PodcastPage({
 }
 
 // eslint-disable-next-line react/prop-types
-function ListPodcast({ alumnus, onCreatePodcastCLicked, onEditPodcastClick }) {
+function ListTestimonial({
+  testimony,
+  onCreatePodcastCLicked,
+  onEditPodcastClick,
+}) {
   const itemsPerPage = 5; // Number of items to display per page
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPodcast, setSelectedPodcast] = useState(null);
   const queryClient = useQueryClient();
 
-  // Mutation for deleting a podcast
-  const { mutate: deleteDept } = useMutation(deletePodcast, {
+  // Mutation for deleting a testimonial
+  const mutate = useMutation(deleteTestimonial, {
     onSuccess: () => {
-      queryClient.invalidateQueries("getAllPodcast");
+      queryClient.invalidateQueries("getAllTestimonial");
       closeModal();
     },
     onError: (error) => {
       closeModal();
-      queryClient.invalidateQueries("getAllPodcast");
-      console.error("Error deleting podcast:", error);
+      queryClient.invalidateQueries("getAllTestimonial");
+      console.error("Error deleting testimonial:", error);
     },
   });
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = alumnus.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = testimony.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(alumnus.length / itemsPerPage);
+  const totalPages = Math.ceil(testimony.length / itemsPerPage);
 
   const paginate = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
@@ -59,8 +68,8 @@ function ListPodcast({ alumnus, onCreatePodcastCLicked, onEditPodcastClick }) {
     }
   };
 
-  const openModal = (podcast) => {
-    setSelectedPodcast(podcast);
+  const openModal = (testimonial) => {
+    setSelectedPodcast(testimonial);
     setIsModalOpen(true);
   };
 
@@ -71,8 +80,8 @@ function ListPodcast({ alumnus, onCreatePodcastCLicked, onEditPodcastClick }) {
 
   const confirmDeletion = () => {
     console.log(selectedPodcast);
-    if (selectedPodcast) {
-      deleteDept(selectedPodcast);
+    if (selectedPodcast && selectedPodcast.id) {
+      mutate.mutate({ id: selectedPodcast.id });
     }
   };
 
@@ -81,10 +90,10 @@ function ListPodcast({ alumnus, onCreatePodcastCLicked, onEditPodcastClick }) {
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-base font-semibold leading-6 text-gray-900 font-mono">
-            Podcast
+            Edit Testimonial
           </h1>
           <p className="mt-2 text-sm text-gray-500 font-mono">
-            A list of all the podcast in the system including their name,
+            A list of all the testimonial in the system including their name,
             description, start date.
           </p>
         </div>
@@ -94,7 +103,7 @@ function ListPodcast({ alumnus, onCreatePodcastCLicked, onEditPodcastClick }) {
             className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             onClick={onCreatePodcastCLicked}
           >
-            Add New Podcast
+            Add New Testimonial
           </button>
         </div>
       </div>
@@ -139,35 +148,37 @@ function ListPodcast({ alumnus, onCreatePodcastCLicked, onEditPodcastClick }) {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {currentItems.map((podcast) => (
-                    <tr key={podcast.id}>
+                  {currentItems.map((testimonial) => (
+                    <tr key={testimonial.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm font-medium text-gray-900">
-                          {podcast.title ? podcast.title : ""}
+                          {testimonial.full_name ? testimonial.full_name : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {podcast.url ? podcast.url : ""}
+                          {testimonial.credentials
+                            ? testimonial.credentials
+                            : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900 line-clamp-1">
-                          {podcast.description ? podcast.description : ""}
+                          {testimonial.testimony ? testimonial.testimony : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium">
                         <a
                           href="#"
                           className="text-indigo-600 hover:text-green-900"
-                          onClick={() => onEditPodcastClick(podcast)}
+                          onClick={() => onEditPodcastClick(testimonial)}
                         >
                           Edit
                         </a>
                         <a
                           href="#"
                           className="text-red-600 hover:text-red-900 pl-5"
-                          onClick={() => openModal(podcast)}
+                          onClick={() => openModal(testimonial)}
                         >
                           Delete
                         </a>
@@ -208,9 +219,10 @@ function ListPodcast({ alumnus, onCreatePodcastCLicked, onEditPodcastClick }) {
                 Showing{" "}
                 <span className="font-medium">{indexOfFirstItem + 1}</span> to{" "}
                 <span className="font-medium">
-                  {Math.min(indexOfLastItem, alumnus.length)}
+                  {Math.min(indexOfLastItem, testimony.length)}
                 </span>{" "}
-                of <span className="font-medium">{alumnus.length}</span> results
+                of <span className="font-medium">{testimony.length}</span>{" "}
+                results
               </p>
             </div>
             <div>
@@ -265,7 +277,7 @@ function ListPodcast({ alumnus, onCreatePodcastCLicked, onEditPodcastClick }) {
           closeModal={closeModal}
           confirmAction={confirmDeletion}
           title="Confirm Deletion"
-          message={`Are you sure you want to delete the podcast "${selectedPodcast.title}"? This action cannot be undone.`}
+          message={`Are you sure you want to delete the testimonial "${selectedPodcast.title}"? This action cannot be undone.`}
         />
       )}
     </div>

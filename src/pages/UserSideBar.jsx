@@ -4,23 +4,12 @@ import {
   ArrowLongLeftIcon,
   Bars3Icon,
   BriefcaseIcon,
-  BuildingLibraryIcon,
   CalendarIcon,
   ChevronDownIcon,
   ChevronUpIcon,
   ClipboardDocumentCheckIcon,
-  Cog6ToothIcon,
-  EllipsisHorizontalCircleIcon,
-  EllipsisVerticalIcon,
   HomeIcon,
-  InboxArrowDownIcon,
   NewspaperIcon,
-  PlusCircleIcon,
-  PlusIcon,
-  StarIcon,
-  TagIcon,
-  UserPlusIcon,
-  UsersIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Fragment, useEffect, useState } from "react";
@@ -104,7 +93,7 @@ function UserSideBar() {
     console.log(itemName);
   };
 
-  const [logo, setLogo] = useState({});
+  const [, setLogo] = useState({});
   const [sideBarBackground, setSideBarBackground] = useState(null);
   const [sideBarTextColor, setSideBarTextColor] = useState(null);
   const [sidebarHoverBG, setSidebarHoverBG] = useState(null);
@@ -295,7 +284,7 @@ function UserSideBar() {
                                   className="h-6 w-6 shrink-0"
                                   aria-hidden="true"
                                 />
-                                Logout
+                                Logoutsdsds
                               </a>
                             </li>
                           </ul>
