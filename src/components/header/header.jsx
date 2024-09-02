@@ -162,19 +162,19 @@ const Header = () => {
   return (
     <>
       <div
-        className="bg-green-800 flex items-center justify-between text-white px-2 min-h-16 "
+        className=" flex items-center justify-between text-white px-2 min-h-16 "
         style={{ backgroundColor: headerBackground || "#276749" }}
       >
         {!inputControler && (
-          <div className="flex items-center">
+          <div className="flex items-center bg-inherit">
             <Button
-              className="md:hidden p-2 text-white bg-green-800 hover:bg-green-900  transition duration-300 ease-in-out"
+              className="md:hidden p-2 text-inherit bg-inherit transition duration-300 ease-in-out"
               onClick={navHandler}
             >
               {isActive ? (
-                <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                <XMarkIcon className="h-6 w-6 bg-inherit" aria-hidden="true" />
               ) : (
-                <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+                <Bars3Icon className="h-6 w-6 bg-inherit" aria-hidden="true" />
               )}
             </Button>
           </div>

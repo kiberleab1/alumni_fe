@@ -16,7 +16,7 @@ export default function CreateJobHistory() {
   const [VisibilityType] = useState(["All", "My Connection", "Only Me"]);
 
   const [jobHistoryFields, setJobHistoryFields] = useState({
-    user_id: "rtete",
+    user_id: "92faa361-3246-4f11-acae-cdb599a0d200",
     title: "",
     description: "",
     status: "",
@@ -27,7 +27,7 @@ export default function CreateJobHistory() {
 
   const clearJobHistoryFields = () => {
     setJobHistoryFields({
-      user_id: "rtete",
+      user_id: "92faa361-3246-4f11-acae-cdb599a0d200",
       title: "",
       description: "",
       status: "",
@@ -64,10 +64,10 @@ export default function CreateJobHistory() {
     console.log(newJobHistory);
     try {
       const result = await createJobHistory(newJobHistory);
-      toast.success("Department saved successfully!");
+      toast.success("Job History saved successfully!");
       setJobHistoryError("");
       handleJobHistoryClear();
-      console.log("Create department result:", result.data);
+      console.log("Create Job History result:", result.data);
     } catch (error) {
       toast.success("Error creating institute!");
       console.error("Error creating institute!", error);

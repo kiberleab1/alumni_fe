@@ -39,7 +39,7 @@ function LandingPage() {
     }
   }
   return (
-    <>
+    <div className="bg-light">
       <QueryResult isError={isError} isLoading={isLoading} data={data}>
         <div className="h-screen -z-10">
           {" "}
@@ -64,7 +64,7 @@ function LandingPage() {
 <PortfolioComponent />
 <FeatureComponent />
 <Outlet /> */}
-    </>
+    </div>
   );
 }
 
