@@ -91,6 +91,7 @@ function UserSideBar() {
       current: true,
     });
     console.log(itemName);
+    setSidebarOpen(false);
   };
 
   const [, setLogo] = useState({});

@@ -59,11 +59,14 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
     setSelectedJob(null);
     setIsModalOpen(false);
   };
-
+  useAOS({
+    duration: 1200,
+    once: true,
+  });
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
       <div className="flex flex-col max-h-screen">
-        <div className="sm:flex sm:items-center mb-4" data-aos="fade-down">
+        <div className="sm:flex sm:items-center mb-4">
           <div className="sm:flex-auto">
             <h1 className="text-2xl font-semibold leading-6 text-gray-900 font-sans">
               Find your dream job
@@ -76,6 +79,7 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
             <div
               key={idx}
               className="max-w-sm w-full h-[250px] shadow-sm bg-white rounded-lg overflow-hidden p-2 m-3 flex flex-col justify-between"
+              data-aos="fade-left"
               onClick={() => openModal(val)}
             >
               <div>
