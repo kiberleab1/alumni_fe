@@ -7,7 +7,7 @@ import AlumniModal from "./AlumniModal";
 import { IoPersonAddSharp } from "react-icons/io5";
 import { FcBusinessman, FcBusinesswoman } from "react-icons/fc";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-
+import img from "../../../../public/gallery/gallery_1.jpg";
 const AlumniGrid = ({ onCreateAlumniClick }) => {
   const itemsPerPage = 8;
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,6 +34,8 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
   });
 
   const alumni = data?.data?.alumniProfile || [];
+  console.log(alumni);
+
   const totalItems = data?.data?.total_items || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
@@ -94,9 +96,11 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
           />
           <button
             className="bg-white text-black border border-black shadow-lg px-4 py-2 rounded-lg focus:outline-none w-full sm:w-auto"
-            onClick={refetch}
+            onClick={() => {
+              refetch;
+            }}
           >
-            Apply Filter
+            Filter
           </button>
         </div>
 
@@ -134,14 +138,18 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                   >
                     <div className="w-28 h-28 mx-auto rounded-full bg-gray-200 mb-4 z-10 overflow-hidden">
                       {alum.user_photo ? (
-                        <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-0" />
+                        <img
+                          src={img}
+                          alt=""
+                          className="rounded-full object-cover w-full h-[130px] z-0 scale-125"
+                        />
                       ) : alum.gender === "male" ? (
                         <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-10" />
-                      ) : alum.gender === "female" ? (
-                        <FcBusinesswoman className="rounded-full object-cover w-full h-[130px] z-10" />
                       ) : (
                         <FcBusinesswoman className="rounded-full object-cover w-full h-[130px] z-10" />
                       )}
+
+                      {}
                     </div>
                     <h3 className="text-xl font-semibold">
                       {alum?.user_data?.name

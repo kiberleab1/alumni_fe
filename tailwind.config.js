@@ -5,6 +5,8 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
     "./node_modules/tw-elements-react/dist/js/**/*.js",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./src/pages/user/events/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {

@@ -43,7 +43,6 @@ export default function JobHistoryPage({
     { keepPreviousData: true }
   );
 
-
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = jobHistorys.slice(indexOfFirstItem, indexOfLastItem);
@@ -58,7 +57,7 @@ export default function JobHistoryPage({
     once: true,
   });
 
-  console.log(jobHistorys)
+  console.log(jobHistorys);
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
       <div className="flex flex-col min-h-screen bg-gray-50">
@@ -90,10 +89,10 @@ export default function JobHistoryPage({
         </div>
 
         <div
-          className=" max-w-8xl flex flex-col md:flex-row items-center justify-center space-x-6 p-4 "
+          className=" max-w-8xl flex flex-col md:flex-row  justify-center space-x-6 p-4 bg-gray-100"
           data-aos="fade-right"
         >
-          <div className=" w-full h-auto  bg-gray-100 shadow-md rounded-lg overflow-hidden">
+          <div className=" w-full min-h-auto   shadow-md rounded-lg overflow-hidden">
             {jobHistorys.map((val, index) => {
               return (
                 <div
@@ -109,9 +108,7 @@ export default function JobHistoryPage({
                     <p className="text-lg font-semibold text-gray-800 block">
                       {val.user_name}
                     </p>
-                    <p className="text-sm text-gray-600 block">
-                      {val.degree}
-                    </p>
+                    <p className="text-sm text-gray-600 block">{val.degree}</p>
                   </div>
                   <div className="flex-shrink-0 flex items-center space-x-4">
                     <MdMessage className="text-blue-500 hover:text-blue-900 bg-gray-100" />
@@ -132,30 +129,29 @@ export default function JobHistoryPage({
               {selectedJobHistory?.job_history.map((val, index) => {
                 return (
                   <div>
-                  <div className="flex items-center p-2">
-                    <div className="flex-grow text-left">
-                      <p className="text-lg font-semibold text-gray-800 block">
-                        {val?.title}
-                      </p>
-                      <i className="text-sm text-gray-600 block">{val?.title}</i>
+                    <div className="flex items-center p-2">
+                      <div className="flex-grow text-left">
+                        <p className="text-lg font-semibold text-gray-800 block">
+                          {val?.title}
+                        </p>
+                        <i className="text-sm text-gray-600 block">
+                          {val?.title}
+                        </i>
+                      </div>
+
+                      <div className="flex-shrink-0 flex items-center space-x-4">
+                        {val?.duration}
+                      </div>
                     </div>
-  
-                    <div className="flex-shrink-0 flex items-center space-x-4">
-                    {val?.duration}
+                    <div>
+                      <p className="text-left p-2">{val?.description}</p>
                     </div>
                   </div>
-                  <div>
-                    <p className="text-left p-2">
-                      {val?.description}
-                    </p>
-                  </div>
-                </div>
                 );
               })}
             </div>
           )}
         </div>
-
       </div>
     </QueryResult>
   );
