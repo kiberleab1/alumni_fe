@@ -8,7 +8,7 @@ import { useQuery } from "react-query";
 import { getAlumniProfileById, getImageBaseUrl } from "src/api";
 import QueryResult from "src/components/utils/queryResults";
 
-const AlumniProfile = ({onCreateAlumniClick, onEditAlumniClick}) => {
+const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
   const [isOpen, setIsOpen] = useState(true);
   const user_id = "92faa361-3246-4f11-acae-cdb599a0d200";
   const { isError, data, isLoading } = useQuery(
@@ -36,17 +36,22 @@ const AlumniProfile = ({onCreateAlumniClick, onEditAlumniClick}) => {
           <div className="flex flex-row items-center justify-center gap-3 min-w-[80%]">
             <h1 className="text-5xl font-normal">Alumni Profile</h1>
             <div>
-              <CiEdit className="text-2xl " onClick={() => onEditAlumniClick(data?.data)}/>
+              <CiEdit
+                className="text-2xl "
+                onClick={() => onEditAlumniClick(data?.data)}
+              />
             </div>
           </div>
 
           <img
-            src={ getImageBaseUrl( data?.data?.user_photo)}
+            src={getImageBaseUrl(data?.data?.user_photo)}
             alt={data?.data?.user_id}
-            className="w-48 h-48 rounded-full mt-4"
+            className="w-52 h-52 rounded-full mt-4 object-cover "
           />
 
-          <h2 className="text-4xl  mt-2 font-sans">{data?.data?.user_data?.name} </h2>
+          <h2 className="text-4xl  mt-2 font-sans">
+            {data?.data?.user_data?.name}{" "}
+          </h2>
           <div className="flex items-center  hover:text-blue-700 mt-2">
             <a
               className="text-lg text-gray-500 flex flex-row gap-3"
@@ -72,7 +77,10 @@ const AlumniProfile = ({onCreateAlumniClick, onEditAlumniClick}) => {
                 d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
               />
             </svg>
-            <a href="tel:+251 900 000 000" className="text-gray-350 underline ml-2">
+            <a
+              href="tel:+251 900 000 000"
+              className="text-gray-350 underline ml-2"
+            >
               {data?.data?.user_data?.phone_number}
             </a>
           </div>
@@ -80,8 +88,9 @@ const AlumniProfile = ({onCreateAlumniClick, onEditAlumniClick}) => {
           <div className="border-b w-1/2 my-2 border-gray-300 "></div>
           <div className="">
             <div
-              className={`transition-all duration-500 ease-in-out overflow-hidden border-b-4 min-w-[550px] ${isOpen ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
-                }`}
+              className={`transition-all duration-500 ease-in-out overflow-hidden border-b-4 w-[300px] sm:min-w-[550px] ${
+                isOpen ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
+              }`}
             >
               <Table className="text-left">
                 <tbody>
@@ -98,7 +107,7 @@ const AlumniProfile = ({onCreateAlumniClick, onEditAlumniClick}) => {
                   </tr>
                   <tr className="bg-blue-300">
                     <td className="transform transition-transform duration-300 hover:translate-x-5 ">
-                      {data?.data?.graduation_year.split('T')[0]}
+                      {data?.data?.graduation_year.split("T")[0]}
                     </td>
                   </tr>
                   <tr>
@@ -178,20 +187,25 @@ const AlumniProfile = ({onCreateAlumniClick, onEditAlumniClick}) => {
       ) : (
         <div className="flex items-center justify-center min-h-screen bg-white">
           <div className="text-center">
-            <h1 className="text-2xl md:text-3xl font-bold text-black mb-4">NO ALUMNI PROFILE FOUND</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-black mb-4">
+              NO ALUMNI PROFILE FOUND
+            </h1>
             <p className="text-gray-600 mb-6">
-              It looks like you haven't filled out your alumni profile yet.<br />
-              Please take a moment to create your profile and connect with other alumni.
+              It looks like you haven't filled out your alumni profile yet.
+              <br />
+              Please take a moment to create your profile and connect with other
+              alumni.
             </p>
-            <button className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800" onClick={onCreateAlumniClick}>
+            <button
+              className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
+              onClick={onCreateAlumniClick}
+            >
               CREATE ALUMNI
             </button>
           </div>
         </div>
       )}
-
     </QueryResult>
-
   );
 };
 
