@@ -1,4 +1,5 @@
 import { ErrorMessage, Field, Formik } from "formik";
+import { useQueryClient } from "react-query";
 import { useMutation } from "react-query";
 
 import {
@@ -13,23 +14,26 @@ import {
 import { createWebContent } from "src/api";
 import * as Yup from "yup";
 
-function CreateSlideShowPage() {
+function CreateVisionContent() {
   return (
     <>
-      <CreateSlideShow />
+      <CreateWebContentForm />
     </>
   );
 }
 
-export default CreateSlideShowPage;
+export default CreateVisionContent;
 
-function CreateSlideShow() {
+function CreateWebContentForm() {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation(createWebContent, {
     onSuccess: () => {
-      console.log("ayyay");
+      queryClient.invalidateQueries("getAllVisionComponent");
     },
     onError: (err) => {
-      console.log(err);
+      console.log({ err });
+      queryClient.invalidateQueries("getAllVisionComponent");
     },
   });
   // const typesOfContent = [{ name: "about us" }, { name: "gallery" }];
@@ -44,18 +48,19 @@ function CreateSlideShow() {
     // chooseInput: Yup.string().required("Required"),
     title: Yup.string().required("Required"),
     description: Yup.string().required("Required"),
-    images: Yup.array()
-      .min(1, "Please select at least one image")
-      .required("Required"),
+    images: Yup.array(),
+    // .min(1, "Please select at least one image")
+    // .required("Required"),
   });
   const handleSubmit = (values) => {
     mutation.mutate({
-      component: "slideshow",
+      component: "Vision",
       title: values.title,
       description: values.description,
       images: values.images,
     });
-    // Perform form submission actions here
+
+    // Perform form subVision actions here
   };
   return (
     <div>
@@ -63,7 +68,7 @@ function CreateSlideShow() {
         <Container>
           <Row className="justify-content-center">
             <Col md="7" className="text-center">
-              <h1 className="title font-bold">Slide Show Page</h1>
+              <h1 className="title font-bold">Vision Page</h1>
               <h6 className="subtitle">
                 Here you can check Demos we created based on WrapKit. Its quite
                 easy to Create your own dream website &amp; dashboard in
@@ -81,16 +86,37 @@ function CreateSlideShow() {
               validationSchema={validationSchema}
               onSubmit={handleSubmit}
             >
-              {({ handleSubmit, setFieldValue }) => (
+              {({ handleSubmit }) => (
                 <Form className="row" onSubmit={handleSubmit}>
+                  {/* <FormGroup className="md-12">
+                    <Label htmlFor="chooseInput">Choose Page</Label>
+                    <Field
+                      as="select"
+                      name="chooseInput"
+                      className="form-control"
+                      id="chooseInput"
+                    >
+                      {typesOfContent.map((type) => (
+                        <option key={type.name} value={type.name}>
+                          {type.name.toUpperCase()}
+                        </option>
+                      ))}
+                    </Field>
+                    <ErrorMessage
+                      name="chooseInput"
+                      component="div"
+                      className="text-danger"
+                    />
+                  </FormGroup> */}
+
                   <FormGroup className="col-md-12">
-                    <Label htmlFor="name">header</Label>
+                    <Label htmlFor="name">Title</Label>
                     <Field
                       component="textarea"
                       name="title"
                       className="form-control"
                       id="title"
-                      placeholder="Enter  header"
+                      placeholder="Enter  title"
                     />
                     <ErrorMessage
                       name="title"
@@ -100,14 +126,14 @@ function CreateSlideShow() {
                   </FormGroup>
 
                   <FormGroup className="col-md-12">
-                    <Label htmlFor="email">Enter subheader</Label>
+                    <Label htmlFor="email">Enter Details</Label>
                     <Field
                       component="textarea"
                       name="description"
                       rows="4"
                       className="form-control"
                       id="description"
-                      placeholder="Enter subheader"
+                      placeholder="Enter description"
                     />
                     <ErrorMessage
                       name="description"
@@ -115,7 +141,7 @@ function CreateSlideShow() {
                       className="text-danger"
                     />
                   </FormGroup>
-                  <FormGroup className="col-md-12">
+                  {/* <FormGroup className="col-md-12">
                     <Label htmlFor="images">Select Multiple Images</Label>
                     <br />
                     <input
@@ -138,7 +164,7 @@ function CreateSlideShow() {
                       component="div"
                       className="text-danger"
                     />
-                  </FormGroup>
+                  </FormGroup> */}
                   <Col md="12">
                     <Button
                       type="submit"

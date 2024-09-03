@@ -30,9 +30,9 @@ import EditUser from "src/pages/admin/users/EditUser";
 import Users from "src/pages/admin/users/Users";
 import PermissionPage from "src/pages/PermissionPage";
 import RolePage from "src/pages/Role";
-import CreateWebContent from "./admin/webcontent/AboutUsPage";
-import CreateSlideShowPage from "./admin/webcontent/CreateSlideShowPage";
-import CreateGallaryPage from "./admin/webcontent/CreateGallaryPage";
+import CreateWebContent from "./admin/webcontent/aboutus/AboutUsPage";
+import CreateSlideShowPage from "./admin/webcontent/slideshow/CreateSlideShowPage";
+import CreateGallaryPage from "./admin/webcontent/gallary/CreateGallaryPage";
 import AlumniPage from "./admin/alumni/AlumniPage";
 import DocumentVerificationPage from "./admin/documentVerification/DocumentVerificationPage";
 import ComposeEmail from "./admin/emails/compose";
@@ -42,6 +42,13 @@ import PodcastPage from "./admin/podcast/ListPodcat";
 import CreatePodcastComp from "./admin/podcast/podcast";
 import AdminTestimonialPage from "./admin/webcontent/testimonial/ListTestimonial";
 import CreateTestimonialComp from "./admin/webcontent/testimonial/CreateTestimonialPage";
+import AdminListAboutUsPage from "./admin/webcontent/aboutus/ListAboutusPage";
+import AdminListGalleryPage from "./admin/webcontent/gallary/ListGallaryPage";
+import AdminListSlideShowPage from "./admin/webcontent/slideshow/ListSlideShowPage";
+import AdminListMissionPage from "./admin/webcontent/mission/ListMisssionsPage";
+import CreateMissionContent from "./admin/webcontent/mission/CreateMissionPage";
+import AdminListVisionPage from "./admin/webcontent/vission/ListVisionsPage";
+import CreateVisionContent from "./admin/webcontent/vission/CreatevisionPage";
 
 const componentsMap = {
   Dashboard: AdminsPage,
@@ -85,7 +92,14 @@ const componentsMap = {
   Podcast: PodcastPage,
   "Create Podcast": CreatePodcastComp,
   "Manage Testimony": AdminTestimonialPage,
+  "Manage About us": AdminListAboutUsPage,
+  "Manage Gallery": AdminListGalleryPage,
+  "Manage SlideShow": AdminListSlideShowPage,
   "Create Testimony": CreateTestimonialComp,
+  "Manage Mission": AdminListMissionPage,
+  "Create Mission": CreateMissionContent,
+  "Manage Vision": AdminListVisionPage,
+  "Create Vision": CreateVisionContent,
 };
 
 export default function ComponentRender({ page, onPageSet }) {
@@ -177,6 +191,13 @@ export default function ComponentRender({ page, onPageSet }) {
         console.log({ item });
         setArgs(item);
         onPageSet("Create Testimony");
+      }}
+      onCreateAboutUsPage={() => onPageSet("Create About us")}
+      onCreateGalleryPage={() => onPageSet("Create Gallery Show")}
+      onCreateSlideShowPage={() => onPageSet("Create Slide Show")}
+      onCreateMissionPage={() => onPageSet("Create Mission")}
+      onCreateVisionPage={() => {
+        onPageSet("Create Vision");
       }}
       institute={selectedInstitute}
       admin={selectedAdmin}

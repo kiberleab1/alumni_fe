@@ -101,7 +101,7 @@ const TeamComponent = () => {
               <Row>
                 <Col className="p-4" data-aos="fade-up">
                   <Slider {...settings} className="flex flex-wrap">
-                    {data?.data?.staff.map((staff, index) => {
+                    {data?.data?.staff.map((staff) => {
                       const contactInfo = parseData(staff.contact_info);
                       return (
                         <div
