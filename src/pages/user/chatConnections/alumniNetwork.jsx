@@ -3,7 +3,7 @@ import img from "../../../assets/images/testimonial/1.jpg";
 import img2 from "../../../assets/images/testimonial/2.jpg";
 import img3 from "../../../assets/images/testimonial/3.jpg";
 import img4 from "../../../assets/images/testimonial/4.jpg";
-const AlumniNetwork = () => {
+const ConnectionNetwork = () => {
   const [activeTab, setActiveTab] = useState("connections");
   const [requests, setRequests] = useState([
     {
@@ -150,4 +150,4 @@ const AlumniNetwork = () => {
   );
 };
 
-export default AlumniNetwork;
+export default ConnectionNetwork;

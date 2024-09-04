@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { IoIosSend, IoMdArrowRoundBack } from "react-icons/io";
 
-const ChatInterface = () => {
+const ChatUi = () => {
   const [selectedChat, setSelectedChat] = useState(null);
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState({
@@ -67,7 +67,7 @@ const ChatInterface = () => {
   return (
     <div className="flex h-screen">
       <div
-        className={`w-full md:w-1/3 p-4 border-r bg-gray-100 ${
+        className={`w-[100%] md:w-1/3 p-1 md:p-4 border-r  ${
           selectedChat ? "hidden md:block" : "block"
         }`}
       >
@@ -89,7 +89,7 @@ const ChatInterface = () => {
       </div>
 
       <div
-        className={`w-full md:w-2/3 p-4 flex flex-col justify-between ${
+        className={`w-full md:w-2/3 p-1 md:p-4 flex flex-col justify-between ${
           selectedChat ? "block" : "hidden md:block"
         }`}
       >
@@ -104,7 +104,33 @@ const ChatInterface = () => {
                 <IoMdArrowRoundBack className="text-black" />
               </button>
             </div>
-            <div className="flex flex-col overflow-y-auto h-96 space-y-4">
+            <div className="flex flex-col overflow-y-auto h- space-y-4">
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+              <div className="flex-grow"></div>
+
               {chatHistory[selectedChat].map((chat, index) => (
                 <div
                   key={index}
@@ -113,11 +139,11 @@ const ChatInterface = () => {
                   }`}
                 >
                   <div
-                    className={`p-3 rounded-lg ${
+                    className={`px-3 py-1  sm:p-3 rounded-lg ${
                       chat.isReceived ? "bg-gray-200" : "bg-black text-white"
                     }`}
                   >
-                    <p>{chat.message}</p>
+                    <p className="text-start">{chat.message}</p>
                     <span className="text-xs mt-1 block text-start">
                       {chat.time}
                     </span>
@@ -148,4 +174,4 @@ const ChatInterface = () => {
   );
 };
 
-export default ChatInterface;
+export default ChatUi;
