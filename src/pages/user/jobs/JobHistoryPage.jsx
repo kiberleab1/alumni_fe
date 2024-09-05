@@ -1,6 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
-import { deleteJobHistory, getAllJobHistory } from "src/api";
+import { deleteJobHistory, getAllJobHistory, getImageBaseUrl } from "src/api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { formatDate } from "src/utils/utils";
 import Modal from "src/components/utils/DeleteModal";
@@ -17,27 +17,18 @@ export default function JobHistoryPage({
   onCreateJobHistoryClick,
   onEditJobHistoryClick,
 }) {
-  const [jobHistorys, setJobs] = useState([]);
+  const [jobHistories, setJobHistories] = useState([]);
+  const [selectedJobHistory, setSelectedJobHistory] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showJobHistoryDetails, setShowJobHistoryDetails] = useState(false);
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedJobHistory, setSelectedJobHistory] = useState(null);
-  const [jobHistory, setjobHistory] = useState(false);
 
-  const [getId, setgetId] = useState("");
-  const queryClient = useQueryClient();
-
-  const displayHistory = (getId, jobHistoryData) => {
-    console.log(getId);
-    console.log(jobHistoryData);
-    setjobHistory(!jobHistory);
-    setSelectedJobHistory(jobHistoryData);
-  };
   const { isError, data, isLoading } = useQuery(
     ["getAllJobHistory"],
     async () => {
-      const jobsData = await getAllJobHistory({ pageNumber: 1, pageSize: 10 });
-      setJobs(jobsData.data.jobHistory);
+      const jobsData = await getAllJobHistory({ pageNumber: 1, pageSize: 50 }); // Adjust pagination as needed
+      setJobHistories(jobsData.data.jobHistory);
       return jobsData;
     },
     { keepPreviousData: true }
@@ -45,19 +36,29 @@ export default function JobHistoryPage({
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = jobHistorys.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(jobHistorys.length / itemsPerPage);
+  const currentItems = jobHistories.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(jobHistories.length / itemsPerPage);
 
   const paginate = (pageNumber) => {
     if (pageNumber < 1 || pageNumber > totalPages) return;
     setCurrentPage(pageNumber);
   };
-  useAOS({
-    duration: 1200,
-    once: true,
-  });
 
-  console.log(jobHistorys);
+  const handleUserClick = (jobHistory) => {
+    // Check if the modal is open and the same user is clicked
+    if (isModalOpen && selectedJobHistory?.user_id === jobHistory.user_id) {
+      // Close the modal if the same user is clicked
+      setIsModalOpen(false);
+      setShowJobHistoryDetails(false);
+    } else {
+      // Open the modal and set the new user data
+      setSelectedJobHistory(jobHistory);
+      setShowJobHistoryDetails(true);
+      setIsModalOpen(true);
+    }
+  };
+  useAOS({ duration: 1200, once: true });
+
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
       <div className="flex flex-col min-h-screen bg-gray-50">
@@ -89,69 +90,83 @@ export default function JobHistoryPage({
         </div>
 
         <div
-          className=" max-w-8xl flex flex-col md:flex-row   space-x-6 p-4 "
+          className="flex flex-col md:flex-row space-x-6 p-4"
           data-aos="fade-right"
         >
-          <div className=" w-full max-h-24   shadow-md rounded-lg overflow-hidden bg-gray-100">
-            {jobHistorys.map((val, index) => {
-              return (
-                <div
-                  className="flex items-center p-4 bg-gray-100 hover:bg-gray-200"
-                  onClick={() => displayHistory(`${index}`, val)}
-                >
-                  <img
-                    src={val?.user_photo}
-                    alt="User"
-                    className="w-16 h-16 rounded-full object-cover mr-4"
-                  />
-                  <div className="flex-grow text-left">
-                    <p className="text-lg font-semibold text-gray-800 block">
-                      {val.user_name}
-                    </p>
-                    <p className="text-sm text-gray-600 block">{val.degree}</p>
-                  </div>
-                  <div className="flex-shrink-0 flex items-center space-x-4">
-                    <MdMessage className="text-blue-500 hover:text-blue-900 bg-gray-100" />
+          <div className="w-full shadow-md rounded-lg bg-gray-100">
+            {currentItems.map((user, index) => (
+              <div
+                key={user.user_id}
+                className="flex items-center p-4 bg-gray-100 hover:bg-gray-200 cursor-pointer"
+                onClick={() => handleUserClick(user)}
+              >
+                <img
+                  src={getImageBaseUrl(user?.user_photo)}
+                  alt={user.user_name}
+                  className="w-16 h-16 rounded-full object-cover mr-4"
+                />
+                <div className="flex-grow text-left">
+                  <p className="text-lg font-semibold text-gray-800">
+                    {user.user_name}
+                  </p>
+                  <p className="text-sm text-gray-600">{user.degree}</p>
+                </div>
+                <div className="flex-shrink-0 flex items-center space-x-4">
+                  <MdMessage className="text-blue-500 hover:text-blue-900" />
+                  <LuPlus className="text-green-500 hover:text-green-900" />
+                </div>
+              </div>
+            ))}
+          </div>
 
-                    <LuPlus className="text-green-500 hover:text-green-900 bg-gray-100" />
+          {isModalOpen && showJobHistoryDetails && selectedJobHistory && (
+            <div className="w-full shadow-md rounded-lg bg-gray-200">
+              <div className="p-4 border-b">
+                <h2 className="text-xl font-bold text-gray-800">Job History</h2>
+              </div>
+              {selectedJobHistory?.job_history.map((job, index) => (
+                <div>
+                  <div className="flex items-center p-2">
+                    <div className="flex-grow text-left">
+                      <p className="text-lg font-semibold text-gray-800 block">
+                        {job?.title}
+                      </p>
+                      <i className="text-sm text-gray-600 block">
+                        {job?.title}
+                      </i>
+                    </div>
+
+                    <div className="flex-shrink-0 flex items-center space-x-4">
+                      {job?.duration}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-left p-2">{job?.description}</p>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-          {jobHistory && (
-            <div className=" w-full shadow-md rounded-lg overflow-hidden bg-gray-200 ">
-              <div className="p-4 border-b">
-                <h2 className="text-xl font-bold text-left text-gray-800">
-                  Job History
-                </h2>
-              </div>
-              {selectedJobHistory?.job_history.map((val, index) => {
-                return (
-                  <div>
-                    <div className="flex items-center p-2">
-                      <div className="flex-grow text-left">
-                        <p className="text-lg font-semibold text-gray-800 block">
-                          {val?.title}
-                        </p>
-                        <i className="text-sm text-gray-600 block">
-                          {val?.title}
-                        </i>
-                      </div>
-
-                      <div className="flex-shrink-0 flex items-center space-x-4">
-                        {val?.duration}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-left p-2">{val?.description}</p>
-                    </div>
-                  </div>
-                );
-              })}
+              ))}
             </div>
           )}
         </div>
+      </div>
+      <div className="flex justify-between items-center p-4 sticky bottom-0 bg-white border-t">
+        <button
+          onClick={() => paginate(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="text-gray-900 bg-white"
+        >
+          <ChevronLeftIcon className="h-6 w-6" />
+        </button>
+        <span>
+          {currentPage} / {totalPages}
+        </span>
+        <button
+          onClick={() => paginate(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="text-gray-900 bg-white"
+        >
+          <ChevronRightIcon className="h-6 w-6" />
+        </button>
       </div>
     </QueryResult>
   );
