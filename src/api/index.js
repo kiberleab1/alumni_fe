@@ -26,8 +26,8 @@ axios.interceptors.request.use(
       }
 
       config.headers.User = JSON.stringify(user);
-      if(user){
-        config.headers["user-type"]= user.role_name;
+      if (user) {
+        config.headers["user-type"] = user.role_name;
       }
     } catch (error) {
       //TODO dev
@@ -626,9 +626,18 @@ export async function createWebContent({
   });
 }
 
-export async function getWebContentByComonent({ component }) {
-  const data = { component, pageNumber: 1, pageSize: 1 };
+export async function getWebContentByComonent({
+  component,
+  pageNumber,
+  pageSize,
+}) {
+  const data = { component, pageNumber, pageSize };
   return await axios.post(`${API_BASE_URl}/getWebContentByComponent`, data);
+}
+
+export async function deleteWebContentById({ id }) {
+  const data = { id };
+  return await axios.post(`${API_BASE_URl}/deleteWebContent`, data);
 }
 
 export function getImageBaseUrl(link) {
@@ -678,6 +687,7 @@ export async function createAlumniProfile(alumni) {
       },
     }
   );
+  return response;
 }
 
 export async function updateAlumniProfile(alumni) {
