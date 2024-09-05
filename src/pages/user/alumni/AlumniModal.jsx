@@ -7,6 +7,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { FcBusinessman } from "react-icons/fc";
 import { FcBusinesswoman } from "react-icons/fc";
+import { getImageBaseUrl } from "src/api";
 const AlumniModal = ({ isOpen, onClose, profile }) => {
   if (!isOpen) return null;
   console.log(profile);
@@ -23,9 +24,21 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
           ✕
         </button>
         <div className="flex flex-col items-center">
-          <h1 className="text-4xl md:text-5xl font-normal">Alumni Profile</h1>
           <div className="rounded-full mt-4">
-            <FcBusinesswoman className="h-40 w-40 md:h-56 md:w-56" />
+            {profile?.user_photo && profile?.user_photo.startsWith("uploads/") ? (
+              <img
+                src={getImageBaseUrl(profile?.user_photo)}
+                alt={profile?.user_id}
+                className="w-48 h-48 rounded-full mt-4"
+              />
+            ) : profile?.user_data?.gender === "male" ? (
+              <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-10" />
+            ) : profile?.user_data?.gender === "female" ? (
+              <FcBusinesswoman className="rounded-full object-cover w-full h-[130px] z-10" />
+            ) : (
+              <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-10" />
+            )     
+          }
           </div>
           <h2 className="text-3xl md:text-4xl mt-4 font-sans">
             {profile?.user_data?.name ? profile?.user_data?.name : "Helen Getachew"}
@@ -56,7 +69,7 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
             </svg>
             <a
               href="tel:+251 900 000 000"
-              className="text-blue-400 underline ml-2"
+              className="text-blue-400 underline text-left"
             >
               {profile?.user_data?.phone_number ? profile?.user_data?.phone_number : "+251 900 000 000"}
             </a>
@@ -64,9 +77,8 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
           <div className="border-b w-full my-2 border-gray-300"></div>
           <div className="w-full">
             <div
-              className={`transition-all duration-500 ease-in-out overflow-hidden border-b-4 ${
-                isOpen ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
-              }`}
+              className={`transition-all duration-500 ease-in-out overflow-hidden border-b-4 ${isOpen ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
+                }`}
             >
               <Table className="text-left w-full">
                 <tbody>
@@ -91,7 +103,7 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
                   </tr>
                   <tr className="bg-blue-300">
                     <td className="transform transition-transform duration-300 hover:translate-x-5">
-                      Shashamane
+                    {profile?.user_data?.address?.country ? profile?.user_data?.address?.country : "Ethiopia"}, {profile?.user_data?.address?.region ? profile?.user_data?.address?.region : "Addis Ababa"}, {profile?.user_data?.address?.city ? profile?.user_data?.address?.city : "Addis Ababa"}
                     </td>
                   </tr>
                   <tr>

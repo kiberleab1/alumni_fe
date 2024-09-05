@@ -115,7 +115,7 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
                   </tr>
                   <tr className="bg-blue-300">
                     <td className="transform transition-transform duration-300 hover:translate-x-5  ">
-                      Shashamane
+                    {data?.data?.user_data?.address?.country ? data?.data?.user_data?.address?.country : "Ethiopia"}, {data?.data?.user_data?.address?.region ? data?.data?.user_data?.address?.region : "Addis Ababa"}, {data?.data?.user_data?.address?.city ? data?.data?.user_data?.address?.city : "Addis Ababa"}
                     </td>
                   </tr>
                   <tr>

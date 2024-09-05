@@ -62,7 +62,7 @@ export default function EditUser({ user }) {
         const birthAddressData = await getAddressById(birthAddressId);
         setBirthAddressData(birthAddressData);
 
-        const roleData = await getRoleByName({ name: "user" });
+        const roleData = await getRoleByName({ name: "alumni" });
         if (roleData) {
           const roles = {
             roleName: roleData.data.role_name,
