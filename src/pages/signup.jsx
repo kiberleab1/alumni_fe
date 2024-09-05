@@ -53,7 +53,7 @@ const SignupForm = () => {
   const { isError, data, isLoading } = useQuery(
     ["getRoleByName"],
     async () => {
-      const roleData = await getRoleByName({ name: "user" });
+      const roleData = await getRoleByName({ name: "alumni" });
 
       setRoles(roleData.data.id);
     },

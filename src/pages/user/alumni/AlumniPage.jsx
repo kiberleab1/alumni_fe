@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "react-query";
 import useAOS from "../aos";
-import { filterAlumniProfile } from "src/api";
+import { filterAlumniProfile, getImageBaseUrl } from "src/api";
 import QueryResult from "src/components/utils/queryResults";
 import AlumniModal from "./AlumniModal";
 import { IoPersonAddSharp } from "react-icons/io5";
@@ -96,9 +96,7 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
           />
           <button
             className="bg-white text-black border border-black shadow-lg px-4 py-2 rounded-lg focus:outline-none w-full sm:w-auto"
-            onClick={() => {
-              refetch;
-            }}
+            onClick={refetch}
           >
             Filter
           </button>
@@ -137,16 +135,16 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                     key={alum.id}
                   >
                     <div className="w-28 h-28 mx-auto rounded-full bg-gray-200 mb-4 z-10 overflow-hidden">
-                      {alum.user_photo ? (
+                      {alum.user_photo && alum.user_photo.startsWith("uploads/") ? (
                         <img
-                          src={img}
+                          src={getImageBaseUrl(alum.user_photo)}
                           alt=""
                           className="rounded-full object-cover w-full h-[130px] z-0 scale-125"
                         />
                       ) : alum.gender === "male" ? (
                         <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-10" />
                       ) : (
-                        <FcBusinesswoman className="rounded-full object-cover w-full h-[130px] z-10" />
+                        <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-10" />
                       )}
 
                       {}

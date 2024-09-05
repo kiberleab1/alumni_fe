@@ -382,6 +382,17 @@ export async function getAllEvents({ pageNumber, pageSize }) {
   }
 }
 
+export async function filterEvents({ pageNumber, pageSize, keyword, value }) {
+  try {
+    return await axios.get(
+      `${API_BASE_URl}/filterEvents?pageNumber=${pageNumber}&pageSize=${pageSize}&filterKeyword=${keyword}&value=${value}`
+    );
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    throw error;
+  }
+}
+
 export async function getInstituteEvents({ institute_id, max_count }) {
   try {
     return await axios.get(
@@ -423,7 +434,6 @@ export async function deleteEvent(event_id) {
   return await axios.get(`${API_BASE_URl}/deleteEvents?id=${event_id}`);
 }
 
-export async function filterEvents() {}
 
 export async function getEventsStatByDate(institute_id, max_count) {
   return await axios.get(

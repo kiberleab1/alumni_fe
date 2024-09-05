@@ -58,7 +58,7 @@ export default function CreateUserPage() {
     ["getRoleByName", "getInstitutes"],
     async () => {
       try {
-        const roleData = await getRoleByName({ name: "user" });
+        const roleData = await getRoleByName({ name: "alumni" });
         if (roleData) {
           const roles = {
             roleName: roleData.data.role_name,

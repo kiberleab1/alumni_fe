@@ -27,7 +27,7 @@ export default function Users({ onCreateUserClick, onUserEditClick }) {
   const { isError, data, isLoading } = useQuery(
     ["getRoleByName", "getAllinstituteAdmins"],
     async () => {
-      const roleData = await getRoleByName({ name: "user" });
+      const roleData = await getRoleByName({ name: "alumni" });
       const admin_role_id = roleData.data.id;
       setAdminRoleId(admin_role_id);
 
