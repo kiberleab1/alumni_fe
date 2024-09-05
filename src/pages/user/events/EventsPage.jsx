@@ -3,7 +3,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
-import { deleteEvent, getAllEvents } from "src/api";
+import { deleteEvent, getAllEvents, getImageBaseUrl } from "src/api";
 import QueryResult from "src/components/utils/queryResults";
 import { CiLocationOn } from "react-icons/ci";
 import {
@@ -15,7 +15,7 @@ import { SlCalender } from "react-icons/sl";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { FiFilter } from "react-icons/fi";
 import { MdDriveFileRenameOutline, MdLockReset } from "react-icons/md";
-
+import image from "../../../assets/images/testimonial/2.jpg";
 export default function EventsPage({ onEventsDetailClick }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
@@ -205,8 +205,10 @@ function ListEvent({
             >
               <div className="h-[520px]">
                 <div
-                  className="bg-cover bg-center"
-                  style={{ backgroundImage: `url(${val.image})` }}
+                  className="bg-cover bg-center "
+                  style={{
+                    backgroundImage: `url(${getImageBaseUrl(val.image)})`,
+                  }}
                 ></div>
                 <div className="p-4">
                   <h2 className="text-md text-start font-bold mb-3 line-clamp-2">
