@@ -89,14 +89,14 @@ export default function JobHistoryPage({
         </div>
 
         <div
-          className=" max-w-8xl flex flex-col md:flex-row items-center justify-center space-x-6 p-4 "
+          className=" max-w-8xl flex flex-col md:flex-row   space-x-6 p-4 "
           data-aos="fade-right"
         >
-          <div className=" w-full h-auto  bg-gray-100 shadow-md rounded-lg overflow-hidden">
+          <div className=" w-full max-h-24   shadow-md rounded-lg overflow-hidden bg-gray-100">
             {jobHistorys.map((val, index) => {
               return (
                 <div
-                  className="flex items-center p-4 hover:bg-gray-200"
+                  className="flex items-center p-4 bg-gray-100 hover:bg-gray-200"
                   onClick={() => displayHistory(`${index}`, val)}
                 >
                   <img

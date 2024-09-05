@@ -8,6 +8,7 @@ import { IoPersonAddSharp } from "react-icons/io5";
 import { FcBusinessman } from "react-icons/fc";
 import { FcBusinesswoman } from "react-icons/fc";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import img from "../../../../public/gallery/gallery_1.jpg";
 const AlumniGrid = ({ onCreateAlumniClick }) => {
   const itemsPerPage = 8;
   const [currentPage, setCurrentPage] = useState(1);
@@ -128,14 +129,18 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                   >
                     <div className="w-28 h-28 mx-auto rounded-full bg-gray-200 mb-4 z-10 overflow-hidden">
                       {alum.user_photo ? (
-                        <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-0" />
+                        <img
+                          src={img}
+                          alt=""
+                          className="rounded-full object-cover w-full h-[130px] z-0 scale-125"
+                        />
                       ) : alum.gender === "male" ? (
                         <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-10" />
-                      ) : alum.gender === "female" ? (
-                        <FcBusinesswoman className="rounded-full object-cover w-full h-[130px] z-10" />
                       ) : (
                         <FcBusinesswoman className="rounded-full object-cover w-full h-[130px] z-10" />
                       )}
+
+                      {}
                     </div>
                     <h3 className="text-xl font-semibold">{alum.user_id}</h3>
                     <p className="text-gray-500">
