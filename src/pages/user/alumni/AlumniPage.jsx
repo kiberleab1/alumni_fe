@@ -147,7 +147,7 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                         <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-10" />
                       )}
 
-                      {}
+                      { }
                     </div>
                     <h3 className="text-xl font-semibold">
                       {alum?.user_data?.name
@@ -182,44 +182,56 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                 </p>
               </div>
               <nav
-                className="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                className="isolate inline-flex -space-x-px rounded-md shadow-sm overflow-hidden max-w-full"
                 aria-label="Pagination"
               >
+                {/* Previous Button */}
                 <button
                   onClick={() => paginate(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 transition-all duration-300 ${
-                    currentPage === 1
-                      ? "cursor-not-allowed"
-                      : "hover:bg-gray-50"
-                  }`}
+                  className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 transition-all duration-300 ${currentPage === 1 ? "cursor-not-allowed" : "hover:bg-gray-50"
+                    }`}
                 >
                   <IoIosArrowBack className="text-xl" />
                 </button>
-                {Array.from(
-                  { length: totalPages },
-                  (_, index) => index + 1
-                ).map((pageNumber) => (
-                  <button
-                    key={pageNumber}
-                    onClick={() => paginate(pageNumber)}
-                    className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border transition-all duration-300 ${
-                      currentPage === pageNumber
-                        ? "bg-gray-200 text-black"
-                        : "text-black bg-white border-gray-300 hover:bg-gray-50"
-                    }`}
-                  >
-                    {pageNumber}
-                  </button>
-                ))}
+
+                {/* Logic for pagination */}
+                {Array.from({ length: Math.min(10, totalPages) }, (_, index) => {
+                  let pageNumber;
+
+                  if (currentPage <= 5) {
+                    // Ensure pagination starts at 1 if on the first few pages
+                    pageNumber = index + 1;
+                  } else if (currentPage + 5 >= totalPages) {
+                    // Adjust to show last pages when near the end
+                    pageNumber = totalPages - 9 + index;
+                  } else {
+                    // Center current page in pagination list
+                    pageNumber = currentPage - 5 + index;
+                  }
+
+                  if (pageNumber > totalPages || pageNumber < 1) return null;
+
+                  return (
+                    <button
+                      key={pageNumber}
+                      onClick={() => paginate(pageNumber)}
+                      className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border transition-all duration-300 ${currentPage === pageNumber
+                          ? "bg-gray-200 text-black"
+                          : "text-black bg-white border-gray-300 hover:bg-gray-50"
+                        }`}
+                    >
+                      {pageNumber}
+                    </button>
+                  );
+                })}
+
+                {/* Next Button */}
                 <button
                   onClick={() => paginate(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 transition-all duration-300 ${
-                    currentPage === totalPages
-                      ? "cursor-not-allowed"
-                      : "hover:bg-gray-50"
-                  }`}
+                  className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 transition-all duration-300 ${currentPage === totalPages ? "cursor-not-allowed" : "hover:bg-gray-50"
+                    }`}
                 >
                   <IoIosArrowForward className="text-xl" />
                 </button>
@@ -229,26 +241,24 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
               <button
                 onClick={() => paginate(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded-lg ${
-                  currentPage === 1 ? "cursor-not-allowed" : ""
-                }`}
+                className={`bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded-lg ${currentPage === 1 ? "cursor-not-allowed" : ""
+                  }`}
               >
                 <IoIosArrowBack className="text-xl" />
               </button>
               <p className="text-sm text-gray-700">
-                Showing {indexOfFirstItem} to {indexOfLastItem} of {totalItems}{" "}
-                results
+                Showing {indexOfFirstItem} to {indexOfLastItem} of {totalItems} results
               </p>
               <button
                 onClick={() => paginate(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded-lg ${
-                  currentPage === totalPages ? "cursor-not-allowed" : ""
-                }`}
+                className={`bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded-lg ${currentPage === totalPages ? "cursor-not-allowed" : ""
+                  }`}
               >
                 <IoIosArrowForward className="text-xl" />
               </button>
             </div>
+
           </div>
         )}
         {isModalOpen && selectedAlumni && (
