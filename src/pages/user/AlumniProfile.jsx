@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Table } from "reactstrap";
-import { CiEdit, CiSaveDown1, CiSaveUp1 } from "react-icons/ci";
+import { CiEdit } from "react-icons/ci";
 import { TfiEmail } from "react-icons/tfi";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -17,9 +17,9 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 
-  const toggle = () => {
-    setIsOpen((prevOpen) => !prevOpen);
-  };
+  // const toggle = () => {
+  //   setIsOpen((prevOpen) => !prevOpen);
+  // };
   useEffect(() => {
     AOS.init({
       duration: 2000,
@@ -33,8 +33,8 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
           className="flex flex-col items-center  min-h-screen"
           data-aos="fade-down"
         >
-          <div className="flex flex-row items-center justify-center gap-3 min-w-[80%]">
-            <h1 className="text-5xl font-normal">Alumni Profile</h1>
+          <div className="flex flex-row items-center justify-center gap-3 min-w-[80%] ">
+            <h1 className="text-4xl md:text-5xl">Alumni Profile</h1>
             <div>
               <CiEdit
                 className="text-2xl "
@@ -58,7 +58,7 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
               href="mailto:helengetachew@gmail.com"
             >
               <TfiEmail className="text-2xl " />
-              {data?.data?.user_data?.email}{" "}
+              helengetachew@gmail.com{" "}
             </a>
           </div>
 

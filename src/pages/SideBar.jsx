@@ -18,6 +18,7 @@ import { deleteUserToken, getUserToken } from "src/helpers/globalStorage";
 import { useNavigate } from "react-router-dom";
 import { possibleNavigationMenus } from "src/helpers/role_maaping";
 import { useEffect } from "react";
+import useAOS from "./user/aos";
 // import { useLocation } from "react-router-dom";
 const navigationWithNoSubNavigation = [
   "Dashboard",
@@ -150,6 +151,8 @@ function SideBar() {
     console.log(itemName);
     setchildUrl(itemName);
     findParentByName(itemName);
+    setSidebarOpen(false);
+    setSidebarOpenMain(false);
   };
 
   // const location = useLocation();
@@ -159,6 +162,10 @@ function SideBar() {
   //   });
   //   handleNavigationItemClick(item.name);
   // }, []);
+  useAOS({
+    duration: 1200,
+    once: true,
+  });
   const handlePageSet = (pageName) => {
     console.log(`Page set to: ${pageName}`);
     setComponentClicked({
@@ -227,7 +234,10 @@ function SideBar() {
                       </button>
                     </div>
                   </Transition.Child>
-                  <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4 ring-1 ring-white/10">
+                  <div
+                    className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4 ring-1 ring-white/10"
+                    data-aos="fade-left"
+                  >
                     <div className="flex h-16 shrink-0 items-center">
                       <span className="text-2xl text-gray-50 font-bold font-mono">
                         X Alumni

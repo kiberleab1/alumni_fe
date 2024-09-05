@@ -156,3 +156,234 @@ export default function JobHistoryPage({
     </QueryResult>
   );
 }
+
+{
+  /* <div
+className=" max-w-8xl flex flex-col md:flex-row items-center justify-center space-x-6 p-4 "
+data-aos="fade-right"
+>
+<div className=" w-full h-auto justify-top  bg-gray-100 shadow-md rounded-lg overflow-hidden">
+  <div className="p-4 border-b">
+    <h2 className="text-xl font-bold text-left text-gray-800">
+      Users
+    </h2>
+  </div>
+  {users.map((val, index) => {
+    return (
+      <div
+        className="flex items-center p-4 hover:bg-gray-200"
+        onClick={() => displayHistory(`${val.id}`)}
+      >
+        <img
+          src={val.img}
+          alt="User"
+          className="w-16 h-16 rounded-full object-cover mr-4"
+        />
+        <div className="flex-grow text-left">
+          <p className="text-lg font-semibold text-gray-800 block">
+            {val.name}
+          </p>
+          <p className="text-sm text-gray-600 block">
+            {val.Department}
+          </p>
+        </div>
+        <div className="flex-shrink-0 flex items-center space-x-4">
+          <MdMessage className="text-blue-500 hover:text-blue-900 bg-gray-100" />
+
+          <LuPlus className="text-green-500 hover:text-green-900 bg-gray-100" />
+        </div>
+      </div>
+    );
+  })}
+</div>
+{jobHistory && (
+  <div className=" w-full shadow-md rounded-lg overflow-hidden bg-gray-200 ">
+    <div className="p-4 border-b">
+      <h2 className="text-xl font-bold text-left text-gray-800">
+        Job History
+      </h2>
+    </div>
+
+    <div>
+      <div className="flex items-center p-2">
+        <div className="flex-grow text-left">
+          <p className="text-lg font-semibold text-gray-800 block">
+            Senior Software Engineer
+          </p>
+          <i className="text-sm text-gray-600 block">Acme lnc.</i>
+        </div>
+
+        <div className="flex-shrink-0 flex items-center space-x-4">
+          Jan 2020 - Present
+        </div>
+      </div>
+      <div>
+        <p className="text-left p-2">
+          Integrated your provided card structure for Senior Software
+          Engineer as the second card, maintaining its original
+          styling.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <div className="flex items-center p-2">
+        <div className="flex-grow text-left">
+          <p className="text-lg font-semibold text-gray-800 block">
+            Front-End Developer
+          </p>
+          <i className="text-sm text-gray-600 block">XYZ Corp.</i>
+        </div>
+
+        <div className="flex-shrink-0 flex items-center space-x-4">
+          Jun 2018 - Dec 2019
+        </div>
+      </div>
+      <div>
+        <p className="text-left p-2">
+          Integrated your provided card structure for Senior Software
+          Engineer as the second card, maintaining its original
+          styling.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <div className="flex items-center p-2">
+        <div className="flex-grow text-left">
+          <p className="text-lg font-semibold text-gray-800 block">
+            Intern
+          </p>
+          <i className="text-sm text-gray-600 block">startup lnc..</i>
+        </div>
+
+        <div className="flex-shrink-0 flex items-center space-x-4">
+          May 2017 - Aug 2017
+        </div>
+      </div>
+      <div>
+        <p className="text-left p-2">
+          Integrated your provided card structure for Senior Software
+          Engineer as the second card, maintaining its original
+          styling.
+        </p>
+      </div>
+    </div>
+  </div>
+)}
+</div> */
+}
+
+// import React, { useState } from 'react';
+// import { MdMessage } from 'react-icons/md';
+// import { LuPlus } from 'react-icons/lu';
+
+// const JobHistoryPage = () => {
+//   const [selectedUser, setSelectedUser] = useState(null);
+
+//   const users = [
+//     {
+//       id: 1,
+//       name: 'John Doe',
+//       Department: 'Engineering',
+//       img: 'path/to/image1.jpg',
+//       jobHistory: [
+//         {
+//           title: 'Senior Software Engineer',
+//           company: 'Acme Inc.',
+//           duration: 'Jan 2020 - Present',
+//           description: 'Working on various software engineering projects.',
+//         },
+//         {
+//           title: 'Front-End Developer',
+//           company: 'XYZ Corp.',
+//           duration: 'Jun 2018 - Dec 2019',
+//           description: 'Developed front-end features for multiple clients.',
+//         },
+//       ],
+//     },
+//     {
+//       id: 2,
+//       name: 'Jane Smith',
+//       Department: 'Marketing',
+//       img: 'path/to/image2.jpg',
+//       jobHistory: [
+//         {
+//           title: 'Marketing Specialist',
+//           company: 'Marketing Gurus',
+//           duration: 'Jan 2019 - Present',
+//           description: 'Leading marketing campaigns and strategies.',
+//         },
+//       ],
+//     },
+//   ];
+
+//   const displayHistory = (userId) => {
+//     const user = users.find((u) => u.id === userId);
+//     setSelectedUser(user);
+//   };
+
+//   return (
+//     <div className="flex">
+//       <div className="w-1/3 h-auto bg-gray-100 shadow-md rounded-lg overflow-hidden">
+//         <div className="p-4 border-b">
+//           <h2 className="text-xl font-bold text-left text-gray-800">Users</h2>
+//         </div>
+//         {users.map((val) => (
+//           <div
+//             key={val.id}
+//             className="flex items-center p-4 hover:bg-gray-200 cursor-pointer"
+//             onClick={() => displayHistory(val.id)}
+//           >
+//             <img
+//               src={val.img}
+//               alt="User"
+//               className="w-16 h-16 rounded-full object-cover mr-4"
+//             />
+//             <div className="flex-grow text-left">
+//               <p className="text-lg font-semibold text-gray-800 block">
+//                 {val.name}
+//               </p>
+//               <p className="text-sm text-gray-600 block">{val.Department}</p>
+//             </div>
+//             <div className="flex-shrink-0 flex items-center space-x-4">
+//               <MdMessage className="text-blue-500 hover:text-blue-900 bg-gray-100" />
+//               <LuPlus className="text-green-500 hover:text-green-900 bg-gray-100" />
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+
+//       {selectedUser && (
+//         <div className="w-2/3 shadow-md rounded-lg overflow-hidden bg-gray-200 ml-4">
+//           <div className="p-4 border-b">
+//             <h2 className="text-xl font-bold text-left text-gray-800">
+//               {selectedUser.name}'s Job History
+//             </h2>
+//           </div>
+
+//           {selectedUser.jobHistory.map((job, index) => (
+//             <div key={index}>
+//               <div className="flex items-center p-2">
+//                 <div className="flex-grow text-left">
+//                   <p className="text-lg font-semibold text-gray-800 block">
+//                     {job.title}
+//                   </p>
+//                   <i className="text-sm text-gray-600 block">{job.company}</i>
+//                 </div>
+//                 <div className="flex-shrink-0 flex items-center space-x-4">
+//                   {job.duration}
+//                 </div>
+//               </div>
+//               <div>
+//                 <p className="text-left p-2">{job.description}</p>
+//               </div>
+//             </div>
+//           ))}
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default JobHistoryPage;
