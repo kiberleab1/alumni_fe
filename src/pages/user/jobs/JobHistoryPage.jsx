@@ -109,24 +109,6 @@ export default function JobHistoryPage({ onCreateJobHistoryClick, onEditJobHisto
                 </div>
               </div>
             ))}
-
-            <div className="flex justify-between items-center p-4 sticky bottom-0 bg-white border-t">
-              <button
-                onClick={() => paginate(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="text-gray-600"
-              >
-                <ChevronLeftIcon className="h-6 w-6" />
-              </button>
-              <span>{currentPage} / {totalPages}</span>
-              <button
-                onClick={() => paginate(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="text-gray-600"
-              >
-                <ChevronRightIcon className="h-6 w-6" />
-              </button>
-            </div>
           </div>
 
           {isModalOpen && showJobHistoryDetails && selectedJobHistory && (
@@ -158,6 +140,25 @@ export default function JobHistoryPage({ onCreateJobHistoryClick, onEditJobHisto
             </div>
           )}
         </div>
+      </div>
+      <div className="flex justify-between items-center p-4 sticky bottom-0 bg-white border-t">
+        <button
+          onClick={() => paginate(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="text-gray-900 bg-white"
+        >
+          <ChevronLeftIcon className="h-6 w-6" />
+        </button>
+        <span>
+          {currentPage} / {totalPages}
+        </span>
+        <button
+          onClick={() => paginate(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="text-gray-900 bg-white"
+        >
+          <ChevronRightIcon className="h-6 w-6" />
+        </button>
       </div>
     </QueryResult>
   );
