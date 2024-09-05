@@ -53,32 +53,39 @@ const subNavigation = [
     icon: PlusCircleIcon,
     current: false,
   },
-  {
-    name: "Create About us",
-    parent: "WebContent",
-    icon: PlusCircleIcon,
-    current: false,
-  },
-  {
-    name: "Create Slide Show",
-    parent: "WebContent",
-    icon: PlusCircleIcon,
-    current: false,
-  },
-  {
-    name: "Create Our Story Page",
-    parent: "WebContent",
-    icon: PlusCircleIcon,
-    current: false,
-  },
-  {
-    name: "Create Gallery Show",
-    parent: "WebContent",
-    icon: PlusCircleIcon,
-    current: false,
-  },
+
   {
     name: "Manage Testimony",
+    parent: "WebContent",
+    icon: PencilIcon,
+    current: false,
+  },
+  {
+    name: "Manage About us",
+    parent: "WebContent",
+    icon: PencilIcon,
+    current: false,
+  },
+  {
+    name: "Manage Gallery",
+    parent: "WebContent",
+    icon: PencilIcon,
+    current: false,
+  },
+  {
+    name: "Manage SlideShow",
+    parent: "WebContent",
+    icon: PencilIcon,
+    current: false,
+  },
+  {
+    name: "Manage Mission",
+    parent: "WebContent",
+    icon: PencilIcon,
+    current: false,
+  },
+  {
+    name: "Manage Vision",
     parent: "WebContent",
     icon: PencilIcon,
     current: false,

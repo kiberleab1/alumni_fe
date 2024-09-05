@@ -1,4 +1,5 @@
 import { ErrorMessage, Field, Formik } from "formik";
+import { useQueryClient } from "react-query";
 import { useMutation } from "react-query";
 
 import {
@@ -13,7 +14,7 @@ import {
 import { createWebContent } from "src/api";
 import * as Yup from "yup";
 
-function CreateWebContent() {
+function CreateMissionContent() {
   return (
     <>
       <CreateWebContentForm />
@@ -21,15 +22,18 @@ function CreateWebContent() {
   );
 }
 
-export default CreateWebContent;
+export default CreateMissionContent;
 
 function CreateWebContentForm() {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation(createWebContent, {
     onSuccess: () => {
-      console.log("ayyay");
+      queryClient.invalidateQueries("getAllMissionComponent");
     },
     onError: (err) => {
-      console.log(err);
+      console.log({ err });
+      queryClient.invalidateQueries("getAllMissionComponent");
     },
   });
   // const typesOfContent = [{ name: "about us" }, { name: "gallery" }];
@@ -44,17 +48,18 @@ function CreateWebContentForm() {
     // chooseInput: Yup.string().required("Required"),
     title: Yup.string().required("Required"),
     description: Yup.string().required("Required"),
-    images: Yup.array()
-      .min(1, "Please select at least one image")
-      .required("Required"),
+    images: Yup.array(),
+    // .min(1, "Please select at least one image")
+    // .required("Required"),
   });
   const handleSubmit = (values) => {
     mutation.mutate({
-      component: "aboutus",
+      component: "Mission",
       title: values.title,
       description: values.description,
       images: values.images,
     });
+
     // Perform form submission actions here
   };
   return (
@@ -63,7 +68,7 @@ function CreateWebContentForm() {
         <Container>
           <Row className="justify-content-center">
             <Col md="7" className="text-center">
-              <h1 className="title font-bold">About us Page</h1>
+              <h1 className="title font-bold">Mission Page</h1>
               <h6 className="subtitle">
                 Here you can check Demos we created based on WrapKit. Its quite
                 easy to Create your own dream website &amp; dashboard in
@@ -81,7 +86,7 @@ function CreateWebContentForm() {
               validationSchema={validationSchema}
               onSubmit={handleSubmit}
             >
-              {({ handleSubmit, setFieldValue }) => (
+              {({ handleSubmit }) => (
                 <Form className="row" onSubmit={handleSubmit}>
                   {/* <FormGroup className="md-12">
                     <Label htmlFor="chooseInput">Choose Page</Label>
@@ -136,7 +141,7 @@ function CreateWebContentForm() {
                       className="text-danger"
                     />
                   </FormGroup>
-                  <FormGroup className="col-md-12">
+                  {/* <FormGroup className="col-md-12">
                     <Label htmlFor="images">Select Multiple Images</Label>
                     <br />
                     <input
@@ -159,7 +164,7 @@ function CreateWebContentForm() {
                       component="div"
                       className="text-danger"
                     />
-                  </FormGroup>
+                  </FormGroup> */}
                   <Col md="12">
                     <Button
                       type="submit"

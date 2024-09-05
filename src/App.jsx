@@ -47,7 +47,7 @@ const queryClient = new QueryClient({
 
 function App() {
   const activeUrl = window.location.pathname;
-
+  console.log(activeUrl.trim().toLowerCase().includes("/user"));
   console.log(window.location.pathname);
 
   return (
@@ -108,8 +108,9 @@ function App() {
             <Route path="/" element={<Navigate to="/landing" replace />} />
             <Route path="*" element={<NotFoundComponent />} />
           </Routes>
-          {!activeUrl.startsWith("/user") &&
-            !activeUrl.startsWith("/admin") && <Footer />}
+          {!activeUrl.includes("/user ") && !activeUrl.includes("/admin") && (
+            <Footer />
+          )}
         </div>
       </BrowserRouter>
     </QueryClientProvider>

@@ -8,7 +8,11 @@ import AOS from "aos";
 import { useEffect } from "react";
 function AboutUsPage() {
   const { isError, data, isLoading } = useQuery("aboutUs", async () => {
-    return await getWebContentByComonent({ component: "aboutus" });
+    return await getWebContentByComonent({
+      component: "aboutus",
+      pageNumber: 1,
+      pageSize: 1,
+    });
   });
   console.log(data);
 

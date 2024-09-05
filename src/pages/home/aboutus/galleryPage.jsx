@@ -13,7 +13,11 @@ function GalleryPage() {
     imagesList: [],
   });
   const { isError, data, isLoading } = useQuery(["gallery"], async () => {
-    const data = await getWebContentByComonent({ component: "gallery" });
+    const data = await getWebContentByComonent({
+      component: "gallery",
+      pageNumber: 1,
+      pageSize: 1,
+    });
     const imgArray = [];
     data.data.map((img) => {
       img.image.map((link) => {

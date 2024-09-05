@@ -18,7 +18,11 @@ function LandingPage() {
     imagesList: [],
   });
   const { isError, data, isLoading } = useQuery(["slideshow"], async () => {
-    const data = await getWebContentByComonent({ component: "slideshow" });
+    const data = await getWebContentByComonent({
+      component: "slideshow",
+      pageNumber: 1,
+      pageSize: 1,
+    });
     const imgArray = [];
     data.data.map((img) => {
       img.image.map((link) => {
