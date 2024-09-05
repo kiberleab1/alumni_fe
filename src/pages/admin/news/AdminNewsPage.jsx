@@ -153,13 +153,13 @@ export default function NewsPage({ onCreateNewsClick, onNewsEditClick }) {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm text-gray-900">
-                            {news.ownerAdminId ? news.ownerAdminId : "N/A"}
+                            {news.adminName	 ? news.adminName	 : "N/A"}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm text-gray-900">
-                            {news.ownerInstituteId
-                              ? news.ownerInstituteId
+                            {news.instituteName	
+                              ? news.instituteName	
                               : "N/A"}
                           </div>
                         </td>

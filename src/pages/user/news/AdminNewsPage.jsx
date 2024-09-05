@@ -2,7 +2,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { deletedNews, getAllNews } from "src/api";
+import { deletedNews, getAllNews, getImageBaseUrl } from "src/api";
 import { convertDate, formatDate, truncateDescription } from "src/utils/utils";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -76,7 +76,7 @@ export default function NewsPage({ onNewsDetailClick }) {
                 <div className="group cursor-pointer border border-gray-300 rounded-2xl p-2 sm:p-5 transition-all duration-300 hover:border-indigo-600">
                   <div className="flex justify-center mb-6">
                     <img
-                      src="https://pagedone.io/asset/uploads/1696244579.png"
+                      src= {getImageBaseUrl(val.image)}
                       alt="Event"
                       className="rounded-lg"
                     />

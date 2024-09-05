@@ -108,9 +108,9 @@ function App() {
             <Route path="/" element={<Navigate to="/landing" replace />} />
             <Route path="*" element={<NotFoundComponent />} />
           </Routes>
-          {!activeUrl.includes("/user ") && !activeUrl.includes("/admin") && (
-            <Footer />
-          )}
+          {activeUrl != "/user" &&
+            activeUrl != "/admin" &&
+            activeUrl != "/admin*" && <Footer />}
         </div>
       </BrowserRouter>
     </QueryClientProvider>
