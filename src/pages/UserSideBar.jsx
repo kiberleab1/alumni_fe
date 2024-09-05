@@ -17,6 +17,9 @@ import ComponentRender from "../pages/UserComponentRender";
 import CreateAdminPage from "./admin/admins/createAdmin";
 import { useQuery } from "react-query";
 import { getAllSettings, getImageBaseUrl } from "src/api";
+import { BiMessageSquareCheck } from "react-icons/bi";
+import { MdConnectWithoutContact } from "react-icons/md";
+import { deleteUserToken } from "src/helpers/globalStorage";
 // import { useLocation } from "react-router-dom";
 
 const navigation = [
@@ -29,6 +32,13 @@ const navigation = [
   },
   { name: "Alumni", href: "#", icon: AcademicCapIcon, current: false },
   { name: "Jobs", href: "#", icon: BriefcaseIcon, current: false },
+  {
+    name: "My Connections",
+    href: "#",
+    icon: MdConnectWithoutContact,
+    current: false,
+  },
+  { name: "Chat", href: "#", icon: BiMessageSquareCheck, current: false },
   { name: "Jobs History", href: "#", icon: BriefcaseIcon, current: false },
   {
     name: "Document Verification",
@@ -46,6 +56,8 @@ const navigationWithNoSubNavigation = [
   "Profile",
   "Events",
   "News",
+  "Chat",
+  "My Connections",
   "Jobs",
   "Jobs History",
   "Alumni",
@@ -456,9 +468,13 @@ function UserSideBar() {
                       <a
                         href="#"
                         className={classNames(
-                          "text-gray-400 hover:text-white hover:bg-gray-800",
+                          "text-gray-900 hover:text-white hover:bg-gray-800",
                           "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                         )}
+                        onClick={() => {
+                          deleteUserToken();
+                          window.location.href = "/landing/program/login";
+                        }}
                       >
                         <ArrowLongLeftIcon
                           className="h-6 w-6 shrink-0"

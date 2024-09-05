@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { IoIosSend, IoMdArrowRoundBack } from "react-icons/io";
 
-const ChatUi = () => {
+export default function ChatUi() {
   const [selectedChat, setSelectedChat] = useState(null);
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState({
@@ -172,6 +172,4 @@ const ChatUi = () => {
       </div>
     </div>
   );
-};
-
-export default ChatUi;
+}

@@ -3,7 +3,7 @@ import img from "../../../assets/images/testimonial/1.jpg";
 import img2 from "../../../assets/images/testimonial/2.jpg";
 import img3 from "../../../assets/images/testimonial/3.jpg";
 import img4 from "../../../assets/images/testimonial/4.jpg";
-const ConnectionNetwork = () => {
+export default function ConnectionNetwork() {
   const [activeTab, setActiveTab] = useState("connections");
   const [requests, setRequests] = useState([
     {
@@ -148,6 +148,4 @@ const ConnectionNetwork = () => {
       )}
     </div>
   );
-};
-
-export default ConnectionNetwork;
+}
