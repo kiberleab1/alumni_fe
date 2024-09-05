@@ -1,5 +1,11 @@
 import { useQueryClient, useMutation, useQuery } from "react-query";
-import { createAddress, getInstitutes, getRoleByName, getRoles, signup } from "src/api";
+import {
+  createAddress,
+  getInstitutes,
+  getRoleByName,
+  getRoles,
+  signup,
+} from "src/api";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Container, Row, Col, FormGroup, Label, Button } from "reactstrap";
@@ -38,7 +44,7 @@ const SignupForm = () => {
     onSuccess: () => {
       queryClient.invalidateQueries("signup");
       toast.success("Signup success. Welcome to the alumni system!");
-  
+
       setTimeout(() => {
         navigate("/landing/program/login");
       }, 1000);
@@ -53,7 +59,7 @@ const SignupForm = () => {
   const { isError, data, isLoading } = useQuery(
     ["getRoleByName"],
     async () => {
-      const roleData = await getRoleByName({ name: "user" });
+      const roleData = await getRoleByName({ name: "alumni" });
 
       setRoles(roleData.data.id);
     },
@@ -83,7 +89,7 @@ const SignupForm = () => {
       placeholder: "House Number",
     },
   };
-  console.log(roles)
+  console.log(roles);
   const userInformationFields = {
     first_name: {
       label: "First Name",
@@ -162,8 +168,8 @@ const SignupForm = () => {
     onSubmit: async (values) => {
       console.log("Form values address:", values);
       const result = await createAddress(values);
-      if(result.data){
-        setAddressData(result.data.id)        
+      if (result.data) {
+        setAddressData(result.data.id);
       }
       // submit here
       setstepOne(false);
@@ -187,8 +193,8 @@ const SignupForm = () => {
     onSubmit: async (values) => {
       console.log("Form values birth:", values);
       const result = await createAddress(values);
-      if(result.data){
-        setBirthPlaceAddress(result.data.id)        
+      if (result.data) {
+        setBirthPlaceAddress(result.data.id);
       }
       // submit here
       setstepOne(false);
@@ -210,10 +216,10 @@ const SignupForm = () => {
       }, {})
     ),
     onSubmit: async (values) => {
-      values['role_id'] =  roles;
-      values['address_id'] =  addressData;
-      values['birth_place_id'] =  birthPlaceAddress;
-      values['institute_id'] =  "714642fd-c7d5-4372-9c57-17858b4c1933";
+      values["role_id"] = roles;
+      values["address_id"] = addressData;
+      values["birth_place_id"] = birthPlaceAddress;
+      values["institute_id"] = "714642fd-c7d5-4372-9c57-17858b4c1933";
 
       console.log("Form values user info:", values);
       // submit here
@@ -569,7 +575,7 @@ const SignupForm = () => {
           )}
         </div>
       </div>
-      {/* 
+      {/*
       <div className="spacer" id="forms-component">
         <Container>
           <Row className="justify-content-center">
@@ -1018,7 +1024,6 @@ const SignupForm = () => {
         </Container> */}
       {/* </div> */}
       <ToastContainer />
-
     </div>
   );
 };

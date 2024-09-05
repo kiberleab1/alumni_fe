@@ -26,6 +26,9 @@ axios.interceptors.request.use(
       }
 
       config.headers.User = JSON.stringify(user);
+      if (user) {
+        config.headers["user-type"] = user.role_name;
+      }
     } catch (error) {
       //TODO dev
       // config.headers.Authorization = "Bearer dev";
@@ -688,6 +691,7 @@ export async function createAlumniProfile(alumni) {
       },
     }
   );
+  return response;
 }
 
 export async function updateAlumniProfile(alumni) {
@@ -768,10 +772,10 @@ export async function updateTestimonial({
   return result;
 }
 export async function filterAlumniProfile({
-  pageNumber,
-  pageSize,
-  filterKeyword,
-  value,
+  pageNumber = 1,
+  pageSize = 10,
+  filterKeyword = "all",
+  value = "all",
 }) {
   console.log(pageNumber, pageSize, filterKeyword, value);
   const result = await axios.get(

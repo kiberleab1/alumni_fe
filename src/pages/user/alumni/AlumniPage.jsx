@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery } from "react-query";
 import useAOS from "../aos";
 import { getAllAlumni } from "src/api";
-import defaultImg from "../../../assets/images/testimonial/2.jpg";
 import QueryResult from "src/components/utils/queryResults";
 import AlumniModal from "./AlumniModal";
 import { IoPersonAddSharp } from "react-icons/io5";
@@ -14,7 +13,7 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAlumni, setSelectedAlumni] = useState(null);
-  const { isError, data, isLoading } = useQuery(
+  const { isError, data, isLoading, refetch } = useQuery(
     ["getAllAlumni", currentPage],
     () => getAllAlumni({ pageNumber: currentPage, pageSize: itemsPerPage }),
     { keepPreviousData: true, refetchOnWindowFocus: false }
@@ -87,9 +86,11 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
             value={searchQuery}
             onChange={handleSearchChange}
           />
-
-          <button className="bg-black text-white px-4 py-2 rounded-lg focus:outline-none w-full sm:w-auto">
-            Filters
+          <button
+            className="bg-white text-black border border-black shadow-lg px-4 py-2 rounded-lg focus:outline-none w-full sm:w-auto"
+            onClick={refetch}
+          >
+            Filter
           </button>
         </div>
 
@@ -120,7 +121,7 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
               {filteredAlumni.length > 0 ? (
-                filteredAlumni.map((alum, index) => (
+                filteredAlumni.map((alum) => (
                   <div
                     className="bg-white shadow-md rounded-lg p-6 text-center"
                     key={alum.id}
