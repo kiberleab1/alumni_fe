@@ -17,7 +17,7 @@ import ComponentRender from "../pages/UserComponentRender";
 import CreateAdminPage from "./admin/admins/createAdmin";
 import { useQuery } from "react-query";
 import { getAllSettings, getImageBaseUrl } from "src/api";
-import { BiMessageSquareCheck } from "react-icons/bi";
+import { BiChat } from "react-icons/bi";
 import { MdConnectWithoutContact } from "react-icons/md";
 import { deleteUserToken } from "src/helpers/globalStorage";
 // import { useLocation } from "react-router-dom";
@@ -38,7 +38,7 @@ const navigation = [
     icon: MdConnectWithoutContact,
     current: false,
   },
-  { name: "Chat", href: "#", icon: BiMessageSquareCheck, current: false },
+  { name: "Chat", href: "#", icon: BiChat, current: false },
   { name: "Jobs History", href: "#", icon: BriefcaseIcon, current: false },
   {
     name: "Document Verification",

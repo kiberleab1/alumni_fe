@@ -25,6 +25,45 @@ export default function ChatUi() {
         time: "5:40:00 PM",
         isReceived: true,
       },
+      {
+        sender: "You",
+        message: "Hi! I'm doing well, thanks. How about you?",
+        time: "5:35:00 PM",
+        isReceived: false,
+      },
+      {
+        sender: "Abebe",
+        message:
+          "I'm great! Just wanted to catch up. Are you planning to attend the alumni event next month?",
+        time: "5:40:00 PM",
+        isReceived: true,
+      },
+      {
+        sender: "You",
+        message: "Hi! I'm doing well, thanks. How about you?",
+        time: "5:35:00 PM",
+        isReceived: false,
+      },
+      {
+        sender: "Abebe",
+        message:
+          "I'm great! Just wanted to catch up. Are you planning to attend the alumni event next month? Are you planning to attend the alumni event next month?",
+        time: "5:40:00 PM",
+        isReceived: true,
+      },
+      {
+        sender: "You",
+        message: "Hi! I'm doing well, thanks. How about you?",
+        time: "5:35:00 PM",
+        isReceived: false,
+      },
+      {
+        sender: "Abebe",
+        message:
+          "I'm great! Just wanted to catch up. Are you planning to attend the alumni event next month?",
+        time: "5:40:00 PM",
+        isReceived: true,
+      },
     ],
     Alemu: [
       {
@@ -65,7 +104,7 @@ export default function ChatUi() {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-fit lg:h-[800px]">
       <div
         className={`w-[100%] md:w-1/3 p-1 md:p-4 border-r  ${
           selectedChat ? "hidden md:block" : "block"
@@ -104,43 +143,19 @@ export default function ChatUi() {
                 <IoMdArrowRoundBack className="text-black" />
               </button>
             </div>
-            <div className="flex flex-col overflow-y-auto h- space-y-4">
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-              <div className="flex-grow"></div>
-
+            <div className="flex flex-col overflow-y-auto h-screen space-y-4">
               {chatHistory[selectedChat].map((chat, index) => (
                 <div
                   key={index}
-                  className={`flex ${
+                  className={`flex  ${
                     chat.isReceived ? "justify-start" : "justify-end"
                   }`}
                 >
                   <div
                     className={`px-3 py-1  sm:p-3 rounded-lg ${
-                      chat.isReceived ? "bg-gray-200" : "bg-black text-white"
+                      chat.isReceived
+                        ? "bg-gray-200 text-black max-w-[60%]"
+                        : "bg-black text-white"
                     }`}
                   >
                     <p className="text-start">{chat.message}</p>
@@ -151,14 +166,13 @@ export default function ChatUi() {
                 </div>
               ))}
             </div>
-
             <div className="flex items-center border-t ">
               <input
                 type="text"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Type a message..."
-                className="flex-1 p-1 border rounded-r-none rounded-l-lg border-collapse"
+                className="flex-1 p-1 border rounded-r-none rounded-l-lg border-collapse bg-gray-100 text-black"
               />
               <button
                 onClick={onSendMessage}
