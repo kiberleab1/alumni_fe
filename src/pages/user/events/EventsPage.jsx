@@ -3,7 +3,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
-import { deleteEvent, filterEvents, getImageBaseUrl } from "src/api";
+import { deleteEvent, getAllEvents, getImageBaseUrl } from "src/api";
 import QueryResult from "src/components/utils/queryResults";
 import { CiLocationOn } from "react-icons/ci";
 import {
@@ -15,37 +15,21 @@ import { SlCalender } from "react-icons/sl";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { FiFilter } from "react-icons/fi";
 import { MdDriveFileRenameOutline, MdLockReset } from "react-icons/md";
-
+import image from "../../../assets/images/testimonial/2.jpg";
 export default function EventsPage({ onEventsDetailClick }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [filterType, setFilterType] = useState("all");
-  const [filterValue, setFilterValue] = useState("all");
-  const [pendingFilterType, setPendingFilterType] = useState("all");
-  const [pendingFilterValue, setPendingFilterValue] = useState("all");
   const itemsPerPage = 8;
-  const queryClient = useQueryClient();
 
-  const { isError, data, isLoading, refetch } = useQuery(
-    ["filterEvents", currentPage, filterType, filterValue], 
+  const { isError, data, isLoading } = useQuery(
+    ["getAllEvents", currentPage],
     async () => {
-      const result = await filterEvents({
+      return await getAllEvents({
         pageNumber: currentPage,
         pageSize: itemsPerPage,
-        keyword: pendingFilterType,
-        value: pendingFilterValue,
       });
-      return result;
     },
     { keepPreviousData: true }
   );
-
-  const applyFilters = () => {
-console.log(pendingFilterType)
-    console.log(pendingFilterValue);
-    setFilterType(pendingFilterType);
-    setFilterValue(pendingFilterValue); 
-    refetch(); 
-  };
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
@@ -57,9 +41,6 @@ console.log(pendingFilterType)
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
           itemsPerPage={itemsPerPage}
-          setPendingFilterType={setPendingFilterType}
-          setPendingFilterValue={setPendingFilterValue}
-          applyFilters={applyFilters}
         />
       </div>
     </QueryResult>
@@ -73,29 +54,11 @@ function ListEvent({
   currentPage,
   setCurrentPage,
   itemsPerPage,
-  setPendingFilterType,
-  setPendingFilterValue,
-  applyFilters,
 }) {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState({ type: null, value: null });
-
-  const handleFilterChange = (type, value) => {
-    setSelectedFilter({ type, value });
-    setPendingFilterType(type);
-    setPendingFilterValue(value);
-  };
-
-  const handleApplyFilters = () => {
-    applyFilters();
-    setIsDropdownOpen(false);
-  };
-
-  const handleClearFilters = () => {
-    setSelectedFilter({ type: null, value: null });
-    setPendingFilterType(null);
-    setPendingFilterValue(null);
-  };
+  // @ts-ignore
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const queryClient = useQueryClient();
 
   const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
   const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalItems);
@@ -105,6 +68,78 @@ function ListEvent({
     if (pageNumber < 1 || pageNumber > totalPages) return;
     setCurrentPage(pageNumber);
   };
+
+  // @ts-ignore
+  const openModal = (event) => {
+    setSelectedEvent(event);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedEvent(null);
+    setIsModalOpen(false);
+  };
+
+  const { mutate: deleteEventModalAction } = useMutation(deleteEvent, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("getAllEvents");
+      closeModal();
+      toast.success("Event deleted successfully!");
+    },
+    onError: (error) => {
+      closeModal();
+      queryClient.invalidateQueries("getAllEvents");
+      console.error("Error deleting event:", error);
+      toast.error("Error deleting event!");
+    },
+  });
+
+  // @ts-ignore
+  const confirmDeletion = () => {
+    if (selectedEvent) {
+      deleteEventModalAction(selectedEvent.id);
+    }
+  };
+  const [filteredItems, setFilteredItems] = useState(eventsData);
+  console.log(filteredItems);
+
+  const [isAscending, setIsAscending] = useState(true);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const uniqueInstitutes = [
+    // @ts-ignore
+    ...new Set(eventsData.map((item) => item.instituteName)),
+  ];
+
+  const filterByInstitute = (institute) => {
+    console.log(institute);
+
+    setFilteredItems(
+      eventsData.filter((item) => item.instituteName == institute)
+    );
+
+    setIsDropdownOpen(false);
+  };
+
+  const sortByDate = () => {
+    const sortedItems = [...filteredItems].sort((a, b) =>
+      isAscending
+        ? // @ts-ignore
+          new Date(a.createdAt) - new Date(b.createdAt)
+        : // @ts-ignore
+          new Date(b.createdAt) - new Date(a.createdAt)
+    );
+    setFilteredItems(sortedItems);
+    setIsAscending(!isAscending);
+    setIsDropdownOpen(false);
+  };
+
+  const resetFilters = () => {
+    setFilteredItems(eventsData);
+    setIsAscending(true);
+    setIsDropdownOpen(false);
+  };
+
   return (
     <div className="flex flex-col bg-gray-20 rounded-lg w-full">
       <div className="sticky top-0 sm:flex sm:items-center flex flex-row z-50 bg-gray-100">
@@ -124,108 +159,56 @@ function ListEvent({
       </div>
       <div>
         {isDropdownOpen && (
-          <div className="absolute right-0 bg-white shadow-lg p-6 rounded-md z-50 w-80">
-            <div className="mt-4 grid gap-4">
-              <div className="grid gap-2">
-                <label className="text-sm font-medium text-gray-900">Order By</label>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      value="desc"
-                      name="created"
-                      className="mr-2"
-                      checked={selectedFilter.type === 'created' && selectedFilter.value === 'desc'}
-                      onChange={() => handleFilterChange('created', 'desc')}
-                    />
-                    Created Date (Descending)
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      value="asc"
-                      name="created"
-                      className="mr-2"
-                      checked={selectedFilter.type === 'created' && selectedFilter.value === 'asc'}
-                      onChange={() => handleFilterChange('created', 'asc')}
-                    />
-                    Created Date (Ascending)
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid gap-2">
-                <label className="text-sm font-medium text-gray-900">Order By</label>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      value="desc"
-                      name="deadline"
-                      className="mr-2"
-                      checked={selectedFilter.type === 'deadline' && selectedFilter.value === 'desc'}
-                      onChange={() => handleFilterChange('deadline', 'desc')}
-                    />
-                    Deadline Date (Descending)
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      value="asc"
-                      name="deadline"
-                      className="mr-2"
-                      checked={selectedFilter.type === 'deadline' && selectedFilter.value === 'asc'}
-                      onChange={() => handleFilterChange('deadline', 'asc')}
-                    />
-                    Deadline Date (Ascending)
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid gap-2">
-                <label htmlFor="institute-filter" className="text-sm font-medium text-gray-900">
-                  Institute
-                </label>
-                <input
-                  id="institute-filter"
-                  type="text"
-                  placeholder="Search institute events..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-black"
-                  value={selectedFilter.type === 'institute' ? selectedFilter.value : ''}
-                  onChange={(e) => handleFilterChange('institute', e.target.value)}
-                />
-              </div>
-
-              <div className="flex justify-end gap-2">
+          <div className="absolute mt-2 w-48 rounded-md shadow-lg bg-gray-300  ring-1 ring-black ring-opacity-5 right-0 top-[200px] sm:top-[150px] z-50 m-2">
+            <div className="w-8 h-8  bg-gray-300 items-center justify-center m-auto rotate-45 -translate-y-3"></div>
+            <div className="py-2">
+              {uniqueInstitutes.map((val, idx) => (
                 <button
-                  className="px-4 py-2 text-gray-100 border border-gray-300 rounded-md hover:bg-gray-50"
-                  onClick={handleClearFilters}
+                  onClick={() => filterByInstitute(val)}
+                  className=" px-4 py-2 text-gray-700 bg-inherit text-start hover:bg-gray-100 hover:text-black cursor-pointer flex flex-row gap-2 text-sm"
+                  key={idx}
                 >
-                  Clear Filters
+                  <MdDriveFileRenameOutline className="text-4xl text-start flex gap-2" />{" "}
+                  {val}
                 </button>
-                <button
-                  className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
-                  onClick={handleApplyFilters}
-                >
-                  Apply Filters
-                </button>
+              ))}
+
+              <div
+                onClick={sortByDate}
+                className=" px-4 py-2 text-gray-700 hover:bg-gray-100  hover:text-black cursor-pointer flex flex-row items-center gap-2"
+              >
+                {isAscending ? <TbSortDescending /> : <TbSortAscending />} Date
+              </div>
+              <div
+                onClick={resetFilters}
+                className=" px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-black cursor-pointer flex flex-row gap-2"
+              >
+                <MdLockReset /> Reset
               </div>
             </div>
           </div>
         )}
-        
+        {/* <ul className="mt-4">
+          {filteredItems.map((item, index) => (
+            <li key={index} className="mb-2 p-2 border border-gray-300 rounded">
+              {item.createdAt} - {item.instituteName}
+            </li>
+          ))}
+        </ul> */}
       </div>
       <div className=" mt-6 container w-full z-10">
         <div className="flex flex-wrap items-center overflow-y-scroll scroll-auto">
-          {eventsData?.map((val, idx) => (
+          {filteredItems.map((val, idx) => (
             <div
-              className="relative w-full sm:w-[80%] md:w-1/3 lg:w-1/3 xl:w-[22%] bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105 mx-3 md:mx-4 my-4"
+              className="relative w-full sm:w-[320px] bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105 mx-3 md:mx-4 my-4"
               key={idx}
             >
               <div className="h-[520px]">
                 <div
-                  className="bg-cover bg-center"
-                  style={{ backgroundImage: `url(${getImageBaseUrl(val.image)})` }}
+                  className="bg-cover bg-center "
+                  style={{
+                    backgroundImage: `url(${getImageBaseUrl(val.image)})`,
+                  }}
                 ></div>
                 <div className="p-4">
                   <h2 className="text-md text-start font-bold mb-3 line-clamp-2">
@@ -284,8 +267,9 @@ function ListEvent({
           <button
             onClick={() => handlePagination(currentPage - 1)}
             disabled={currentPage === 1}
-            className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 ${currentPage === 1 ? "cursor-not-allowed" : "hover:bg-gray-50"
-              }`}
+            className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 ${
+              currentPage === 1 ? "cursor-not-allowed" : "hover:bg-gray-50"
+            }`}
           >
             <IoIosArrowBack className="text-xl" />
           </button>
@@ -294,10 +278,11 @@ function ListEvent({
               <button
                 key={pageNumber}
                 onClick={() => handlePagination(pageNumber)}
-                className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border ${currentPage === pageNumber
-                  ? "bg-gray-200 text-black "
-                  : "text-black bg-white border-gray-300 hover:bg-gray-50"
-                  }`}
+                className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border ${
+                  currentPage === pageNumber
+                    ? "bg-gray-200 text-black "
+                    : "text-black bg-white border-gray-300 hover:bg-gray-50"
+                }`}
               >
                 {pageNumber}
               </button>
@@ -306,10 +291,11 @@ function ListEvent({
           <button
             onClick={() => handlePagination(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 ${currentPage === totalPages
-              ? "cursor-not-allowed"
-              : "hover:bg-gray-50"
-              }`}
+            className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 ${
+              currentPage === totalPages
+                ? "cursor-not-allowed"
+                : "hover:bg-gray-50"
+            }`}
           >
             <IoIosArrowForward className="text-xl" />
           </button>
