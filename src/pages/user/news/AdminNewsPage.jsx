@@ -76,7 +76,7 @@ export default function NewsPage({ onNewsDetailClick }) {
                 <div className="group cursor-pointer border border-gray-300 rounded-2xl p-2 sm:p-5 transition-all duration-300 hover:border-indigo-600">
                   <div className="flex justify-center mb-6">
                     <img
-                      src= {getImageBaseUrl(val.image)}
+                      src={getImageBaseUrl(val.image)}
                       alt="Event"
                       className="rounded-lg"
                     />

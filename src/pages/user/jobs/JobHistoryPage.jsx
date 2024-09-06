@@ -13,13 +13,17 @@ import { GrHistory } from "react-icons/gr";
 import { MdMessage } from "react-icons/md";
 import { LuPlus } from "react-icons/lu";
 
-export default function JobHistoryPage({ onCreateJobHistoryClick, onEditJobHistoryClick }) {
+export default function JobHistoryPage({
+  onCreateJobHistoryClick,
+  onEditJobHistoryClick,
+}) {
   const [jobHistories, setJobHistories] = useState([]);
   const [selectedJobHistory, setSelectedJobHistory] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showJobHistoryDetails, setShowJobHistoryDetails] = useState(false);
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
+  console.log(isModalOpen);
 
   const { isError, data, isLoading } = useQuery(
     ["getAllJobHistory"],
@@ -42,17 +46,15 @@ export default function JobHistoryPage({ onCreateJobHistoryClick, onEditJobHisto
   };
 
   const handleUserClick = (jobHistory) => {
-    // Check if the modal is open and the same user is clicked
     if (isModalOpen && selectedJobHistory?.user_id === jobHistory.user_id) {
-      // Close the modal if the same user is clicked
       setIsModalOpen(false);
       setShowJobHistoryDetails(false);
     } else {
-      // Open the modal and set the new user data
       setSelectedJobHistory(jobHistory);
       setShowJobHistoryDetails(true);
       setIsModalOpen(true);
     }
+    setIsModalOpen(!isModalOpen);
   };
   useAOS({ duration: 1200, once: true });
 
@@ -66,7 +68,7 @@ export default function JobHistoryPage({ onCreateJobHistoryClick, onEditJobHisto
             </h1>
           </div>
           <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-          <a
+            <a
               href="#_"
               className="relative inline-block text-lg group "
               onClick={onCreateJobHistoryClick}
@@ -86,56 +88,87 @@ export default function JobHistoryPage({ onCreateJobHistoryClick, onEditJobHisto
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row space-x-6 p-4" data-aos="fade-right">
+        <div
+          className="flex flex-col md:flex-row space-x-6 p- md:p-4"
+          data-aos="fade-right"
+        >
           <div className="w-full shadow-md rounded-lg bg-gray-100">
-            {currentItems.map((user, index) => (
+            {currentItems.map((user) => (
               <div
                 key={user.user_id}
-                className="flex items-center p-4 bg-gray-100 hover:bg-gray-200 cursor-pointer"
+                className="flex flex-col md:flex-row items-center p-4 bg-gray-100 hover:bg-gray-200 cursor-pointer"
                 onClick={() => handleUserClick(user)}
               >
-                <img
-                  src={getImageBaseUrl(user?.user_photo)}
-                  alt={user.user_name}
-                  className="w-16 h-16 rounded-full object-cover mr-4"
-                />
-                <div className="flex-grow text-left">
-                  <p className="text-lg font-semibold text-gray-800">{user.user_name}</p>
-                  <p className="text-sm text-gray-600">{user.degree}</p>
+                <div className="flex items-center w-full">
+                  <img
+                    src={getImageBaseUrl(user?.user_photo)}
+                    alt={user.user_name}
+                    className="w-16 h-16 rounded-full object-cover mr-4"
+                  />
+                  <div className="flex-grow text-left">
+                    <p className="text-lg font-semibold text-gray-800">
+                      {user.user_name}
+                    </p>
+                    <p className="text-sm text-gray-600">{user.degree}</p>
+                  </div>
+                  <div className="flex-shrink-0 flex items-center space-x-4">
+                    <MdMessage className="text-blue-500 hover:text-blue-900" />
+                    <LuPlus className="text-green-500 hover:text-green-900" />
+                  </div>
                 </div>
-                <div className="flex-shrink-0 flex items-center space-x-4">
-                  <MdMessage className="text-blue-500 hover:text-blue-900" />
-                  <LuPlus className="text-green-500 hover:text-green-900" />
-                </div>
+
+                {selectedJobHistory === user && isModalOpen && (
+                  <div className="block md:hidden w-full bg-gray-200 mt-4 p-1  rounded-lg">
+                    <div className="p-1 md:p-4 border-b">
+                      <h2 className="text-xl font-bold text-gray-800 text-start">
+                        Job History
+                      </h2>
+                    </div>
+                    {user?.job_history?.map((job, index) => (
+                      <div key={index} className="flex flex-col">
+                        <div className="flex flex-col ">
+                          <div className="flex-grow text-start">
+                            <p className="text-lg font-semibold text-gray-800 text-start">
+                              {job?.title}
+                            </p>
+                            {/* <i className="text-sm text-gray-600">
+                              {"job?.title"}
+                            </i> */}
+                          </div>
+                          <div className="flex-shrink-0 flex   text-start">
+                            {job?.duration}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-start mt-2">{job?.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
 
           {isModalOpen && showJobHistoryDetails && selectedJobHistory && (
-            <div className="w-full shadow-md rounded-lg bg-gray-200">
+            <div className="hidden md:block w-full shadow-md rounded-lg bg-gray-200">
               <div className="p-4 border-b">
                 <h2 className="text-xl font-bold text-gray-800">Job History</h2>
               </div>
               {selectedJobHistory?.job_history.map((job, index) => (
-                <div>
-                <div className="flex items-center p-2">
-                  <div className="flex-grow text-left">
-                    <p className="text-lg font-semibold text-gray-800 block">
+                <div key={index} className="flex flex-col  p-2">
+                  <div className="flex-grow flex-col text-start">
+                    <p className="text-lg font-semibold text-gray-800  text-start">
                       {job?.title}
                     </p>
-                    <i className="text-sm text-gray-600 block">
-                      {job?.title}
-                    </i>
+                    <div className="flex-shrink-0 flex items-center space-x-4  text-start">
+                      {job?.duration}
+                    </div>
+                    {/* <i className="text-sm text-gray-600">{job?.title}</i> */}
                   </div>
 
-                  <div className="flex-shrink-0 flex items-center space-x-4">
-                    {job?.duration}
-                  </div>
+                  <p className="text-left mt-1 ">{job?.description}</p>
                 </div>
-                <div>
-                  <p className="text-left p-2">{job?.description}</p>
-                </div>
-              </div>
               ))}
             </div>
           )}
