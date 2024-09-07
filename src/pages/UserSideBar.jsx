@@ -211,13 +211,16 @@ function UserSideBar() {
                     </div>
                   </Transition.Child>
                   <div
-                    className="flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-4 ring-1 ring-white/10"
+                    className="flex grow flex-col gap-y-5 overflow-y-auto px-2 md:px-6 pb-4 ring-1 ring-white/10"
                     style={{ backgroundColor: sideBarBackground || "#000000" }}
                   >
                     <div className="flex h-16 shrink-0 items-center">
-                      <span className="text-2xl text-gray-50 font-bold font-mono">
+                      <div className="transition duration-300 ease-in-out w-[50px] text-white hover:bg-gray-900 text-left">
+                        <img src="https://kefeta.et/wp-content/uploads/2023/01/cropped-Kefeta-Logo-English-Colors-2048x1479-1-120x87.png" />
+                      </div>
+                      {/* <span className="text-2xl text-gray-50 font-bold font-mono">
                         X Alumni
-                      </span>
+                      </span> */}
                     </div>
                     <nav className="flex flex-1 flex-col">
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -291,7 +294,7 @@ function UserSideBar() {
                                   className="h-6 w-6 shrink-0"
                                   aria-hidden="true"
                                 />
-                                Logoutsdsds
+                                Logout
                               </a>
                             </li>
                           </ul>
@@ -305,19 +308,23 @@ function UserSideBar() {
           </Dialog>
         </Transition.Root>
         <div
-          className={`${sidebarOpenMain
-            ? "hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col"
-            : "hidden"
-            }`}
+          className={`${
+            sidebarOpenMain
+              ? "hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col"
+              : "hidden"
+          }`}
         >
           <div
             className="flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-4"
             style={{ backgroundColor: sideBarBackground || "#000000" }}
           >
-            <div className="flex h-16 shrink-0 items-center">
-              <span className="text-2xl text-gray-50 font-bold font-mono mr-4">
+            <div className="flex h-16 shrink-0 items-center mt-2">
+              <div className="transition duration-300 ease-in-out w-[70px] text-white hover:bg-gray-900 text-left">
+                <img src="https://kefeta.et/wp-content/uploads/2023/01/cropped-Kefeta-Logo-English-Colors-2048x1479-1-120x87.png" />
+              </div>
+              {/* <span className="text-2xl text-gray-50 font-bold font-mono mr-4">
                 X Alumni
-              </span>
+              </span> */}
               <button
                 type="button"
                 className="ml-auto"
@@ -412,7 +419,7 @@ function UserSideBar() {
                                         color:
                                           componentClicked.name === subItem.name
                                             ? sideBarActuveTextColor ||
-                                            "#FFFFFF"
+                                              "#FFFFFF"
                                             : sideBarTextColor || "#ccc",
                                         backgroundColor:
                                           componentClicked.name === subItem.name
@@ -429,7 +436,7 @@ function UserSideBar() {
                                         e.currentTarget.style.color =
                                           componentClicked.name === item.name
                                             ? sideBarActuveTextColor ||
-                                            "#FFFFFF"
+                                              "#FFFFFF"
                                             : sideBarTextColor || "#ccc";
                                         e.currentTarget.style.backgroundColor =
                                           componentClicked.name === item.name
@@ -470,7 +477,10 @@ function UserSideBar() {
                           window.location.href = "/landing/program/login";
                         }}
                       >
-                        <ArrowLongLeftIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
+                        <ArrowLongLeftIcon
+                          className="h-6 w-6 shrink-0"
+                          aria-hidden="true"
+                        />
                         Logout
                       </a>
                     </li>
