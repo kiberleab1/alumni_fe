@@ -14,7 +14,6 @@ import { MdMessage } from "react-icons/md";
 import { LuPlus } from "react-icons/lu";
 
 export default function JobHistoryPage({ onCreateJobHistoryClick, onEditJobHistoryClick }) {
-  const [jobHistories, setJobHistories] = useState([]);
   const [selectedJobHistory, setSelectedJobHistory] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showJobHistoryDetails, setShowJobHistoryDetails] = useState(false);
@@ -24,17 +23,16 @@ export default function JobHistoryPage({ onCreateJobHistoryClick, onEditJobHisto
   const { isError, data, isLoading } = useQuery(
     ["getAllJobHistory"],
     async () => {
-      const jobsData = await getAllJobHistory({ pageNumber: 1, pageSize: 50 }); // Adjust pagination as needed
-      setJobHistories(jobsData.data.jobHistory);
+      const jobsData = await getAllJobHistory({ pageNumber: 1, pageSize: 10 });
       return jobsData;
     },
-    { keepPreviousData: true }
+    {  refetchOnWindowFocus: false, refetchOnMount: false, keepPreviousData: true, }
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = jobHistories.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(jobHistories.length / itemsPerPage);
+  const currentItems = data?.data?.jobHistory?.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(data?.data?.jobHistory?.length / itemsPerPage);
 
   const paginate = (pageNumber) => {
     if (pageNumber < 1 || pageNumber > totalPages) return;
@@ -88,7 +86,7 @@ export default function JobHistoryPage({ onCreateJobHistoryClick, onEditJobHisto
 
         <div className="flex flex-col md:flex-row space-x-6 p-4" data-aos="fade-right">
           <div className="w-full shadow-md rounded-lg bg-gray-100">
-            {currentItems.map((user, index) => (
+            {data?.data?.jobHistory?.map((user, index) => (
               <div
                 key={user.user_id}
                 className="flex items-center p-4 bg-gray-100 hover:bg-gray-200 cursor-pointer"

@@ -22,8 +22,6 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
         pageNumber: currentPage,
         pageSize: itemsPerPage,
       });
-      setJobs(jobsData.data.jobs);
-      setTotalItems(jobsData.data.total_items);
       return jobsData;
     },
     { keepPreviousData: true, refetchOnWindowFocus: false }
@@ -34,13 +32,8 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
     once: true,
   });
 
-  useEffect(() => {
-    if (!isError && !isLoading && data) {
-      setJobs(data.data.jobs);
-    }
-  }, [isError, isLoading, data]);
 
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const totalPages = Math.ceil(data?.data?.total_items / itemsPerPage);
 
   const paginate = (pageNumber) => {
     if (pageNumber < 1 || pageNumber > totalPages) return;
@@ -48,7 +41,7 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
   };
 
   const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
-  const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalItems);
+  const indexOfLastItem = Math.min(currentPage * itemsPerPage, data?.data?.total_items);
 
   const openModal = (job) => {
     setSelectedJob(job);
@@ -72,7 +65,7 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
         </div>
 
         <div className="flex flex-wrap justify-center item-center h-full overflow-y-scroll">
-          {jobs.map((val, idx) => (
+          {data?.data?.jobs?.map((val, idx) => (
             <div
               key={idx}
               className="max-w-sm w-full h-[250px] shadow-sm bg-white rounded-lg overflow-hidden p-2 m-3 flex flex-col justify-between"
@@ -105,7 +98,7 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
             <p className="text-sm text-gray-700">
               Showing <span className="font-medium">{indexOfFirstItem}</span> to{" "}
               <span className="font-medium">{indexOfLastItem}</span> of{" "}
-              <span className="font-medium">{totalItems}</span> results
+              <span className="font-medium">{data?.data?.total_items}</span> results
             </p>
           </div>
           <div>
