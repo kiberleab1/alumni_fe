@@ -44,7 +44,8 @@ const queryClient = new QueryClient({
     },
   },
 });
-
+console.log(localStorage.getItem("userData"));
+const user = localStorage.getItem("userData");
 function App() {
   const activeUrl = window.location.pathname;
   console.log(activeUrl.trim().toLowerCase().includes("/user"));
@@ -67,14 +68,20 @@ function App() {
 
             <Route path="/admin/email/compose" element={<ComposeEmail />} />
             <Route path="/admin/*" element={<SideBar />} />
-            <Route path="/user/*" element={<UserSideBar />} />
+            <Route
+              path="/user/*"
+              element={user ? <UserSideBar /> : <LoginPage />}
+            />
             {/* <Route path="/signin" element={<Signin />} /> */}
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/alumni_profile" element={<Alumni_profile />} />
             <Route path="/asd" element={<CreateStaff />} />
             <Route path="/sdsds" element={<Directory />} />
-            <Route path="/landing" element={<LandingLayout />}>
+            <Route
+              path="/landing"
+              element={user ? <LandingLayout /> : <LoginPage />}
+            >
               <Route index element={<LandingPage />} />
               <Route path="content" element={<ContentPage />} />
               <Route path="aboutus">

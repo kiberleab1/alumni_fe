@@ -8,11 +8,12 @@ import "aos/dist/aos.css";
 import { FcBusinessman } from "react-icons/fc";
 import { FcBusinesswoman } from "react-icons/fc";
 import { getImageBaseUrl } from "src/api";
+import { FaUserFriends, FaUserPlus } from "react-icons/fa";
 const AlumniModal = ({ isOpen, onClose, profile }) => {
   if (!isOpen) return null;
   console.log(profile);
   return (
-    <div className="absolute inset-0 flex justify-center items-start md:items-center z-50 bg-black bg-opacity-50 h-auto ">
+    <div className="fixed md:absolute inset-0 flex justify-center items-start md:items-center z-50 bg-black bg-opacity-50 overflow-scroll ">
       <div
         className="bg-white rounded-lg shadow-lg max-w-lg w-full p-6 md:p-8 relative mx-4 my-8 md:mx-8 md:my-12 lg:mx-12 lg:my-16"
         data-aos="fade-down"
@@ -23,25 +24,34 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
         >
           ✕
         </button>
-        <div className="flex flex-col items-center">
-          <div className="rounded-full mt-4">
-            {profile?.user_photo && profile?.user_photo.startsWith("uploads/") ? (
+        <div className="flex flex-col items-center ">
+          <div className="relative rounded-full mt-4 border-4 border-transparent w-52 h-52 flex items-center justify-center ">
+            {profile?.user_photo &&
+            profile?.user_photo.startsWith("uploads/") ? (
               <img
                 src={getImageBaseUrl(profile?.user_photo)}
                 alt={profile?.user_id}
-                className="w-48 h-48 rounded-full mt-4"
+                className="w-full h-full rounded-full object-cover"
               />
             ) : profile?.user_data?.gender === "male" ? (
-              <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-10" />
+              <FcBusinessman className="w-full h-full rounded-full" />
             ) : profile?.user_data?.gender === "female" ? (
-              <FcBusinesswoman className="rounded-full object-cover w-full h-[130px] z-10" />
+              <FcBusinesswoman className="w-full h-full rounded-full" />
             ) : (
-              <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-10" />
-            )     
-          }
+              <FcBusinessman className="w-full h-full rounded-full " />
+            )}
+
+            <div className="absolute bottom-0 right-0 transform -translate-y-2/3 ">
+              <div className="bg-black text-white rounded-full border-2 border-black w-8 h-8 flex items-center justify-center font-extrabold text-3xl outline-offset-4">
+                <FaUserPlus />
+              </div>
+            </div>
           </div>
+
           <h2 className="text-3xl md:text-4xl mt-4 font-sans">
-            {profile?.user_data?.name ? profile?.user_data?.name : "Helen Getachew"}
+            {profile?.user_data?.name
+              ? profile?.user_data?.name
+              : "Helen Getachew"}
           </h2>
           <div className="flex items-center hover:text-blue-700 mt-2">
             <TfiEmail className="w-6 h-6 mr-2 mb-2" />
@@ -49,7 +59,9 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
               className="text-lg text-blue-500"
               href="mailto:helengetachew@gmail.com"
             >
-              {profile?.user_data?.email ? profile?.user_data?.email : "helengetachew@gmail.com"}
+              {profile?.user_data?.email
+                ? profile?.user_data?.email
+                : "helengetachew@gmail.com"}
             </a>
           </div>
           <div className="flex items-center hover:text-blue-700">
@@ -71,14 +83,19 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
               href="tel:+251 900 000 000"
               className="text-blue-400 underline text-left"
             >
-              {profile?.user_data?.phone_number ? profile?.user_data?.phone_number : "+251 900 000 000"}
+              {profile?.user_data?.phone_number
+                ? profile?.user_data?.phone_number
+                : "+251 900 000 000"}
             </a>
           </div>
-          <div className="border-b w-full my-2 border-gray-300"></div>
+          <div className="border-b w-full my-2 border-gray-300 text-end flex flex-row items-center gap-2">
+            <FaUserFriends /> Send request
+          </div>
           <div className="w-full">
             <div
-              className={`transition-all duration-500 ease-in-out overflow-hidden border-b-4 ${isOpen ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
-                }`}
+              className={`transition-all duration-500 ease-in-out overflow-hidden border-b-4 ${
+                isOpen ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
+              }`}
             >
               <Table className="text-left w-full">
                 <tbody>
@@ -103,7 +120,17 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
                   </tr>
                   <tr className="bg-blue-300">
                     <td className="transform transition-transform duration-300 hover:translate-x-5">
-                    {profile?.user_data?.address?.country ? profile?.user_data?.address?.country : "Ethiopia"}, {profile?.user_data?.address?.region ? profile?.user_data?.address?.region : "Addis Ababa"}, {profile?.user_data?.address?.city ? profile?.user_data?.address?.city : "Addis Ababa"}
+                      {profile?.user_data?.address?.country
+                        ? profile?.user_data?.address?.country
+                        : "Ethiopia"}
+                      ,{" "}
+                      {profile?.user_data?.address?.region
+                        ? profile?.user_data?.address?.region
+                        : "Addis Ababa"}
+                      ,{" "}
+                      {profile?.user_data?.address?.city
+                        ? profile?.user_data?.address?.city
+                        : "Addis Ababa"}
                     </td>
                   </tr>
                   <tr>

@@ -66,6 +66,7 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
     setSearchQuery("");
     console.log(event.target.value);
   };
+  useAOS({ duration: 1200, once: true });
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
@@ -127,7 +128,10 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                 ></span>
               </a>
             </div> */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+              data-aos="fade-up"
+            >
               {alumni.length > 0 ? (
                 alumni.map((alum) => (
                   <div
@@ -135,7 +139,8 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                     key={alum.id}
                   >
                     <div className="w-28 h-28 mx-auto rounded-full bg-gray-200 mb-4 z-10 overflow-hidden">
-                      {alum.user_photo && alum.user_photo.startsWith("uploads/") ? (
+                      {alum.user_photo &&
+                      alum.user_photo.startsWith("uploads/") ? (
                         <img
                           src={getImageBaseUrl(alum.user_photo)}
                           alt=""
@@ -147,7 +152,7 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                         <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-10" />
                       )}
 
-                      { }
+                      {}
                     </div>
                     <h3 className="text-xl font-semibold">
                       {alum?.user_data?.name
@@ -189,49 +194,59 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                 <button
                   onClick={() => paginate(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 transition-all duration-300 ${currentPage === 1 ? "cursor-not-allowed" : "hover:bg-gray-50"
-                    }`}
+                  className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 transition-all duration-300 ${
+                    currentPage === 1
+                      ? "cursor-not-allowed"
+                      : "hover:bg-gray-50"
+                  }`}
                 >
                   <IoIosArrowBack className="text-xl" />
                 </button>
 
                 {/* Logic for pagination */}
-                {Array.from({ length: Math.min(10, totalPages) }, (_, index) => {
-                  let pageNumber;
+                {Array.from(
+                  { length: Math.min(10, totalPages) },
+                  (_, index) => {
+                    let pageNumber;
 
-                  if (currentPage <= 5) {
-                    // Ensure pagination starts at 1 if on the first few pages
-                    pageNumber = index + 1;
-                  } else if (currentPage + 5 >= totalPages) {
-                    // Adjust to show last pages when near the end
-                    pageNumber = totalPages - 9 + index;
-                  } else {
-                    // Center current page in pagination list
-                    pageNumber = currentPage - 5 + index;
-                  }
+                    if (currentPage <= 5) {
+                      // Ensure pagination starts at 1 if on the first few pages
+                      pageNumber = index + 1;
+                    } else if (currentPage + 5 >= totalPages) {
+                      // Adjust to show last pages when near the end
+                      pageNumber = totalPages - 9 + index;
+                    } else {
+                      // Center current page in pagination list
+                      pageNumber = currentPage - 5 + index;
+                    }
 
-                  if (pageNumber > totalPages || pageNumber < 1) return null;
+                    if (pageNumber > totalPages || pageNumber < 1) return null;
 
-                  return (
-                    <button
-                      key={pageNumber}
-                      onClick={() => paginate(pageNumber)}
-                      className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border transition-all duration-300 ${currentPage === pageNumber
-                          ? "bg-gray-200 text-black"
-                          : "text-black bg-white border-gray-300 hover:bg-gray-50"
+                    return (
+                      <button
+                        key={pageNumber}
+                        onClick={() => paginate(pageNumber)}
+                        className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border transition-all duration-300 ${
+                          currentPage === pageNumber
+                            ? "bg-gray-200 text-black"
+                            : "text-black bg-white border-gray-300 hover:bg-gray-50"
                         }`}
-                    >
-                      {pageNumber}
-                    </button>
-                  );
-                })}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  }
+                )}
 
                 {/* Next Button */}
                 <button
                   onClick={() => paginate(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 transition-all duration-300 ${currentPage === totalPages ? "cursor-not-allowed" : "hover:bg-gray-50"
-                    }`}
+                  className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 transition-all duration-300 ${
+                    currentPage === totalPages
+                      ? "cursor-not-allowed"
+                      : "hover:bg-gray-50"
+                  }`}
                 >
                   <IoIosArrowForward className="text-xl" />
                 </button>
@@ -241,24 +256,26 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
               <button
                 onClick={() => paginate(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded-lg ${currentPage === 1 ? "cursor-not-allowed" : ""
-                  }`}
+                className={`bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded-lg ${
+                  currentPage === 1 ? "cursor-not-allowed" : ""
+                }`}
               >
                 <IoIosArrowBack className="text-xl" />
               </button>
               <p className="text-sm text-gray-700">
-                Showing {indexOfFirstItem} to {indexOfLastItem} of {totalItems} results
+                Showing {indexOfFirstItem} to {indexOfLastItem} of {totalItems}{" "}
+                results
               </p>
               <button
                 onClick={() => paginate(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded-lg ${currentPage === totalPages ? "cursor-not-allowed" : ""
-                  }`}
+                className={`bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded-lg ${
+                  currentPage === totalPages ? "cursor-not-allowed" : ""
+                }`}
               >
                 <IoIosArrowForward className="text-xl" />
               </button>
             </div>
-
           </div>
         )}
         {isModalOpen && selectedAlumni && (

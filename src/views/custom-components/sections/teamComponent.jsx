@@ -126,7 +126,7 @@ const TeamComponent = () => {
                               <h5 className="mb-2 text-xl font-medium leading-tight text-center font-sans">
                                 {staff.title}
                               </h5>
-                              <p className="mb-4 text-base text-center font-sans-serif">
+                              <p className="mb-4 text-base text-start font-sans-serif line-clamp-5">
                                 {staff.description}
                               </p>
                               <ul className="list-inline flex justify-center space-x-4">

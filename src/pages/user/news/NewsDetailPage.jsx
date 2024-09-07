@@ -3,16 +3,16 @@ import img from "../../../assets/images/testimonial/4.jpg";
 import { getImageBaseUrl } from "src/api";
 const defaultImage =
   "https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA=";
-const NewsDetailPage = ({news}) => {
-  console.log(news)
+const NewsDetailPage = ({ news }) => {
+  console.log(news);
 
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  const deadline = new Date(news.deadline); 
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  const deadline = new Date(news.deadline);
   // @ts-ignore
-  const formattedDeadline = deadline.toLocaleDateString('en-US', options);
+  const formattedDeadline = deadline.toLocaleDateString("en-US", options);
   return (
     <div className="flex justify-center py-8">
-      <div className="container mx-auto p-4 max-w-4xl">
+      <div className="md:container mx-auto md:p-4 max-w-4xl">
         <div className="flex flex-col items-start">
           {/* <img
             src={news.image}
@@ -34,8 +34,12 @@ const NewsDetailPage = ({news}) => {
             <p className="text-gray-500 text-justify mt-4 text-lg">
               {formattedDeadline} - {news.adminName}
             </p>
-            <p className="mt-4 text-justify font-serif text-lg text-gray-500" dangerouslySetInnerHTML={{ __html: news.description || "No Description" }}>
-            </p>
+            <p
+              className="mt-4 text-justify font-serif text-lg text-gray-500"
+              dangerouslySetInnerHTML={{
+                __html: news.description || "No Description",
+              }}
+            ></p>
           </div>
         </div>
       </div>
