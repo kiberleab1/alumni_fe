@@ -87,7 +87,7 @@ function ListDepartment({
       deleteDept(selectedItem);
     }
   };
-  useEffect;
+
   return (
     <div className="flex flex-col">
       <div className="sm:flex sm:items-center">

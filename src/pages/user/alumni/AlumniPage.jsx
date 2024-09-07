@@ -66,6 +66,7 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
     setSearchQuery("");
     console.log(event.target.value);
   };
+  useAOS({ duration: 1200, once: true });
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
@@ -127,7 +128,10 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                 ></span>
               </a>
             </div> */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+              data-aos="fade-up"
+            >
               {alumni.length > 0 ? (
                 alumni.map((alum) => (
                   <div

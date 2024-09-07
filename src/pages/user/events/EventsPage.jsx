@@ -16,6 +16,7 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { FiFilter } from "react-icons/fi";
 import { MdDriveFileRenameOutline, MdLockReset } from "react-icons/md";
 import image from "../../../assets/images/testimonial/2.jpg";
+import useAOS from "../aos";
 export default function EventsPage({ onEventsDetailClick }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
@@ -139,6 +140,7 @@ function ListEvent({
     setIsAscending(true);
     setIsDropdownOpen(false);
   };
+  useAOS({ duration: 1200, once: true });
 
   return (
     <div className="flex flex-col bg-gray-20 rounded-lg w-full">
@@ -196,7 +198,7 @@ function ListEvent({
           ))}
         </ul> */}
       </div>
-      <div className=" mt-6 container w-full z-10">
+      <div className=" mt-6 container w-full z-10" data-aos="fade-down">
         <div className="flex flex-wrap items-center gap-4 overflow-y-scroll scroll-auto m-auto content-start">
           {filteredItems.map((val, idx) => (
             <div

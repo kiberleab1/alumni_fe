@@ -11,6 +11,7 @@ import img from "../../../assets/images/testimonial/2.jpg";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoIosArrowBack } from "react-icons/io";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import useAOS from "../aos";
 export default function NewsPage({ onNewsDetailClick }) {
   const [newsList, setNewsList] = useState([]);
   const itemsPerPage = 6;
@@ -58,7 +59,7 @@ export default function NewsPage({ onNewsDetailClick }) {
   // console.log(indexOfLastItem);
   // console.log(totalItems);
   console.log(newsList);
-
+  useAOS({ duration: 1200, once: true });
   return (
     <QueryResult isLoading={isLoading} isError={isError} data={data}>
       <div className="flex flex-col  bg-gray-20  w-[100%]">
@@ -72,7 +73,11 @@ export default function NewsPage({ onNewsDetailClick }) {
         <div className="container mx-auto  h-full overflow-y-scroll max-w-[100%] ">
           <div className=" flex flex-wrap justify-center w-[100%]">
             {newsList.map((val, idx) => (
-              <div key={idx} className="w-[450px] h-[400px]  sm:m-4">
+              <div
+                key={idx}
+                className="w-[450px] h-fit sm:m-4"
+                data-aos="fade-down"
+              >
                 <div className="group cursor-pointer border border-gray-300 rounded-2xl p-2 sm:p-5 transition-all duration-300 hover:border-indigo-600">
                   <div className="flex justify-center mb-6">
                     <img

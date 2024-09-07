@@ -71,7 +71,10 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-center item-center h-full overflow-y-scroll">
+        <div
+          className="flex flex-wrap justify-center item-center h-full overflow-y-scroll"
+          data-aos="fade-right"
+        >
           {jobs.map((val, idx) => (
             <div
               key={idx}
