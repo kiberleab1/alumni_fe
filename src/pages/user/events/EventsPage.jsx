@@ -15,6 +15,7 @@ import { SlCalender } from "react-icons/sl";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { FiFilter } from "react-icons/fi";
 import { MdDriveFileRenameOutline, MdLockReset } from "react-icons/md";
+import { formatInputDate } from "src/utils/utils";
 
 export default function EventsPage({ onEventsDetailClick }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -234,7 +235,7 @@ function ListEvent({
                   <div className="flex items-center text-gray-600 mb-2 space-x-2">
                     <div className="flex flex-row gap-2 items-center">
                       <SlCalender />
-                      <span className="line-clamp-1">{val.time}</span>
+                      <span className="line-clamp-1">{formatInputDate(val.time)}</span>
                     </div>
                   </div>
                   <div className="flex items-center text-gray-600 mb-2 space-x-2 ">
@@ -246,7 +247,7 @@ function ListEvent({
                   <div className="flex text-gray-600 space-x-2 line-clamp-2">
                     <div className="flex flex-row gap-2 ">
                       <TbArrowZigZag />
-                      <span className="text-start">{val.instituteName}</span>
+                      <span className="text-start">{val.instituteName ? val.instituteName : 'General'}</span>
                     </div>
                   </div>
                 </div>
