@@ -13,7 +13,7 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
   if (!isOpen) return null;
   console.log(profile);
   return (
-    <div className="absolute inset-0 flex justify-center items-start md:items-center z-50 bg-black bg-opacity-50 h-auto ">
+    <div className="fixed md:absolute inset-0 flex justify-center items-start md:items-center z-50 bg-black bg-opacity-50 overflow-scroll ">
       <div
         className="bg-white rounded-lg shadow-lg max-w-lg w-full p-6 md:p-8 relative mx-4 my-8 md:mx-8 md:my-12 lg:mx-12 lg:my-16"
         data-aos="fade-down"
