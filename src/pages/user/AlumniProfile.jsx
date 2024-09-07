@@ -34,7 +34,7 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
           data-aos="fade-down"
         >
           <div className="flex flex-row items-center justify-center gap-3 min-w-[80%]">
-            <h1 className="text-4xl sm:text-5xl font-normal">Alumni Profile</h1>
+            <h1 className="text-3xl sm:text-5xl font-normal">Alumni Profile</h1>
             <div>
               <CiEdit
                 className="text-2xl "
