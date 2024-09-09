@@ -41,7 +41,7 @@ export default function EventsPage({ onEventsDetailClick }) {
   );
 
   const applyFilters = () => {
-console.log(pendingFilterType)
+    console.log(pendingFilterType)
     console.log(pendingFilterValue);
     setFilterType(pendingFilterType);
     setFilterValue(pendingFilterValue); 
@@ -93,9 +93,10 @@ function ListEvent({
   };
 
   const handleClearFilters = () => {
-    setSelectedFilter({ type: null, value: null });
-    setPendingFilterType(null);
-    setPendingFilterValue(null);
+    setSelectedFilter({type: null, value: null });
+    setPendingFilterType('all');
+    setPendingFilterValue('all');
+    applyFilters();
   };
 
   const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
@@ -199,13 +200,13 @@ function ListEvent({
 
               <div className="flex justify-end gap-2">
                 <button
-                  className="px-4 py-2 text-gray-100 border border-gray-300 rounded-md hover:bg-gray-50"
+                  className="px-4 py-2 text-gray-100 border border-gray-300 rounded-md hover:bg-gray-700"
                   onClick={handleClearFilters}
                 >
                   Clear Filters
                 </button>
                 <button
-                  className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                  className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-900"
                   onClick={handleApplyFilters}
                 >
                   Apply Filters

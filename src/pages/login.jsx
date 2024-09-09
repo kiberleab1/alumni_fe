@@ -29,7 +29,7 @@ const LoginForm = () => {
         switch (data.user.role_name) {
           case "super_admin":
             // navigate("/admin");
-            window.location.href = "/admin";
+            window.location.href = "/super_admin";
             break;
           case "admin":
             // navigate("/admin");

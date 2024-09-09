@@ -10,16 +10,22 @@ export default function AlumniPage({
   onCreateAlumniClick,
   onEditAlumniClick,
 }) {
-  const { isError, data, isLoading } = useQuery("getAllAlumni", async () => {
-    return await getAllAlumni({ pageNumber: 1, pageSize: 10 });
+  const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { isError, data, isLoading } = useQuery(["getAllAlumni", currentPage], async () => {
+    return await getAllAlumni({ pageNumber: currentPage, pageSize: itemsPerPage });
   });
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
       <div>
-        <ListDepartment
+        <ListAlumni
           alumnus={data?.data?.alumniProfile}
           onCreateAlumniClick={onCreateAlumniClick}
+          currentPage={currentPage}
+          totalItems={data?.data?.total_items}
+          setCurrentPage={setCurrentPage}
           onEditAlumniClick={(alumni) =>
             onEditAlumniClick(alumni)
           }
@@ -30,13 +36,15 @@ export default function AlumniPage({
 }
 
 // eslint-disable-next-line react/prop-types
-function ListDepartment({
+function ListAlumni({
   alumnus,
   onCreateAlumniClick,
   onEditAlumniClick,
+  currentPage,
+  setCurrentPage,
+  totalItems
 }) {
-  const itemsPerPage = 5; // Number of items to display per page
-  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const queryClient = useQueryClient();
@@ -54,16 +62,14 @@ function ListDepartment({
     },
   });
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = alumnus.slice(indexOfFirstItem, indexOfLastItem)
 
-  const totalPages = Math.ceil(alumnus.length / itemsPerPage);
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
+  const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalItems);
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const paginate = (pageNumber) => {
-    if (pageNumber >= 1 && pageNumber <= totalPages) {
-      setCurrentPage(pageNumber);
-    }
+    if (pageNumber < 1 || pageNumber > totalPages) return;
+    setCurrentPage(pageNumber);
   };
 
   const openModal = (alumni) => {
@@ -108,7 +114,7 @@ function ListDepartment({
       <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
         <div className="min-w-full">
           <div className="overflow-x-auto">
-            <div className="table-container" style={{ maxHeight: "500px" }}>
+            <div className="table-container" style={{ maxHeight: "800px" }}>
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="sticky top-0 bg-gray-50 z-10">
                   <tr>
@@ -151,31 +157,37 @@ function ListDepartment({
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {currentItems.map((alumni) => (
+                  {alumnus.map((alumni) => (
                     <tr key={alumni.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm font-medium text-gray-900">
-                          {alumni.user_id ? alumni.user_id : "" }
+                          {alumni?.user_data?.name
+                            ? alumni?.user_data?.name
+                            : "Unknown Name"}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {alumni.institution_id ? alumni.institution_id : "" }
+                          {alumni?.institute_name
+                            ? alumni?.institute_name
+                            : alumni.institution_id}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {alumni.department_id ? alumni.department_id : "" }
+                          {alumni?.department_name
+                            ? alumni?.department_name
+                            : alumni.department_id}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {alumni.graduation_year ? formatDate(alumni.graduation_year) : "" }
+                          {alumni.graduation_year ? formatDate(alumni.graduation_year) : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {alumni.status ? alumni.status : "" }
+                          {alumni.status ? alumni.status : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium">
@@ -206,9 +218,8 @@ function ListDepartment({
             <button
               onClick={() => paginate(currentPage - 1)}
               disabled={currentPage === 1}
-              className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${
-                currentPage === 1 ? "cursor-not-allowed" : ""
-              }`}
+              className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${currentPage === 1 ? "cursor-not-allowed" : ""
+                }`}
             >
               <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
               <span className="ml-2">Previous</span>
@@ -216,9 +227,8 @@ function ListDepartment({
             <button
               onClick={() => paginate(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${
-                currentPage === totalPages ? "cursor-not-allowed" : ""
-              }`}
+              className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${currentPage === totalPages ? "cursor-not-allowed" : ""
+                }`}
             >
               <span className="mr-2">Next</span>
               <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
@@ -227,12 +237,7 @@ function ListDepartment({
           <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
-                Showing{" "}
-                <span className="font-medium">{indexOfFirstItem + 1}</span> to{" "}
-                <span className="font-medium">
-                  {Math.min(indexOfLastItem, alumnus.length)}
-                </span>{" "}
-                of <span className="font-medium">{alumnus.length}</span>{" "}
+                Showing {indexOfFirstItem} to {indexOfLastItem} of {totalItems}{" "}
                 results
               </p>
             </div>
@@ -244,9 +249,8 @@ function ListDepartment({
                 <button
                   onClick={() => paginate(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className={`mr-2 ml-2 relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${
-                    currentPage === 1 ? "cursor-not-allowed" : ""
-                  }`}
+                  className={`mr-2 ml-2 relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${currentPage === 1 ? "cursor-not-allowed" : ""
+                    }`}
                 >
                   <span className="sr-only">Previous</span>
                   <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
@@ -258,11 +262,10 @@ function ListDepartment({
                   <button
                     key={pageNumber}
                     onClick={() => paginate(pageNumber)}
-                    className={`relative ${
-                      currentPage === pageNumber
-                        ? "z-10 bg-indigo-600 text-white"
-                        : "text-gray-900 bg-white hover:bg-gray-50"
-                    } inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus:outline-offset-0`}
+                    className={`relative ${currentPage === pageNumber
+                      ? "z-10 bg-indigo-600 text-white"
+                      : "text-gray-900 bg-white hover:bg-gray-50"
+                      } inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus:outline-offset-0`}
                   >
                     {pageNumber}
                   </button>
@@ -270,9 +273,8 @@ function ListDepartment({
                 <button
                   onClick={() => paginate(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className={`relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-100 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${
-                    currentPage === totalPages ? "cursor-not-allowed" : ""
-                  }`}
+                  className={`relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-100 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${currentPage === totalPages ? "cursor-not-allowed" : ""
+                    }`}
                 >
                   <span className="sr-only">Next</span>
                   <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />

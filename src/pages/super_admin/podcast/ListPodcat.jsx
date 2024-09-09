@@ -1,116 +1,107 @@
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { useQuery, useQueryClient, useMutation } from "react-query";
+import { deletePodcast, getAllPodcast } from "src/api";
 import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { toast } from "react-toastify";
-import { deleteEvent, getAllEvents } from "src/api";
-import Modal from "src/components/utils/DeleteModal";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import Modal from "../../../components/utils/DeleteModal";
 import QueryResult from "src/components/utils/queryResults";
-import { formatDate, formatInputDate } from "src/utils/utils";
 
-export default function EventsPage({ onCreateEventClick, onEditEventClick }) {
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  const { isError, data, isLoading } = useQuery("getAllEvents", async () => {
-    return await getAllEvents({ pageNumber: currentPage, pageSize: itemsPerPage });
+export default function PodcastPage({
+  onCreatePodcastClick,
+  onEditPodcastClick,
+}) {
+  const { isError, data, isLoading } = useQuery("getAllPodcast", async () => {
+    return await getAllPodcast({ pageNumber: 1, pageSize: 10 });
   });
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
       <div>
-        <ListEvent
-          eventsData={data?.data?.events}
-          onCreateEventClick={onCreateEventClick}
-          onEditEventClick={(event) => onEditEventClick(event)}
-          totalItems={data?.data?.total_items}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          itemsPerPage={itemsPerPage}
-
+        <ListPodcast
+          alumnus={data?.data}
+          onCreatePodcastCLicked={onCreatePodcastClick}
+          onEditPodcastClick={(podcast) => onEditPodcastClick(podcast)}
         />
       </div>
     </QueryResult>
   );
 }
 
-function ListEvent({ 
-  eventsData, 
-  onCreateEventClick, 
-  onEditEventClick, 
-  totalItems,
-  currentPage,
-  itemsPerPage,
-  setCurrentPage, }) {
-
+// eslint-disable-next-line react/prop-types
+function ListPodcast({ alumnus, onCreatePodcastCLicked, onEditPodcastClick }) {
+  const itemsPerPage = 5; // Number of items to display per page
+  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedPodcast, setSelectedPodcast] = useState(null);
+  const queryClient = useQueryClient();
 
-  const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
-  const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalItems);
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  // Mutation for deleting a podcast
+  const { mutate: deleteDept } = useMutation(deletePodcast, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("getAllPodcast");
+      closeModal();
+    },
+    onError: (error) => {
+      closeModal();
+      queryClient.invalidateQueries("getAllPodcast");
+      console.error("Error deleting podcast:", error);
+    },
+  });
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = alumnus.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(alumnus.length / itemsPerPage);
 
   const paginate = (pageNumber) => {
-    if (pageNumber < 1 || pageNumber > totalPages) return;
-    setCurrentPage(pageNumber);
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
   };
 
-  const openModal = (event) => {
-    setSelectedEvent(event);
+  const openModal = (podcast) => {
+    setSelectedPodcast(podcast);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
-    setSelectedEvent(null);
+    setSelectedPodcast(null);
     setIsModalOpen(false);
   };
 
   const confirmDeletion = () => {
-    console.log(selectedEvent);
-    if (selectedEvent) {
-      deleteEventModalAction(selectedEvent.id);
+    console.log(selectedPodcast);
+    if (selectedPodcast) {
+      deleteDept(selectedPodcast);
     }
   };
-
-  const queryClient = useQueryClient();
-  const { mutate: deleteEventModalAction } = useMutation(deleteEvent, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("getAllEvents");
-      closeModal();
-      toast.success("Event Deleted successfully!");
-    },
-    onError: (error) => {
-      closeModal();
-      queryClient.invalidateQueries("getAllEvents");
-      console.error("Error deleting Event:", error);
-      toast.success("Error deleting Event!");
-    },
-  });
 
   return (
     <div className="flex flex-col">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">
-            Events
+          <h1 className="text-base font-semibold leading-6 text-gray-900 font-mono">
+            Podcast
           </h1>
-          <p className="mt-2 text-sm text-gray-700">
-            A list of all the evnets in the system.
+          <p className="mt-2 text-sm text-gray-500 font-mono">
+            A list of all the podcast in the system including their name,
+            description, start date.
           </p>
         </div>
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
           <button
             type="button"
             className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            onClick={onCreateEventClick}
+            onClick={onCreatePodcastCLicked}
           >
-            Add New Event
+            Add New Podcast
           </button>
         </div>
       </div>
       <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
         <div className="min-w-full">
           <div className="overflow-x-auto">
-            <div className="table-container" style={{ maxHeight: "800px" }}>
+            <div className="table-container" style={{ maxHeight: "500px" }}>
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="sticky top-0 bg-gray-50 z-10">
                   <tr>
@@ -118,37 +109,26 @@ function ListEvent({
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
                     >
-                      ID
+                      title
                     </th>
                     <th
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
                     >
-                      Owner Admin
+                      url
                     </th>
                     <th
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
                     >
-                      Owner Institute
+                      description
                     </th>
+
                     <th
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
                     >
-                      Event Level
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
-                    >
-                      Event Time
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
-                    >
-                      Created At
+                      Status
                     </th>
                     <th
                       scope="col"
@@ -159,52 +139,35 @@ function ListEvent({
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {eventsData.map((event) => (
-                    <tr key={event.id}>
+                  {currentItems.map((podcast) => (
+                    <tr key={podcast.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm font-medium text-gray-900">
-                          {event.id}
+                          {podcast.title ? podcast.title : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {event.adminName ? event.adminName : "N/A"}
+                          {podcast.url ? podcast.url : ""}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
-                        <div className="text-sm text-gray-900">
-                          {event.instituteName
-                            ? event.instituteName
-                            : "N/A"}
+                        <div className="text-sm text-gray-900 line-clamp-1">
+                          {podcast.description ? podcast.description : ""}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-start">
-                        <div className="text-sm text-gray-900">
-                          {event.level ? event.level : "N/A"}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-start">
-                        <div className="text-sm text-gray-900">
-                          {event.time ? formatDate(event.time) : "N/A"}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-start">
-                        <div className="text-sm text-gray-900">
-                          {formatDate(event.createdAt)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium ">
+                      <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium">
                         <a
                           href="#"
                           className="text-indigo-600 hover:text-green-900"
-                          onClick={() => onEditEventClick(event)}
+                          onClick={() => onEditPodcastClick(podcast)}
                         >
                           Edit
                         </a>
                         <a
                           href="#"
                           className="text-red-600 hover:text-red-900 pl-5"
-                          onClick={() => openModal(event)}
+                          onClick={() => openModal(podcast)}
                         >
                           Delete
                         </a>
@@ -221,8 +184,9 @@ function ListEvent({
             <button
               onClick={() => paginate(currentPage - 1)}
               disabled={currentPage === 1}
-              className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${currentPage === 1 ? "cursor-not-allowed" : ""
-                }`}
+              className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${
+                currentPage === 1 ? "cursor-not-allowed" : ""
+              }`}
             >
               <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
               <span className="ml-2">Previous</span>
@@ -230,8 +194,9 @@ function ListEvent({
             <button
               onClick={() => paginate(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${currentPage === totalPages ? "cursor-not-allowed" : ""
-                }`}
+              className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${
+                currentPage === totalPages ? "cursor-not-allowed" : ""
+              }`}
             >
               <span className="mr-2">Next</span>
               <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
@@ -243,10 +208,9 @@ function ListEvent({
                 Showing{" "}
                 <span className="font-medium">{indexOfFirstItem + 1}</span> to{" "}
                 <span className="font-medium">
-                  {Math.min(indexOfLastItem, eventsData.length)}
+                  {Math.min(indexOfLastItem, alumnus.length)}
                 </span>{" "}
-                of <span className="font-medium">{eventsData.length}</span>{" "}
-                results
+                of <span className="font-medium">{alumnus.length}</span> results
               </p>
             </div>
             <div>
@@ -257,8 +221,9 @@ function ListEvent({
                 <button
                   onClick={() => paginate(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className={`relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${currentPage === 1 ? "cursor-not-allowed" : ""
-                    }`}
+                  className={`mr-2 ml-2 relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${
+                    currentPage === 1 ? "cursor-not-allowed" : ""
+                  }`}
                 >
                   <span className="sr-only">Previous</span>
                   <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
@@ -270,10 +235,11 @@ function ListEvent({
                   <button
                     key={pageNumber}
                     onClick={() => paginate(pageNumber)}
-                    className={`relative ${currentPage === pageNumber
+                    className={`relative ${
+                      currentPage === pageNumber
                         ? "z-10 bg-indigo-600 text-white"
                         : "text-gray-900 bg-white hover:bg-gray-50"
-                      } inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus:outline-offset-0`}
+                    } inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus:outline-offset-0`}
                   >
                     {pageNumber}
                   </button>
@@ -281,8 +247,9 @@ function ListEvent({
                 <button
                   onClick={() => paginate(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className={`relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${currentPage === totalPages ? "cursor-not-allowed" : ""
-                    }`}
+                  className={`relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-100 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${
+                    currentPage === totalPages ? "cursor-not-allowed" : ""
+                  }`}
                 >
                   <span className="sr-only">Next</span>
                   <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
@@ -292,13 +259,13 @@ function ListEvent({
           </div>
         </div>
       </div>
-      {selectedEvent && (
+      {selectedPodcast && (
         <Modal
           isOpen={isModalOpen}
           closeModal={closeModal}
           confirmAction={confirmDeletion}
           title="Confirm Deletion"
-          message={`Are you sure you want to delete the institute "${selectedEvent.id}"? This action cannot be undone.`}
+          message={`Are you sure you want to delete the podcast "${selectedPodcast.title}"? This action cannot be undone.`}
         />
       )}
     </div>

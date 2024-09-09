@@ -12,16 +12,13 @@ import { InboxArrowDownIcon, NewspaperIcon } from "@heroicons/react/20/solid";
 import { CalendarDaysIcon, UsersIcon } from "@heroicons/react/24/solid";
 import Modal from "../../../components/utils/DeleteModal";
 import QueryResult from "src/components/utils/queryResults";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 export default function InstitutionsPage({
   onCreateInstituteClick,
   onInstituteEditClick,
 }) {
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  const { isError, data, isLoading } = useQuery(["getInstitutions", currentPage], async () => {
-    return await getInstitutes({ pageNumber: currentPage, pageSize: itemsPerPage });
+  const { isError, data, isLoading } = useQuery("getInstitutions", async () => {
+    return await getInstitutes({ pageNumber: 1, pageSize: 20 });
   });
 
   return (
@@ -31,11 +28,10 @@ export default function InstitutionsPage({
           institutes={data?.data?.institute}
           onCreateInstituteClick={onCreateInstituteClick}
           onInstituteEditClick={(institute) => onInstituteEditClick(institute)}
-          totalItems={data?.data?.total_items}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          itemsPerPage={itemsPerPage}
         />
+      </div>
+      <div>
+        <StatData />
       </div>
     </QueryResult>
   );
@@ -46,25 +42,27 @@ function ListInstitutions({
   institutes,
   onCreateInstituteClick,
   onInstituteEditClick,
-  totalItems,
-  currentPage,
-  itemsPerPage,
-  setCurrentPage
 }) {
+  const itemsPerPage = 5; // Number of items to display per page
+  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedInstitute, setSelectedInstitute] = useState(null);
   const queryClient = useQueryClient();
+  // Calculate pagination boundaries
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  let currentItems = institutes.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Calculate total number of pages
+  const totalPages = Math.ceil(institutes.length / itemsPerPage);
 
   // Change page
-  const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
-  const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalItems);
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-
   const paginate = (pageNumber) => {
-    if (pageNumber < 1 || pageNumber > totalPages) return;
-    setCurrentPage(pageNumber);
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
   };
+
   const { mutate: deleteInstituteModalAction } = useMutation(deleteInstitute, {
     onSuccess: () => {
       queryClient.invalidateQueries("getInstitutions");
@@ -98,6 +96,10 @@ function ListInstitutions({
     }
   };
 
+  console.log(currentItems);
+
+  currentItems = parseContactInfo(currentItems);
+  console.log(currentItems);
   return (
     <div className="flex flex-col">
       <div className="sm:flex sm:items-center">
@@ -123,7 +125,7 @@ function ListInstitutions({
       <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
         <div className="min-w-full">
           <div className="overflow-x-auto">
-            <div className="table-container" style={{ maxHeight: "800px" }}>
+            <div className="table-container" style={{ maxHeight: "500px" }}>
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="sticky top-0 bg-gray-50 z-10">
                   <tr>
@@ -184,7 +186,7 @@ function ListInstitutions({
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {institutes.map((institute) => (
+                  {currentItems.map((institute) => (
                     <tr key={institute.name}>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm font-medium text-gray-900 text-start">
@@ -255,93 +257,85 @@ function ListInstitutions({
             </div>
           </div>
         </div>
-        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between mt-10">
-          <div>
-            <p className="text-sm text-gray-700">
-              Showing{" "}
-              <span className="font-medium">{indexOfFirstItem}</span> to{" "}
-              <span className="font-medium">{indexOfLastItem}</span> of{" "}
-              <span className="font-medium">{totalItems}</span> results
-            </p>
-          </div>
-          <nav
-            className="isolate inline-flex -space-x-px rounded-md shadow-sm overflow-hidden max-w-full"
-            aria-label="Pagination"
-          >
+        <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+          <div className="flex flex-1 justify-between sm:hidden">
             <button
               onClick={() => paginate(currentPage - 1)}
               disabled={currentPage === 1}
-              className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 transition-all duration-300 ${currentPage === 1
-                  ? "cursor-not-allowed"
-                  : "hover:bg-gray-50"
-                }`}
+              className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${
+                currentPage === 1 ? "cursor-not-allowed" : ""
+              }`}
             >
-              <IoIosArrowBack className="text-xl" />
+              <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+              <span className="ml-2">Previous</span>
             </button>
-
-            {Array.from(
-              { length: Math.min(10, totalPages) },
-              (_, index) => {
-                let pageNumber;
-
-                if (currentPage <= 5) {
-                  pageNumber = index + 1;
-                } else if (currentPage + 5 >= totalPages) {
-                  pageNumber = totalPages - 9 + index;
-                } else {
-                  pageNumber = currentPage - 5 + index;
-                }
-
-                if (pageNumber > totalPages || pageNumber < 1) return null;
-
-                return (
-                  <button
-                    key={pageNumber}
-                    onClick={() => paginate(pageNumber)}
-                    className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border transition-all duration-300 ${currentPage === pageNumber
-                        ? "bg-gray-200 text-black"
-                        : "text-black bg-white border-gray-300 hover:bg-gray-50"
-                      }`}
-                  >
-                    {pageNumber}
-                  </button>
-                );
-              }
-            )}
-
             <button
               onClick={() => paginate(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 transition-all duration-300 ${currentPage === totalPages
-                  ? "cursor-not-allowed"
-                  : "hover:bg-gray-50"
-                }`}
+              className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${
+                currentPage === totalPages ? "cursor-not-allowed" : ""
+              }`}
             >
-              <IoIosArrowForward className="text-xl" />
+              <span className="mr-2">Next</span>
+              <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
             </button>
-          </nav>
-        </div>
-        <div className="flex sm:hidden justify-between items-center mt-10">
-          <button
-            onClick={() => paginate(currentPage - 1)}
-            disabled={currentPage === 1}
-            className={`bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded-lg ${currentPage === 1 ? "cursor-not-allowed" : ""
-              }`}
-          >
-            <IoIosArrowBack className="text-xl" />
-          </button>
-          <p className="text-sm text-gray-700">
-            Showing {indexOfFirstItem} to {indexOfLastItem} of {totalItems}{" "}
-            results
-          </p>
-          <button
-            onClick={() => paginate(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className={`bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded-lg ${currentPage === totalPages ? "cursor-not-allowed" : ""
-              }`}
-          >
-            <IoIosArrowForward className="text-xl" />
-          </button>
+          </div>
+          <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm text-gray-700">
+                Showing{" "}
+                <span className="font-medium">{indexOfFirstItem + 1}</span> to{" "}
+                <span className="font-medium">
+                  {Math.min(indexOfLastItem, institutes.length)}
+                </span>{" "}
+                of <span className="font-medium">{institutes.length}</span>{" "}
+                results
+              </p>
+            </div>
+            <div>
+              <nav
+                className="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                aria-label="Pagination"
+              >
+                <button
+                  onClick={() => paginate(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={`mr-2 ml-2 relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${
+                    currentPage === 1 ? "cursor-not-allowed" : ""
+                  }`}
+                >
+                  <span className="sr-only">Previous</span>
+                  <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+                </button>
+                {Array.from(
+                  { length: totalPages },
+                  (_, index) => index + 1
+                ).map((pageNumber) => (
+                  <button
+                    key={pageNumber}
+                    onClick={() => paginate(pageNumber)}
+                    className={`relative ${
+                      currentPage === pageNumber
+                        ? "z-10 bg-indigo-600 text-white"
+                        : "text-gray-900 bg-white hover:bg-gray-50"
+                    } inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus:outline-offset-0`}
+                  >
+                    {pageNumber}
+                  </button>
+                ))}
+                <button
+                  onClick={() => paginate(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className={`relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-100 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${
+                    currentPage === totalPages ? "cursor-not-allowed" : ""
+                  }`}
+                >
+                  <span className="sr-only">Next</span>
+                  <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </nav>
+            </div>
+          </div>
         </div>
       </div>
       {selectedInstitute && (

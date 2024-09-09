@@ -19,31 +19,39 @@ import "react-toastify/dist/ReactToastify.css";
 import QueryResult from "src/components/utils/queryResults";
 
 export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
-  const itemsPerPage = 10;
+  const [, setAdminRoleId] = useState(null);
+  const [institutionAdmins, setInstitutionAdmins] = useState([]);
+  const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAdmin, setSelectedAdmin] = useState(null);
   const queryClient = useQueryClient();
 
   const { isError, data, isLoading } = useQuery(
-    ["getAllinstituteAdmins", currentPage],
+    ["getRoleByName", "getAllinstituteAdmins"],
     async () => {
       const roleData = await getRoleByName({ name: "admin" });
       const admin_role_id = roleData.data?.id;
+      setAdminRoleId(admin_role_id);
 
       const instituteAdminsData = await getAllInstituteAdmins({
-        pageNumber: currentPage,
-        pageSize: itemsPerPage,
+        pageNumber: 1,
+        pageSize: 10,
         value: admin_role_id,
       });
       const admins = instituteAdminsData.data.users.map((user) => ({
         ...user,
       }));
-
+      setInstitutionAdmins(admins);
       return { roleData, instituteAdminsData, admins };
     },
     { keepPreviousData: true }
   );
+  //   const mutation = useMutation(deleteAdmin, {
+  //     onSuccess: () => {
+  //       queryClient.invalidateQueries("getAllinstituteAdmins");
+  //     },
+  //   });
 
   const { mutate: deleteAdminModalAction } = useMutation(deleteAdmin, {
     onSuccess: () => {
@@ -80,16 +88,19 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
     }
   };
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = institutionAdmins.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+  const totalPages = Math.ceil(institutionAdmins.length / itemsPerPage);
 
-  const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
-  const indexOfLastItem = Math.min(currentPage * itemsPerPage, data?.instituteAdminsData?.data?.total_items);
-  const totalPages = Math.ceil(data?.instituteAdminsData?.data?.total_items / itemsPerPage);
-
-  console.log(data)
   const paginate = (pageNumber) => {
     if (pageNumber < 1 || pageNumber > totalPages) return;
     setCurrentPage(pageNumber);
   };
+  console.log("What the fuck is going on here", data);
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
@@ -117,7 +128,7 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
         <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
           <div className="min-w-full">
             <div className="overflow-x-auto">
-              <div className="table-container" style={{ maxHeight: "800px" }}>
+              <div className="table-container" style={{ maxHeight: "500px" }}>
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="sticky top-0 bg-gray-50 z-10">
                     <tr>
@@ -160,7 +171,7 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {data?.instituteAdminsData?.data?.users.map((admin) => (
+                    {currentItems.map((admin) => (
                       <tr key={admin.email}>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm font-medium text-gray-900 text-start">
@@ -239,11 +250,11 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
                   Showing{" "}
                   <span className="font-medium">{indexOfFirstItem + 1}</span> to{" "}
                   <span className="font-medium">
-                    {Math.min(indexOfLastItem, data?.instituteAdminsData?.data?.total_items)}
+                    {Math.min(indexOfLastItem, institutionAdmins.length)}
                   </span>{" "}
                   of{" "}
                   <span className="font-medium">
-                    {data?.instituteAdminsData?.data?.total_items}
+                    {institutionAdmins.length}
                   </span>{" "}
                   results
                 </p>
@@ -300,10 +311,10 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
             closeModal={closeModal}
             confirmAction={confirmDeletion}
             title="Confirm Deletion"
-            message={`Are you sure you want to delete the admin "${selectedAdmin.first_name} ${selectedAdmin.last_name}"? This action cannot be undone.`}
+            message={`Are you sure you want to delete the institute "${selectedAdmin.first_name} ${selectedAdmin.last_name}"? This action cannot be undone.`}
           />
         )}
-        {/* <StatData /> */}
+        <StatData />
       </div>
     </QueryResult>
   );

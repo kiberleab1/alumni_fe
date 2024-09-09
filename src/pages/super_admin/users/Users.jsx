@@ -1,51 +1,50 @@
-import { useState } from "react";
-import {
-  deleteAdmin,
-  getAllinstituteAdmins as getAllInstituteAdmins,
-  getRoleByName,
-} from "src/api";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { formatDate } from "../../../utils/utils";
 import {
   AdjustmentsHorizontalIcon,
   BuildingLibraryIcon,
   UserIcon,
-  CalendarDaysIcon,
-} from "@heroicons/react/24/solid";
+} from "@heroicons/react/20/solid";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import Modal from "../../../components/utils/DeleteModal";
+import { CalendarDaysIcon } from "@heroicons/react/24/solid";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import QueryResult from "src/components/utils/queryResults";
+import { deleteAdmin, getAllinstituteAdmins, getRoleByName } from "src/api";
+import { formatDate } from "src/utils/utils";
+import Modal from "src/components/utils/DeleteModal";
 
-export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
-  const itemsPerPage = 10;
+export default function Users({ onCreateUserClick, onUserEditClick }) {
+  const [, setAdminRoleId] = useState(null);
+  const [institutionAdmins, setInstitutionAdmins] = useState([]);
+  const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedAdmin, setSelectedAdmin] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const queryClient = useQueryClient();
 
   const { isError, data, isLoading } = useQuery(
-    ["getAllinstituteAdmins", currentPage],
+    ["getRoleByName", "getAllinstituteAdmins"],
     async () => {
-      const roleData = await getRoleByName({ name: "admin" });
-      const admin_role_id = roleData.data?.id;
+      const roleData = await getRoleByName({ name: "alumni" });
+      const admin_role_id = roleData.data.id;
+      setAdminRoleId(admin_role_id);
 
-      const instituteAdminsData = await getAllInstituteAdmins({
-        pageNumber: currentPage,
-        pageSize: itemsPerPage,
+      const instituteAdminsData = await getAllinstituteAdmins({
+        pageNumber: 1,
+        pageSize: 10,
         value: admin_role_id,
       });
       const admins = instituteAdminsData.data.users.map((user) => ({
         ...user,
       }));
-
-      return { roleData, instituteAdminsData, admins };
+      setInstitutionAdmins(admins);
     },
     { keepPreviousData: true }
   );
 
-  const { mutate: deleteAdminModalAction } = useMutation(deleteAdmin, {
+  const { mutate: deleteUserModalAction } = useMutation(deleteAdmin, {
     onSuccess: () => {
       queryClient.invalidateQueries("getAllinstituteAdmins");
       closeModal();
@@ -54,70 +53,73 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
     onError: (error) => {
       closeModal();
       queryClient.invalidateQueries("getAllinstituteAdmins");
-      console.error("Error deleting admin:", error);
-      toast.success("Error deleting admin!");
+      console.error("Error deleting user:", error);
+      toast.success("Error deleting user!");
     },
   });
 
-  const openModal = (admin) => {
-    setSelectedAdmin(admin);
+  const openModal = (user) => {
+    setSelectedUser(user);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
-    setSelectedAdmin(null);
+    setSelectedUser(null);
     setIsModalOpen(false);
   };
 
   const confirmDeletion = () => {
-    if (selectedAdmin) {
-      const deleteAdminData = {
-        address_id: selectedAdmin.address_id,
-        birth_place_id: selectedAdmin.birth_place_id,
-        id: selectedAdmin.id,
+    console.log(selectedUser);
+    if (selectedUser) {
+      const deleteUserData = {
+        address_id: selectedUser.address_id,
+        birth_place_id: selectedUser.birth_place_id,
+        id: selectedUser.id,
       };
-      deleteAdminModalAction(deleteAdminData);
+      deleteUserModalAction(deleteUserData);
     }
   };
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = institutionAdmins.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+  const totalPages = Math.ceil(institutionAdmins.length / itemsPerPage);
 
-  const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
-  const indexOfLastItem = Math.min(currentPage * itemsPerPage, data?.instituteAdminsData?.data?.total_items);
-  const totalPages = Math.ceil(data?.instituteAdminsData?.data?.total_items / itemsPerPage);
-
-  console.log(data)
   const paginate = (pageNumber) => {
     if (pageNumber < 1 || pageNumber > totalPages) return;
     setCurrentPage(pageNumber);
   };
 
   return (
-    <QueryResult isError={isError} isLoading={isLoading} data={data}>
+    <QueryResult isLoading={isLoading} isError={isError} data={data}>
       <div className="flex flex-col">
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
             <h1 className="text-base font-semibold leading-6 text-gray-900">
-              ADMINISTRATORS
+              USERS
             </h1>
             <p className="mt-2 text-sm text-gray-700">
-              A list of all the Admins in the system including their name,
-              title, email and role.
+              A list of all the users in the system including their name, title,
+              email and role.
             </p>
           </div>
           <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
             <button
               type="button"
               className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              onClick={onAddAdminClick}
+              onClick={onCreateUserClick}
             >
-              Add Admin
+              Add User
             </button>
           </div>
         </div>
         <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
           <div className="min-w-full">
             <div className="overflow-x-auto">
-              <div className="table-container" style={{ maxHeight: "800px" }}>
+              <div className="table-container" style={{ maxHeight: "500px" }}>
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="sticky top-0 bg-gray-50 z-10">
                     <tr>
@@ -143,6 +145,12 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
                       >
+                        Gender
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider"
+                      >
                         Institute Name
                       </th>
                       <th
@@ -160,45 +168,50 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {data?.instituteAdminsData?.data?.users.map((admin) => (
-                      <tr key={admin.email}>
+                    {currentItems.map((user) => (
+                      <tr key={user.email}>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm font-medium text-gray-900 text-start">
-                            {admin.first_name} {admin.last_name}
+                            {user.first_name} {user.last_name}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm text-gray-900">
-                            {admin.email ? admin.email : "N/A"}
+                            {user.email ? user.email : "N/A"}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm text-gray-900">
-                            {admin.phone_number ? admin.phone_number : "N/A"}
+                            {user.phone_number ? user.phone_number : "N/A"}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm text-gray-900">
-                            {admin.institute_name}
+                            {user.gender}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm text-gray-900">
-                            {formatDate(admin.createdAt)}
+                            {user.institute_id}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-start">
+                          <div className="text-sm text-gray-900">
+                            {formatDate(user.createdAt)}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium ">
                           <a
                             href="#"
                             className="text-indigo-600 hover:text-green-900"
-                            onClick={() => onAdminEditClick(admin)}
+                            onClick={() => onUserEditClick(user)}
                           >
                             Edit
                           </a>
                           <a
                             href="#"
                             className="text-red-600 hover:text-red-900 pl-5"
-                            onClick={() => openModal(admin)}
+                            onClick={() => openModal(user)}
                           >
                             Delete
                           </a>
@@ -239,11 +252,11 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
                   Showing{" "}
                   <span className="font-medium">{indexOfFirstItem + 1}</span> to{" "}
                   <span className="font-medium">
-                    {Math.min(indexOfLastItem, data?.instituteAdminsData?.data?.total_items)}
+                    {Math.min(indexOfLastItem, institutionAdmins.length)}
                   </span>{" "}
                   of{" "}
                   <span className="font-medium">
-                    {data?.instituteAdminsData?.data?.total_items}
+                    {institutionAdmins.length}
                   </span>{" "}
                   results
                 </p>
@@ -294,16 +307,16 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
             </div>
           </div>
         </div>
-        {selectedAdmin && (
+        {selectedUser && (
           <Modal
             isOpen={isModalOpen}
             closeModal={closeModal}
             confirmAction={confirmDeletion}
             title="Confirm Deletion"
-            message={`Are you sure you want to delete the admin "${selectedAdmin.first_name} ${selectedAdmin.last_name}"? This action cannot be undone.`}
+            message={`Are you sure you want to delete the institute "${selectedUser.first_name} ${selectedUser.last_name}"? This action cannot be undone.`}
           />
         )}
-        {/* <StatData /> */}
+        <StatData />
       </div>
     </QueryResult>
   );
@@ -415,7 +428,7 @@ function StatData() {
           </div>
         </dl>
       </li>
-      <li key="4" className="overflow-hidden rounded-xl border border-gray-200">
+      <li key="3" className="overflow-hidden rounded-xl border border-gray-200">
         <div className="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
           <AdjustmentsHorizontalIcon className="h-12 w-12 flex-none rounded-lg bg-white text-pink-900 object-cover ring-1 ring-gray-100/10" />
           <div className="text-sm font-medium leading-6 text-gray-900">

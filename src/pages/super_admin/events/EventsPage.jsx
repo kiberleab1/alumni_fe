@@ -5,13 +5,11 @@ import { toast } from "react-toastify";
 import { deleteEvent, getAllEvents } from "src/api";
 import Modal from "src/components/utils/DeleteModal";
 import QueryResult from "src/components/utils/queryResults";
-import { formatDate, formatInputDate } from "src/utils/utils";
+import { formatDate } from "src/utils/utils";
 
 export default function EventsPage({ onCreateEventClick, onEditEventClick }) {
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
   const { isError, data, isLoading } = useQuery("getAllEvents", async () => {
-    return await getAllEvents({ pageNumber: currentPage, pageSize: itemsPerPage });
+    return await getAllEvents({ pageNumber: 1, pageSize: 10 });
   });
 
   return (
@@ -21,33 +19,22 @@ export default function EventsPage({ onCreateEventClick, onEditEventClick }) {
           eventsData={data?.data?.events}
           onCreateEventClick={onCreateEventClick}
           onEditEventClick={(event) => onEditEventClick(event)}
-          totalItems={data?.data?.total_items}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          itemsPerPage={itemsPerPage}
-
         />
       </div>
     </QueryResult>
   );
 }
 
-function ListEvent({ 
-  eventsData, 
-  onCreateEventClick, 
-  onEditEventClick, 
-  totalItems,
-  currentPage,
-  itemsPerPage,
-  setCurrentPage, }) {
-
+function ListEvent({ eventsData, onCreateEventClick, onEditEventClick }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const itemsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
-  const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalItems);
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = eventsData.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(eventsData.length / itemsPerPage);
 
   const paginate = (pageNumber) => {
     if (pageNumber < 1 || pageNumber > totalPages) return;
@@ -110,7 +97,7 @@ function ListEvent({
       <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
         <div className="min-w-full">
           <div className="overflow-x-auto">
-            <div className="table-container" style={{ maxHeight: "800px" }}>
+            <div className="table-container" style={{ maxHeight: "500px" }}>
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="sticky top-0 bg-gray-50 z-10">
                   <tr>
@@ -159,7 +146,7 @@ function ListEvent({
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {eventsData.map((event) => (
+                  {currentItems.map((event) => (
                     <tr key={event.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm font-medium text-gray-900">
@@ -185,7 +172,7 @@ function ListEvent({
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm text-gray-900">
-                          {event.time ? formatDate(event.time) : "N/A"}
+                          {event.time ? event.time : "N/A"}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
@@ -221,8 +208,9 @@ function ListEvent({
             <button
               onClick={() => paginate(currentPage - 1)}
               disabled={currentPage === 1}
-              className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${currentPage === 1 ? "cursor-not-allowed" : ""
-                }`}
+              className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${
+                currentPage === 1 ? "cursor-not-allowed" : ""
+              }`}
             >
               <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
               <span className="ml-2">Previous</span>
@@ -230,8 +218,9 @@ function ListEvent({
             <button
               onClick={() => paginate(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${currentPage === totalPages ? "cursor-not-allowed" : ""
-                }`}
+              className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${
+                currentPage === totalPages ? "cursor-not-allowed" : ""
+              }`}
             >
               <span className="mr-2">Next</span>
               <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
@@ -257,8 +246,9 @@ function ListEvent({
                 <button
                   onClick={() => paginate(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className={`relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${currentPage === 1 ? "cursor-not-allowed" : ""
-                    }`}
+                  className={`relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${
+                    currentPage === 1 ? "cursor-not-allowed" : ""
+                  }`}
                 >
                   <span className="sr-only">Previous</span>
                   <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
@@ -270,10 +260,11 @@ function ListEvent({
                   <button
                     key={pageNumber}
                     onClick={() => paginate(pageNumber)}
-                    className={`relative ${currentPage === pageNumber
+                    className={`relative ${
+                      currentPage === pageNumber
                         ? "z-10 bg-indigo-600 text-white"
                         : "text-gray-900 bg-white hover:bg-gray-50"
-                      } inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus:outline-offset-0`}
+                    } inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus:outline-offset-0`}
                   >
                     {pageNumber}
                   </button>
@@ -281,8 +272,9 @@ function ListEvent({
                 <button
                   onClick={() => paginate(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className={`relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${currentPage === totalPages ? "cursor-not-allowed" : ""
-                    }`}
+                  className={`relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${
+                    currentPage === totalPages ? "cursor-not-allowed" : ""
+                  }`}
                 >
                   <span className="sr-only">Next</span>
                   <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
