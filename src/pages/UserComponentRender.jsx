@@ -16,7 +16,8 @@ import CreateAlumni from "src/pages/user/alumni/CreateAlumni";
 import EventDetailPage from "./user/events/EventDetailPage";
 import NewsDetailPage from "./user/news/NewsDetailPage";
 import EditAlumni from "./user/alumni/EditAlumni";
-
+import ChatUi from "./user/chatAndConnection/chat";
+import ConnectionNetwork from "./user/chatAndConnection/alumniNetwork";
 const componentsMap = {
   Profile: AlumniProfile,
   Users: Users,
@@ -34,6 +35,8 @@ const componentsMap = {
   "Document Verification": DocumentVerificationPage,
   "Event Detail": EventDetailPage,
   "News Detail": NewsDetailPage,
+  Chat: ChatUi,
+  "My Connections": ConnectionNetwork,
 };
 
 export default function ComponentRender({ page, onPageSet }) {

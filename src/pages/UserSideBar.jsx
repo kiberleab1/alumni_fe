@@ -32,8 +32,13 @@ const navigation = [
   },
   { name: "Alumni", href: "#", icon: AcademicCapIcon, current: false },
   { name: "Jobs", href: "#", icon: BriefcaseIcon, current: false },
-  // { name: "My Connections", href: "#", icon: MdConnectWithoutContact, current: false },
-  // { name: "Chat", href: "#", icon: BiMessageSquareCheck, current: false },
+  {
+    name: "My Connections",
+    href: "#",
+    icon: MdConnectWithoutContact,
+    current: false,
+  },
+  { name: "Chat", href: "#", icon: BiMessageSquareCheck, current: false },
   { name: "Jobs History", href: "#", icon: BriefcaseIcon, current: false },
   {
     name: "Document Verification",
