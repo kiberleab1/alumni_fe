@@ -18,7 +18,7 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
   );
 
   const toggle = () => {
-    setIsOpen((prevOpen) => !prevOpen);
+    setIsOpen(!isOpen);
   };
   useEffect(() => {
     AOS.init({
@@ -26,18 +26,19 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
       once: false,
     });
   });
+
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
       {data != null && data?.data && data?.data?.graduation_year ? (
         <div
-          className="flex flex-col items-center  min-h-screen"
+          className="flex flex-col items-center min-h-screen"
           data-aos="fade-down"
         >
           <div className="flex flex-row items-center justify-center gap-3 min-w-[80%]">
             <h1 className="text-3xl sm:text-5xl font-normal">Alumni Profile</h1>
             <div>
               <CiEdit
-                className="text-2xl "
+                className="text-2xl"
                 onClick={() => onEditAlumniClick(data?.data)}
               />
             </div>
@@ -46,19 +47,20 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
           <img
             src={getImageBaseUrl(data?.data?.user_photo)}
             alt={data?.data?.user_id}
-            className="w-52 h-52 rounded-full mt-4 object-cover "
+            className="w-52 h-52 rounded-full mt-4 object-cover"
           />
 
-          <h2 className="text-4xl  mt-2 font-sans">
-            {data?.data?.user_data?.name}{" "}
+          <h2 className="text-4xl mt-2 font-sans">
+            {data?.data?.user_data?.name}
           </h2>
-          <div className="flex items-center  hover:text-blue-700 mt-2">
+
+          <div className="flex items-center hover:text-blue-700 mt-2">
             <a
               className="text-lg text-gray-500 flex flex-row gap-3"
               href="mailto:helengetachew@gmail.com"
             >
-              <TfiEmail className="text-2xl " />
-              {data?.data?.user_data?.email}{" "}
+              <TfiEmail className="text-2xl" />
+              {data?.data?.user_data?.email}
             </a>
           </div>
 
@@ -85,114 +87,110 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
             </a>
           </div>
 
-          <div className="border-b w-1/2 my-2 border-gray-300 "></div>
-          <div className="">
-            <div
-              className={`transition-all duration-500 ease-in-out overflow-hidden border-b-4 w-[300px] sm:min-w-[550px] ${
-                isOpen ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
-              }`}
-            >
-              <Table className="text-left">
-                <tbody>
-                  <tr>
-                    <th className="w-1/4">Degree</th>
-                  </tr>
-                  <tr className="bg-blue-300">
-                    <td className="transform transition-transform duration-300 hover:translate-x-5 ">
-                      {data?.data?.degree}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th className="w-1/4">Graduation Date</th>
-                  </tr>
-                  <tr className="bg-blue-300">
-                    <td className="transform transition-transform duration-300 hover:translate-x-5 ">
-                      {data?.data?.graduation_year.split("T")[0]}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th className="w-1/4">Location</th>
-                  </tr>
-                  <tr className="bg-blue-300">
-                    <td className="transform transition-transform duration-300 hover:translate-x-5  ">
-                      {data?.data?.user_data?.address?.country
-                        ? data?.data?.user_data?.address?.country
-                        : "Ethiopia"}
-                      ,{" "}
-                      {data?.data?.user_data?.address?.region
-                        ? data?.data?.user_data?.address?.region
-                        : "Addis Ababa"}
-                      ,{" "}
-                      {data?.data?.user_data?.address?.city
-                        ? data?.data?.user_data?.address?.city
-                        : "Addis Ababa"}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th className="w-1/4">Department</th>
-                  </tr>
-                  <tr className="bg-blue-300">
-                    <td className="transform transition-transform duration-300 hover:translate-x-5  max-w-[500px]">
-                      {data?.data?.department_name}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th className="w-1/4">Skills</th>
-                  </tr>
-                  <tr className="bg-blue-300">
-                    <td className="transform transition-transform duration-300 hover:translate-x-5 max-w-[500px] ">
-                      {data?.data?.Skills}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th className="w-1/4 ">Language</th>
-                  </tr>
-                  <tr className="bg-blue-300">
-                    <td className="transform transition-transform duration-300 hover:translate-x-5  ">
-                      {data?.data?.Language}
-                    </td>
-                  </tr>
-                  {/* <tr>
-                    <th className="w-1/4">Resume</th>
-                  </tr> */}
-                </tbody>
-              </Table>
-              {/* <div className=" flex flex-col items-center text-center pb-6">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="black"
-                  className="w-10 h-10"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.625 1.5H9a3.75 3.75 0 0 1 3.75 3.75v1.875c0 1.036.84 1.875 1.875 1.875H16.5a3.75 3.75 0 0 1 3.75 3.75v7.875c0 1.035-.84 1.875-1.875 1.875H5.625a1.875 1.875 0 0 1-1.875-1.875V3.375c0-1.036.84-1.875 1.875-1.875Zm5.845 17.03a.75.75 0 0 0 1.06 0l3-3a.75.75 0 1 0-1.06-1.06l-1.72 1.72V12a.75.75 0 0 0-1.5 0v4.19l-1.72-1.72a.75.75 0 0 0-1.06 1.06l3 3Z"
-                    clipRule="evenodd"
-                  />
-                  <path d="M14.25 5.25a5.23 5.23 0 0 0-1.279-3.434 9.768 9.768 0 0 1 6.963 6.963A5.23 5.23 0 0 0 16.5 7.5h-1.875a.375.375 0 0 1-.375-.375V5.25Z" />
-                </svg>
+          <div className="border-b w-1/2 my-2 border-gray-300"></div>
 
-                <a
-                  href="https://drive.google.com/file/d/1mXg4b5xI9XsGnqg0wQHb2K5JgUy5UxP6/view?usp=sharing"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hover:text-blue-300"
-                >
-                  View Resume
-                </a>
-              </div> */}
-            </div>
-            {/* <button
-              className=" text-black bg-white text-3xl py-2 px-4 "
-              onClick={toggle}
-            >
-              {isOpen ? (
-                <CiSaveUp1 className="text-red-800 hover:text-red-400" />
-              ) : (
-                <CiSaveDown1 className="text-blue-800 hover:text-blue-400" />
+          <div className="relative w-full max-w-[1200px] overflow-hidden">
+            <div className="flex flex-row transition-all duration-500 ease-in-out ">
+              <div
+                className={`transition-all duration-500 ease-in-out w-[300px] sm:min-w-[550px] ${
+                  isOpen
+                    ? "translate-x-[-0%]"
+                    : "translate-x-[0%] sm:translate-x-[50%]"
+                }`}
+              >
+                <Table className="text-left">
+                  <tbody>
+                    <tr>
+                      <th className="w-1/4">Degree</th>
+                    </tr>
+                    <tr className="bg-blue-300">
+                      <td className="transform transition-transform duration-300 hover:translate-x-5">
+                        {data?.data?.degree}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="w-1/4">Graduation Date</th>
+                    </tr>
+                    <tr className="bg-blue-300">
+                      <td className="transform transition-transform duration-300 hover:translate-x-5">
+                        {data?.data?.graduation_year.split("T")[0]}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="w-1/4">Location</th>
+                    </tr>
+                    <tr className="bg-blue-300">
+                      <td className="transform transition-transform duration-300 hover:translate-x-5">
+                        {data?.data?.user_data?.address?.country ?? "Ethiopia"},{" "}
+                        {data?.data?.user_data?.address?.region ??
+                          "Addis Ababa"}
+                        ,{" "}
+                        {data?.data?.user_data?.address?.city ?? "Addis Ababa"}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="w-1/4">Department</th>
+                    </tr>
+                    <tr className="bg-blue-300">
+                      <td className="transform transition-transform duration-300 hover:translate-x-5">
+                        {data?.data?.department_name}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="w-1/4">Skills</th>
+                    </tr>
+                    <tr className="bg-blue-300">
+                      <td className="transform transition-transform duration-300 hover:translate-x-5">
+                        {data?.data?.Skills}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="w-1/4">Language</th>
+                    </tr>
+                    <tr className="bg-blue-300">
+                      <td className="transform transition-transform duration-300 hover:translate-x-5">
+                        {data?.data?.Language}
+                      </td>
+                    </tr>
+                  </tbody>
+                </Table>
+              </div>
+
+              {isOpen && (
+                <div className="w-[2px] bg-gray-300 hidden xl:block h-auto mx-4"></div>
               )}
-            </button> */}
+
+              {isOpen && (
+                <div
+                  className={` transition-all duration-500 ease-in-out overflow-hidden hidden xl:block sm:min-w-[550px]`}
+                >
+                  <Table className="text-left">
+                    <tbody>
+                      <tr>
+                        <th className="w-1/4">Additional Info</th>
+                      </tr>
+                      <tr className="bg-blue-300">
+                        <td className="transform transition-transform duration-300 hover:translate-x-5">
+                          {data?.data?.additionalInfo}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                </div>
+              )}
+            </div>
           </div>
+
+          <button
+            className="text-black bg-white text-3xl py-2 px-4 mt-4 "
+            onClick={toggle}
+          >
+            {isOpen ? (
+              <CiSaveUp1 className="text-red-800 hover:text-red-400 rotate-90" />
+            ) : (
+              <CiSaveDown1 className="text-blue-800 hover:text-blue-400 rotate-90" />
+            )}
+          </button>
         </div>
       ) : (
         <div className="flex items-center justify-center min-h-screen bg-white">
