@@ -89,7 +89,7 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
 
           <div className="border-b w-1/2 my-2 border-gray-300"></div>
 
-          <div className="relative w-full max-w-[1200px] overflow-hidden">
+          <div className="relative w-full max-w-[1150px] overflow-hidden">
             <div className="flex flex-row transition-all duration-500 ease-in-out ">
               <div
                 className={`transition-all duration-500 ease-in-out w-[300px] sm:min-w-[550px] ${
@@ -157,7 +157,17 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
               </div>
 
               {isOpen && (
-                <div className="w-[2px] bg-gray-300 hidden xl:block h-auto mx-4"></div>
+                <div className="relative flex items-center">
+                  <div className="w-[2px] bg-black hidden xl:block h-full mx-4 z-0"></div>
+                  {isOpen ? (
+                    <CiSaveDown1
+                      className="z-50 p-2  w-full rounded-[50%] h-auto my-auto items-center justify-center mx-auto absolute text-white  bg-gray-700 rotate-90 text-2xl top-1/2 transform -translate-y-1/2 translate-x-/2 cursor-pointer"
+                      onClick={toggle}
+                    />
+                  ) : (
+                    ""
+                  )}
+                </div>
               )}
 
               {isOpen && (
@@ -182,13 +192,17 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
           </div>
 
           <button
-            className="text-black bg-white text-3xl py-2 px-4 mt-4 "
+            className={` ${
+              isOpen
+                ? "hidden"
+                : "text-black bg-gray-700 text-3xl py-2 px-4 mt-4 border"
+            }`}
             onClick={toggle}
           >
             {isOpen ? (
-              <CiSaveUp1 className="text-red-800 hover:text-red-400 rotate-90" />
+              ""
             ) : (
-              <CiSaveDown1 className="text-blue-800 hover:text-blue-400 rotate-90" />
+              <CiSaveUp1 className="text-red-50 hover:text-red-400 rotate-90" />
             )}
           </button>
         </div>
