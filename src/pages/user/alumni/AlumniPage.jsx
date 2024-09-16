@@ -190,7 +190,6 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                 className="isolate inline-flex -space-x-px rounded-md shadow-sm overflow-hidden max-w-full"
                 aria-label="Pagination"
               >
-                {/* Previous Button */}
                 <button
                   onClick={() => paginate(currentPage - 1)}
                   disabled={currentPage === 1}
@@ -203,20 +202,16 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                   <IoIosArrowBack className="text-xl" />
                 </button>
 
-                {/* Logic for pagination */}
                 {Array.from(
                   { length: Math.min(10, totalPages) },
                   (_, index) => {
                     let pageNumber;
 
                     if (currentPage <= 5) {
-                      // Ensure pagination starts at 1 if on the first few pages
                       pageNumber = index + 1;
                     } else if (currentPage + 5 >= totalPages) {
-                      // Adjust to show last pages when near the end
                       pageNumber = totalPages - 9 + index;
                     } else {
-                      // Center current page in pagination list
                       pageNumber = currentPage - 5 + index;
                     }
 

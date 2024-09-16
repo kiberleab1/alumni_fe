@@ -10,8 +10,10 @@ export default function DepartmentPage({
   onCreateDepartmentClick,
   onDepartmentEditClick,
 }) {
-  const { isError, data, isLoading } = useQuery("getDepartments", async () => {
-    return await getDepartments({ pageNumber: 1, pageSize: 10 });
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const { isError, data, isLoading } = useQuery(["getDepartments", currentPage], async () => {
+    return await getDepartments({ pageNumber: currentPage, pageSize: itemsPerPage });
   });
 
   return (
@@ -23,6 +25,10 @@ export default function DepartmentPage({
           onDepartmentEditClick={(department) =>
             onDepartmentEditClick(department)
           }
+          totalItems={data?.data?.total_items}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          itemsPerPage={itemsPerPage}
         />
       </div>
     </QueryResult>
@@ -34,9 +40,12 @@ function ListDepartment({
   departments,
   onCreateDepartmentClick,
   onDepartmentEditClick,
+  totalItems,
+  currentPage,
+  itemsPerPage,
+  setCurrentPage
 }) {
-  const itemsPerPage = 5; // Number of items to display per page
-  const [currentPage, setCurrentPage] = useState(1);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const queryClient = useQueryClient();
@@ -54,19 +63,16 @@ function ListDepartment({
     },
   });
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = parseContactInfo(
-    departments.slice(indexOfFirstItem, indexOfLastItem)
-  );
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
+  const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalItems);
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-  const totalPages = Math.ceil(departments.length / itemsPerPage);
 
   const paginate = (pageNumber) => {
-    if (pageNumber >= 1 && pageNumber <= totalPages) {
-      setCurrentPage(pageNumber);
-    }
+    if (pageNumber < 1 || pageNumber > totalPages) return;
+    setCurrentPage(pageNumber);
   };
+
 
   const openModal = (department) => {
     setSelectedDepartment(department);
@@ -110,7 +116,7 @@ function ListDepartment({
       <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
         <div className="min-w-full">
           <div className="overflow-x-auto">
-            <div className="table-container" style={{ maxHeight: "500px" }}>
+            <div className="table-container" style={{ maxHeight: "800px" }}>
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="sticky top-0 bg-gray-50 z-10">
                   <tr>
@@ -153,7 +159,7 @@ function ListDepartment({
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {currentItems.map((department) => (
+                  {departments.map((department) => (
                     <tr key={department.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm font-medium text-gray-900">
