@@ -123,7 +123,7 @@ function ListEvent({
         </div>
       </div>
       <div>
-        {isDropdownOpen && (
+      {isDropdownOpen && (
           <div className="absolute right-0 bg-white shadow-lg p-6 rounded-md z-50 w-80">
             <div className="mt-4 grid gap-4">
               <div className="grid gap-2">
@@ -213,13 +213,13 @@ function ListEvent({
             </div>
           </div>
         )}
-        
+
       </div>
       <div className=" mt-6 container w-full z-10">
         <div className="flex flex-wrap items-center overflow-y-scroll scroll-auto">
           {eventsData?.map((val, idx) => (
             <div
-              className="relative w-full sm:w-[80%] md:w-1/3 lg:w-1/3 xl:w-[22%] bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105 mx-3 md:mx-4 my-4"
+              className="relative w-full sm:w-[320px] bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105 mx-3 md:mx-4 my-4"
               key={idx}
             >
               <div className="h-[520px]">
@@ -285,7 +285,7 @@ function ListEvent({
             onClick={() => handlePagination(currentPage - 1)}
             disabled={currentPage === 1}
             className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 ${currentPage === 1 ? "cursor-not-allowed" : "hover:bg-gray-50"
-              }`}
+            }`}
           >
             <IoIosArrowBack className="text-xl" />
           </button>
@@ -295,9 +295,9 @@ function ListEvent({
                 key={pageNumber}
                 onClick={() => handlePagination(pageNumber)}
                 className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border ${currentPage === pageNumber
-                  ? "bg-gray-200 text-black "
-                  : "text-black bg-white border-gray-300 hover:bg-gray-50"
-                  }`}
+                    ? "bg-gray-200 text-black "
+                    : "text-black bg-white border-gray-300 hover:bg-gray-50"
+                }`}
               >
                 {pageNumber}
               </button>
@@ -307,9 +307,9 @@ function ListEvent({
             onClick={() => handlePagination(currentPage + 1)}
             disabled={currentPage === totalPages}
             className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 ${currentPage === totalPages
-              ? "cursor-not-allowed"
-              : "hover:bg-gray-50"
-              }`}
+                ? "cursor-not-allowed"
+                : "hover:bg-gray-50"
+            }`}
           >
             <IoIosArrowForward className="text-xl" />
           </button>
