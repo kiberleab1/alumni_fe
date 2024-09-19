@@ -234,7 +234,7 @@ function ListEvent({
                     {val.title}
                   </h2>
                   <div className="flex items-center text-gray-600 mb-2 space-x-2">
-                    <div className="flex flex-row gap-2 items-center">
+                    <div className="flex flex-row gap-1 md:gap-2 items-center">
                       <SlCalender />
                       <span className="line-clamp-1">{val.time}</span>
                     </div>
