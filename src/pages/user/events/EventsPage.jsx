@@ -216,7 +216,7 @@ function ListEvent({
 
       </div>
       <div className=" mt-6 container w-full z-10">
-        <div className="flex flex-wrap items-center overflow-y-scroll scroll-auto">
+        <div className="flex flex-wrap items-center gap-4 overflow-y-scroll scroll-auto m-auto content-start">
           {eventsData?.map((val, idx) => (
             <div
               className="relative w-full sm:w-[320px] bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105 mx-3 md:mx-4 my-4"
