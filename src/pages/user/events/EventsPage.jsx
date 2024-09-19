@@ -15,7 +15,8 @@ import { SlCalender } from "react-icons/sl";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { FiFilter } from "react-icons/fi";
 import { MdDriveFileRenameOutline, MdLockReset } from "react-icons/md";
-
+import image from "../../../assets/images/testimonial/2.jpg";
+import useAOS from "../aos";
 export default function EventsPage({ onEventsDetailClick }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [filterType, setFilterType] = useState("all");
@@ -96,6 +97,7 @@ function ListEvent({
     setPendingFilterType(null);
     setPendingFilterValue(null);
   };
+  useAOS({ duration: 1200, once: true });
 
   const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
   const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalItems);
@@ -215,7 +217,7 @@ function ListEvent({
         )}
 
       </div>
-      <div className=" mt-6 container w-full z-10">
+      <div className=" mt-6 container w-full z-10" data-aos="fade-down">
         <div className="flex flex-wrap items-center gap-4 overflow-y-scroll scroll-auto m-auto content-start">
           {eventsData?.map((val, idx) => (
             <div

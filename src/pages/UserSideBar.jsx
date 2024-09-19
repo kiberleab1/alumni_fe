@@ -216,7 +216,7 @@ function UserSideBar() {
                     style={{ backgroundColor: sideBarBackground || "#000000" }}
                   >
                     <div className="flex h-16 shrink-0 items-center">
-                      <div className="transition duration-300 ease-in-out w-[50px] text-white hover:bg-gray-900 text-left">
+                      <div className="transition duration-300 ease-in-out w-[50px] text-white  text-left">
                         <img src="https://kefeta.et/wp-content/uploads/2023/01/cropped-Kefeta-Logo-English-Colors-2048x1479-1-120x87.png" />
                       </div>
                       {/* <span className="text-2xl text-gray-50 font-bold font-mono">
@@ -320,7 +320,7 @@ function UserSideBar() {
             style={{ backgroundColor: sideBarBackground || "#000000" }}
           >
             <div className="flex h-16 shrink-0 items-center mt-2">
-              <div className="transition duration-300 ease-in-out w-[70px] text-white hover:bg-gray-900 text-left">
+              <div className="transition duration-300 ease-in-out w-[70px] text-white  text-left">
                 <img src="https://kefeta.et/wp-content/uploads/2023/01/cropped-Kefeta-Logo-English-Colors-2048x1479-1-120x87.png" />
               </div>
               {/* <span className="text-2xl text-gray-50 font-bold font-mono mr-4">
