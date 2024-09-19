@@ -97,6 +97,7 @@ function UserSideBar() {
       href: `/${itemName.toLowerCase()}`,
       current: true,
     });
+    setSidebarOpen(false);
     console.log(itemName);
   };
 
@@ -352,6 +353,7 @@ function UserSideBar() {
                             "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                           )}
                           style={{
+                            transition: "all 0.3s ease",
                             color:
                               componentClicked.name === item.name
                                 ? sideBarActuveTextColor || "#FFFFFF"
@@ -416,6 +418,7 @@ function UserSideBar() {
                                         "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                                       )}
                                       style={{
+                                        transition: "all 0.3s ease",
                                         color:
                                           componentClicked.name === subItem.name
                                             ? sideBarActuveTextColor ||
