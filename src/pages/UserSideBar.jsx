@@ -34,15 +34,34 @@ const navigation = [
   { name: "Jobs", href: "#", icon: BriefcaseIcon, current: false },
   // { name: "My Connections", href: "#", icon: MdConnectWithoutContact, current: false },
   // { name: "Chat", href: "#", icon: BiMessageSquareCheck, current: false },
-  { name: "Jobs History", href: "#", icon: BriefcaseIcon, current: false },
+  {
+    name: "Jobs History",
+    child: "Create JobHistory",
+    href: "#",
+    icon: BriefcaseIcon,
+    current: false,
+  },
   {
     name: "Document Verification",
+    child: "Document Verification",
     href: "#",
     icon: ClipboardDocumentCheckIcon,
     current: false,
   },
-  { name: "Events", href: "#", icon: CalendarIcon, current: false },
-  { name: "News", href: "#", icon: NewspaperIcon, current: false },
+  {
+    name: "Events",
+    child: "Events",
+    href: "#",
+    icon: CalendarIcon,
+    current: false,
+  },
+  {
+    name: "News",
+    child: "News Detail",
+    href: "#",
+    icon: NewspaperIcon,
+    current: false,
+  },
 ];
 
 const subNavigation = [];
@@ -64,6 +83,8 @@ function classNames(...classes) {
 }
 
 function UserSideBar() {
+  const [child, setchildUrl] = useState("");
+  const [parentUrl, setparentUrl] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarOpenMain, setSidebarOpenMain] = useState(true);
   const [componentClicked, setComponentClicked] = useState({
@@ -72,6 +93,11 @@ function UserSideBar() {
     current: true,
   });
 
+  console.log(componentClicked.name);
+  const findParentByName = (name) => {
+    const item = navigation.find((entry) => entry.name === name);
+    return setparentUrl(item ? item.parent : null);
+  };
   const [navigationItems, setNavigationItems] = useState(navigation);
   const [openDropDown, setOpenDropDown] = useState({});
 
@@ -85,12 +111,12 @@ function UserSideBar() {
 
   const handleNavigationItemClick = (itemName) => {
     const updatedNavigationItems = navigationItems.map((item) => {
-      if (item.name === itemName) {
-        return { ...item, current: true };
-      } else {
-        return { ...item, current: false };
-      }
+      return { ...item, current: item.name === itemName };
     });
+
+    const selectedPage = navigation.find((item) => item?.name === itemName);
+    console.log(selectedPage);
+
     setNavigationItems(updatedNavigationItems);
     setComponentClicked({
       name: itemName,
@@ -98,7 +124,16 @@ function UserSideBar() {
       current: true,
     });
     setSidebarOpen(false);
-    console.log(itemName);
+    setchildUrl(child);
+
+    if (selectedPage) {
+      setparentUrl(selectedPage.name);
+    } else {
+      console.warn(`No navigation item found for ${itemName}`);
+      setparentUrl(selectedPage.name);
+    }
+
+    findParentByName(itemName);
   };
 
   const [, setLogo] = useState({});
@@ -149,11 +184,15 @@ function UserSideBar() {
   // }, []);
   const handlePageSet = (pageName) => {
     console.log(`Page set to: ${pageName}`);
+    const selectedPage = navigation.find((item) => item.child === pageName);
+    console.log(selectedPage);
+
     setComponentClicked({
       name: pageName,
       href: `/${pageName.toLowerCase()}`,
       current: true,
     });
+    setparentUrl(selectedPage.name);
   };
 
   return (
@@ -537,7 +576,39 @@ function UserSideBar() {
                       </div>
                     </li>
                     <li>
-                      <div className="flex items-center">
+                      <div className="flex items-center justify-center">
+                        <a
+                          href="#"
+                          className="ml-0 text-sm font-medium text-gray-500 hover:text-gray-700"
+                          aria-current={
+                            componentClicked.current ? "page" : undefined
+                          }
+                          onClick={() => handleNavigationItemClick(parentUrl)}
+                        >
+                          {parentUrl}
+                        </a>
+                        <svg
+                          className="h-5 w-5 flex-shrink-0 text-gray-300"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                          aria-hidden="true"
+                        >
+                          <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+                        </svg>
+                        <a
+                          href="#"
+                          className="ml-0 text-sm font-medium text-gray-500 hover:text-gray-700"
+                          aria-current={
+                            componentClicked.current ? "page" : undefined
+                          }
+                          onClick={() =>
+                            handleNavigationItemClick(componentClicked.name)
+                          }
+                        >
+                          {componentClicked.name}
+                        </a>
+                      </div>
+                      {/* <div className="flex items-center">
                         <svg
                           className="h-5 w-5 flex-shrink-0 text-gray-300"
                           fill="currentColor"
@@ -555,7 +626,7 @@ function UserSideBar() {
                         >
                           {componentClicked.name}
                         </a>
-                      </div>
+                      </div> */}
                     </li>
                   </ol>
                 </nav>

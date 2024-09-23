@@ -107,6 +107,8 @@ function SideBar() {
     current: true,
   });
   const [navigation, setNavigation] = useState([]);
+  console.log(navigation);
+
   const navigate = useNavigate();
   useEffect(() => {
     const userToken = getUserToken();
@@ -148,7 +150,9 @@ function SideBar() {
       current: true,
     });
     console.log(itemName);
+    setSidebarOpen(false);
     setchildUrl(itemName);
+    setparentUrl(itemName);
     findParentByName(itemName);
   };
 
@@ -496,7 +500,17 @@ function SideBar() {
                       </div>
                     </li>
                     <li>
-                      <div className="flex items-center">
+                      <div className="flex items-center justify-center">
+                        <a
+                          href="#"
+                          className="ml-0 text-sm font-medium text-gray-500 hover:text-gray-700"
+                          aria-current={
+                            componentClicked.current ? "page" : undefined
+                          }
+                          onClick={() => handleNavigationItemClick(parentUrl)}
+                        >
+                          {parentUrl}
+                        </a>
                         <svg
                           className="h-5 w-5 flex-shrink-0 text-gray-300"
                           fill="currentColor"
@@ -511,9 +525,11 @@ function SideBar() {
                           aria-current={
                             componentClicked.current ? "page" : undefined
                           }
-                          onClick={() => handleNavigationItemClick(parentUrl)}
+                          onClick={() =>
+                            handleNavigationItemClick(componentClicked.name)
+                          }
                         >
-                          {parentUrl} / {componentClicked.name}
+                          {componentClicked.name}
                         </a>
                       </div>
                     </li>
