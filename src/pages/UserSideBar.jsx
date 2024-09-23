@@ -32,16 +32,15 @@ const navigation = [
   },
   { name: "Alumni", href: "#", icon: AcademicCapIcon, current: false },
   { name: "Jobs", href: "#", icon: BriefcaseIcon, current: false },
-  // { name: "My Connections", href: "#", icon: MdConnectWithoutContact, current: false },
-  // { name: "Chat", href: "#", icon: BiMessageSquareCheck, current: false },
+  { name: "My Connections", href: "#", icon: MdConnectWithoutContact, current: false },
+  { name: "Chat", href: "#", icon: BiMessageSquareCheck, current: false },
   {
     name: "Jobs History",
     child: "Create JobHistory",
     href: "#",
     icon: BriefcaseIcon,
     current: false,
-  },
-  {
+  }, {
     name: "Document Verification",
     child: "Document Verification",
     href: "#",
@@ -70,8 +69,8 @@ const navigationWithNoSubNavigation = [
   "Profile",
   "Events",
   "News",
-  // "Chat",
-  // "My Connections",
+  "Chat",
+  "My Connections",
   "Jobs",
   "Jobs History",
   "Alumni",
@@ -348,11 +347,10 @@ function UserSideBar() {
           </Dialog>
         </Transition.Root>
         <div
-          className={`${
-            sidebarOpenMain
+          className={`${sidebarOpenMain
               ? "hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col"
               : "hidden"
-          }`}
+            }`}
         >
           <div
             className="flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-4"
@@ -461,7 +459,7 @@ function UserSideBar() {
                                         color:
                                           componentClicked.name === subItem.name
                                             ? sideBarActuveTextColor ||
-                                              "#FFFFFF"
+                                            "#FFFFFF"
                                             : sideBarTextColor || "#ccc",
                                         backgroundColor:
                                           componentClicked.name === subItem.name
@@ -478,7 +476,7 @@ function UserSideBar() {
                                         e.currentTarget.style.color =
                                           componentClicked.name === item.name
                                             ? sideBarActuveTextColor ||
-                                              "#FFFFFF"
+                                            "#FFFFFF"
                                             : sideBarTextColor || "#ccc";
                                         e.currentTarget.style.backgroundColor =
                                           componentClicked.name === item.name

@@ -311,7 +311,7 @@ function ListPermission({ permissions, roles }) {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {currentItems.map((permission) => (
+                  {permissions.map((permission) => (
                     <tr key={permission.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm font-medium text-gray-900">
