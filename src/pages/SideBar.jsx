@@ -107,6 +107,8 @@ function SideBar() {
     current: true,
   });
   const [navigation, setNavigation] = useState([]);
+  console.log(navigation);
+
   const navigate = useNavigate();
   useEffect(() => {
     const userToken = getUserToken();
@@ -148,7 +150,9 @@ function SideBar() {
       current: true,
     });
     console.log(itemName);
+    setSidebarOpen(false);
     setchildUrl(itemName);
+    setparentUrl(itemName);
     findParentByName(itemName);
   };
 
