@@ -83,3 +83,17 @@ export const convertDate = (dateString) => {
   
     return formattedDate.replace(/\d+/, day + daySuffix(day));
   };
+
+export const DateFormat = (date_string) => {
+    const isoDate = date_string;
+    const date = new Date(isoDate);
+
+    const day = date.getUTCDate();
+    const year = date.getUTCFullYear();
+
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const month = monthNames[date.getUTCMonth()];
+
+    const formattedDate = `${month} ${day}, ${year}`;
+    return formattedDate;
+}

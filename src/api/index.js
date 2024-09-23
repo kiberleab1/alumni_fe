@@ -789,3 +789,25 @@ export async function filterAlumniProfile({
   );
   return result;
 }
+
+export async function requestConnection(requesting_user_id) {
+  const data = { requesting_user_id: requesting_user_id };
+  console.log(data);
+  return await axios.post(`${API_BASE_URl}/createConnection`, data);
+}
+
+export async function myConnectionRequests({
+  pageNumber,
+  pageSize,
+  filterKeyword,
+  value,
+}) {
+  console.log(pageNumber, pageSize, filterKeyword, value);
+  const result = await axios.get(`${API_BASE_URl}/filterConnection?pageNumber=${pageNumber}&pageSize=${pageSize}&filterKeyword=${filterKeyword}&value=${value}`);
+  return result;
+}
+
+export async function updateConnection(data) {
+  console.log(data);
+  return await axios.put(`${API_BASE_URl}/updateConnection`, data);
+}
