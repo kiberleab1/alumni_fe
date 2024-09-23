@@ -286,56 +286,56 @@ export default function NewsPage({ onNewsDetailClick }) {
             </div>
           </div> */}
         </div>
-        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm text-gray-700">
-              Showing <span className="font-medium">{indexOfFirstItem}</span> to
-              <span className="font-medium">{indexOfLastItem}</span> of
-              <span className="font-medium">{totalItems}</span> results
-            </p>
-          </div>
-          <div>
-            <nav
-              className="isolate inline-flex -space-x-px rounded-md shadow-sm"
-              aria-label="Pagination"
+      </div>
+      <div className="absolute flex justify-center items-center bottom-0 left-1/2 transform -translate-x-[40%] min-w-[60%] p-2">
+        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-start">
+          <p className="text-sm text-gray-700">
+            Showing <span className="font-medium">{indexOfFirstItem}</span> to
+            <span className="font-medium">{indexOfLastItem}</span> of
+            <span className="font-medium">{totalItems}</span> results
+          </p>
+        </div>
+        <div>
+          <nav
+            className=" isolate inline-flex -space-x-px rounded-md shadow-sm overflow-hidden"
+            aria-label="Pagination"
+          >
+            <button
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`relative border-0 inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white  ${
+                currentPage === 1 ? "cursor-not-allowed" : "hover:bg-gray-50"
+              }`}
             >
-              <button
-                onClick={() => paginate(currentPage - 1)}
-                disabled={currentPage === 1}
-                className={`relative border-0 inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white  ${
-                  currentPage === 1 ? "cursor-not-allowed" : "hover:bg-gray-50"
-                }`}
-              >
-                <IoIosArrowBack className="text-xl" />
-              </button>
-              {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-                (pageNumber) => (
-                  <button
-                    key={pageNumber}
-                    onClick={() => paginate(pageNumber)}
-                    className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border ${
-                      currentPage === pageNumber
-                        ? "bg-gray-200 text-black "
-                        : "text-black bg-white border-gray-300 hover:bg-gray-50"
-                    }`}
-                  >
-                    {pageNumber}
-                  </button>
-                )
-              )}
-              <button
-                onClick={() => paginate(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0  ${
-                  currentPage === totalPages
-                    ? "cursor-not-allowed"
-                    : "hover:bg-gray-50"
-                }`}
-              >
-                <IoIosArrowForward className="text-xl" />
-              </button>
-            </nav>
-          </div>
+              <IoIosArrowBack className="text-xl" />
+            </button>
+            {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+              (pageNumber) => (
+                <button
+                  key={pageNumber}
+                  onClick={() => paginate(pageNumber)}
+                  className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border ${
+                    currentPage === pageNumber
+                      ? "bg-gray-200 text-black "
+                      : "text-black bg-white border-gray-300 hover:bg-gray-50"
+                  }`}
+                >
+                  {pageNumber}
+                </button>
+              )
+            )}
+            <button
+              onClick={() => paginate(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0  ${
+                currentPage === totalPages
+                  ? "cursor-not-allowed"
+                  : "hover:bg-gray-50"
+              }`}
+            >
+              <IoIosArrowForward className="text-xl" />
+            </button>
+          </nav>
         </div>
       </div>
     </QueryResult>

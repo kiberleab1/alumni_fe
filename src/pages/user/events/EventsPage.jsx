@@ -28,7 +28,7 @@ export default function EventsPage({ onEventsDetailClick }) {
   const queryClient = useQueryClient();
 
   const { isError, data, isLoading, refetch } = useQuery(
-    ["filterEvents", currentPage, filterType, filterValue], 
+    ["filterEvents", currentPage, filterType, filterValue],
     async () => {
       const result = await filterEvents({
         pageNumber: currentPage,
@@ -42,11 +42,11 @@ export default function EventsPage({ onEventsDetailClick }) {
   );
 
   const applyFilters = () => {
-console.log(pendingFilterType)
+    console.log(pendingFilterType);
     console.log(pendingFilterValue);
     setFilterType(pendingFilterType);
-    setFilterValue(pendingFilterValue); 
-    refetch(); 
+    setFilterValue(pendingFilterValue);
+    refetch();
   };
 
   return (
@@ -80,7 +80,10 @@ function ListEvent({
   applyFilters,
 }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState({ type: null, value: null });
+  const [selectedFilter, setSelectedFilter] = useState({
+    type: null,
+    value: null,
+  });
 
   const handleFilterChange = (type, value) => {
     setSelectedFilter({ type, value });
@@ -126,11 +129,13 @@ function ListEvent({
         </div>
       </div>
       <div>
-      {isDropdownOpen && (
+        {isDropdownOpen && (
           <div className="absolute right-0 bg-white shadow-lg p-6 rounded-md z-50 w-80">
             <div className="mt-4 grid gap-4">
               <div className="grid gap-2">
-                <label className="text-sm font-medium text-gray-900">Order By</label>
+                <label className="text-sm font-medium text-gray-900">
+                  Order By
+                </label>
                 <div>
                   <div className="flex items-center gap-2">
                     <input
@@ -138,8 +143,11 @@ function ListEvent({
                       value="desc"
                       name="created"
                       className="mr-2"
-                      checked={selectedFilter.type === 'created' && selectedFilter.value === 'desc'}
-                      onChange={() => handleFilterChange('created', 'desc')}
+                      checked={
+                        selectedFilter.type === "created" &&
+                        selectedFilter.value === "desc"
+                      }
+                      onChange={() => handleFilterChange("created", "desc")}
                     />
                     Created Date (Descending)
                   </div>
@@ -149,8 +157,11 @@ function ListEvent({
                       value="asc"
                       name="created"
                       className="mr-2"
-                      checked={selectedFilter.type === 'created' && selectedFilter.value === 'asc'}
-                      onChange={() => handleFilterChange('created', 'asc')}
+                      checked={
+                        selectedFilter.type === "created" &&
+                        selectedFilter.value === "asc"
+                      }
+                      onChange={() => handleFilterChange("created", "asc")}
                     />
                     Created Date (Ascending)
                   </div>
@@ -158,7 +169,9 @@ function ListEvent({
               </div>
 
               <div className="grid gap-2">
-                <label className="text-sm font-medium text-gray-900">Order By</label>
+                <label className="text-sm font-medium text-gray-900">
+                  Order By
+                </label>
                 <div>
                   <div className="flex items-center gap-2">
                     <input
@@ -166,8 +179,11 @@ function ListEvent({
                       value="desc"
                       name="deadline"
                       className="mr-2"
-                      checked={selectedFilter.type === 'deadline' && selectedFilter.value === 'desc'}
-                      onChange={() => handleFilterChange('deadline', 'desc')}
+                      checked={
+                        selectedFilter.type === "deadline" &&
+                        selectedFilter.value === "desc"
+                      }
+                      onChange={() => handleFilterChange("deadline", "desc")}
                     />
                     Deadline Date (Descending)
                   </div>
@@ -177,8 +193,11 @@ function ListEvent({
                       value="asc"
                       name="deadline"
                       className="mr-2"
-                      checked={selectedFilter.type === 'deadline' && selectedFilter.value === 'asc'}
-                      onChange={() => handleFilterChange('deadline', 'asc')}
+                      checked={
+                        selectedFilter.type === "deadline" &&
+                        selectedFilter.value === "asc"
+                      }
+                      onChange={() => handleFilterChange("deadline", "asc")}
                     />
                     Deadline Date (Ascending)
                   </div>
@@ -186,7 +205,10 @@ function ListEvent({
               </div>
 
               <div className="grid gap-2">
-                <label htmlFor="institute-filter" className="text-sm font-medium text-gray-900">
+                <label
+                  htmlFor="institute-filter"
+                  className="text-sm font-medium text-gray-900"
+                >
                   Institute
                 </label>
                 <input
@@ -194,8 +216,14 @@ function ListEvent({
                   type="text"
                   placeholder="Search institute events..."
                   className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-black"
-                  value={selectedFilter.type === 'institute' ? selectedFilter.value : ''}
-                  onChange={(e) => handleFilterChange('institute', e.target.value)}
+                  value={
+                    selectedFilter.type === "institute"
+                      ? selectedFilter.value
+                      : ""
+                  }
+                  onChange={(e) =>
+                    handleFilterChange("institute", e.target.value)
+                  }
                 />
               </div>
 
@@ -216,7 +244,6 @@ function ListEvent({
             </div>
           </div>
         )}
-
       </div>
       <div className=" mt-6 container w-full z-10" data-aos="fade-down">
         <div className="flex flex-wrap items-center gap-4 overflow-y-scroll scroll-auto m-auto content-start">
@@ -228,7 +255,9 @@ function ListEvent({
               <div className="h-[520px]">
                 <div
                   className="bg-cover bg-center"
-                  style={{ backgroundImage: `url(${getImageBaseUrl(val.image)})` }}
+                  style={{
+                    backgroundImage: `url(${getImageBaseUrl(val.image)})`,
+                  }}
                 ></div>
                 <div className="p-4">
                   <h2 className="text-md text-start font-bold mb-3 line-clamp-2">
@@ -237,7 +266,9 @@ function ListEvent({
                   <div className="flex items-center text-gray-600 mb-2 space-x-2">
                     <div className="flex flex-row gap-1 md:gap-2 items-center">
                       <SlCalender />
-                      <span className="line-clamp-1">{formatInputDate(val.time)}</span>
+                      <span className="line-clamp-1">
+                        {formatInputDate(val.time)}
+                      </span>
                     </div>
                   </div>
                   <div className="flex items-center text-gray-600 mb-2 space-x-2 ">
@@ -274,20 +305,23 @@ function ListEvent({
           ))}
         </div>
       </div>
-      <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between z-10">
-        <p className="text-sm text-gray-700">
-          Showing <span className="font-medium">{indexOfFirstItem}</span> to{" "}
-          <span className="font-medium">{indexOfLastItem}</span> of{" "}
-          <span className="font-medium">{totalItems}</span> results
-        </p>
+      <div className="absolute flex justify-center items-center bottom-0 left-1/2 transform -translate-x-[40%] min-w-[60%] p-2">
+        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-start">
+          <p className="text-sm text-gray-700">
+            Showing <span className="font-medium">{indexOfFirstItem}</span> to{" "}
+            <span className="font-medium">{indexOfLastItem}</span> of{" "}
+            <span className="font-medium">{totalItems}</span> results
+          </p>
+        </div>
         <nav
-          className="isolate inline-flex -space-x-px rounded-md shadow-sm"
+          className=" isolate inline-flex -space-x-px rounded-md shadow-sm overflow-hidden"
           aria-label="Pagination"
         >
           <button
             onClick={() => handlePagination(currentPage - 1)}
             disabled={currentPage === 1}
-            className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 ${currentPage === 1 ? "cursor-not-allowed" : "hover:bg-gray-50"
+            className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 ${
+              currentPage === 1 ? "cursor-not-allowed" : "hover:bg-gray-50"
             }`}
           >
             <IoIosArrowBack className="text-xl" />
@@ -297,19 +331,22 @@ function ListEvent({
               <button
                 key={pageNumber}
                 onClick={() => handlePagination(pageNumber)}
-                className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border ${currentPage === pageNumber
+                className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border ${
+                  currentPage === pageNumber
                     ? "bg-gray-200 text-black "
                     : "text-black bg-white border-gray-300 hover:bg-gray-50"
                 }`}
               >
-                {pageNumber}
+                {1 || pageNumber}
               </button>
             )
           )}
+
           <button
             onClick={() => handlePagination(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 ${currentPage === totalPages
+            className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 ${
+              currentPage === totalPages
                 ? "cursor-not-allowed"
                 : "hover:bg-gray-50"
             }`}
