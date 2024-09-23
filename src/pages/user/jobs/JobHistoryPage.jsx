@@ -13,7 +13,10 @@ import { GrHistory } from "react-icons/gr";
 import { MdMessage } from "react-icons/md";
 import { LuPlus } from "react-icons/lu";
 
-export default function JobHistoryPage({ onCreateJobHistoryClick, onEditJobHistoryClick }) {
+export default function JobHistoryPage({
+  onCreateJobHistoryClick,
+  onEditJobHistoryClick,
+}) {
   const [selectedJobHistory, setSelectedJobHistory] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showJobHistoryDetails, setShowJobHistoryDetails] = useState(false);
@@ -27,12 +30,19 @@ export default function JobHistoryPage({ onCreateJobHistoryClick, onEditJobHisto
       const jobsData = await getAllJobHistory({ pageNumber: 1, pageSize: 10 });
       return jobsData;
     },
-    {  refetchOnWindowFocus: false, refetchOnMount: false, keepPreviousData: true, }
+    {
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      keepPreviousData: true,
+    }
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = data?.data?.jobHistory?.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = data?.data?.jobHistory?.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
   const totalPages = Math.ceil(data?.data?.jobHistory?.length / itemsPerPage);
 
   const paginate = (pageNumber) => {

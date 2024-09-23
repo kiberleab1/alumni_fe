@@ -70,46 +70,47 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
-      <div className="container mx-auto">
-        <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-6">
-          <select
-            className="bg-white text-black border border-black shadow-lg px-4 py-2 rounded-lg focus:outline-none w-full sm:w-auto"
-            value={selectedFilter}
-            onChange={handleFilterChange}
-          >
-            <option value="all">Filter options</option>
-            <option value="user_id">Filter by Name</option>
-            <option value="graduation_year">Filter by Graduation Year</option>
-            <option value="institution_id">Filter by Institution</option>
-            <option value="department_id">Filter by Department</option>
-            <option value="gender">Filter by Gender</option>
-            <option value="disability">Filter by Disability</option>
-          </select>
-          <input
-            type="text"
-            placeholder={`Search alumni by ${selectedFilter.replace(
-              "_",
-              " "
-            )}...`}
-            className="w-full p-2 border bg-white text-black border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-          <button
-            className="bg-white text-black border border-black shadow-lg px-4 py-2 rounded-lg focus:outline-none w-full sm:w-auto"
-            onClick={refetch}
-          >
-            Filter
-          </button>
-        </div>
+      <div className="flex flex-col justify-between max-h-[]  ">
+        <div className=" ">
+          <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center space-y- sm:space-y-0 sm:space-x-4 mb-">
+            <select
+              className="bg-white text-black border border-black shadow-lg px-4 py-2 rounded-lg focus:outline-none w-full sm:w-auto"
+              value={selectedFilter}
+              onChange={handleFilterChange}
+            >
+              <option value="all">Filter options</option>
+              <option value="user_id">Filter by Name</option>
+              <option value="graduation_year">Filter by Graduation Year</option>
+              <option value="institution_id">Filter by Institution</option>
+              <option value="department_id">Filter by Department</option>
+              <option value="gender">Filter by Gender</option>
+              <option value="disability">Filter by Disability</option>
+            </select>
+            <input
+              type="text"
+              placeholder={`Search alumni by ${selectedFilter.replace(
+                "_",
+                " "
+              )}...`}
+              className="w-full p-2 border bg-white text-black border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+            <button
+              className="bg-white text-black border border-black shadow-lg px-4 py-2 rounded-lg focus:outline-none w-full sm:w-auto"
+              onClick={refetch}
+            >
+              Filter
+            </button>
+          </div>
 
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : isError ? (
-          <p>Error loading alumni.</p>
-        ) : (
-          <div>
-            {/* <div className="sm:ml-16 sm:mt-0 sm:flex-none text-end mb-2">
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : isError ? (
+            <p>Error loading alumni.</p>
+          ) : (
+            <div className="p-6  ">
+              {/* <div className="sm:ml-16 sm:mt-0 sm:flex-none text-end mb-2">
               <a
                 href="#_"
                 className="relative inline-block text-lg group"
@@ -127,164 +128,156 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                   data-rounded="rounded-lg"
                 ></span>
               </a>
-            </div> */}
-            <div
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
-              data-aos="fade-up"
-            >
-              {alumni.length > 0 ? (
-                alumni.map((alum) => (
-                  <div
-                    className="bg-white shadow-md rounded-lg p-6 text-center"
-                    key={alum.id}
-                  >
-                    <div className="w-28 h-28 mx-auto rounded-full bg-gray-200 mb-4 z-10 overflow-hidden">
-                      {alum.user_photo &&
-                      alum.user_photo.startsWith("uploads/") ? (
-                        <img
-                          src={getImageBaseUrl(alum.user_photo)}
-                          alt=""
-                          className="rounded-full object-cover w-full h-[130px] z-0 scale-125"
-                        />
-                      ) : alum.gender === "male" ? (
-                        <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-10" />
-                      ) : (
-                        <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-10" />
-                      )}
-
-                      {}
-                    </div>
-                    <h3 className="text-xl font-semibold">
-                      {alum?.user_data?.name
-                        ? alum?.user_data?.name
-                        : "Unknown Name"}
-                    </h3>
-                    <p className="text-gray-500">
-                      Class of {new Date(alum.graduation_year).getFullYear()}
-                    </p>
-                    <p className="mt-2 text-gray-700 line-clamp-1">
-                      {alum.degree}
-                    </p>
-                    <button
-                      className="mt-4 bg-black text-white px-4 py-2 rounded-lg w-full"
-                      onClick={() => openModal(alum)}
+             </div> */}
+              <div
+                className="flex  lg:justify-start flex-wrap gap-8  object-fill  "
+                data-aos="fade-up"
+              >
+                {alumni.length > 0 ? (
+                  alumni.map((alum) => (
+                    <div
+                      className=" bg-white shadow-md rounded-lg p-3 text-center w-full md:max-w-[21em] "
+                      key={alum.id}
                     >
-                      View Profile
-                    </button>
-                  </div>
-                ))
-              ) : (
-                <p>No alumni found.</p>
-              )}
-            </div>
-            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between mt-10">
-              <div>
-                <p className="text-sm text-gray-700">
-                  Showing{" "}
-                  <span className="font-medium">{indexOfFirstItem}</span> to{" "}
-                  <span className="font-medium">{indexOfLastItem}</span> of{" "}
-                  <span className="font-medium">{totalItems}</span> results
-                </p>
-              </div>
-              <nav
-                className="isolate inline-flex -space-x-px rounded-md shadow-sm overflow-hidden max-w-full"
-                aria-label="Pagination"
-              >
-                {/* Previous Button */}
-                <button
-                  onClick={() => paginate(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 transition-all duration-300 ${
-                    currentPage === 1
-                      ? "cursor-not-allowed"
-                      : "hover:bg-gray-50"
-                  }`}
-                >
-                  <IoIosArrowBack className="text-xl" />
-                </button>
+                      <div className="w-28 h-28 mx-auto rounded-full bg-gray-200 mb-4 z-10 overflow-hidden">
+                        {alum.user_photo &&
+                        alum.user_photo.startsWith("uploads/") ? (
+                          <img
+                            src={getImageBaseUrl(alum.user_photo)}
+                            alt=""
+                            className="rounded-full object-cover w-full h-[130px] z-0 scale-125"
+                          />
+                        ) : alum.gender === "male" ? (
+                          <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-10" />
+                        ) : (
+                          <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-10" />
+                        )}
 
-                {/* Logic for pagination */}
-                {Array.from(
-                  { length: Math.min(10, totalPages) },
-                  (_, index) => {
-                    let pageNumber;
-
-                    if (currentPage <= 5) {
-                      // Ensure pagination starts at 1 if on the first few pages
-                      pageNumber = index + 1;
-                    } else if (currentPage + 5 >= totalPages) {
-                      // Adjust to show last pages when near the end
-                      pageNumber = totalPages - 9 + index;
-                    } else {
-                      // Center current page in pagination list
-                      pageNumber = currentPage - 5 + index;
-                    }
-
-                    if (pageNumber > totalPages || pageNumber < 1) return null;
-
-                    return (
+                        {}
+                      </div>
+                      <h3 className="text-xl font-semibold">
+                        {alum?.user_data?.name
+                          ? alum?.user_data?.name
+                          : "Unknown Name"}
+                      </h3>
+                      <p className="text-gray-500">
+                        Class of {new Date(alum.graduation_year).getFullYear()}
+                      </p>
+                      <p className="mt-2 text-gray-700 line-clamp-1">
+                        {alum.degree}
+                      </p>
                       <button
-                        key={pageNumber}
-                        onClick={() => paginate(pageNumber)}
-                        className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border transition-all duration-300 ${
-                          currentPage === pageNumber
-                            ? "bg-gray-200 text-black"
-                            : "text-black bg-white border-gray-300 hover:bg-gray-50"
-                        }`}
+                        className="mt-4 bg-black text-white px-4 py-2 rounded-lg w-full"
+                        onClick={() => openModal(alum)}
                       >
-                        {pageNumber}
+                        View Profile
                       </button>
-                    );
-                  }
+                    </div>
+                  ))
+                ) : (
+                  <p>No alumni found.</p>
                 )}
+              </div>
+            </div>
+          )}
 
-                {/* Next Button */}
+          {isModalOpen && selectedAlumni && (
+            <AlumniModal
+              profile={selectedAlumni}
+              isOpen={isModalOpen}
+              onClose={closeModal}
+            />
+          )}
+        </div>{" "}
+        <div className="absolute flex justify-center items-center bottom-0 left-1/2 transform -translate-x-[40%] min-w-[60%] p-2">
+          <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-start">
+            <p className="text-sm text-gray-700">
+              Showing <span className="font-medium">{indexOfFirstItem}</span> to{" "}
+              <span className="font-medium">{indexOfLastItem}</span> of{" "}
+              <span className="font-medium">{totalItems}</span> results
+            </p>
+          </div>
+
+          <nav
+            className=" isolate inline-flex -space-x-px rounded-md shadow-sm overflow-hidden"
+            aria-label="Pagination"
+          >
+            <button
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 transition-all duration-300 ${
+                currentPage === 1 ? "cursor-not-allowed" : "hover:bg-gray-50"
+              }`}
+            >
+              <IoIosArrowBack className="text-xl" />
+            </button>
+
+            {Array.from({ length: Math.min(10, totalPages) }, (_, index) => {
+              let pageNumber;
+
+              if (currentPage <= 5) {
+                pageNumber = index + 1;
+              } else if (currentPage + 5 >= totalPages) {
+                pageNumber = totalPages - 9 + index;
+              } else {
+                pageNumber = currentPage - 5 + index;
+              }
+
+              if (pageNumber > totalPages || pageNumber < 1) return null;
+
+              return (
                 <button
-                  onClick={() => paginate(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 transition-all duration-300 ${
-                    currentPage === totalPages
-                      ? "cursor-not-allowed"
-                      : "hover:bg-gray-50"
+                  key={pageNumber}
+                  onClick={() => paginate(pageNumber)}
+                  className={`relative inline-flex items-center px-2 py-2 text-sm font-semibold border transition-all duration-300 ${
+                    currentPage === pageNumber
+                      ? "bg-gray-200 text-black"
+                      : "text-black bg-white border-gray-300 hover:bg-gray-50"
                   }`}
                 >
-                  <IoIosArrowForward className="text-xl" />
+                  {pageNumber}
                 </button>
-              </nav>
-            </div>
-            <div className="flex sm:hidden justify-between items-center mt-10">
-              <button
-                onClick={() => paginate(currentPage - 1)}
-                disabled={currentPage === 1}
-                className={`bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded-lg ${
-                  currentPage === 1 ? "cursor-not-allowed" : ""
-                }`}
-              >
-                <IoIosArrowBack className="text-xl" />
-              </button>
-              <p className="text-sm text-gray-700">
-                Showing {indexOfFirstItem} to {indexOfLastItem} of {totalItems}{" "}
-                results
-              </p>
-              <button
-                onClick={() => paginate(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className={`bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded-lg ${
-                  currentPage === totalPages ? "cursor-not-allowed" : ""
-                }`}
-              >
-                <IoIosArrowForward className="text-xl" />
-              </button>
-            </div>
+              );
+            })}
+
+            <button
+              onClick={() => paginate(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 bg-white border-0 border-gray-300 transition-all duration-300 ${
+                currentPage === totalPages
+                  ? "cursor-not-allowed"
+                  : "hover:bg-gray-50"
+              }`}
+            >
+              <IoIosArrowForward className="text-xl" />
+            </button>
+          </nav>
+
+          <div className=" hidden justify-between items-center mt-10">
+            <button
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded-lg ${
+                currentPage === 1 ? "cursor-not-allowed" : ""
+              }`}
+            >
+              <IoIosArrowBack className="text-xl" />
+            </button>
+            <p className="text-sm text-gray-700">
+              Showing {indexOfFirstItem} to {indexOfLastItem} of {totalItems}{" "}
+              results
+            </p>
+            <button
+              onClick={() => paginate(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`bg-gray-200 hover:bg-gray-300 text-black py-2 px-4 rounded-lg ${
+                currentPage === totalPages ? "cursor-not-allowed" : ""
+              }`}
+            >
+              <IoIosArrowForward className="text-xl" />
+            </button>
           </div>
-        )}
-        {isModalOpen && selectedAlumni && (
-          <AlumniModal
-            profile={selectedAlumni}
-            isOpen={isModalOpen}
-            onClose={closeModal}
-          />
-        )}
+        </div>
       </div>
     </QueryResult>
   );
