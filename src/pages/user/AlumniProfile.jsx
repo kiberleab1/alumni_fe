@@ -7,9 +7,17 @@ import "aos/dist/aos.css";
 import { useQuery } from "react-query";
 import { getAlumniProfileById, getImageBaseUrl } from "src/api";
 import QueryResult from "src/components/utils/queryResults";
-
+import { SlOptionsVertical } from "react-icons/sl";
+import { MdOutlineReadMore } from "react-icons/md";
+import { FaUserFriends } from "react-icons/fa";
+import { FaCodePullRequest } from "react-icons/fa6";
 const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
   const [isOpen, setIsOpen] = useState(true);
+  const [isOptionOpen, setOptionOpen] = useState(false);
+  const [absolutePos, setabsolutePos] = useState(false);
+  const toggleDropdown = () => {
+    setOptionOpen((prev) => !prev);
+  };
   const user_id = "92faa361-3246-4f11-acae-cdb599a0d200";
   const { isError, data, isLoading } = useQuery(
     ["getAlumniProfileById"],
@@ -19,6 +27,9 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
 
   const toggle = () => {
     setIsOpen(!isOpen);
+  };
+  const toggleOverlay = () => {
+    setabsolutePos(!absolutePos);
   };
   useEffect(() => {
     AOS.init({
@@ -31,9 +42,44 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
       {data != null && data?.data && data?.data?.graduation_year ? (
         <div
-          className="flex flex-col items-center min-h-screen"
+          className="relative flex flex-col items-center min-h-screen"
           data-aos="fade-down"
         >
+          <div className="absolute top-0 right-0">
+            <SlOptionsVertical
+              onClick={() => toggleDropdown()}
+              className="text-2xl"
+            />
+          </div>
+          {isOptionOpen && (
+            <div className="absolute rounded-xl right-0 mt-4 w-48 bg-white border border-gray-300 shadow-lg">
+              <ul>
+                <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100">
+                  <CiEdit
+                    className="text-xl "
+                    onClick={() => onEditAlumniClick(data?.data)}
+                  />
+                  Edit
+                </li>
+                <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100">
+                  {" "}
+                  <FaUserFriends
+                    className="text-xl "
+                    onClick={() => onEditAlumniClick(data?.data)}
+                  />{" "}
+                  Conectios{" "}
+                </li>
+                <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100">
+                  {" "}
+                  <FaCodePullRequest
+                    className="text-xl "
+                    onClick={() => onEditAlumniClick(data?.data)}
+                  />{" "}
+                  Option 3
+                </li>
+              </ul>
+            </div>
+          )}
           <div className="flex flex-row items-center justify-center gap-3 min-w-[80%]">
             <h1 className="text-3xl sm:text-5xl font-normal">Alumni Profile</h1>
             <div>
@@ -95,7 +141,7 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
                 className={`transition-all duration-500 ease-in-out w-[300px] sm:min-w-[550px] ${
                   isOpen
                     ? "translate-x-[-0%]"
-                    : "translate-x-[0%] sm:translate-x-[50%]"
+                    : "translate-x-[0%] sm:translate-x-[30%]"
                 }`}
               >
                 <Table className="text-left">
@@ -160,8 +206,8 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
                 <div className="relative flex items-center">
                   <div className="w-[2px] bg-black hidden xl:block h-full mx-4 z-0"></div>
                   {isOpen ? (
-                    <CiSaveDown1
-                      className="z-50 p-2  w-full rounded-[50%] h-auto my-auto items-center justify-center mx-auto absolute text-white  bg-gray-700 rotate-90 text-2xl top-1/2 transform -translate-y-1/2 translate-x-/2 cursor-pointer"
+                    <MdOutlineReadMore
+                      className="z-50 p-2  w-full rounded-[50%] h-auto my-auto items-center justify-center mx-auto absolute text-white  bg-gray-700 rotate-180 text-2xl top-1/2 transform -translate-y-1/2 translate-x-/2 cursor-pointer"
                       onClick={toggle}
                     />
                   ) : (
@@ -190,7 +236,27 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
               )}
             </div>
           </div>
-
+          {absolutePos && (
+            <div
+              className={`absolute h-screen bg-re  transition-all duration-500 ease-in-out overflow-hidden  xl:block sm:min-w-[550px]`}
+            >
+              <Table className="text-left">
+                <tbody>
+                  <tr>
+                    <th className="w-1/4">Additional Info</th>
+                  </tr>
+                  <tr className="bg-blue-300">
+                    <td className="transform transition-transform duration-300 hover:translate-x-5">
+                      {data?.data?.additionalInfo}
+                    </td>
+                  </tr>
+                </tbody>
+              </Table>
+            </div>
+          )}
+          <button className="" onClick={toggleOverlay}>
+            close
+          </button>
           <button
             className={` ${
               isOpen
@@ -202,7 +268,7 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
             {isOpen ? (
               ""
             ) : (
-              <CiSaveUp1 className="text-red-50 hover:text-red-400 rotate-90" />
+              <MdOutlineReadMore className="text-red-50 rotate-360 hover:text-red-400 " />
             )}
           </button>
         </div>
