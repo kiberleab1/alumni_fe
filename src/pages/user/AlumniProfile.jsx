@@ -103,7 +103,7 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
             <img
               src={getImageBaseUrl(data?.data?.user_photo)}
               alt={data?.data?.user_id}
-              className="w-40 h-40 md:w-52 md:h-52 rounded-full mt-3 object-cover z-40 border-4 border-gray-200 shadow-lg shadow-blue-500/50 "
+              className="w-40 h-40 md:w-52 md:h-52 rounded-full mt-3 object-cover z-40 border-4 border-gray-100 shadow-lg shadow-blue-500/50 "
             />
           </div>
 
