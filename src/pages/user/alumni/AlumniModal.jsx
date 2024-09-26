@@ -92,14 +92,14 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
       return (
         <div className="flex flex-rows gap-2 items-center justify-center w-full">
           <button
-            className="bg-gray-200 w-1/2 text-black hover:bg-green-100  border-solid border-2 border-sky-500 py-2 xl:px-4 rounded-l-lg mt-4 flex justify-center items-center gap-2"
+            className="bg-gray-50 w-1/2 text-black hover:bg-green-100  border-solid border-2 border-sky-500 py-2 xl:px-4 rounded-l-lg mt-4 flex justify-center items-center gap-2"
             disabled
           >
             <FaCheck className="text-green-600" />{" "}
             <span className="text-sm line-clamp-1">Request Sent</span>
           </button>
           <button
-            className="bg-gray-200  text-black hover:bg-red-100 w-1/2 border-solid border-2 border-sky-500   xl:px-4 py-2 rounded-l-lg mt-4 flex xl:justify-center xl:items-center gap-1"
+            className="bg-gray-50  text-black hover:bg-red-100 w-1/2 border-solid border-2 border-sky-500   xl:px-4 py-2 rounded-l-lg mt-4 flex xl:justify-center xl:items-center gap-1"
             onClick={handleCancelRequest}
           >
             <FcCancel className="" />
