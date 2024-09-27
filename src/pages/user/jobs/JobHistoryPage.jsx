@@ -179,21 +179,21 @@ export default function JobHistoryPage({
           )}
         </div>
       </div>
-      <div className="flex justify-between items-center p-4 sticky bottom-0 bg-white border-t">
+      <div className="flex justify-center gap-2 items-center p-4 sticky bottom-0 bg-white border-t">
         <button
           onClick={() => paginate(currentPage - 1)}
           disabled={currentPage === 1}
-          className="text-gray-900 bg-white"
+          className=" text-gray-900  bg-white border-1 border-teal-500 hover:bg-teal-500 "
         >
           <ChevronLeftIcon className="h-6 w-6" />
         </button>
-        <span>
+        <button className="bg-teal-500 text-white rounded-lg flex px-3 items-center justify-center">
           {currentPage} / {totalPages}
-        </span>
+        </button>
         <button
           onClick={() => paginate(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="text-gray-900 bg-white"
+          className=" text-gray-900  bg-white border-1 border-teal-500"
         >
           <ChevronRightIcon className="h-6 w-6" />
         </button>
