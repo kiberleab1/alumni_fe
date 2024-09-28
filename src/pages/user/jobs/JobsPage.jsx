@@ -117,7 +117,7 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
         </div>
         <div>
           <nav
-            className=" isolate inline-flex -space-x-px rounded-md shadow-sm overflow-hidden"
+            className=" isolate inline-flex space-x-2 rounded-md shadow-sm overflow-hidden"
             aria-label="Pagination"
           >
             <button
