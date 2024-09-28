@@ -92,7 +92,7 @@ export default function ConnectionNetwork() {
                 : "bg-white text-black"
             }`}
           >
-            My Connections
+            Connections
           </button>
           <button
             onClick={() => {
@@ -105,7 +105,7 @@ export default function ConnectionNetwork() {
                 : "bg-white text-black"
             }`}
           >
-            Connection Requests
+            Requests
           </button>
           <button
             onClick={() => {
