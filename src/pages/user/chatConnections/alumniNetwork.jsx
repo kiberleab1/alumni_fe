@@ -152,7 +152,7 @@ export default function ConnectionNetwork() {
                 return (
                   <div
                     key={connection.id}
-                    className="flex flex-rows items-start m-auto sm:flex-row justify-between w-full py-2 sm:p-4 hover:bg-gray-100 shadow-sm rounded max-w-[1600px] "
+                    className="flex flex-rows items-start my-auto sm:flex-row justify-between w-full py-2 sm:p-4 hover:bg-gray-100 shadow-sm rounded max-w-[90%] "
                   >
                     <div className="flex items-center justify-start m-2 ">
                       <img
