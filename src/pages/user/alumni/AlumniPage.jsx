@@ -8,8 +8,9 @@ import { IoPersonAddSharp } from "react-icons/io5";
 import { FcBusinessman, FcBusinesswoman } from "react-icons/fc";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import img from "../../../../public/gallery/gallery_1.jpg";
+import { FaUserPlus } from "react-icons/fa";
 const AlumniGrid = ({ onCreateAlumniClick }) => {
-  const itemsPerPage = 8;
+  const itemsPerPage = 12;
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAlumni, setSelectedAlumni] = useState(null);
@@ -136,10 +137,16 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                 {alumni.length > 0 ? (
                   alumni.map((alum) => (
                     <div
-                      className=" bg-white shadow-md rounded-lg p-3 text-center w-full md:max-w-[21em] "
+                      className="relative bg-white shadow-md rounded-lg p-2 text-center w-full md:max-w-[21em] "
                       key={alum.id}
                     >
-                      <div className="w-28 h-28 mx-auto rounded-full bg-gray-200 mb-4 z-10 overflow-hidden">
+                      <div className="absolute m-auto flex items-center justify-center z-100 transform -translate-x-2 translate-y-[110px] z-50  w-full">
+                        <div className="z-50 overflow-hidden bg-sky-900 text-white rounded-lg border-2 w-14 h-6 font-extrabold text-2xl  transition-colors duration-300 ease-in-out hover:bg-yellow-500 flex items-center justify-center z-100 -outline-offset-4">
+                          <FaUserPlus />
+                        </div>
+                      </div>
+
+                      <div className="relative w-32 h-32 mx-auto rounded-full bg-gray-200 mb-4 z-10 overflow-hidden">
                         {alum.user_photo &&
                         alum.user_photo.startsWith("uploads/") ? (
                           <img
@@ -152,8 +159,6 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                         ) : (
                           <FcBusinessman className="rounded-full object-cover w-full h-[130px] z-10" />
                         )}
-
-                        {}
                       </div>
                       <h3 className="text-xl font-semibold">
                         {alum?.user_data?.name
@@ -167,7 +172,7 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
                         {alum.degree}
                       </p>
                       <button
-                        className="mt-4 bg-black text-white px-4 py-2 rounded-lg w-full"
+                        className="mt-4 bg-sky-50 text-black hover:bg-gray-300 px-4 py-2 rounded-lg w-full font-sans"
                         onClick={() => openModal(alum)}
                       >
                         View Profile
