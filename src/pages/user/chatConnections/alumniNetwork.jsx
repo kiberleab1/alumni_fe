@@ -180,7 +180,10 @@ export default function ConnectionNetwork() {
                       </div>
                     </div>
                     <button className="bg-gray-100 font-serif text-black py-1 px-3 rounded flex flex-row gap-2 justify-end items-end mt-auto mb-auto">
-                      <TiMessages /> Message
+                      <TiMessages className="flex items-center justify-center m-auto" />{" "}
+                      <span className="hidden sm:flex items-center justify-center m-auto">
+                        Message
+                      </span>
                     </button>
                   </div>
                 );
