@@ -4,12 +4,22 @@ import { CiEdit, CiSaveDown1, CiSaveUp1 } from "react-icons/ci";
 import { TfiEmail } from "react-icons/tfi";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import "./css/almnuIProfileAnim.css";
 import { useQuery } from "react-query";
 import { getAlumniProfileById, getImageBaseUrl } from "src/api";
 import QueryResult from "src/components/utils/queryResults";
+import { SlOptionsVertical } from "react-icons/sl";
+import { MdOutlineReadMore } from "react-icons/md";
+import { FaUserEdit, FaUserFriends } from "react-icons/fa";
+import { FaCodePullRequest } from "react-icons/fa6";
+import { LuServer } from "react-icons/lu";
+import { IoMdClose } from "react-icons/io";
 
 const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
   const [isOpen, setIsOpen] = useState(true);
+  const [isOptionOpen, setOptionOpen] = useState(false);
+  const [absolutePos, setabsolutePos] = useState(false);
+
   const user_id = "92faa361-3246-4f11-acae-cdb599a0d200";
   const { isError, data, isLoading } = useQuery(
     ["getAlumniProfileById"],
@@ -18,7 +28,16 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
   );
 
   const toggle = () => {
-    setIsOpen((prevOpen) => !prevOpen);
+    setIsOpen(!isOpen);
+  };
+  const toggleDropdown = () => {
+    setOptionOpen((prev) => !prev);
+    console.log(isOptionOpen);
+  };
+  SlOptionsVertical;
+  const toggleOverlay = () => {
+    setabsolutePos(!absolutePos);
+    setOptionOpen(false);
   };
   useEffect(() => {
     AOS.init({
@@ -26,43 +45,83 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
       once: false,
     });
   });
+
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
       {data != null && data?.data && data?.data?.graduation_year ? (
         <div
-          className="flex flex-col items-center  min-h-screen"
+          className="relative flex flex-col items-center  min-h-screen  m-auto w-[100%] xl:w-[70%] z-0 bg-gray-100"
           data-aos="fade-down"
         >
-          <div className="flex flex-row items-center justify-center gap-3 min-w-[80%]">
-            <h1 className="text-3xl sm:text-5xl font-normal">Alumni Profile</h1>
-            <div>
+          <div className="absolute bg-gray-900 h-[18%] w-[100%]  z-10 rounded-t-xl"></div>
+          <div className="absolute top-0 right-0 z-40 ">
+            <SlOptionsVertical
+              onClick={() => toggleDropdown()}
+              className="text-xl text-white m-2"
+            />
+          </div>
+          {isOptionOpen && (
+            <div className=" absolute rounded-md right-2 mt-11 ml-5 w-48 bg-white border border-gray-300 shadow-lg z-50 ">
+              <div className=" absolute right-1  rotate-45 -translate-y-1/3 w-6 h-6   bg-white overflow-x-hidden -z-40"></div>
+              <ul className="text-black p-2 z-10">
+                <li
+                  className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100 z-50 overflow-hidden "
+                  onClick={() => onEditAlumniClick(data?.data)}
+                >
+                  <FaUserEdit className="text-xl overflow-hidden " />
+                  Edit
+                </li>
+                <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100">
+                  {" "}
+                  <FaUserFriends className="text-xl " /> Connections{" "}
+                </li>
+                <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100">
+                  {" "}
+                  <FaCodePullRequest className="text-xl " /> Option 4
+                </li>
+                <li
+                  className=" xl:hidden px-4 py-2 flex flex-row gap-3 hover:bg-gray-100"
+                  onClick={toggleOverlay}
+                >
+                  {" "}
+                  <LuServer className="text-xl " /> Information
+                </li>
+              </ul>
+            </div>
+          )}
+          <div className="relative flex flex-col items-center justify-center gap-3 w-[100%] lg:min-w-[80%]">
+            {/* <div className="absolute bg-gray-600 h-[45%] w-[90%] xl:w-[70%] z-0"></div> */}
+            <h1 className="text-3xl sm:text-5xl font-normal text-white  mt-2 z-50">
+              Alumni Profile
+            </h1>
+            {/* <div>
               <CiEdit
-                className="text-2xl "
+                className="text-2xl"
                 onClick={() => onEditAlumniClick(data?.data)}
               />
-            </div>
+            </div> */}{" "}
+            <img
+              src={getImageBaseUrl(data?.data?.user_photo)}
+              alt={data?.data?.user_id}
+              className="w-40 h-40 md:w-52 md:h-52 rounded-full mt-3 object-cover z-40 border-4 border-gray-100 shadow-lg shadow-blue-500/50 "
+            />
           </div>
 
-          <img
-            src={getImageBaseUrl(data?.data?.user_photo)}
-            alt={data?.data?.user_id}
-            className="w-52 h-52 rounded-full mt-4 object-cover "
-          />
-
-          <h2 className="text-4xl  mt-2 font-sans">
-            {data?.data?.user_data?.name}{" "}
+          <h2 className="text-2xl xl:4xl mt-2 font-lora">
+            {data?.data?.user_data?.name}
           </h2>
-          <div className="flex items-center  hover:text-blue-700 mt-2">
+
+          <div className="flex items-center hover:text-blue-700 mt-">
             <a
-              className="text-lg text-gray-500 flex flex-row gap-3"
+              className="text-lg text-gray-500 flex flex-row gap-2 font-serif"
               href="mailto:helengetachew@gmail.com"
             >
-              <TfiEmail className="text-2xl " />
-              {data?.data?.user_data?.email}{" "}
+              <TfiEmail className="text-md lg:text-xl m-auto  " />
+              {data?.data?.user_data?.email}
             </a>
           </div>
 
-          <div className="flex items-center hover:text-blue-700">
+          {/* <div className="flex items-center hover:text-blue-700">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -79,120 +138,395 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick }) => {
             </svg>
             <a
               href="tel:+251 900 000 000"
-              className="text-gray-350 underline ml-2"
+              className="text-gray-350 underline ml-2 text-md"
             >
               {data?.data?.user_data?.phone_number}
             </a>
-          </div>
+          </div> */}
 
-          <div className="border-b w-1/2 my-2 border-gray-300 "></div>
-          <div className="">
-            <div
-              className={`transition-all duration-500 ease-in-out overflow-hidden border-b-4 w-[300px] sm:min-w-[550px] ${
-                isOpen ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
-              }`}
-            >
-              <Table className="text-left">
-                <tbody>
-                  <tr>
-                    <th className="w-1/4">Degree</th>
-                  </tr>
-                  <tr className="bg-blue-300">
-                    <td className="transform transition-transform duration-300 hover:translate-x-5 ">
+          <div className="border-b w-1/2 my-2 border-gray-300"></div>
+
+          <div className="relative w-full max-w-[1150px] overflow-hidden">
+            <div className="flex flex-row justify-start mx-auto transition-all duration-500 ease-in-out ">
+              <div
+                className={`transition-all duration-500 ease-in-out w-[100%] xl:w-[50%] ${
+                  isOpen
+                    ? "translate-x-[-0%] m-auto  "
+                    : "translate-x-[0%] sm:translate-x-[55%]"
+                }`}
+              >
+                <div className="min-w-full rounded-lg p-6 max-w-sm  items-start w-[50%]">
+                  <div className="mb-4  text-start">
+                    <div className="text-sm font-semibold text-gray-700">
+                      Degree
+                    </div>
+                    <div className="text-sm text-gray-600">
                       {data?.data?.degree}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th className="w-1/4">Graduation Date</th>
-                  </tr>
-                  <tr className="bg-blue-300">
-                    <td className="transform transition-transform duration-300 hover:translate-x-5 ">
+                    </div>
+                  </div>
+                  <div className="mb-4 text-start">
+                    <div className="text-sm font-semibold text-gray-700">
+                      Graduation Date
+                    </div>
+                    <div className="text-sm text-gray-600">
                       {data?.data?.graduation_year.split("T")[0]}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th className="w-1/4">Location</th>
-                  </tr>
-                  <tr className="bg-blue-300">
-                    <td className="transform transition-transform duration-300 hover:translate-x-5  ">
-                      {data?.data?.user_data?.address?.country
-                        ? data?.data?.user_data?.address?.country
-                        : "Ethiopia"}
-                      ,{" "}
-                      {data?.data?.user_data?.address?.region
-                        ? data?.data?.user_data?.address?.region
-                        : "Addis Ababa"}
-                      ,{" "}
-                      {data?.data?.user_data?.address?.city
-                        ? data?.data?.user_data?.address?.city
-                        : "Addis Ababa"}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th className="w-1/4">Department</th>
-                  </tr>
-                  <tr className="bg-blue-300">
-                    <td className="transform transition-transform duration-300 hover:translate-x-5  max-w-[500px]">
-                      {data?.data?.department_name}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th className="w-1/4">Skills</th>
-                  </tr>
-                  <tr className="bg-blue-300">
-                    <td className="transform transition-transform duration-300 hover:translate-x-5 max-w-[500px] ">
-                      {data?.data?.Skills}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th className="w-1/4 ">Language</th>
-                  </tr>
-                  <tr className="bg-blue-300">
-                    <td className="transform transition-transform duration-300 hover:translate-x-5  ">
-                      {data?.data?.Language}
-                    </td>
-                  </tr>
-                  {/* <tr>
-                    <th className="w-1/4">Resume</th>
-                  </tr> */}
-                </tbody>
-              </Table>
-              {/* <div className=" flex flex-col items-center text-center pb-6">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="black"
-                  className="w-10 h-10"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.625 1.5H9a3.75 3.75 0 0 1 3.75 3.75v1.875c0 1.036.84 1.875 1.875 1.875H16.5a3.75 3.75 0 0 1 3.75 3.75v7.875c0 1.035-.84 1.875-1.875 1.875H5.625a1.875 1.875 0 0 1-1.875-1.875V3.375c0-1.036.84-1.875 1.875-1.875Zm5.845 17.03a.75.75 0 0 0 1.06 0l3-3a.75.75 0 1 0-1.06-1.06l-1.72 1.72V12a.75.75 0 0 0-1.5 0v4.19l-1.72-1.72a.75.75 0 0 0-1.06 1.06l3 3Z"
-                    clipRule="evenodd"
-                  />
-                  <path d="M14.25 5.25a5.23 5.23 0 0 0-1.279-3.434 9.768 9.768 0 0 1 6.963 6.963A5.23 5.23 0 0 0 16.5 7.5h-1.875a.375.375 0 0 1-.375-.375V5.25Z" />
-                </svg>
+                    </div>
+                  </div>
 
-                <a
-                  href="https://drive.google.com/file/d/1mXg4b5xI9XsGnqg0wQHb2K5JgUy5UxP6/view?usp=sharing"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hover:text-blue-300"
+                  <div className="mb-4 text-start">
+                    <div className="text-sm font-semibold text-gray-700">
+                      Location
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {data?.data?.user_data?.address?.country ?? "Ethiopia"},{" "}
+                      {data?.data?.user_data?.address?.region ?? "Addis Ababa"},{" "}
+                      {data?.data?.user_data?.address?.city ?? "Addis Ababa"}{" "}
+                    </div>
+                  </div>
+                  <div className="mb-4 text-start">
+                    <div className="text-sm font-semibold text-gray-700">
+                      Department
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {data?.data?.department_name}
+                    </div>
+                  </div>
+                  <div className="mb-4 text-start">
+                    <div className="text-sm font-semibold text-gray-700">
+                      Skills
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {data?.data?.Skills}
+                    </div>
+                  </div>
+                  <div className="mb-4 text-start">
+                    <div className="text-sm font-semibold text-gray-700">
+                      Language
+                    </div>
+
+                    <div className="flex gap-2 mt-1">
+                      <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                        English
+                      </span>
+                      <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                        Spanish
+                      </span>
+                      <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                        Node.js
+                      </span>
+                      <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                        SQL
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="text-start">
+                    <div className="text-sm font-semibold text-gray-700">
+                      Phone
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      <a
+                        href="tel:+251 900 000 000"
+                        className="text-gray-600 underline ml-2 text-md"
+                      >
+                        {data?.data?.user_data?.phone_number}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* <Table className="text-left">
+                  <tbody>
+                    <tr>
+                      <th className="w-1/4">Degree</th>
+                    </tr>
+                    <tr className="bg-blue-300">
+                      <td className="transform transition-transform duration-300 hover:translate-x-5">
+                        {data?.data?.degree}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="w-1/4">Graduation Date</th>
+                    </tr>
+                    <tr className="bg-blue-300">
+                      <td className="transform transition-transform duration-300 hover:translate-x-5">
+                      
+                        {data?.data?.graduation_year.split("T")[0]}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="w-1/4">Location</th>
+                    </tr>
+                    <tr className="bg-blue-300">
+                      <td className="transform transition-transform duration-300 hover:translate-x-5">
+                      
+                        {data?.data?.user_data?.address?.country ?? "Ethiopia"},{" "}
+                        {data?.data?.user_data?.address?.region ??
+                          "Addis Ababa"}
+                        ,{" "}
+                        {data?.data?.user_data?.address?.city ?? "Addis Ababa"}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="w-1/4">Department</th>
+                    </tr>
+                    <tr className="bg-blue-300">
+                      <td className="transform transition-transform duration-300 hover:translate-x-5">
+                        {data?.data?.department_name}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="w-1/4">Skills</th>
+                    </tr>
+                    <tr className="bg-blue-300">
+                      <td className="transform transition-transform duration-300 hover:translate-x-5">
+                        {data?.data?.Skills}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="w-1/4">Language</th>
+                    </tr>
+                    <tr className="bg-blue-300">
+                      <td className="transform transition-transform duration-300 hover:translate-x-5">
+                        {data?.data?.Language}
+                      </td>
+                    </tr>
+                  </tbody>
+                </Table> */}
+              </div>
+
+              {isOpen && (
+                <div className="hidden relative xl:flex items-center ">
+                  <div className="w-[2px] bg-black  hidden xl:block h-full mx-4 z-0"></div>
+                  {isOpen ? (
+                    <MdOutlineReadMore
+                      className="z-50 p-2  w-full rounded-[50%] h-auto my-auto items-center justify-center mx-auto absolute text-black  bg-gray-200  rotate-180 text-2xl top-1/2 transform -translate-y-1/2 translate-x-/2 cursor-pointer"
+                      onClick={toggle}
+                    />
+                  ) : (
+                    ""
+                  )}
+                </div>
+              )}
+
+              {isOpen && (
+                <div
+                  className={` transition-all duration-500  ease-in-out overflow-hidden hidden xl:block w-1/2 `}
                 >
-                  View Resume
-                </a>
-              </div> */}
+                  <div className="min-w-full rounded-lg p-6 max-w-sm w-[50%] ">
+                    <div className="mb-4  text-end">
+                      <div className="text-sm font-semibold text-gray-700">
+                        Degree
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {data?.data?.degree}
+                      </div>
+                    </div>
+                    <div className="mb-4 text-end">
+                      <div className="text-sm font-semibold text-gray-700">
+                        Graduation Date
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {data?.data?.graduation_year.split("T")[0]}
+                      </div>
+                    </div>
+                    <div className="mb-4 text-end">
+                      <div className="text-sm font-semibold text-gray-700">
+                        Location
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {data?.data?.user_data?.address?.country ?? "Ethiopia"},{" "}
+                        {data?.data?.user_data?.address?.region ??
+                          "Addis Ababa"}
+                        ,{" "}
+                        {data?.data?.user_data?.address?.city ?? "Addis Ababa"}{" "}
+                      </div>
+                    </div>
+                    <div className="mb-4 text-end">
+                      <div className="text-sm font-semibold text-gray-700">
+                        Department
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {data?.data?.department_name}
+                      </div>
+                    </div>
+                    <div className="mb-4 text-end">
+                      <div className="text-sm font-semibold text-gray-700">
+                        Skills
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {data?.data?.Skills}
+                      </div>
+                    </div>
+                    <div className="mb-4 text-end">
+                      <div className="text-sm font-semibold text-gray-700">
+                        Language
+                      </div>
+
+                      <div className="flex flex-row-reverse it gap-2 mt-1">
+                        <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                          English
+                        </span>
+                        <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                          Spanish
+                        </span>
+                        <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                          Node.js
+                        </span>
+                        <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                          SQL
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="text-end">
+                      <div className="text-sm font-semibold text-gray-700">
+                        Phone
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        <a
+                          href="tel:+251 900 000 000"
+                          className="text-gray-600 underline ml-2 text-md"
+                        >
+                          {data?.data?.user_data?.phone_number}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  {/* <Table className="text-left">
+                    <tbody>
+                      <tr>
+                        <th className="w-1/4">Additional Info</th>
+                      </tr>
+                      <tr className="bg-blue-300">
+                        <td className="transform transition-transform duration-300 hover:translate-x-5">
+                          {data?.data?.additionalInfo}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </Table> */}
+                </div>
+              )}
             </div>
-            {/* <button
-              className=" text-black bg-white text-3xl py-2 px-4 "
+          </div>
+          {/* 
+          <button className="block xl:hidden" onClick={toggleOverlay}>
+            close
+          </button> */}
+          {!isOpen && (
+            <div
+              className={`hidden xl:flex border-none ${
+                isOpen
+                  ? "hidden"
+                  : "text-black bg-inherit text-3xl py-2 px-4 mt-4 border"
+              }`}
+              style={{
+                animation: "zoomInOut 2s infinite",
+                transformOrigin: "center",
+              }}
               onClick={toggle}
             >
               {isOpen ? (
-                <CiSaveUp1 className="text-red-800 hover:text-red-400" />
+                ""
               ) : (
-                <CiSaveDown1 className="text-blue-800 hover:text-blue-400" />
+                <MdOutlineReadMore className="text-black rotate-360 hover:text-red-400" />
               )}
-            </button> */}
-          </div>
+            </div>
+          )}
+
+          {absolutePos && (
+            <div className="absolute h-full w-[100%] xl:hidden top-0 z-50 bg-gray-100 flex items-center justify-center">
+              <button
+                className="absolute right-0 top-0 m-2 bg-gray-100 "
+                onClick={toggleOverlay}
+              >
+                <IoMdClose className="text-black " />
+              </button>
+              <div
+                className={` h-full w-[95%] transition-all duration-500 ease-in-out `}
+              >
+                <div className="min-w-full rounded-lg p-6 max-w-sm  items-start w-[50%]">
+                  <div className="mb-4  text-start">
+                    <div className="text-sm font-semibold text-gray-700">
+                      Degree
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {data?.data?.degree}
+                    </div>
+                  </div>
+                  <div className="mb-4 text-start">
+                    <div className="text-sm font-semibold text-gray-700">
+                      Graduation Date
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {data?.data?.graduation_year.split("T")[0]}
+                    </div>
+                  </div>
+
+                  <div className="mb-4 text-start">
+                    <div className="text-sm font-semibold text-gray-700">
+                      Location
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {data?.data?.user_data?.address?.country ?? "Ethiopia"},{" "}
+                      {data?.data?.user_data?.address?.region ?? "Addis Ababa"},{" "}
+                      {data?.data?.user_data?.address?.city ?? "Addis Ababa"}{" "}
+                    </div>
+                  </div>
+                  <div className="mb-4 text-start">
+                    <div className="text-sm font-semibold text-gray-700">
+                      Department
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {data?.data?.department_name}
+                    </div>
+                  </div>
+                  <div className="mb-4 text-start">
+                    <div className="text-sm font-semibold text-gray-700">
+                      Skills
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {data?.data?.Skills}
+                    </div>
+                  </div>
+                  <div className="mb-4 text-start">
+                    <div className="text-sm font-semibold text-gray-700">
+                      Language
+                    </div>
+
+                    <div className="flex gap-2 mt-1">
+                      <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                        English
+                      </span>
+                      <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                        Spanish
+                      </span>
+                      <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                        Node.js
+                      </span>
+                      <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                        SQL
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="text-start">
+                    <div className="text-sm font-semibold text-gray-700">
+                      Phone
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      <a
+                        href="tel:+251 900 000 000"
+                        className="text-gray-600 underline ml-2 text-md"
+                      >
+                        {data?.data?.user_data?.phone_number}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <div className="flex items-center justify-center min-h-screen bg-white">

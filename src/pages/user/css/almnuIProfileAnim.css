@@ -1,0 +1,14 @@
+
+  @keyframes zoomInOut {
+    0%, 100% {
+      transform: scale(1);
+      color: rgb(236, 227, 227);
+      opacity: 0.6;
+    }
+    50% {
+      transform: scale(1.2);
+      color: rgb(4, 68, 4);
+      opacity: 1;
+    }
+  }
+
