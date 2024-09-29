@@ -37,5 +37,19 @@ export default {
     },
   },
   darkMode: "class",
-  plugins: [import("tw-elements-react/dist/plugin.cjs")],
+  plugins: [
+    import("tw-elements-react/dist/plugin.cjs"),
+    function ({ addUtilities }) {
+      addUtilities({
+        ".no-scrollbar": {
+          "-webkit-overflow-scrolling": "touch",
+          "scrollbar-width": "none",
+          "-ms-overflow-style": "none",
+        },
+        ".no-scrollbar::-webkit-scrollbar": {
+          display: "none",
+        },
+      });
+    },
+  ],
 };

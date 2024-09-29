@@ -1,13 +1,19 @@
 import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { getImageBaseUrl, myConnectionRequests, updateConnection } from "src/api";
+import {
+  getImageBaseUrl,
+  myConnectionRequests,
+  updateConnection,
+} from "src/api";
 import QueryResult from "src/components/utils/queryResults";
 import { DateFormat } from "src/utils/utils";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
-
+import { TiMessages } from "react-icons/ti";
+import { FcAcceptDatabase } from "react-icons/fc";
+import { BiStopCircle } from "react-icons/bi";
 export default function ConnectionNetwork() {
   const [activeTab, setActiveTab] = useState("connections");
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,7 +23,12 @@ export default function ConnectionNetwork() {
   const queryClient = useQueryClient();
 
   const { isError, data, isLoading, refetch } = useQuery(
-    ["myConnectionRequests", currentPage, pendingFilterType, pendingFilterValue],
+    [
+      "myConnectionRequests",
+      currentPage,
+      pendingFilterType,
+      pendingFilterValue,
+    ],
     async () => {
       const result = await myConnectionRequests({
         pageNumber: currentPage,
@@ -60,120 +71,90 @@ export default function ConnectionNetwork() {
     if (status === "accepted") {
       toast.success(`You have become friends with ${connection?.user?.name}!`);
     } else if (status === "declined") {
-      toast.info(`You have declined the request from ${connection?.user?.name}.`);
+      toast.info(
+        `You have declined the request from ${connection?.user?.name}.`
+      );
     }
   };
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
-      <div className="p-4">
-        <h2 className="text-2xl font-bold mb-4">My Alumni Network</h2>
-
-        <div className="flex m-auto space-x-4 mb-6 max-w-[1600px]">
-          <div className="text-start">
-            <button
-              onClick={() => {
-                setActiveTab("connections");
-                setPendingFilterValue("accepted");
-              }}
-              className={`py-2 px-4 rounded text-start ${
-                activeTab === "connections" ? "bg-black text-white" : "bg-white text-black"
-              }`}
-            >
-              My Connections
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab("requests");
-                setPendingFilterValue("pending");
-              }}
-              className={`py-2 px-4 rounded ${
-                activeTab === "requests" ? "bg-black text-white" : "bg-white text-black"
-              }`}
-            >
-              Connection Requests
-            </button>
-          </div>
+      <div className="xl:p-4 ">
+        <div className="text-start flex flex-row gap- rounded-sm w-[100%]  ">
+          <button
+            onClick={() => {
+              setActiveTab("connections");
+              setPendingFilterValue("accepted");
+            }}
+            className={`py-2 xl:px-4 rounded-none hover:border-gray-500 text-start font-serif  transition-all duration-300  ${
+              activeTab === "connections"
+                ? "bg-white text-cyan-500 border"
+                : "bg-white text-black"
+            }`}
+          >
+            Connections
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("requests");
+              setPendingFilterValue("pending");
+            }}
+            className={`py-2 xl:px-4 rounded-none font-serif hover:border-gray-500 transition-all duration-300  ${
+              activeTab === "requests"
+                ? "bg-white text-cyan-500 border"
+                : "bg-white text-black"
+            }`}
+          >
+            Requests
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("myrequests");
+              setPendingFilterValue("pending");
+            }}
+            className={`py-2 xl:px-4 rounded-none font-serif hover:border-gray-500 transition-all duration-300  ${
+              activeTab === "myrequests"
+                ? "bg-white text-cyan-500 border  "
+                : "bg-white text-black"
+            }`}
+          >
+            My Requests
+          </button>
         </div>
 
         {activeTab === "connections" && (
-          <div>
-            <h3 className="text-xl font-semibold mt-8 mb-4">My Connections</h3>
+          <div className="  mt-8 mb-4">
             <div className="space-y-4 flex flex-col gap-y-2">
               {connectionList.map((connection) => {
-                const userPhotoUrl = getImageBaseUrl(connection?.alumni?.user_photo);
-                    const userName = connection?.user?.name || '';
-                    const isPhotoAvailable = userPhotoUrl && userPhotoUrl.length > 0 && userPhotoUrl.startsWith('uploads/');
-
-                    const [firstName, lastName] = userName.split(" ");
-                    const truncatedFirstName = !isPhotoAvailable && firstName.length > 11
-                      ? `${firstName.slice(0, 5)}...`
-                      : firstName;
-
-                    const truncatedLastName = !isPhotoAvailable && lastName.length > 7
-                      ? `${lastName.slice(0, 5)}...`
-                      : lastName;
-                    const displayName = lastName ? `${truncatedFirstName} ${truncatedLastName}` : truncatedFirstName;
-
-                return (
-                  <div
-                    key={connection.id}
-                    className="flex flex-col items-center m-auto sm:flex-row justify-between w-full py-2 sm:p-4 bg-white shadow rounded max-w-[1600px]"
-                  >
-                    <div className="flex items-center mb-4 sm:mb-0">
-                      <img
-                        src={userPhotoUrl || "default-placeholder.png"}
-                        alt={displayName}
-                        className="w-12 h-12 rounded-full mr-4"
-                      />
-                      <div>
-                            <h4
-                              className={`text-lg font-semibold text-start ${!isPhotoAvailable ? 'text-sm' : ''}`}
-                              style={{
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                maxWidth: "200px",
-                              }}
-                            >
-                              {connection?.user?.name}
-                            </h4>
-                            <p className="text-gray-500">Joined on {DateFormat(connection?.createdat)}</p>
-                          </div>
-                    </div>
-                    <button className="bg-black text-white py-1 px-3 rounded">Message</button>
-                  </div>
+                const userPhotoUrl = getImageBaseUrl(
+                  connection?.alumni?.user_photo
                 );
-              })}
-            </div>
-          </div>
-        )}
-
-        {activeTab === "requests" && (
-          <div>
-            <h3 className="text-xl font-semibold mt-8 mb-4">Connection Requests</h3>
-            <div className="space-y-4 flex flex-col gap-y-2">
-              {connectionList.map((connection) => {
-                const userPhotoUrl = getImageBaseUrl(connection?.alumni?.user_photo);
-                const userName = connection?.user?.name || '';
-                const isPhotoAvailable = userPhotoUrl && userPhotoUrl.length > 0 && userPhotoUrl.startsWith('uploads/');
+                const userName = connection?.user?.name || "";
+                const isPhotoAvailable =
+                  userPhotoUrl &&
+                  userPhotoUrl.length > 0 &&
+                  userPhotoUrl.startsWith("uploads/");
 
                 const [firstName, lastName] = userName.split(" ");
-                const truncatedFirstName = !isPhotoAvailable && firstName.length > 11
-                  ? `${firstName.slice(0, 5)}...`
-                  : firstName;
+                const truncatedFirstName =
+                  !isPhotoAvailable && firstName.length > 11
+                    ? `${firstName.slice(0, 5)}...`
+                    : firstName;
 
-                const truncatedLastName = !isPhotoAvailable && lastName.length > 7
-                  ? `${lastName.slice(0, 5)}...`
-                  : lastName;
-                const displayName = lastName ? `${truncatedFirstName} ${truncatedLastName}` : truncatedFirstName;
+                const truncatedLastName =
+                  !isPhotoAvailable && lastName.length > 7
+                    ? `${lastName.slice(0, 5)}...`
+                    : lastName;
+                const displayName = lastName
+                  ? `${truncatedFirstName} ${truncatedLastName}`
+                  : truncatedFirstName;
 
                 return (
                   <div
                     key={connection.id}
-                    className="flex flex-col items-center m-auto sm:flex-row justify-between w-full py-2 sm:p-4 bg-white shadow rounded max-w-[1600px]"
+                    className="flex flex-rows items-start my-auto sm:flex-row justify-between w-full py-2 sm:p-4 hover:bg-gray-100 shadow-sm rounded max-w-[90%] "
                   >
-                    <div className="flex items-center mb-4 sm:mb-0">
+                    <div className="flex items-center justify-start m-2 ">
                       <img
                         src={userPhotoUrl || "default-placeholder.png"}
                         alt={displayName}
@@ -181,7 +162,9 @@ export default function ConnectionNetwork() {
                       />
                       <div>
                         <h4
-                          className={`text-lg font-semibold text-start ${!isPhotoAvailable ? 'text-sm' : ''}`}
+                          className={`text-lg font-semibold font-serif text-start ${
+                            !isPhotoAvailable ? "text-lg" : ""
+                          }`}
                           style={{
                             whiteSpace: "nowrap",
                             overflow: "hidden",
@@ -191,20 +174,95 @@ export default function ConnectionNetwork() {
                         >
                           {connection?.user?.name}
                         </h4>
-                        <p className="text-gray-500">Requested on {DateFormat(connection?.createdat)}</p>
+                        <p className="text-gray-500 text-sm">
+                          Joined on {DateFormat(connection?.createdat)}
+                        </p>
                       </div>
                     </div>
-                    <div className="flex space-x-2">
+                    <button className="bg-gray-100 font-serif text-black py-1 px-3 rounded flex flex-row gap-2 justify-end items-end mt-auto mb-auto">
+                      <TiMessages className="flex items-center justify-center m-auto" />{" "}
+                      <span className="hidden sm:flex items-center justify-center m-auto">
+                        Message
+                      </span>
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {activeTab === "requests" && (
+          <div className="  mt-8 mb-4">
+            <div className="space-y-4 flex flex-col gap-y-2">
+              {connectionList.map((connection) => {
+                const userPhotoUrl = getImageBaseUrl(
+                  connection?.alumni?.user_photo
+                );
+                const userName = connection?.user?.name || "";
+                const isPhotoAvailable =
+                  userPhotoUrl &&
+                  userPhotoUrl.length > 0 &&
+                  userPhotoUrl.startsWith("uploads/");
+
+                const [firstName, lastName] = userName.split(" ");
+                const truncatedFirstName =
+                  !isPhotoAvailable && firstName.length > 11
+                    ? `${firstName.slice(0, 5)}...`
+                    : firstName;
+
+                const truncatedLastName =
+                  !isPhotoAvailable && lastName?.length > 7
+                    ? `${lastName.slice(0, 5)}...`
+                    : lastName;
+                const displayName = lastName
+                  ? `${truncatedFirstName} ${truncatedLastName}`
+                  : truncatedFirstName;
+
+                return (
+                  <div
+                    key={connection.id}
+                    className="flex flex-col w-[100%] gap-2 items-center sm:flex-row justify-between  sm:py-2 sm:p-4 bg-gray-50 hover:bg-gray-100 shadow rounded xl:max-w-[90%]"
+                  >
+                    <div className="flex items-center justify-center my-auto ">
+                      <img
+                        src={userPhotoUrl || "default-placeholder.png"}
+                        alt={displayName}
+                        className="w-12 h-12 rounded-full mr-4"
+                      />
+
+                      <div className="flex flex-col ">
+                        <h4
+                          className={`text-lg font-semibold text-start ${
+                            !isPhotoAvailable ? "text-sm" : ""
+                          }`}
+                          style={{
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            maxWidth: "200px",
+                          }}
+                        >
+                          {connection?.user?.name}
+                        </h4>
+                        <p className="text-gray-500">
+                          Requested on {DateFormat(connection?.createdat)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex space-x-2 p-2">
                       <button
                         onClick={() => handleAction(connection, "accepted")}
-                        className="bg-green-500 text-white py-1 px-3 rounded"
+                        className="hover:bg-green-500 bg-gray-100 flex flex-row gap-2 items-center justify-center text-white py-1 px-3 rounded"
                       >
-                        Accept
+                        <FcAcceptDatabase />{" "}
+                        <span className="text-black">Accept</span>
                       </button>
                       <button
                         onClick={() => handleAction(connection, "declined")}
-                        className="bg-red-500 text-white py-1 px-3 rounded"
+                        className="flex flex-row gap-2 bg-gray-100 items-center justify-center  hover:bg-red-500 text-black py-1 px-3 rounded"
                       >
+                        <BiStopCircle />
                         Decline
                       </button>
                     </div>
