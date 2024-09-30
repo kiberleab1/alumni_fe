@@ -12,12 +12,17 @@ import {
   TbSortDescending,
 } from "react-icons/tb";
 import { SlCalender } from "react-icons/sl";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import {
+  IoIosArrowBack,
+  IoIosArrowForward,
+  IoMdArrowDropdown,
+} from "react-icons/io";
 import { FiFilter } from "react-icons/fi";
 import { MdDriveFileRenameOutline, MdLockReset } from "react-icons/md";
 import image from "../../../assets/images/testimonial/2.jpg";
 import useAOS from "../aos";
 import { formatInputDate } from "src/utils/utils";
+import { FaFilter } from "react-icons/fa";
 export default function EventsPage({ onEventsDetailClick }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [filterType, setFilterType] = useState("all");
@@ -114,140 +119,155 @@ function ListEvent({
   };
   return (
     <div className="flex flex-col bg-gray-20 rounded-lg w-full">
-      <div className="sticky top-0 sm:flex sm:items-center flex flex-row z-50 bg-gray-100">
-        <div className="sm:flex-auto flex flex-row justify-between items-center ">
-          <h1 className="text-2xl font-semibold text-gray-900 mx-auto">
-            Upcoming Events
-          </h1>
-          <div className="relative bg-white">
-            <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="px-4 py-2 bg-gray-50 border-black text-black rounded flex flex-row gap-2 items-center text-lg"
-            >
-              <FiFilter /> Filter
-            </button>
+      <div className="top-0 sm:flex sm:items-center justify-end flex flex-row z-50 relative ">
+        <div className="flex flex-row gap-1 items-center">
+          <div className="grid gap-2">
+            <input
+              id="institute-filter"
+              type="text"
+              placeholder="Search institute events..."
+              autoComplete="off"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-black"
+              value={
+                selectedFilter.type === "institute" ? selectedFilter.value : ""
+              }
+              onFocus={() => setIsDropdownOpen(true)}
+              onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
+              onChange={(e) => handleFilterChange("institute", e.target.value)}
+            />
           </div>
-        </div>
-      </div>
-      <div>
-        {isDropdownOpen && (
-          <div className="absolute right-0 bg-white shadow-lg p-6 rounded-md z-50 w-80">
-            <div className="mt-4 grid gap-4">
-              <div className="grid gap-2">
-                <label className="text-sm font-medium text-gray-900">
-                  Order By
-                </label>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      value="desc"
-                      name="created"
-                      className="mr-2"
-                      checked={
-                        selectedFilter.type === "created" &&
-                        selectedFilter.value === "desc"
-                      }
-                      onChange={() => handleFilterChange("created", "desc")}
-                    />
-                    Created Date (Descending)
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      value="asc"
-                      name="created"
-                      className="mr-2"
-                      checked={
-                        selectedFilter.type === "created" &&
-                        selectedFilter.value === "asc"
-                      }
-                      onChange={() => handleFilterChange("created", "asc")}
-                    />
-                    Created Date (Ascending)
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid gap-2">
-                <label className="text-sm font-medium text-gray-900">
-                  Order By
-                </label>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      value="desc"
-                      name="deadline"
-                      className="mr-2"
-                      checked={
-                        selectedFilter.type === "deadline" &&
-                        selectedFilter.value === "desc"
-                      }
-                      onChange={() => handleFilterChange("deadline", "desc")}
-                    />
-                    Deadline Date (Descending)
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      value="asc"
-                      name="deadline"
-                      className="mr-2"
-                      checked={
-                        selectedFilter.type === "deadline" &&
-                        selectedFilter.value === "asc"
-                      }
-                      onChange={() => handleFilterChange("deadline", "asc")}
-                    />
-                    Deadline Date (Ascending)
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid gap-2">
-                <label
-                  htmlFor="institute-filter"
-                  className="text-sm font-medium text-gray-900"
-                >
-                  Institute
-                </label>
-                <input
-                  id="institute-filter"
-                  type="text"
-                  placeholder="Search institute events..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-black"
-                  value={
-                    selectedFilter.type === "institute"
-                      ? selectedFilter.value
-                      : ""
-                  }
-                  onChange={(e) =>
-                    handleFilterChange("institute", e.target.value)
-                  }
-                />
-              </div>
-
-              <div className="flex justify-end gap-2">
-                <button
-                  className="px-4 py-2 text-gray-100 border border-gray-300 rounded-md hover:bg-gray-50"
-                  onClick={handleClearFilters}
-                >
-                  Clear Filters
-                </button>
-                <button
-                  className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
-                  onClick={handleApplyFilters}
-                >
-                  Apply Filters
-                </button>
-              </div>
+          <div className="sm:flex-auto flex flex-row items-center">
+            <div className="relative bg-white">
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="px-4 py-2 bg-gray-50 text-gray-700  hover:bg-gray-950 hover:text-white border-black rounded flex flex-row gap-2 items-center text-lg"
+              >
+                <FaFilter />
+              </button>
             </div>
           </div>
-        )}
+        </div>
+
+        <div className="absolute right-0 top-11">
+          {isDropdownOpen && (
+            <div className="  bg-white shadow-lg p-6 rounded-md z-50 w-80">
+              <div className="mt-4 grid gap-4">
+                <div className="grid gap-2">
+                  <label className="text-sm font-medium text-gray-900">
+                    Order By
+                  </label>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        value="desc"
+                        name="created"
+                        className="mr-2"
+                        checked={
+                          selectedFilter.type === "created" &&
+                          selectedFilter.value === "desc"
+                        }
+                        onChange={() => handleFilterChange("created", "desc")}
+                      />
+                      Created Date (Descending)
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        value="asc"
+                        name="created"
+                        className="mr-2"
+                        checked={
+                          selectedFilter.type === "created" &&
+                          selectedFilter.value === "asc"
+                        }
+                        onChange={() => handleFilterChange("created", "asc")}
+                      />
+                      Created Date (Ascending)
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid gap-2">
+                  <label className="text-sm font-medium text-gray-900">
+                    Order By
+                  </label>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        value="desc"
+                        name="deadline"
+                        className="mr-2"
+                        checked={
+                          selectedFilter.type === "deadline" &&
+                          selectedFilter.value === "desc"
+                        }
+                        onChange={() => handleFilterChange("deadline", "desc")}
+                      />
+                      Deadline Date (Descending)
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        value="asc"
+                        name="deadline"
+                        className="mr-2"
+                        checked={
+                          selectedFilter.type === "deadline" &&
+                          selectedFilter.value === "asc"
+                        }
+                        onChange={() => handleFilterChange("deadline", "asc")}
+                      />
+                      Deadline Date (Ascending)
+                    </div>
+                  </div>
+                </div>
+
+                {/* <div className="grid gap-2">
+                  <label
+                    htmlFor="institute-filter"
+                    className="text-sm font-medium text-gray-900"
+                  >
+                    Institute
+                  </label>
+                  <input
+                    id="institute-filter"
+                    type="text"
+                    placeholder="Search institute events..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-black"
+                    value={
+                      selectedFilter.type === "institute"
+                        ? selectedFilter.value
+                        : ""
+                    }
+                    onChange={(e) =>
+                      handleFilterChange("institute", e.target.value)
+                    }
+                  />
+                </div> */}
+
+                <div className="flex justify-end gap-2">
+                  <button
+                    className="px-4 py-2 text-gray-100 border border-gray-300 rounded-md hover:bg-gray-50"
+                    onClick={handleClearFilters}
+                  >
+                    Clear Filters
+                  </button>
+                  <button
+                    className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                    onClick={handleApplyFilters}
+                  >
+                    Apply Filters
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
       <div className=" mt-6 container w-full z-10" data-aos="fade-down">
-        <div className="flex flex-wrap items-center gap-4 overflow-y-scroll scroll-auto m-auto content-start">
+        <div className="flex flex-wrap items-center gap-4 overflow-y-scroll no-scrollbar m-auto content-start">
           {eventsData?.map((val, idx) => (
             <div
               className="relative w-full sm:w-[320px] bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105 mx-3 md:mx-4 my-4"
