@@ -74,14 +74,8 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
             className="bg-sky-50 hover:bg-sky-100 border-2 border-sky-500 w-1/2 justify-center  py-2 px-4 rounded-l-lg mt-4 flex items-center gap-2"
             onClick={handleSubmit}
           >
-            <FaUserPlus className="text-sky-500" />{" "}
+            <FaUserPlus className="text-sky-900" />{" "}
             <span className="text-black">Send Request</span>
-          </button>
-          <button
-            className="bg-sky-50 hover:bg-sky-100 border-2 border-sky-500 w-1/2  text-black  py-2 px-4 rounded-l-lg mt-4 flex justify-center items-center gap-2"
-            onClick={handleSubmit}
-          >
-            <BiMessageAltDetail className="text-sky-500" /> Message
           </button>
         </div>
       );
@@ -115,7 +109,6 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
     ) {
       return (
         <div className="text-green-500 font-bold py-2 px-2 mt-2 w-full">
-          {/* You are friends with {profile?.user_data?.name || "this user"}. */}
           <button className="flex-row w-full bg-white hover:bg-blue-700  text-black border-2 border-sky-500 justify-center font-serif text-lg py-2 px-4 rounded-l-lg mt-2 flex items-center gap-2">
             <BiMessageAltDetail className="text-sky-500 text-xl" /> Message
           </button>
