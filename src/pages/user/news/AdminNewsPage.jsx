@@ -66,12 +66,10 @@ export default function NewsPage({ onNewsDetailClick }) {
         <div className="flex flex-col  bg-gray-20  w-[100%]">
           <div className="sm:flex sm:items-center">
             <div className="sm:flex-auto">
-              <h1 className="text-2xl mb-10 font-semibold text-gray-900 font-sans">
-                Latest news
-              </h1>
+              <h1 className="text-2xl mb-10 font-semibold text-gray-900 font-sans"></h1>
             </div>
           </div>
-          <div className="container mx-auto  h-full overflow-y-scroll max-w-[100%] ">
+          <div className="container mx-auto  h-full overflow-y-scroll no-scrollbar max-w-[100%] ">
             <div className=" flex flex-wrap justify-center w-[100%]">
               {newsList.map((val, idx) => (
                 <div
