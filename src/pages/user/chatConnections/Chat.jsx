@@ -5,7 +5,7 @@ import { FaBinoculars } from "react-icons/fa";
 import { IoIosSend, IoMdArrowRoundBack } from "react-icons/io";
 import { IoTelescope, IoWoman } from "react-icons/io5";
 import { MdOutlineAttachFile, MdTagFaces } from "react-icons/md";
-// import "./css.css";
+import "./css.css";
 export default function ChatUi() {
   const [selectedChat, setSelectedChat] = useState(null);
   const [message, setMessage] = useState("");
@@ -38,29 +38,29 @@ export default function ChatUi() {
     //     isReceived: true,
     //   },
     // ],
-    Alx: [
-      {
-        sender: "Abebe",
-        message: "Hey, how's it going?",
-        image: null,
-        time: "5:30:00 PM",
-        isReceived: true,
-      },
-      {
-        sender: "You",
-        message: "fuck u",
-        image: null,
-        time: "5:35:00 PM",
-        isReceived: false,
-      },
-      {
-        sender: "Abebe",
-        message: "Hey, how's it going?",
-        image: null,
-        time: "5:30:00 PM",
-        isReceived: true,
-      },
-    ],
+    // Alx: [
+    //   {
+    //     sender: "Abebe",
+    //     message: "Hey, how's it going?",
+    //     image: null,
+    //     time: "5:30:00 PM",
+    //     isReceived: true,
+    //   },
+    //   {
+    //     sender: "You",
+    //     message: "fuck u",
+    //     image: null,
+    //     time: "5:35:00 PM",
+    //     isReceived: false,
+    //   },
+    //   {
+    //     sender: "Abebe",
+    //     message: "Hey, how's it going?",
+    //     image: null,
+    //     time: "5:30:00 PM",
+    //     isReceived: true,
+    //   },
+    // ],
     // Abd: [
     //   {
     //     sender: "Abebe",
@@ -324,6 +324,7 @@ export default function ChatUi() {
               <div>
                 <div className="flex items-center border-t p-2 bg-gray-100">
                   <textarea
+                    type="text"
                     ref={textareaRef}
                     value={message}
                     rows={1}
@@ -396,7 +397,8 @@ export default function ChatUi() {
             <div className="shadow move  inset-x-0 bottom-0 h-2 bg-gray-300 animate-pulse"></div>
             <div className="message mt-4">
               <p className="text-gray-600 text-lg">
-                You haven't selected a chat history.
+                {" "}
+                you haven't select chat history{" "}
               </p>
             </div>
           </div>
