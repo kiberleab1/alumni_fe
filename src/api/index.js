@@ -791,7 +791,7 @@ export async function filterAlumniProfile({
 }
 
 export async function requestConnection(requesting_user_id) {
-  const data = { requesting_user_id: requesting_user_id };
+  const data = { user_id: requesting_user_id };
   console.log(data);
   return await axios.post(`${API_BASE_URl}/createConnection`, data);
 }
@@ -810,4 +810,10 @@ export async function myConnectionRequests({
 export async function updateConnection(data) {
   console.log(data);
   return await axios.put(`${API_BASE_URl}/updateConnection`, data);
+}
+
+export async function getChatHistory({from_user_id, to_user_id}){
+  console.log(from_user_id, to_user_id);
+  const result = await axios.get(`${API_BASE_URl}/chat/history?from_user_id=${from_user_id}&to_user_id=${to_user_id}`);
+  return result;
 }
