@@ -230,10 +230,10 @@ export default function ChatUi() {
           <div className="flex flex-col  text-center gap-2  m-auto rounded-lg p-6 ">
             <IoTelescope className="m-auto text-black text-4xl" />
 
-            <h1 className="text-gray-600 text-md">
+            <p className="text-gray-600 text-xl">
               {" "}
               You have no Connections history
-            </h1>
+            </p>
           </div>
         ) : (
           chatUsers.slice(0, visibleChats).map((name) => (
@@ -394,7 +394,7 @@ export default function ChatUi() {
                 <MdTagFaces className="text-8xl text-yellow-700 rotate-180" />
               </div>
             </div>
-            <div className="shadow move  inset-x-0 bottom-0 h-2 bg-gray-300 animate-pulse"></div>
+            <div className="shadow move inset-x-0 bottom-0 h-2 bg-gray-300"></div>
             <div className="message mt-4">
               <p className="text-gray-600 text-lg">
                 {" "}

@@ -35,6 +35,18 @@ export default {
         moveCircle4: "moveCircle4 45s linear infinite",
       },
     },
+    extend: {
+      keyframes: {
+        move: {
+          "0%": { left: "25%" },
+          "50%": { left: "60%" },
+          "100%": { left: "25%" },
+        },
+      },
+      animation: {
+        move: "move 3s ease-in-out infinite",
+      },
+    },
   },
   darkMode: "class",
   plugins: [
