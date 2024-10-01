@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
-import { FaBinoculars } from "react-icons/fa";
+import { FaBinoculars, FaRocketchat } from "react-icons/fa";
 import { IoIosSend, IoMdArrowRoundBack } from "react-icons/io";
-import { IoTelescope, IoWoman } from "react-icons/io5";
+import {
+  IoChatbubbleEllipsesSharp,
+  IoTelescope,
+  IoWoman,
+} from "react-icons/io5";
 import { MdOutlineAttachFile, MdTagFaces } from "react-icons/md";
 import "./css.css";
 export default function ChatUi() {
@@ -391,12 +395,12 @@ export default function ChatUi() {
             <div className="dot two w-4 h-4 bg-red-500 rounded-full animate-bounce ml-2"></div> */}
             <div className="face2  mt-4">
               <div className="sad mt-2 w-8 h-2  !border-none inline-block ">
-                <MdTagFaces className="text-8xl text-yellow-700 rotate-180" />
+                <IoChatbubbleEllipsesSharp className="text-8xl text-yellow-700 " />
               </div>
             </div>
-            <div className="shadow move inset-x-0 bottom-0 h-2 bg-gray-300"></div>
+            <div className="shadow move inset-x-0 bottom-0 h-2 bg-gray-300 "></div>
             <div className="message mt-4">
-              <p className="text-gray-600 text-lg">
+              <p className="text-gray-600 text-lg fony-serf uppercase">
                 {" "}
                 you haven't select chat history{" "}
               </p>
