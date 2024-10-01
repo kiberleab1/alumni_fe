@@ -96,7 +96,7 @@ const Mission = () => {
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 rounded-full shadow-md ">
               <GiFlagObjective className="text-black text-4xl" />
             </div>
-            <div className="relative mt-16 overflow-auto flex-1 z-100 ">
+            <div className="relative mt-16  overflow-y-scroll no-scrollbar flex-1 z-100 ">
               <h1 className="text-black text-2xl  font-bold text-center mb-4 font-sans">
                 Core Values
               </h1>
