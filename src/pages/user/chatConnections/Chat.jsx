@@ -2,9 +2,14 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
 import { FaBinoculars, FaRocketchat } from "react-icons/fa";
-import { IoIosSend, IoMdArrowRoundBack } from "react-icons/io";
+import {
+  IoIosArrowDropdown,
+  IoIosSend,
+  IoMdArrowRoundBack,
+} from "react-icons/io";
 import {
   IoChatbubbleEllipsesSharp,
+  IoCloseSharp,
   IoTelescope,
   IoWoman,
 } from "react-icons/io5";
@@ -14,8 +19,8 @@ export default function ChatUi() {
   const [selectedChat, setSelectedChat] = useState(null);
   const [message, setMessage] = useState("");
 
-  const [image, setImage] = useState("");
-  console.log(image);
+  const [selectedImages, setSelectedImages] = useState([]);
+
   const [visibleChats, setVisibleChats] = useState(10);
   const messagesEndRef = useRef(null);
   const [chatHistory, setChatHistory] = useState({
@@ -42,29 +47,29 @@ export default function ChatUi() {
     //     isReceived: true,
     //   },
     // ],
-    // Alx: [
-    //   {
-    //     sender: "Abebe",
-    //     message: "Hey, how's it going?",
-    //     image: null,
-    //     time: "5:30:00 PM",
-    //     isReceived: true,
-    //   },
-    //   {
-    //     sender: "You",
-    //     message: "fuck u",
-    //     image: null,
-    //     time: "5:35:00 PM",
-    //     isReceived: false,
-    //   },
-    //   {
-    //     sender: "Abebe",
-    //     message: "Hey, how's it going?",
-    //     image: null,
-    //     time: "5:30:00 PM",
-    //     isReceived: true,
-    //   },
-    // ],
+    Alx: [
+      {
+        sender: "Abebe",
+        message: "Hey, how's it going?",
+        image: null,
+        time: "5:30:00 PM",
+        isReceived: true,
+      },
+      {
+        sender: "You",
+        message: "fuck u",
+        image: null,
+        time: "5:35:00 PM",
+        isReceived: false,
+      },
+      {
+        sender: "Abebe",
+        message: "Hey, how's it going?",
+        image: null,
+        time: "5:30:00 PM",
+        isReceived: true,
+      },
+    ],
     // Abd: [
     //   {
     //     sender: "Abebe",
@@ -155,21 +160,21 @@ export default function ChatUi() {
   }, [chatHistory[selectedChat]]);
 
   const onSendMessage = () => {
-    if (message.trim() || image) {
+    if (message.trim() || selectedImages.length > 0) {
       const messageData = {
         message: message,
-        image: image,
+        images: selectedImages.map((img) => URL.createObjectURL(img)), // Convert images to URLs
         time: new Date().toLocaleTimeString(),
         sender: "You",
       };
-      console.log(messageData.message);
+
       setChatHistory((prevChatHistory) => ({
         ...prevChatHistory,
         [selectedChat]: [...(prevChatHistory[selectedChat] || []), messageData],
       }));
 
       setMessage("");
-      setImage("");
+      setSelectedImages([]); // Clear selected images after sending
     }
   };
   // const onSendMessage = () => {
@@ -209,21 +214,19 @@ export default function ChatUi() {
     }
   };
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);
-    }
+  const handleFileUpload = (event) => {
+    const files = Array.from(event.target.files);
+    setSelectedImages((prevImages) => [...prevImages, ...files]);
   };
-
-  const handleRemoveImage = () => {
-    setImage(null);
+  const handleRemoveImage = (indexToRemove) => {
+    setSelectedImages((prevImages) =>
+      prevImages.filter((_, index) => index !== indexToRemove)
+    );
   };
   console.log(chatHistory[selectedChat]);
 
   return (
-    <div className="flex h-[90vh] bg-white">
+    <div className="flex h-[90vh] w-[] ">
       <div
         className={`w-[100%] md:w-1/3 p-1 md:p-4 border-r overflow-y-scroll no-scrollbar ${
           selectedChat ? "hidden md:block" : "block"
@@ -270,20 +273,24 @@ export default function ChatUi() {
       </div>
 
       <div
-        className={`w-full md:w-2/3 p-1 md:p-4 flex flex-col justify-between  ${
+        className={`w-full md:w-2/3  md:p-4 flex flex-col justify-between  ${
           selectedChat ? "block" : "hidden md:block"
         }`}
       >
         {selectedChat ? (
           <>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">{selectedChat}</h2>
-              <button
-                onClick={handleBackClick}
-                className="md:hidden bg-white text-white py-2 px-4 rounded-lg"
-              >
-                <IoMdArrowRoundBack className="text-black" />
-              </button>
+            <div className="flex justify-between items-center mb-4 w-[100%] m0">
+              <div className="flex flex-row justify-center items-center">
+                {" "}
+                <button
+                  onClick={handleBackClick}
+                  className="md:hidden bg-white text-white py-2  rounded-lg"
+                >
+                  <IoMdArrowRoundBack className="text-black" />
+                </button>{" "}
+                <h2 className="text-2xl font-bold">{selectedChat}</h2>
+              </div>
+              <IoIosArrowDropdown className="text-3xl hover:text-cyan-500 " />
             </div>
 
             <div className="flex flex-col h-full overflow-y-scroll no-scrollbar font-sans">
@@ -296,7 +303,7 @@ export default function ChatUi() {
                     }`}
                   >
                     <div className={`inline-block max-w-[90% lg:max-w-[70%]`}>
-                      {msg.image && (
+                      {/* {msg.image && (
                         <img
                           src={msg.image}
                           alt="Sent"
@@ -304,13 +311,31 @@ export default function ChatUi() {
                             msg.isReceived ? "bg-gray-300" : "bg-gray-800"
                           }`}
                         />
-                      )}
+                      )} */}
+                      <div>
+                        {msg.images && msg.images.length > 0 && (
+                          <div className="flex flex-col gap-2">
+                            {msg.images.map((image, idx) => (
+                              <img
+                                key={idx}
+                                src={image}
+                                alt="Sent"
+                                className={`rounded-lg w-32 h-32 object-cover mb-1 ${
+                                  msg.sender === "You"
+                                    ? "bg-gray-800"
+                                    : "bg-gray-300"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
                       {msg.message && (
                         <p
-                          className={`flex p-2 rounded-lg font-sans  ${
+                          className={`flex px-3 py-2 rounded-lg font-serif  ${
                             msg.isReceived
-                              ? "bg-gray-300 text-black  text-[.9rem]  "
-                              : "bg-gray-900 text-white  text-[.9rem] text-left"
+                              ? "bg-gray-300 text-black  text-[1rem]  "
+                              : "bg-gray-900 text-white  text-[1rem] text-left"
                           }`}
                         >
                           {msg.message}
@@ -326,9 +351,37 @@ export default function ChatUi() {
                 <div ref={messagesEndRef} />
               </div>
               <div>
-                <div className="flex items-center border-t p-2 bg-gray-100">
+                <div className="grid grid-cols-3 gap-4 mt-4">
+                  {selectedImages.map((image, index) => (
+                    <div key={index} className="relative">
+                      <img
+                        src={URL.createObjectURL(image)}
+                        alt={`Selected ${index}`}
+                        className="max-w-40 h-24 object-cover rounded-lg"
+                      />
+
+                      <button
+                        className="absolute top-0 left-0 bg-red-500 text-white rounded-full p-1"
+                        onClick={() => handleRemoveImage(index)}
+                      >
+                        <IoCloseSharp className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {/* {image && (
+                  <div className="relative bottom-0 flex justify-start">
+                    <img
+                      src={image}
+                      alt="Selected"
+                      className="w-12 h-12 object-cover rounded-full ml-2 cursor-pointer"
+                      onClick={handleRemoveImage}
+                    />
+                  </div>
+                )} */}
+                <div className="flex items-center border-t p-2 bg-gray-100 rounded-lg">
                   <textarea
-                    type="text"
                     ref={textareaRef}
                     value={message}
                     rows={1}
@@ -345,32 +398,25 @@ export default function ChatUi() {
                       onChange={handleFileUpload}
                       className="hidden"
                       id="file-upload"
+                      multiple
                     />
-                    <label
-                      htmlFor="file-upload"
-                      className="cursor-pointer bg-inherit text-2xl  py-2 rounded-lg"
-                    >
-                      <MdOutlineAttachFile />
-                    </label>
-                    <button
-                      onClick={onSendMessage}
-                      className="bg-inherit text-2xl px-4 py-2 rounded-l-none"
-                    >
-                      <IoIosSend />
-                    </button>
+                    <div className="flex flex-row items-center justify-center">
+                      <label
+                        htmlFor="file-upload"
+                        className="cursor-pointer bg-inherit text-2xl  py-2 rounded-lg flex flex-row"
+                      >
+                        <MdOutlineAttachFile className="text-black" />
+                      </label>
+                      <span
+                        onClick={onSendMessage}
+                        className="bg-inherit rounded-l-none"
+                      >
+                        <IoIosSend className="text-black text-2xl" />
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-              {image && (
-                <div className="relative">
-                  <img
-                    src={image}
-                    alt="Selected"
-                    className="w-12 h-12 object-cover rounded-full ml-2 cursor-pointer"
-                    onClick={handleRemoveImage}
-                  />
-                </div>
-              )}
             </div>
 
             {/* <div className="flex items-center border-t ">
