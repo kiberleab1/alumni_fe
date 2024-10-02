@@ -228,11 +228,11 @@ export default function ChatUi() {
   return (
     <div className="flex h-[90vh] w-[] ">
       <div
-        className={`w-[100%] md:w-1/3 p-1 md:p-4 border-r overflow-y-scroll no-scrollbar ${
+        className={`w-[100%] md:w-1/3  md:p-4 md:border-r overflow-y-scroll no-scrollbar ${
           selectedChat ? "hidden md:block" : "block"
         }`}
       >
-        <h2 className="text-xl font-medium mb-4 border-b-2">Connections</h2>
+        <h2 className="text-xl font-medium mb-4 border-b-2 ">Connections</h2>
         {chatUsers.length < 1 ? (
           <div className="flex flex-col  text-center gap-2  m-auto rounded-lg p-6 ">
             <IoTelescope className="m-auto text-black text-4xl" />
@@ -351,13 +351,13 @@ export default function ChatUi() {
                 <div ref={messagesEndRef} />
               </div>
               <div>
-                <div className="grid grid-cols-3 gap-4 mt-4">
+                <div className="flex flex-wrap gap-2 mt-4">
                   {selectedImages.map((image, index) => (
                     <div key={index} className="relative">
                       <img
                         src={URL.createObjectURL(image)}
                         alt={`Selected ${index}`}
-                        className="max-w-40 h-24 object-cover rounded-lg"
+                        className="w-20 h-24 object-cover rounded-lg"
                       />
 
                       <button
