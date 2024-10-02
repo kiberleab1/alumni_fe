@@ -320,7 +320,7 @@ export default function ChatUi() {
                                 key={idx}
                                 src={image}
                                 alt="Sent"
-                                className={`rounded-lg w-32 h-32 object-cover mb-1 ${
+                                className={`rounded-lg w-[12rem]  h-full object-cover mb-1 ${
                                   msg.sender === "You"
                                     ? "bg-gray-800"
                                     : "bg-gray-300"
