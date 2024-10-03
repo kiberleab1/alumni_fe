@@ -27,7 +27,7 @@ import { BsFiletypeCsv } from "react-icons/bs";
 import img from "../../../assets/images/testimonial/3.jpg";
 import { GiUnfriendlyFire } from "react-icons/gi";
 import { useQuery, useQueryClient } from "react-query";
-import { myConnectionRequests, getChatHistory } from "src/api";
+import { myConnectionRequests, getChatHistory, getImageBaseUrl } from "src/api";
 import QueryResult from "src/components/utils/queryResults";
 import { getUserToken } from "src/helpers/globalStorage";
 
@@ -349,7 +349,7 @@ export default function ChatUi({ userId }) {
             >
               <div className="flex flex-row items-center gap-2">
                 <img
-                  src={img}
+                  src={getImageBaseUrl(connectionList[name].alumni?.user_photo)}
                   alt="profile"
                   className="w-12 h-12 rounded-full mr-2"
                 />
@@ -400,11 +400,11 @@ export default function ChatUi({ userId }) {
               <div className=" absolute rounded-md right-2 mt-11 ml-5 w-52 bg-white border border-gray-300 shadow-lg z-50 ">
                 <div className=" absolute right-1  rotate-45 -translate-y-1/3 w-6 h-6   bg-white overflow-x-hidden -z-40"></div>
                 <ul className="text-black p-2 z-10">
-                  <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100 z-50 overflow-hidden ">
+                  <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100 z-50 overflow-hidden text-xs ">
                     <GiUnfriendlyFire className="text-xl overflow-hidden " />
                     Unfriend {selectedChat?.user?.name }
                   </li>
-                  <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100 z-50 overflow-hidden ">
+                  <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100 z-50 overflow-hidden text-xs ">
                     <MdAutoDelete className="text-xl overflow-hidden " />
                     Clear History
                   </li>
@@ -564,7 +564,7 @@ export default function ChatUi({ userId }) {
                     placeholder="Type a message..."
                     className="flex-1 p-2 border-none rounded-r-none w-[100%] rounded-l-lg bg-gray-100 text-black resize-none overflow-hidden no-scrollbar"
                   />
-                  <div className="flex flex-row transform bg-gray-900 hover:bg-gray-200 p-3 rounded-full group">
+                  <div className="flex flex-row transform bg-gray-900 hover:bg-gray-400 p-3 rounded-full group">
                     <div className="flex flex-row items-center justify-center">
                       <span
                         onClick={onSendMessage}
