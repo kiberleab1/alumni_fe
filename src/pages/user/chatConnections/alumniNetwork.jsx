@@ -14,6 +14,7 @@ import "aos/dist/aos.css";
 import { TiMessages } from "react-icons/ti";
 import { FcAcceptDatabase } from "react-icons/fc";
 import { BiStopCircle } from "react-icons/bi";
+import { UserIcon } from "@heroicons/react/24/outline";
 export default function ConnectionNetwork() {
   const [activeTab, setActiveTab] = useState("connections");
   const [currentPage, setCurrentPage] = useState(1);
@@ -86,7 +87,6 @@ export default function ConnectionNetwork() {
               setActiveTab("connections");
               setPendingFilterValue("accepted");
               setPendingFilterType("all");
-
             }}
             className={`py-2 xl:px-4 rounded-none hover:border-gray-500 text-start font-serif  transition-all duration-300  ${activeTab === "connections"
                 ? "bg-white text-cyan-500 border"
@@ -114,7 +114,6 @@ export default function ConnectionNetwork() {
               setPendingFilterValue("requesting_user_id");
               setPendingFilterType("requesting_user_id");
               refetch();
-
             }}
             className={`py-2 xl:px-4 rounded-none font-serif hover:border-gray-500 transition-all duration-300  ${activeTab === "myrequests"
                 ? "bg-white text-cyan-500 border  "
@@ -129,8 +128,11 @@ export default function ConnectionNetwork() {
           <div className="  mt-8 mb-4">
             <div className="space-y-4 flex flex-col gap-y-2">
               {connectionList.length === 0 ? (
-                <div className="text-center text-gray-500">
-                  No connections found
+                <div className="flex flex-col h-[100vh] items-center text-center text-gray-700 animate-pulse ">
+                  <div className="flex flex-col items-center mt-[20%]">
+                    <UserIcon className="w-10 h-10 mb-3" />
+                    <p>No connections found</p>{" "}
+                  </div>
                 </div>
               ) : (
                 <div>
@@ -171,8 +173,9 @@ export default function ConnectionNetwork() {
                           />
                           <div>
                             <h4
-                              className={`text-lg font-semibold font-serif text-start ${!isPhotoAvailable ? "text-lg" : ""
-                                }`}
+                              className={`text-lg font-semibold font-serif text-start ${
+                                !isPhotoAvailable ? "text-lg" : ""
+                              }`}
                               style={{
                                 whiteSpace: "nowrap",
                                 overflow: "hidden",
@@ -202,155 +205,179 @@ export default function ConnectionNetwork() {
           </div>
         )}
 
-        {activeTab === "requests" && (
+       {activeTab === "requests" && (
           <div className="  mt-8 mb-4">
             <div className="space-y-4 flex flex-col gap-y-2">
-              {connectionList.map((connection) => {
-                const userPhotoUrl = getImageBaseUrl(
-                  connection?.alumni?.user_photo
-                );
-                const userName = connection?.user?.name || "";
-                const isPhotoAvailable =
-                  userPhotoUrl &&
-                  userPhotoUrl.length > 0 &&
-                  userPhotoUrl.startsWith("uploads/");
-
-                const [firstName, lastName] = userName.split(" ");
-                const truncatedFirstName =
-                  !isPhotoAvailable && firstName.length > 11
-                    ? `${firstName.slice(0, 5)}...`
-                    : firstName;
-
-                const truncatedLastName =
-                  !isPhotoAvailable && lastName?.length > 7
-                    ? `${lastName.slice(0, 5)}...`
-                    : lastName;
-                const displayName = lastName
-                  ? `${truncatedFirstName} ${truncatedLastName}`
-                  : truncatedFirstName;
-
-                return (
-                  <div
-                    key={connection.id}
-                    className="flex flex-col w-[100%] gap-2 items-center sm:flex-row justify-between  sm:py-2 sm:p-4 bg-gray-50 hover:bg-gray-100 shadow rounded xl:max-w-[90%]"
-                  >
-                    <div className="flex items-center justify-center my-auto ">
-                      <img
-                        src={userPhotoUrl || "default-placeholder.png"}
-                        alt={displayName}
-                        className="w-12 h-12 rounded-full mr-4"
-                      />
-
-                      <div className="flex flex-col ">
-                        <h4
-                          className={`text-lg font-semibold text-start ${!isPhotoAvailable ? "text-sm" : ""
-                            }`}
-                          style={{
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            maxWidth: "200px",
-                          }}
-                        >
-                          {connection?.user?.name}
-                        </h4>
-                        <p className="text-gray-500">
-                          Requested on {DateFormat(connection?.createdat)}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex space-x-2 p-2">
-                      <button
-                        onClick={() => handleAction(connection, "accepted")}
-                        className="hover:bg-green-500 bg-green-100 flex flex-row gap-2 items-center justify-center text-white py-1 px-3 rounded"
-                      >
-                        <FcAcceptDatabase />{" "}
-                        <span className="text-black">Accept</span>
-                      </button>
-                      <button
-                        onClick={() => handleAction(connection, "declined")}
-                        className="flex flex-row gap-2 bg-red-100 items-center justify-center  hover:bg-red-500 text-black py-1 px-3 rounded"
-                      >
-                        <BiStopCircle />
-                        Decline
-                      </button>
-                    </div>
+              {connectionList.length === 0 ? (
+                <div className="flex flex-col h-[100vh] items-center text-center text-gray-700 animate-pulse">
+                  <div className="flex flex-col items-center mt-[20%]">
+                    <UserIcon className="w-10 h-10 mb-3" />
+                    <p className="text-lg ">No requests found</p>{" "}
                   </div>
-                );
-              })}
+                </div>
+              ) : (
+                <div>
+                  {connectionList.map((connection) => {
+                    const userPhotoUrl = getImageBaseUrl(
+                      connection?.alumni?.user_photo
+                    );
+                    const userName = connection?.user?.name || "";
+                    const isPhotoAvailable =
+                      userPhotoUrl &&
+                      userPhotoUrl.length > 0 &&
+                      userPhotoUrl.startsWith("uploads/");
+
+                    const [firstName, lastName] = userName.split(" ");
+                    const truncatedFirstName =
+                      !isPhotoAvailable && firstName.length > 11
+                        ? `${firstName.slice(0, 5)}...`
+                        : firstName;
+
+                    const truncatedLastName =
+                      !isPhotoAvailable && lastName?.length > 7
+                        ? `${lastName.slice(0, 5)}...`
+                        : lastName;
+                    const displayName = lastName
+                      ? `${truncatedFirstName} ${truncatedLastName}`
+                      : truncatedFirstName;
+
+                    return (
+                      <div
+                        key={connection.id}
+                        className="flex flex-col w-[100%] gap-2 items-center sm:flex-row justify-between  sm:py-2 sm:p-4 bg-gray-50 hover:bg-gray-100 shadow rounded xl:max-w-[90%]"
+                      >
+                        <div className="flex items-center justify-center my-auto ">
+                          <img
+                            src={userPhotoUrl || "default-placeholder.png"}
+                            alt={displayName}
+                            className="w-12 h-12 rounded-full mr-4"
+                          />
+
+                          <div className="flex flex-col ">
+                            <h4
+                              className={`text-lg font-semibold text-start ${
+                                !isPhotoAvailable ? "text-sm" : ""
+                              }`}
+                              style={{
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                maxWidth: "200px",
+                              }}
+                            >
+                              {connection?.user?.name}
+                            </h4>
+                            <p className="text-gray-500">
+                              Requested on {DateFormat(connection?.createdat)}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2 p-2">
+                          <button
+                            onClick={() => handleAction(connection, "accepted")}
+                            className="hover:bg-green-500 bg-green-100 flex flex-row gap-2 items-center justify-center text-white py-1 px-3 rounded"
+                          >
+                            <FcAcceptDatabase />{" "}
+                            <span className="text-black">Accept</span>
+                          </button>
+                          <button
+                            onClick={() => handleAction(connection, "declined")}
+                            className="flex flex-row gap-2 bg-red-100 items-center justify-center  hover:bg-red-500 text-black py-1 px-3 rounded"
+                          >
+                            <BiStopCircle />
+                            Decline
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         )}
 
-       {activeTab === "myrequests" && (
+        {activeTab === "myrequests" && (
           <div className="  mt-8 mb-4">
             <div className="space-y-4 flex flex-col gap-y-2">
-              {connectionList.map((connection) => {
-                const userPhotoUrl = getImageBaseUrl(
-                  connection?.alumni?.user_photo
-                );
-                const userName = connection?.user?.name || "";
-                const isPhotoAvailable =
-                  userPhotoUrl &&
-                  userPhotoUrl.length > 0 &&
-                  userPhotoUrl.startsWith("uploads/");
-
-                const [firstName, lastName] = userName.split(" ");
-                const truncatedFirstName =
-                  !isPhotoAvailable && firstName.length > 11
-                    ? `${firstName.slice(0, 5)}...`
-                    : firstName;
-
-                const truncatedLastName =
-                  !isPhotoAvailable && lastName?.length > 7
-                    ? `${lastName.slice(0, 5)}...`
-                    : lastName;
-                const displayName = lastName
-                  ? `${truncatedFirstName} ${truncatedLastName}`
-                  : truncatedFirstName;
-
-                return (
-                  <div
-                    key={connection.id}
-                    className="flex flex-col w-[100%] gap-2 items-center sm:flex-row justify-between  sm:py-2 sm:p-4 bg-gray-50 hover:bg-gray-100 shadow rounded xl:max-w-[90%]"
-                  >
-                    <div className="flex items-center justify-center my-auto ">
-                      <img
-                        src={userPhotoUrl || "default-placeholder.png"}
-                        alt={displayName}
-                        className="w-12 h-12 rounded-full mr-4"
-                      />
-
-                      <div className="flex flex-col ">
-                        <h4
-                          className={`text-lg font-semibold text-start ${!isPhotoAvailable ? "text-sm" : ""
-                            }`}
-                          style={{
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            maxWidth: "200px",
-                          }}
-                        >
-                          {connection?.user?.name}
-                        </h4>
-                        <p className="text-gray-500">
-                          Requested on {DateFormat(connection?.createdat)}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex space-x-2 p-2">
-                      <button
-                        onClick={() => handleAction(connection, "declined")}
-                        className="flex flex-row gap-2 bg-red-100 items-center justify-center  hover:bg-red-500 text-black py-1 px-3 rounded"
-                      >
-                        <BiStopCircle />
-                        Cancel Connection Request
-                      </button>
-                    </div>
+              {connectionList.length === 0 ? (
+                <div className="flex flex-col h-[100vh] items-center text-center text-gray-700 animate-pulse">
+                  <div className="flex flex-col items-center mt-[20%]">
+                    <UserIcon className="w-10 h-10 mb-3" />
+                    <p className="text-lg ">No requests found</p>{" "}
                   </div>
-                );
-              })}
+                </div>
+              ) : (
+                <div>
+                  {connectionList.map((connection) => {
+                    const userPhotoUrl = getImageBaseUrl(
+                      connection?.alumni?.user_photo
+                    );
+                    const userName = connection?.user?.name || "";
+                    const isPhotoAvailable =
+                      userPhotoUrl &&
+                      userPhotoUrl.length > 0 &&
+                      userPhotoUrl.startsWith("uploads/");
+
+                    const [firstName, lastName] = userName.split(" ");
+                    const truncatedFirstName =
+                      !isPhotoAvailable && firstName.length > 11
+                        ? `${firstName.slice(0, 5)}...`
+                        : firstName;
+
+                    const truncatedLastName =
+                      !isPhotoAvailable && lastName?.length > 7
+                        ? `${lastName.slice(0, 5)}...`
+                        : lastName;
+                    const displayName = lastName
+                      ? `${truncatedFirstName} ${truncatedLastName}`
+                      : truncatedFirstName;
+
+                    return (
+                      <div
+                        key={connection.id}
+                        className="flex flex-col w-[100%] gap-2 items-center sm:flex-row justify-between  sm:py-2 sm:p-4 bg-gray-50 hover:bg-gray-100 shadow rounded xl:max-w-[90%]"
+                      >
+                        <div className="flex items-center justify-center my-auto ">
+                          <img
+                            src={userPhotoUrl || "default-placeholder.png"}
+                            alt={displayName}
+                            className="w-12 h-12 rounded-full mr-4"
+                          />
+
+                          <div className="flex flex-col ">
+                            <h4
+                              className={`text-lg font-semibold text-start ${
+                                !isPhotoAvailable ? "text-sm" : ""
+                              }`}
+                              style={{
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                maxWidth: "200px",
+                              }}
+                            >
+                              {connection?.user?.name}
+                            </h4>
+                            <p className="text-gray-500">
+                              Requested on {DateFormat(connection?.createdat)}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2 p-2">
+                          <button
+                            onClick={() => handleAction(connection, "declined")}
+                            className="flex flex-row gap-2 bg-red-100 items-center justify-center  hover:bg-red-500 text-black py-1 px-3 rounded"
+                          >
+                            <BiStopCircle />
+                            Cancel Connection Request
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         )}
