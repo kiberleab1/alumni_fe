@@ -47,9 +47,15 @@ const queryClient = new QueryClient({
 console.log(localStorage.getItem("userData"));
 const user = localStorage.getItem("userData");
 function App() {
-  const activeUrl = window.location.pathname;
-  console.log(activeUrl.trim().toLowerCase().includes("/user"));
-  console.log(window.location.pathname);
+  const activeUrl = window.location.pathname.trim().toLowerCase();
+  const pathsToDisableFooter = ["/user", "/login", "/register", "/admin"];
+
+  const activeUrlPath = pathsToDisableFooter.some((path) =>
+    activeUrl.includes(path)
+  );
+
+  console.log(activeUrlPath); // true or false based on the condition
+  console.log(activeUrl);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -115,9 +121,7 @@ function App() {
             <Route path="/" element={<Navigate to="/landing" replace />} />
             <Route path="*" element={<NotFoundComponent />} />
           </Routes>
-          {activeUrl != "/user" &&
-            activeUrl != "/admin" &&
-            activeUrl != "/admin*" && <Footer />}
+          {!activeUrlPath && <Footer />}
         </div>
       </BrowserRouter>
     </QueryClientProvider>

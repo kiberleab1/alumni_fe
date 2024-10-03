@@ -1,5 +1,11 @@
 import { useQueryClient, useMutation, useQuery } from "react-query";
-import { createAddress, getInstitutes, getRoleByName, getRoles, signup } from "src/api";
+import {
+  createAddress,
+  getInstitutes,
+  getRoleByName,
+  getRoles,
+  signup,
+} from "src/api";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Container, Row, Col, FormGroup, Label, Button } from "reactstrap";
@@ -38,7 +44,7 @@ const SignupForm = () => {
     onSuccess: () => {
       queryClient.invalidateQueries("signup");
       toast.success("Signup success. Welcome to the alumni system!");
-  
+
       setTimeout(() => {
         navigate("/landing/program/login");
       }, 1000);
@@ -83,7 +89,7 @@ const SignupForm = () => {
       placeholder: "House Number",
     },
   };
-  console.log(roles)
+
   const userInformationFields = {
     first_name: {
       label: "First Name",
@@ -162,10 +168,10 @@ const SignupForm = () => {
     onSubmit: async (values) => {
       console.log("Form values address:", values);
       const result = await createAddress(values);
-      if(result.data){
-        setAddressData(result.data.id)        
+      if (result.data) {
+        setAddressData(result.data.id);
       }
-      // submit here
+
       setstepOne(false);
       setstepTwo(true);
       setstepThree(false);
@@ -187,10 +193,10 @@ const SignupForm = () => {
     onSubmit: async (values) => {
       console.log("Form values birth:", values);
       const result = await createAddress(values);
-      if(result.data){
-        setBirthPlaceAddress(result.data.id)        
+      if (result.data) {
+        setBirthPlaceAddress(result.data.id);
       }
-      // submit here
+
       setstepOne(false);
       setstepTwo(false);
       setstepThree(true);
@@ -210,10 +216,10 @@ const SignupForm = () => {
       }, {})
     ),
     onSubmit: async (values) => {
-      values['role_id'] =  roles;
-      values['address_id'] =  addressData;
-      values['birth_place_id'] =  birthPlaceAddress;
-      values['institute_id'] =  "714642fd-c7d5-4372-9c57-17858b4c1933";
+      values["role_id"] = roles;
+      values["address_id"] = addressData;
+      values["birth_place_id"] = birthPlaceAddress;
+      values["institute_id"] = "714642fd-c7d5-4372-9c57-17858b4c1933";
 
       console.log("Form values user info:", values);
       // submit here
@@ -250,9 +256,9 @@ const SignupForm = () => {
     }
   };
   return (
-    <div className="min-h-screen">
-      <div className="flex items-center  justify-center  my-[10%]">
-        <div className=" p-8 max-w-2xl mt-16 mx-auto border border-sky-500 transition-all duration-700">
+    <div className="min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="p-4 xl:p-14 max-w-2xl  my-auto border border-sky-500 transition-all duration-700">
           <div className="sticky top-2 mt-2 z-0 w-90 bg-gray-200 rounded-full h-2.5 mb-4 overflow-hidden">
             <div
               className="bg-green-900 h-2.5 z-0 rounded-full transition-all duration-700 "
@@ -314,7 +320,7 @@ const SignupForm = () => {
                   <div className="flex justify-between w-full">
                     <button
                       type="button"
-                      className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-red-900 hover:bg-red-700 active:bg-red-400 text-white py-2 px-4 rounded"
+                      className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-red-900 hover:bg-red-700 active:bg-red-400"
                       onClick={() =>
                         addressFormValueAndImplmentation.resetForm()
                       }
@@ -1018,7 +1024,6 @@ const SignupForm = () => {
         </Container> */}
       {/* </div> */}
       <ToastContainer />
-
     </div>
   );
 };

@@ -6,6 +6,8 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { storeUserToken as storeUserToken } from "src/helpers/globalStorage";
 import { ToastContainer } from "react-toastify";
+import { IoPeopleOutline } from "react-icons/io5";
+import { IoMdLock, IoMdMail } from "react-icons/io";
 
 export default function LoginPage() {
   return (
@@ -89,22 +91,15 @@ const LoginForm = () => {
   });
 
   return (
-    <div className="min-h-screen">
-      <div
-        className="
-
-        p-8
-        max-w-xl
-        mt-[10%]
-        mx-auto
-        border-sky-500
-        transition-all
-        duration-700"
-      >
+    <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className=" border-sky-500  transition-all     duration-700">
         <div className="transition-all duration-700">
-          <div>
-            <h1 className="text-2xl text-center font-bold">Login </h1>
-            <div className="flex items-center justify-between mb-4 "></div>
+          <div className=" f">
+            <div className="text-2xl flex  text-center items-center justify-center font-bold m-auto">
+              {" "}
+              <IoPeopleOutline className="text-8xl" />{" "}
+            </div>
+            <div className="flex items-center justify-between mb- "></div>
 
             <form
               onSubmit={loginFormValueAndImplmentation.handleSubmit}
@@ -119,14 +114,31 @@ const LoginForm = () => {
                     >
                       {loginFormFields[field].label}
                     </label>
-                    <input
-                      id={field}
-                      name={field}
-                      type={field}
-                      {...loginFormValueAndImplmentation.getFieldProps(field)}
-                      placeholder={loginFormFields[field].placeholder}
-                      className="form-input w-full px-3 py-2 placeholder-gray-400 text-black border rounded bg-white"
-                    />
+
+                    <div className="relative">
+                      {/* Conditionally render icons for email and password */}
+                      {field === "email" && (
+                        <span className="absolute  p-2 top-1/2 transform pr-1 -translate-y-1/2 text-gray-500 border-r">
+                          <IoMdMail className="text-xl" />
+                        </span>
+                      )}
+
+                      {field === "password" && (
+                        <span className="absolute p-2 top-1/2 pr-1 transform -translate-y-1/2 text-gray-500 border-r">
+                          <IoMdLock className="text-xl" />
+                        </span>
+                      )}
+
+                      <input
+                        id={field}
+                        name={field}
+                        type={loginFormFields[field].type}
+                        {...loginFormValueAndImplmentation.getFieldProps(field)}
+                        placeholder={loginFormFields[field].placeholder}
+                        className="form-input w-[80%] px-12 py-2 placeholder-gray-100 text-black border rounded bg-white"
+                      />
+                    </div>
+
                     {loginFormValueAndImplmentation.touched[field] &&
                     loginFormValueAndImplmentation.errors[field] ? (
                       <div className="text-red-500 text-sm">
@@ -136,25 +148,26 @@ const LoginForm = () => {
                   </div>
                 ))}
               </div>
-              <div className="block  overflow-hidden space-x-4">
+              <div className="block  overflow-hidden space-x-4 0 ">
                 <button
                   type="submit"
-                  className="transition duration-300 ease-in-out hover:scale-110 bg-gray-800 hover:bg-gray-700 text-white py-2 px-4 rounded w-full active:bg-gray-300"
+                  className="transition duration-300 ease-in-out hover:scale-95 bg-gray-800 hover:bg-gray-600 text-white py-2 rounded w-[80%] active:bg-gray-300 p-2"
                 >
                   Login
                 </button>
 
-                <p className="mt-1 text-sm leading-6 text-gray-600 font-mono text-left">
-                  <a href="/landing/program/register">Register</a>
-                  {"if you don't have an account"}
-                </p>
+                <div className="mt-2 text-sm leading-6 text-gray-600 w-[80%] font-mono text-left flex items-center justify-center">
+                  <a href="/landing/program/register" className="">
+                    Register
+                  </a>
+                  <span className="ml-2">if you don't have an account</span>
+                </div>
               </div>
             </form>
           </div>
         </div>
       </div>
       <ToastContainer />
-
     </div>
   );
 };
