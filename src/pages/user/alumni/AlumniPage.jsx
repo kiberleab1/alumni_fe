@@ -74,7 +74,7 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
-      <div className="flex flex-col justify-between max-h-[]  ">
+      <div className="flex flex-col justify-between max-h-[] py-5 ">
         <div className=" ">
           <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center space-y- sm:space-y-0 sm:space-x-4 mb-">
             <select

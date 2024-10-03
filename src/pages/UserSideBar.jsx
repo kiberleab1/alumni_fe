@@ -32,7 +32,12 @@ const navigation = [
   },
   { name: "Alumni", href: "#", icon: AcademicCapIcon, current: false },
   { name: "Jobs", href: "#", icon: BriefcaseIcon, current: false },
-  { name: "My Connections", href: "#", icon: MdConnectWithoutContact, current: false },
+  {
+    name: "My Connections",
+    href: "#",
+    icon: MdConnectWithoutContact,
+    current: false,
+  },
   { name: "Chat", href: "#", icon: BiMessageSquareCheck, current: false },
   {
     name: "Jobs History",
@@ -40,7 +45,8 @@ const navigation = [
     href: "#",
     icon: BriefcaseIcon,
     current: false,
-  }, {
+  },
+  {
     name: "Document Verification",
     child: "Document Verification",
     href: "#",
@@ -347,10 +353,11 @@ function UserSideBar() {
           </Dialog>
         </Transition.Root>
         <div
-          className={`${sidebarOpenMain
+          className={`${
+            sidebarOpenMain
               ? "hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col"
               : "hidden"
-            }`}
+          }`}
         >
           <div
             className="flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-4"
@@ -459,7 +466,7 @@ function UserSideBar() {
                                         color:
                                           componentClicked.name === subItem.name
                                             ? sideBarActuveTextColor ||
-                                            "#FFFFFF"
+                                              "#FFFFFF"
                                             : sideBarTextColor || "#ccc",
                                         backgroundColor:
                                           componentClicked.name === subItem.name
@@ -476,7 +483,7 @@ function UserSideBar() {
                                         e.currentTarget.style.color =
                                           componentClicked.name === item.name
                                             ? sideBarActuveTextColor ||
-                                            "#FFFFFF"
+                                              "#FFFFFF"
                                             : sideBarTextColor || "#ccc";
                                         e.currentTarget.style.backgroundColor =
                                           componentClicked.name === item.name
@@ -632,8 +639,8 @@ function UserSideBar() {
             )}
           </div>
 
-          <main className="py-10">
-            <div className="px-4 sm:px-6 lg:px-8">
+          <main className="md:py-1">
+            <div className="md:px-4  xl:px-8">
               <ComponentRender
                 page={componentClicked.name}
                 onPageSet={handlePageSet}
