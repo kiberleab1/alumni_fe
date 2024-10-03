@@ -1,0 +1,88 @@
+$white: #FCFCFC;
+$gray: #CBCDD3;
+$dark: #777777;
+html {
+  display: grid;
+  min-height: 100%;
+}
+.face2 {
+  position: absolute;
+  width: 22%;
+  height: 22%;
+  background: $white;
+  border-radius: 50%;
+  border: 1px solid $dark;
+  top: 21%;
+  left: 37.5%;
+  z-index: 2;
+  animation: roll 3s ease-in-out infinite;
+}
+.sad {
+  top: 49%;
+  border: 2px solid;
+  border-color: $dark transparent transparent $dark;
+  transform: rotate(45deg);
+}
+
+.shadow {
+  position: absolute;
+  width: 21%;
+  height: 3%;
+  opacity: .5;
+  background: $dark;
+  left: 40%;
+  top: 43%;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.message {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  height: 40%;
+  top: 47%;
+}
+
+
+
+
+
+@keyframes roll {
+  0% {
+    transform: rotate(0deg);
+    left: 25%;
+  }
+  25% {
+    left: 60%;
+    transform: rotate(100deg);
+  }
+  50% {
+    left: 80%;
+    transform: rotate(200deg);
+  }
+  100% {
+    transform: rotate(0deg);
+    left: 25%;
+  }
+}
+
+@keyframes move {
+  0% {
+    left: 25%;
+  }
+  25% {
+    left: 60%;
+  }
+  50% {
+    left: 80%;
+  }
+  
+  100% {
+    left: 25%;
+  }
+}
+.move {
+  position: absolute;
+  animation: move 3s ease-in-out infinite;
+}
