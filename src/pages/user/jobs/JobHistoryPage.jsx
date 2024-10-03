@@ -12,6 +12,8 @@ import useAOS from "../aos";
 import { GrHistory } from "react-icons/gr";
 import { MdMessage } from "react-icons/md";
 import { LuPlus } from "react-icons/lu";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import Pagination from "src/components/pagination/paginationUpdated";
 
 export default function JobHistoryPage({
   onCreateJobHistoryClick,
@@ -65,7 +67,7 @@ export default function JobHistoryPage({
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
-      <div className="flex flex-col min-h-screen bg-gray-50">
+      <div className="flex flex-col max-h-screen bg-gray-50">
         <div className="sm:flex sm:items-center mb-4 mt-4" data-aos="fade-down">
           <div className="sm:flex-auto">
             <h1 className="text-2xl font-semibold leading-6 text-gray-900 font-sans">
@@ -179,7 +181,15 @@ export default function JobHistoryPage({
           )}
         </div>
       </div>
-      <div className="flex justify-center gap-2 items-center p-4 sticky bottom-0 bg-white border-t">
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        indexOfFirstItem={indexOfFirstItem}
+        indexOfLastItem={indexOfLastItem}
+        totalItems={data?.data?.total_items}
+        paginate={paginate}
+      />
+      {/* <div className="flex justify-center gap-2 items-center p-4 sticky bottom-0 bg-white border-t">
         <button
           onClick={() => paginate(currentPage - 1)}
           disabled={currentPage === 1}
@@ -197,7 +207,7 @@ export default function JobHistoryPage({
         >
           <ChevronRightIcon className="h-6 w-6" />
         </button>
-      </div>
+      </div> */}
     </QueryResult>
   );
 }
