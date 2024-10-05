@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
-import {FaBinoculars,
+import {
+  FaBinoculars,
+  FaFileAlt,
   FaFileCsv,
   FaFilePdf,
   FaRocketchat,
@@ -27,7 +29,7 @@ import { BsFiletypeCsv } from "react-icons/bs";
 import img from "../../../assets/images/testimonial/3.jpg";
 import { GiUnfriendlyFire } from "react-icons/gi";
 import { useQuery, useQueryClient } from "react-query";
-import { myConnectionRequests, getChatHistory, getImageBaseUrl } from "src/api";
+import { myConnectionRequests, getChatHistory, getImageBaseUrl, sendFiles } from "src/api";
 import QueryResult from "src/components/utils/queryResults";
 import { getUserToken } from "src/helpers/globalStorage";
 
@@ -154,34 +156,64 @@ export default function ChatUi({ userId }) {
     }
   }, [chatHistory]);
 
-  const onSendMessage = () => {
-    if (message.trim() === "" || !selectedChat) return;
-    if (message.trim() || selectedFiles.length > 0) {
+  const onSendMessage = async () => {
+    if (!message.trim() && selectedFiles.length === 0) return;
+    if (!selectedChat) return;
+  
+    const to_user_id = selectedChat?.alumni?.user_id;
+    
+    let success = false;
+  
+    if (selectedFiles.length > 0) {
+      const formData = new FormData();
+      formData.append("from_user_id", userToken?.user?.id);
+      formData.append("to_user_id", to_user_id);
+  
+      selectedFiles.forEach((file, index) => {
+        formData.append(`files`, file);
+      });
+  
+      try {
+        const response = await sendFiles(formData);
+        if (response) {
+          const result = await response?.data;
+          setSelectedFiles([]);
+          success = true;
+        }
+      } catch (error) {
+        console.error("Error uploading files:", error);
+      }
+    }
+  
+    if (message.trim()) {
       const messageData = {
         from_user_id: userToken?.user?.id,
-        images: selectedFiles.map((file) => ({
-          url: URL.createObjectURL(file),
-          name: file.name,
-          type: file.type,
-        })),
-        to_user_id: selectedChat?.alumni?.user_id,
+        to_user_id: to_user_id,
+        message: message.trim(),
         createdAt: new Date().toLocaleTimeString(),
-        message,
       };
-
+  
       ws.current.send(JSON.stringify(messageData));
-
+  
       setChatHistory((prevHistory) => ({
         ...prevHistory,
-        [selectedChat?.alumni?.user_id]: [
-          ...(prevHistory[selectedChat?.alumni?.user_id] || []),
-          { message, isReceived: false, time: new Date().toLocaleTimeString() },
+        [to_user_id]: [
+          ...(prevHistory[to_user_id] || []),
+          {
+            message: message.trim(),
+            isReceived: false,
+            time: new Date().toLocaleTimeString(),
+          },
         ],
       }));
       setMessage("");
-      setSelectedImages([]);
       setSelectedFiles([]);
+      success = true;
     }
+    let previousChat = selectedChat;
+    setSelectedChat(null);
+    setSelectedChat(previousChat);
+
   };
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -312,290 +344,226 @@ export default function ChatUi({ userId }) {
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
-    <div
-      className="flex h-[95vh] w-[] "
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          onSendMessage();
-        }
-      }}
-    >
       <div
-        className={`w-[100%] md:w-1/3  md:p-4 md:border-r overflow-y-scroll no-scrollbar ${selectedChat?.user.name ? "hidden md:block" : "block"
-        }`}
+        className="flex h-[95vh] w-[] "
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            onSendMessage();
+          }
+        }}
       >
-        <h2 className="text-xl font-medium mb-4 border-b-2">Connections</h2>
-        {connectionList.length < 1 ? (
-          <div className="flex flex-col  text-center gap-2  m-auto rounded-lg p-6 ">
-            <IoTelescope className="m-auto text-black text-4xl" />
+        <div
+          className={`w-[100%] md:w-1/3  md:p-4 md:border-r overflow-y-scroll no-scrollbar ${selectedChat?.user.name ? "hidden md:block" : "block"
+            }`}
+        >
+          <h2 className="text-xl font-medium mb-4 border-b-2">Connections</h2>
+          {connectionList.length < 1 ? (
+            <div className="flex flex-col  text-center gap-2  m-auto rounded-lg p-6 ">
+              <IoTelescope className="m-auto text-black text-4xl" />
 
-            <p className="text-gray-600 text-xl">
-              {" "}
-              You have no Connections history
-            </p>
-          </div>
-        ) : (
-          Object.keys(connectionList).map((name) => (
-            <div
-              key={name}
-              onClick={() => {
-                setSelectedChat(connectionList[name]);
-                setChatSelected(connectionList[name].user?.name);
-                setMessage("");
-              }}
-              className={`p-3 mb-2 rounded-lg cursor-pointer hover:bg-gray-200 ${selectedChat?.user.name === connectionList[name].user?.name ? "bg-gray-300" : "bg-gray-100"
-              }`}
-            >
-              <div className="flex flex-row items-center gap-2">
-                <img
-                  src={getImageBaseUrl(connectionList[name].alumni?.user_photo)}
-                  alt="profile"
-                  className="w-12 h-12 rounded-full mr-2"
-                />
-                <div>
-                  <h3 className="font-semibold text-gray-800 text-start">{connectionList[name].user?.name}</h3>
-                  <p className="text-gray-500 text-start line-clamp-1 text-[.8rem]">
-                  {connectionList[name].messages && connectionList[name].messages.length > 0
-                      ? connectionList[name].messages[connectionList[name].messages.length - 1]?.message
-                      : 'No messages'}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
-
-        {visibleChats < chatUsers.length && (
-          <button
-            onClick={() => setVisibleChats((prev) => prev + 10)}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 w-full"
-          >
-            See more
-          </button>
-        )}
-      </div>
-
-      <div
-        className={`w-full md:w-2/3  md:p-4 flex flex-col justify-between ${selectedChat?.user.name ? "block" : "hidden md:block"
-        }`}
-      >
-        {selectedChat?.user?.name ? (
-          <>
-            <div className="flex justify-between items-center mb-4 w-[100%] px-2 py-2 bg-gray-200 rounded-xl  text-black">
-              <div className="flex flex-row items-center gap-1 ml-4">
+              <p className="text-gray-600 text-xl">
                 {" "}
-                <IoMdArrowRoundBack
-                  className="text-black md:hidden text-2xl  rounded-lg"
-                  onClick={handleBackClick}
-                />
-                <h2 className="text-2xl font-bold">{selectedChat?.user?.name }</h2>
-              </div>
-              <IoIosArrowDropdown
-                className="text-3xl hover:text-cyan-500 "
-                onClick={() => toggleDropdown()}
-              />
-            </div>
-            {isOptionOpen && (
-              <div className=" absolute rounded-md right-2 mt-11 ml-5 w-52 bg-white border border-gray-300 shadow-lg z-50 ">
-                <div className=" absolute right-1  rotate-45 -translate-y-1/3 w-6 h-6   bg-white overflow-x-hidden -z-40"></div>
-                <ul className="text-black p-2 z-10">
-                  <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100 z-50 overflow-hidden text-xs ">
-                    <GiUnfriendlyFire className="text-xl overflow-hidden " />
-                    Unfriend {selectedChat?.user?.name }
-                  </li>
-                  <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100 z-50 overflow-hidden text-xs ">
-                    <MdAutoDelete className="text-xl overflow-hidden " />
-                    Clear History
-                  </li>
-                </ul>
-              </div>
-            )}
-            <div className="flex flex-col h-full overflow-y-scroll no-scrollbar font-sans">
-              <div className="flex-1 md:bg-gray-200 rounded-lg">
-                {chatHistory[selectedChat?.alumni?.user_id]?.map((msg, index) => (
-                  <div
-                    key={index}
-                    className={`p-3 ${
-                      msg.isReceived ? "text-left" : "text-right"
-                    }`}
-                  >
-                    <div className="inline-block max-w-[90% lg:max-w-[70%]">
-                      {/* Display images first */}
-                      {msg.images && msg.images.length > 0 && (
-                        <div className="flex flex-col gap-2">
-                          {msg.images.map((file, idx) => {
-                            const fileName = file.name || "Unknown file";
-                            const fileType = file.type || "";
-
-                            const fileExtension = fileName
-                              .split(".")
-                              .pop()
-                              .toLowerCase();
-
-                            const isImage = fileType.startsWith("image/");
-                            const isPDF = fileType === "application/pdf";
-                            const isCSV = fileExtension === "csv";
-
-                            return (
-                              <div key={idx} className="relative">
-                                {isImage && (
-                                  <img
-                                    src={file.url}
-                                    alt={`Sent Image: ${fileName}`}
-                                    className={`rounded-lg w-full h-auto object-cover mb-1 ${
-                                      msg.isReceived
-                                        ? "bg-gray-300"
-                                        : "bg-gray-800"
-                                    }`}
-                                  />
-                                )}
-
-                                {isPDF && (
-                                  <div
-                                    className={`flex flex-row items-center justify-center px-3 py-2 rounded-lg font-serif ${
-                                      msg.isReceived
-                                        ? "bg-gray-300 text-black text-[1rem]"
-                                        : "bg-gray-900 text-white text-[1rem] text-left"
-                                    }`}
-                                  >
-                                    <div className="flex flex-row items-center justify-center gap-2 p-3">
-                                      <FaFilePdf className="text-3xl text-white" />
-                                      <span className="text-white truncate">
-                                        {formatString(fileName)}
-                                      </span>
-                                    </div>
-                                    <a
-                                      href={file.url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-sm text-gray-100 underline"
-                                    >
-                                      <IoCloudDownloadOutline className="text-2xl" />
-                                    </a>
-                                  </div>
-                                )}
-
-                                {isCSV && (
-                                  <div
-                                    className={`flex flex-row items-center justify-center px-3 py-2 rounded-lg font-serif ${
-                                      msg.isReceived
-                                        ? "bg-gray-300 text-black text-[1rem]"
-                                        : "bg-gray-900 text-white text-[1rem] text-left"
-                                    }`}
-                                  >
-                                    <div className="flex flex-row items-center justify-center gap-2 p-3">
-                                      <FaFileCsv className="text-3xl text-white" />
-                                      <span className="text-white truncate max-w-48">
-                                        {formatString(fileName)}
-                                      </span>
-                                    </div>
-                                    <a
-                                      href={file.url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-sm text-gray-100 underline"
-                                    >
-                                      <IoCloudDownloadOutline className="text-2xl" />
-                                    </a>
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                      {msg.message && (
-                        <p
-                          className={`flex px-3 py-2 rounded-lg font-serif ${
-                            msg.isReceived
-                              ? "bg-gray-100 text-black text-[16px]"
-                              : "bg-gray-900 text-white text-[16px] text-left"
-                          }`}
-                        >
-                          {msg.message}
-                        </p>
-                      )}
-                    </div>
-                    <span className="block text-xs mt-1 ml-1 text-gray-500">
-                      {msg.time}
-                    </span>
-                  </div>
-                ))}
-
-                <div ref={messagesEndRef} />
-              </div>
-              <div>
-                <div className="flex flex-wrap gap-2 bg-black ">
-                </div>
-                <div className="flex flex-wrap gap-3 mt-4">
-                  {selectedFiles.map((file, index) =>
-                    renderFilePreview(file, index)
-                  )}
-                </div>
-
-                <div className="flex items-center border-t p-2 m-2 bg-gray-100 rounded-lg">
-                  <label
-                    htmlFor="file-upload"
-                    className="cursor-pointer bg-inherit text-2xl  py-2 rounded-lg flex flex-row"
-                  >
-                    <MdOutlineAttachFile className="text-black" />
-                    <input
-                      type="file"
-                      accept="image/*,application/pdf,.csv,.txt"
-                      onChange={handleFileUpload}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          onSendMessage();
-                        }
-                      }}
-                      className="hidden"
-                      id="file-upload"
-                      multiple
-                    />
-                  </label>
-                  <textarea
-                    ref={textareaRef}
-                    value={message}
-                    rows={1}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Type a message..."
-                    className="flex-1 p-2 border-none rounded-r-none w-[100%] rounded-l-lg bg-gray-100 text-black resize-none overflow-hidden no-scrollbar"
-                  />
-                  <div className="flex flex-row transform bg-gray-900 hover:bg-gray-400 p-3 rounded-full group">
-                    <div className="flex flex-row items-center justify-center">
-                      <span
-                        onClick={onSendMessage}
-                        className="bg-inherit rounded-l-none"
-                      >
-                        <IoSend className="text-gray-50 group-hover:text-gray-900 text-3xl" />
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="relative text-center bg-inherit  bg-gray-100  h-full">
-            <div className="face2  mt-4">
-              <div className="sad mt-2 w-8 h-2  !border-none inline-block ">
-                <IoChatbubbleEllipsesSharp className="text-8xl text-gray-600 " />
-              </div>
-            </div>
-            <div className="shadow move inset-x-0 bottom-0 h-2 bg-gray-300 "></div>
-            <div className="message mt-4">
-              <p className="text-gray-600 text-lg fony-serf uppercase">
-                {" "}
-                you haven't select chat history{" "}
+                You have no Connections history
               </p>
             </div>
-          </div>
-        )}
+          ) : (
+            Object.keys(connectionList).map((name) => (
+              <div
+                key={name}
+                onClick={() => {
+                  setSelectedChat(connectionList[name]);
+                  setChatSelected(connectionList[name].user?.name);
+                  setMessage("");
+                }}
+                className={`p-3 mb-2 rounded-lg cursor-pointer hover:bg-gray-200 ${selectedChat?.user.name === connectionList[name].user?.name ? "bg-gray-300" : "bg-gray-100"
+                  }`}
+              >
+                <div className="flex flex-row items-center gap-2">
+                  <img
+                    src={getImageBaseUrl(connectionList[name].alumni?.user_photo)}
+                    alt="profile"
+                    className="w-12 h-12 rounded-full mr-2"
+                  />
+                  <div>
+                    <h3 className="font-semibold text-gray-800 text-start">{connectionList[name].user?.name}</h3>
+                    <p className="text-gray-500 text-start line-clamp-1 text-[.8rem]">
+                      {connectionList[name].messages && connectionList[name].messages.length > 0
+                        ? connectionList[name].messages[connectionList[name].messages.length - 1]?.message
+                        : 'No messages'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+
+          {visibleChats < chatUsers.length && (
+            <button
+              onClick={() => setVisibleChats((prev) => prev + 10)}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 w-full"
+            >
+              See more
+            </button>
+          )}
+        </div>
+
+        <div
+          className={`w-full md:w-2/3  md:p-4 flex flex-col justify-between ${selectedChat?.user.name ? "block" : "hidden md:block"
+            }`}
+        >
+          {selectedChat?.user?.name ? (
+            <>
+              <div className="flex justify-between items-center mb-4 w-[100%] px-2 py-2 bg-gray-200 rounded-xl  text-black">
+                <div className="flex flex-row items-center gap-1 ml-4">
+                  {" "}
+                  <IoMdArrowRoundBack
+                    className="text-black md:hidden text-2xl  rounded-lg"
+                    onClick={handleBackClick}
+                  />
+                  <h2 className="text-2xl font-bold">{selectedChat?.user?.name }</h2>
+                </div>
+                <IoIosArrowDropdown
+                  className="text-3xl hover:text-cyan-500 "
+                  onClick={() => toggleDropdown()}
+                />
+              </div>
+              {isOptionOpen && (
+                <div className=" absolute rounded-md right-2 mt-11 ml-5 w-52 bg-white border border-gray-300 shadow-lg z-50 ">
+                  <div className=" absolute right-1  rotate-45 -translate-y-1/3 w-6 h-6   bg-white overflow-x-hidden -z-40"></div>
+                  <ul className="text-black p-2 z-10">
+                    <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100 z-50 overflow-hidden text-xs ">
+                      <GiUnfriendlyFire className="text-xl overflow-hidden " />
+                      Unfriend {selectedChat?.user?.name }
+                    </li>
+                    <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100 z-50 overflow-hidden text-xs ">
+                      <MdAutoDelete className="text-xl overflow-hidden " />
+                      Clear History
+                    </li>
+                  </ul>
+                </div>
+              )}
+              <div className="flex flex-col h-full overflow-y-scroll no-scrollbar font-sans">
+                <div className="flex-1 md:bg-gray-200 rounded-lg">
+                  {chatHistory[selectedChat?.alumni?.user_id]?.map((msg, index) => (
+                    <div key={index}className={`p-3 ${msg.isReceived ? "text-left" : "text-right"}`}>
+                      <div className="inline-block max-w-[90% lg:max-w-[70%]">
+                        {msg.message && msg.message.startsWith("uploads/") ? (
+                          <>
+                            {['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'].some(ext => msg.message.endsWith(ext)) ? (
+                              <img src={getImageBaseUrl(msg.message)} alt="Sent file" className="rounded-lg w-full h-auto object-cover mb-1" />
+                            ) : null}
+
+                            {msg.message.endsWith(".pdf") ? (
+                              <div className="bg-red-900 p-2 rounded-lg text-white flex items-center space-x-2">
+                                <FaFilePdf className="text-xl" />
+                                <a href={getImageBaseUrl(msg.message)} target="_blank" rel="noopener noreferrer" className="underline">
+                                  {msg.message.split("uploads/")[1]}
+                                </a>
+                              </div>
+                            ) : null}
+
+                            {msg.message.endsWith(".csv") ? (
+                              <div className="bg-green-900 p-2 rounded-lg text-white flex items-center space-x-2">
+                                <BsFiletypeCsv className="text-xl" />
+                                <a href={getImageBaseUrl(msg.message)} target="_blank" rel="noopener noreferrer" className="underline">
+                                  {msg.message.split("uploads/")[1]}
+                                </a>
+                              </div>
+                            ) : null}
+
+                            {['.doc', '.docx', '.xls', '.xlsx', '.txt'].some(ext => msg.message.endsWith(ext)) ? (
+                              <div className="bg-blue-900 p-2 rounded-lg text-white flex items-center space-x-2">
+                                <FaFileAlt className="text-xl" />
+                                <a href={getImageBaseUrl(msg.message)} target="_blank" rel="noopener noreferrer" className="underline">
+                                 {msg.message.split("uploads/")[1]}
+                                </a>
+                              </div>
+                            ) : null}
+                          </>
+                        ) : (
+                          <p className={`px-3 py-2 rounded-lg ${msg.isReceived ? "bg-gray-100 text-black" : "bg-gray-900 text-white"}`}>
+                            {msg.message}
+                          </p>
+                        )}
+                      </div>
+                      <span className="block text-xs mt-1 text-gray-500">{msg.time}</span>
+                    </div>
+                  ))}
+
+                  <div ref={messagesEndRef} />
+                </div>
+                <div>
+                  <div className="flex flex-wrap gap-2 bg-black ">
+                  </div>
+                  <div className="flex flex-wrap gap-3 mt-4">
+                    {selectedFiles.map((file, index) =>
+                      renderFilePreview(file, index)
+                    )}
+                  </div>
+
+                  <div className="flex items-center border-t p-2 m-2 bg-gray-100 rounded-lg">
+                    <label
+                      htmlFor="file-upload"
+                      className="cursor-pointer bg-inherit text-2xl  py-2 rounded-lg flex flex-row"
+                    >
+                      <MdOutlineAttachFile className="text-black" />
+                      <input
+                        type="file"
+                        accept="image/*,application/pdf,.csv,.txt"
+                        onChange={handleFileUpload}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            onSendMessage();
+                          }
+                        }}
+                        className="hidden"
+                        id="file-upload"
+                        multiple
+                      />
+                    </label>
+                    <textarea
+                      ref={textareaRef}
+                      value={message}
+                      rows={1}
+                      onChange={(e) => setMessage(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      placeholder="Type a message..."
+                      className="flex-1 p-2 border-none rounded-r-none w-[100%] rounded-l-lg bg-gray-100 text-black resize-none overflow-hidden no-scrollbar"
+                    />
+                    <div className="flex flex-row transform bg-gray-900 hover:bg-gray-400 p-3 rounded-full group">
+                      <div className="flex flex-row items-center justify-center">
+                        <span
+                          onClick={onSendMessage}
+                          className="bg-inherit rounded-l-none"
+                        >
+                          <IoSend className="text-gray-50 group-hover:text-gray-900 text-3xl" />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="relative text-center bg-inherit  bg-gray-100  h-full">
+              <div className="face2  mt-4">
+                <div className="sad mt-2 w-8 h-2  !border-none inline-block ">
+                  <IoChatbubbleEllipsesSharp className="text-8xl text-gray-600 " />
+                </div>
+              </div>
+              <div className="shadow move inset-x-0 bottom-0 h-2 bg-gray-300 "></div>
+              <div className="message mt-4">
+                <p className="text-gray-600 text-lg fony-serf uppercase">
+                  {" "}
+                  you haven't select chat history{" "}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
     </QueryResult>
 
   );

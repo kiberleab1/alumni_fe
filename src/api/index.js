@@ -817,3 +817,13 @@ export async function getChatHistory({from_user_id, to_user_id}){
   const result = await axios.get(`${API_BASE_URl}/chat/history?from_user_id=${from_user_id}&to_user_id=${to_user_id}`);
   return result;
 }
+
+export async function sendFiles(messageData) {
+  console.log(messageData);
+  const response = await axios.post(`${API_BASE_URl}/chat/sendFiles`, messageData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response;
+}
