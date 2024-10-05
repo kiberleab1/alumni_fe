@@ -24,7 +24,7 @@ html {
   transform: rotate(45deg);
 }
 
-/* .shadow {
+.shadow {
   position: absolute;
   width: 21%;
   height: 3%;
@@ -34,7 +34,7 @@ html {
   top: 43%;
   border-radius: 50%;
   z-index: 1;
-} */
+}
 
 .message {
   position: absolute;
