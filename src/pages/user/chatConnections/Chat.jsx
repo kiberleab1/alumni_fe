@@ -543,7 +543,7 @@ export default function ChatUi({ userId }) {
                     )}
                   </div>
 
-                  <div className="flex items-center border-t p-2 m-2 bg-gray-100 rounded-lg">
+                  <div className="flex items-center border-t p- m-1 bg-gray-100 rounded-lg">
                     <label
                       htmlFor="file-upload"
                       className="cursor-pointer bg-inherit text-2xl  py-2 rounded-lg flex flex-row"
@@ -556,7 +556,7 @@ export default function ChatUi({ userId }) {
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();
-                            // onSendMessage();
+                            onSendMessage();
                           }
                         }}
                         className="hidden"
@@ -573,12 +573,9 @@ export default function ChatUi({ userId }) {
                       placeholder="Type a message..."
                       className="flex-1 p-1 border-none rounded-r-none w-[100%] rounded-l-lg bg-gray-100 text-black resize-none overflow-hidden no-scrollbar"
                     />
-                    <div className="flex flex-row transform bg-gray-900 hover:bg-gray-400 p-3 rounded-full group">
+                    <div className="flex flex-row transform bg-gray-900 hover:bg-gray-400 p-3 rounded-r-lg group">
                       <div className="flex flex-row items-center justify-center">
-                        <span
-                          onClick={onSendMessage}
-                          className="bg-inherit rounded-l-none"
-                        >
+                        <span onClick={onSendMessage} className="bg-inherit ">
                           <IoSend className="text-gray-50 group-hover:text-gray-900 text-xl " />
                         </span>
                       </div>
