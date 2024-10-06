@@ -13,6 +13,12 @@ import QueryResult from "src/components/utils/queryResults";
 import { deleteAdmin, getAllinstituteAdmins, getRoleByName } from "src/api";
 import { formatDate } from "src/utils/utils";
 import Modal from "src/components/utils/DeleteModal";
+import { FaUserFriends } from "react-icons/fa";
+import { CiEdit } from "react-icons/ci";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import IconHeaderWithButton from "src/components/IconHeader/IconHeaderWithButton";
+import Pagination from "src/components/adminPagination/adminPagination";
 
 export default function Users({ onCreateUserClick, onUserEditClick }) {
   const [, setAdminRoleId] = useState(null);
@@ -96,32 +102,23 @@ export default function Users({ onCreateUserClick, onUserEditClick }) {
   return (
     <QueryResult isLoading={isLoading} isError={isError} data={data}>
       <div className="flex flex-col">
-        <div className="sm:flex sm:items-center">
-          <div className="sm:flex-auto">
-            <h1 className="text-base font-semibold leading-6 text-gray-900">
-              USERS
-            </h1>
-            <p className="mt-2 text-sm text-gray-700">
-              A list of all the users in the system including their name, title,
-              email and role.
-            </p>
-          </div>
-          <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-            <button
-              type="button"
-              className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              onClick={onCreateUserClick}
-            >
-              Add User
-            </button>
-          </div>
-        </div>
+        <IconHeaderWithButton
+          title="Users"
+          Icon={FaUserFriends}
+          buttonText="Add User"
+          ButtonIcon={FaUserFriends}
+          onButtonClick={onCreateUserClick}
+        />
+
         <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
           <div className="min-w-full">
             <div className="overflow-x-auto">
               <div className="table-container" style={{ maxHeight: "500px" }}>
                 <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="sticky top-0 bg-gray-50 z-10">
+                  <thead
+                    className="sticky top-0 bg-gray-100 z-10 font-serif"
+                    data-aos="fade-up"
+                  >
                     <tr>
                       <th
                         scope="col"
@@ -167,7 +164,10 @@ export default function Users({ onCreateUserClick, onUserEditClick }) {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody
+                    className="bg-white divide-y divide-gray-200"
+                    data-aos="fade-down"
+                  >
                     {currentItems.map((user) => (
                       <tr key={user.email}>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
@@ -176,44 +176,44 @@ export default function Users({ onCreateUserClick, onUserEditClick }) {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-gray-600">
                             {user.email ? user.email : "N/A"}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-gray-600">
                             {user.phone_number ? user.phone_number : "N/A"}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-gray-600">
                             {user.gender}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-gray-600">
                             {user.institute_id}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-gray-600">
                             {formatDate(user.createdAt)}
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium ">
+                        <td className="px-6 py-4 whitespace-nowrap text-start text-sm font-medium flex flex-row">
                           <a
                             href="#"
-                            className="text-indigo-600 hover:text-green-900"
+                            className="text-gray-600 hover:text-green-900"
                             onClick={() => onUserEditClick(user)}
                           >
-                            Edit
+                            <CiEdit className="text-2xl" />
                           </a>
                           <a
                             href="#"
-                            className="text-red-600 hover:text-red-900 pl-5"
+                            className="text-gray-600 hover:text-red-900 pl-5"
                             onClick={() => openModal(user)}
                           >
-                            Delete
+                            <RiDeleteBin5Line className="text-2xl" />
                           </a>
                         </td>
                       </tr>
@@ -223,89 +223,14 @@ export default function Users({ onCreateUserClick, onUserEditClick }) {
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-            <div className="flex flex-1 justify-between sm:hidden">
-              <button
-                onClick={() => paginate(currentPage - 1)}
-                disabled={currentPage === 1}
-                className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${
-                  currentPage === 1 ? "cursor-not-allowed" : ""
-                }`}
-              >
-                <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
-                <span className="ml-2">Previous</span>
-              </button>
-              <button
-                onClick={() => paginate(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${
-                  currentPage === totalPages ? "cursor-not-allowed" : ""
-                }`}
-              >
-                <span className="mr-2">Next</span>
-                <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
-              </button>
-            </div>
-            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm text-gray-700">
-                  Showing{" "}
-                  <span className="font-medium">{indexOfFirstItem + 1}</span> to{" "}
-                  <span className="font-medium">
-                    {Math.min(indexOfLastItem, institutionAdmins.length)}
-                  </span>{" "}
-                  of{" "}
-                  <span className="font-medium">
-                    {institutionAdmins.length}
-                  </span>{" "}
-                  results
-                </p>
-              </div>
-              <div>
-                <nav
-                  className="isolate inline-flex -space-x-px rounded-md shadow-sm"
-                  aria-label="Pagination"
-                >
-                  <button
-                    onClick={() => paginate(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className={`mr-2 ml-2 relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${
-                      currentPage === 1 ? "cursor-not-allowed" : ""
-                    }`}
-                  >
-                    <span className="sr-only">Previous</span>
-                    <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
-                  </button>
-                  {Array.from(
-                    { length: totalPages },
-                    (_, index) => index + 1
-                  ).map((pageNumber) => (
-                    <button
-                      key={pageNumber}
-                      onClick={() => paginate(pageNumber)}
-                      className={`relative ${
-                        currentPage === pageNumber
-                          ? "z-10 bg-indigo-600 text-white"
-                          : "text-gray-900 bg-white hover:bg-gray-50"
-                      } inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus:outline-offset-0`}
-                    >
-                      {pageNumber}
-                    </button>
-                  ))}
-                  <button
-                    onClick={() => paginate(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className={`relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-100 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${
-                      currentPage === totalPages ? "cursor-not-allowed" : ""
-                    }`}
-                  >
-                    <span className="sr-only">Next</span>
-                    <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
-                  </button>
-                </nav>
-              </div>
-            </div>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPaginate={paginate}
+            indexOfFirstItem={indexOfFirstItem}
+            indexOfLastItem={indexOfLastItem}
+            dataLength={institutionAdmins.length}
+          />
         </div>
         {selectedUser && (
           <Modal
@@ -316,7 +241,7 @@ export default function Users({ onCreateUserClick, onUserEditClick }) {
             message={`Are you sure you want to delete the institute "${selectedUser.first_name} ${selectedUser.last_name}"? This action cannot be undone.`}
           />
         )}
-        <StatData />
+        {/* <StatData /> */}
       </div>
     </QueryResult>
   );
