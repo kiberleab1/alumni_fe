@@ -32,6 +32,7 @@ import { useQuery, useQueryClient } from "react-query";
 import { myConnectionRequests, getChatHistory, getImageBaseUrl, sendFiles } from "src/api";
 import QueryResult from "src/components/utils/queryResults";
 import { getUserToken } from "src/helpers/globalStorage";
+import { BiDotsHorizontalRounded, BiDotsVerticalRounded } from "react-icons/bi";
 
 export default function ChatUi({ userId }) {
   const [isOptionOpen, setOptionOpen] = useState(false);
@@ -58,7 +59,7 @@ export default function ChatUi({ userId }) {
       "myConnectionRequests",
       currentPage,
       pendingFilterType,
-      pendingFilterValue
+      pendingFilterValue,
     ],
     async () => {
       return await myConnectionRequests({
@@ -83,30 +84,33 @@ export default function ChatUi({ userId }) {
           to_user_id: selectedChat?.alumni?.user_id,
         });
 
-        const formattedChatHistory = chat_history_data.reduce((acc, message) => {
-          const isReceived = message.from_user_id !== userToken?.user?.id;
-          const date = new Date(message.createdAt);
+        const formattedChatHistory = chat_history_data.reduce(
+          (acc, message) => {
+            const isReceived = message.from_user_id !== userToken?.user?.id;
+            const date = new Date(message.createdAt);
 
-          const options = {
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-            hour12: true,
-          };
-          const formattedTime = date.toLocaleTimeString('en-US', options);
+            const options = {
+              hour: "numeric",
+              minute: "numeric",
+              second: "numeric",
+              hour12: true,
+            };
+            const formattedTime = date.toLocaleTimeString("en-US", options);
 
-          return {
-            ...acc,
-            [selectedChat.alumni.user_id]: [
-              ...(acc[selectedChat.alumni.user_id] || []),
-              {
-                message: message.message,
-                isReceived,
-                time: formattedTime,
-              },
-            ],
-          };
-        }, {});
+            return {
+              ...acc,
+              [selectedChat.alumni.user_id]: [
+                ...(acc[selectedChat.alumni.user_id] || []),
+                {
+                  message: message.message,
+                  isReceived,
+                  time: formattedTime,
+                },
+              ],
+            };
+          },
+          {}
+        );
 
         setChatHistory((prevHistory) => ({
           ...prevHistory,
@@ -128,9 +132,7 @@ export default function ChatUi({ userId }) {
 
     ws.current.onopen = () => {
       console.log("Connected to WebSocket server");
-      ws.current.send(
-        JSON.stringify({ type: "register", user_id: userId })
-      );
+      ws.current.send(JSON.stringify({ type: "register", user_id: userId }));
     };
 
     ws.current.onmessage = (event) => {
@@ -140,7 +142,7 @@ export default function ChatUi({ userId }) {
         ...prevHistory,
         [from_user_id]: [
           ...(prevHistory[from_user_id] || []),
-          { message, isReceived: true, time: new Date().toLocaleTimeString() },
+          { message, isReceived: true, time: new Date().toLocaleDateString() },
         ],
       }));
     };
@@ -159,20 +161,20 @@ export default function ChatUi({ userId }) {
   const onSendMessage = async () => {
     if (!message.trim() && selectedFiles.length === 0) return;
     if (!selectedChat) return;
-  
+
     const to_user_id = selectedChat?.alumni?.user_id;
-    
+
     let success = false;
-  
+
     if (selectedFiles.length > 0) {
       const formData = new FormData();
       formData.append("from_user_id", userToken?.user?.id);
       formData.append("to_user_id", to_user_id);
-  
+
       selectedFiles.forEach((file, index) => {
         formData.append(`files`, file);
       });
-  
+
       try {
         const response = await sendFiles(formData);
         if (response) {
@@ -184,7 +186,7 @@ export default function ChatUi({ userId }) {
         console.error("Error uploading files:", error);
       }
     }
-  
+
     if (message.trim()) {
       const messageData = {
         from_user_id: userToken?.user?.id,
@@ -192,9 +194,9 @@ export default function ChatUi({ userId }) {
         message: message.trim(),
         createdAt: new Date().toLocaleTimeString(),
       };
-  
+
       ws.current.send(JSON.stringify(messageData));
-  
+
       setChatHistory((prevHistory) => ({
         ...prevHistory,
         [to_user_id]: [
@@ -202,7 +204,7 @@ export default function ChatUi({ userId }) {
           {
             message: message.trim(),
             isReceived: false,
-            time: new Date().toLocaleTimeString(),
+            time: new Date().toLocaleDateString(),
           },
         ],
       }));
@@ -344,15 +346,7 @@ export default function ChatUi({ userId }) {
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
-      <div
-        className="flex h-[95vh] w-[] "
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            onSendMessage();
-          }
-        }}
-      >
+      <div className="flex h-[95vh] w-[] ">
         <div
           className={`w-[100%] md:w-1/3  md:p-4 md:border-r overflow-y-scroll no-scrollbar ${selectedChat?.user.name ? "hidden md:block" : "block"
             }`}
@@ -376,21 +370,30 @@ export default function ChatUi({ userId }) {
                   setChatSelected(connectionList[name].user?.name);
                   setMessage("");
                 }}
-                className={`p-3 mb-2 rounded-lg cursor-pointer hover:bg-gray-200 ${selectedChat?.user.name === connectionList[name].user?.name ? "bg-gray-300" : "bg-gray-100"
+                className={`p-3 mb-2 rounded-lg cursor-pointer hover:bg-gray-200 ${selectedChat?.user.name === connectionList[name].user?.name
+                  ? "bg-gray-300"
+                  : "bg-gray-100"
                   }`}
               >
                 <div className="flex flex-row items-center gap-2">
                   <img
-                    src={getImageBaseUrl(connectionList[name].alumni?.user_photo)}
+                    src={getImageBaseUrl(
+                      connectionList[name].alumni?.user_photo
+                    )}
                     alt="profile"
                     className="w-12 h-12 rounded-full mr-2"
                   />
                   <div>
-                    <h3 className="font-semibold text-gray-800 text-start">{connectionList[name].user?.name}</h3>
+                    <h3 className="font-semibold text-gray-800 text-start">
+                      {connectionList[name].user?.name}
+                    </h3>
                     <p className="text-gray-500 text-start line-clamp-1 text-[.8rem]">
-                      {connectionList[name].messages && connectionList[name].messages.length > 0
-                        ? connectionList[name].messages[connectionList[name].messages.length - 1]?.message
-                        : 'No messages'}
+                      {connectionList[name].messages &&
+                        connectionList[name].messages.length > 0
+                        ? connectionList[name].messages[
+                          connectionList[name].messages.length - 1
+                        ]?.message
+                        : "No messages"}
                     </p>
                   </div>
                 </div>
@@ -421,7 +424,9 @@ export default function ChatUi({ userId }) {
                     className="text-black md:hidden text-2xl  rounded-lg"
                     onClick={handleBackClick}
                   />
-                  <h2 className="text-2xl font-bold">{selectedChat?.user?.name }</h2>
+                  <h2 className="text-2xl font-bold">
+                    {selectedChat?.user?.name}
+                  </h2>
                 </div>
                 <IoIosArrowDropdown
                   className="text-3xl hover:text-cyan-500 "
@@ -434,7 +439,7 @@ export default function ChatUi({ userId }) {
                   <ul className="text-black p-2 z-10">
                     <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100 z-50 overflow-hidden text-xs ">
                       <GiUnfriendlyFire className="text-xl overflow-hidden " />
-                      Unfriend {selectedChat?.user?.name }
+                      Unfriend {selectedChat?.user?.name}
                     </li>
                     <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100 z-50 overflow-hidden text-xs ">
                       <MdAutoDelete className="text-xl overflow-hidden " />
@@ -445,64 +450,113 @@ export default function ChatUi({ userId }) {
               )}
               <div className="flex flex-col h-full overflow-y-scroll no-scrollbar font-sans">
                 <div className="flex-1 md:bg-gray-200 rounded-lg">
-                  {chatHistory[selectedChat?.alumni?.user_id]?.map((msg, index) => (
-                    <div key={index}className={`p-3 ${msg.isReceived ? "text-left" : "text-right"}`}>
-                      <div className="inline-block max-w-[90% lg:max-w-[70%]">
-                        {msg.message && msg.message.startsWith("uploads/") ? (
-                          <>
-                            {['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'].some(ext => msg.message.endsWith(ext)) ? (
-                              <img src={getImageBaseUrl(msg.message)} alt="Sent file" className="rounded-lg w-full h-auto object-cover mb-1" />
-                            ) : null}
+                  {chatHistory[selectedChat?.alumni?.user_id]?.map((msg, index) => {
+                    const isLongMessage = msg.message && msg.message.length > 100;
 
-                            {msg.message.endsWith(".pdf") ? (
-                              <div className="bg-red-900 p-2 rounded-lg text-white flex items-center space-x-2">
-                                <FaFilePdf className="text-xl" />
-                                <a href={getImageBaseUrl(msg.message)} target="_blank" rel="noopener noreferrer" className="underline">
-                                  {msg.message.split("uploads/")[1]}
-                                </a>
-                              </div>
-                            ) : null}
+                    return (
+                      <div
+                        key={index}
+                        className={`p-3 flex ${msg.isReceived ? "justify-start" : "justify-end"} w-full`}
+                      >
+                        <div className={`inline-block max-w-[90%] lg:max-w-[70%] ${isLongMessage ? "block w-full" : ""} rounded-lg p-2 relative`}>
 
-                            {msg.message.endsWith(".csv") ? (
-                              <div className="bg-green-900 p-2 rounded-lg text-white flex items-center space-x-2">
-                                <BsFiletypeCsv className="text-xl" />
-                                <a href={getImageBaseUrl(msg.message)} target="_blank" rel="noopener noreferrer" className="underline">
-                                  {msg.message.split("uploads/")[1]}
-                                </a>
+                          {/* <div className={`${msg.isReceived ? "text-left" : "text-right"} mb-2`}>
+                            <div className="inline-block relative group">
+                              <button className="text-gray-500">
+                                <BiDotsHorizontalRounded />
+                              </button>
+                              <div className="absolute mt-2 w-28 bg-white border border-gray-300 rounded-md shadow-lg hidden group-hover:block z-10">
+                                <ul className="text-black p-2">
+                                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Delete</li>
+                                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Copy</li>
+                                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Forward</li>
+                                </ul>
                               </div>
-                            ) : null}
+                            </div>
+                          </div> */}
 
-                            {['.doc', '.docx', '.xls', '.xlsx', '.txt'].some(ext => msg.message.endsWith(ext)) ? (
-                              <div className="bg-blue-900 p-2 rounded-lg text-white flex items-center space-x-2">
-                                <FaFileAlt className="text-xl" />
-                                <a href={getImageBaseUrl(msg.message)} target="_blank" rel="noopener noreferrer" className="underline">
-                                 {msg.message.split("uploads/")[1]}
-                                </a>
-                              </div>
-                            ) : null}
-                          </>
-                        ) : (
-                          <p className={`px-3 py-2 rounded-lg ${msg.isReceived ? "bg-gray-100 text-black" : "bg-gray-900 text-white"}`}>
-                            {msg.message}
-                          </p>
-                        )}
+                          {msg.message && msg.message.startsWith("uploads/") ? (
+                            <>
+                              {['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'].some(ext => msg.message.endsWith(ext)) ? (
+                                <img
+                                  src={getImageBaseUrl(msg.message)}
+                                  alt="Sent file"
+                                  className="rounded-lg w-full h-auto object-cover mb-1"
+                                />
+                              ) : null}
+
+                              {msg.message.endsWith(".pdf") ? (
+                                <div className="bg-red-900 p-2 rounded-lg text-white flex items-center space-x-2">
+                                  <FaFilePdf className="text-xl" />
+                                  <a
+                                    href={getImageBaseUrl(msg.message)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="underline"
+                                  >
+                                    {formatString(msg.message.split("uploads/")[1])}
+                                  </a>
+                                </div>
+                              ) : null}
+
+                              {msg.message.endsWith(".csv") ? (
+                                <div className="bg-green-900 p-2 rounded-lg text-white flex items-center space-x-2">
+                                  <BsFiletypeCsv className="text-xl" />
+                                  <a
+                                    href={getImageBaseUrl(msg.message)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="underline"
+                                  >
+                                    {formatString(msg.message.split("uploads/")[1])}
+                                  </a>
+                                </div>
+                              ) : null}
+
+                              {['.doc', '.docx', '.xls', '.xlsx', '.txt'].some(ext => msg.message.endsWith(ext)) ? (
+                                <div className="bg-blue-900 p-2 rounded-lg text-white flex items-center space-x-2">
+                                  <FaFileAlt className="text-xl" />
+                                  <a
+                                    href={getImageBaseUrl(msg.message)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="underline"
+                                  >
+                                    {formatString(msg.message.split("uploads/")[1])}
+                                  </a>
+                                </div>
+                              ) : null}
+                            </>
+                          ) : (
+                            <p
+                              className={`px-4 py-2 rounded-lg ${msg.isReceived ? "bg-gray-100 text-black" : "bg-gray-900 text-white"}`}
+                              style={{
+                                textAlign: msg.isReceived ? "left" : "left",
+                                alignSelf: msg.isReceived ? "flex-start" : "flex-end",
+                                height: isLongMessage ? "auto" : "initial",
+                                minHeight: isLongMessage ? "100px" : "auto",
+                              }}
+                            >
+                              {msg.message}
+                            </p>
+                          )}
+                          <span className="block text-xs mt-1 text-gray-500 text-center">{msg.time}</span>
+                        </div>
                       </div>
-                      <span className="block text-xs mt-1 text-gray-500">{msg.time}</span>
-                    </div>
-                  ))}
+                    );
+                  })}
 
                   <div ref={messagesEndRef} />
                 </div>
                 <div>
-                  <div className="flex flex-wrap gap-2 bg-black ">
-                  </div>
+                  <div className="flex flex-wrap gap-2 bg-black "></div>
                   <div className="flex flex-wrap gap-3 mt-4">
                     {selectedFiles.map((file, index) =>
                       renderFilePreview(file, index)
                     )}
                   </div>
 
-                  <div className="flex items-center border-t p-2 m-2 bg-gray-100 rounded-lg">
+                  <div className="flex items-center border-t p- m-1 bg-gray-100 rounded-lg">
                     <label
                       htmlFor="file-upload"
                       className="cursor-pointer bg-inherit text-2xl  py-2 rounded-lg flex flex-row"
@@ -530,15 +584,12 @@ export default function ChatUi({ userId }) {
                       onChange={(e) => setMessage(e.target.value)}
                       onKeyDown={handleKeyDown}
                       placeholder="Type a message..."
-                      className="flex-1 p-2 border-none rounded-r-none w-[100%] rounded-l-lg bg-gray-100 text-black resize-none overflow-hidden no-scrollbar"
+                      className="flex-1 p-1 border-none rounded-r-none w-[100%] rounded-l-lg bg-gray-100 text-black resize-none overflow-hidden no-scrollbar"
                     />
-                    <div className="flex flex-row transform bg-gray-900 hover:bg-gray-400 p-3 rounded-full group">
+                    <div className="flex flex-row transform bg-gray-900 hover:bg-gray-400 p-3 rounded-r-lg group">
                       <div className="flex flex-row items-center justify-center">
-                        <span
-                          onClick={onSendMessage}
-                          className="bg-inherit rounded-l-none"
-                        >
-                          <IoSend className="text-gray-50 group-hover:text-gray-900 text-3xl" />
+                        <span onClick={onSendMessage} className="bg-inherit ">
+                          <IoSend className="text-gray-50 group-hover:text-gray-900 text-xl " />
                         </span>
                       </div>
                     </div>
@@ -565,6 +616,5 @@ export default function ChatUi({ userId }) {
         </div>
       </div>
     </QueryResult>
-
   );
 }
