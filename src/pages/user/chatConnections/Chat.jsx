@@ -419,20 +419,20 @@ export default function ChatUi({ userId }) {
                   </ul>
                 </div>
               )}
-              <div className="flex flex-col h-full overflow-y-scroll no-scrollbar font-sans">
+              <div className="flex flex-col h-full  overflow-y-scroll no-scrollbar font-sans">
                 <div className="flex-1 md:bg-gray-200 rounded-lg">
                   {chatHistory[selectedChat?.alumni?.user_id]?.map(
                     (msg, index) => (
                       <div
                         key={index}
-                        className={`p-3 ${
+                        className={`p-1 ${
                           msg.isReceived ? "text-left" : "text-right"
                         }`}
                       >
-                        <div className="inline-block max-w-[90% lg:max-w-[70%]">
+                        <div className="inline-block max-w-[90%] lg:max-w-[70%] ">
                           {/* Display images first */}
                           {msg.images && msg.images.length > 0 && (
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-">
                               {msg.images.map((file, idx) => {
                                 const fileName = file.name || "Unknown file";
                                 const fileType = file.type || "";
@@ -516,10 +516,10 @@ export default function ChatUi({ userId }) {
                           )}
                           {msg.message && (
                             <p
-                              className={`flex px-3 py-2 rounded-lg font-serif ${
+                              className={`flex px-3 py-2  rounded-lg font-serif ${
                                 msg.isReceived
-                                  ? "bg-gray-100 text-black text-[16px]"
-                                  : "bg-gray-900 text-white text-[16px] text-left"
+                                  ? "bg-gray-100 text-gray-500 text-[16px]"
+                                  : "bg-gray-900 text-gray-300 text-[16px] text-left"
                               }`}
                             >
                               {msg.message}
