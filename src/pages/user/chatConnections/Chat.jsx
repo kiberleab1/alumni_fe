@@ -516,19 +516,22 @@ export default function ChatUi({ userId }) {
                           )}
                           {msg.message && (
                             <p
-                              className={`flex px-3 py-2  rounded-lg font-serif ${
+                              className={`flex flex-col-reverse px-3 py-2   rounded-lg font-serif ${
                                 msg.isReceived
                                   ? "bg-gray-100 text-gray-500 text-[16px]"
                                   : "bg-gray-900 text-gray-300 text-[16px] text-left"
                               }`}
                             >
+                              <span className="block text-xs mt-1 text-gray-400">
+                                {msg.time}
+                              </span>
                               {msg.message}
                             </p>
                           )}
                         </div>
-                        <span className="block text-xs mt-1 ml-1 text-gray-500">
+                        {/* <span className="block text-xs mt-1 ml-1 text-gray-500">
                           {msg.time}
-                        </span>
+                        </span> */}
                       </div>
                     )
                   )}
