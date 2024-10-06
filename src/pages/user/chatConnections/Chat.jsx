@@ -517,10 +517,10 @@ export default function ChatUi({ userId }) {
                           )}
                           {msg.message && (
                             <p
-                              className={` flex flex-col-reverse px-3 py-2   rounded-lg font-serif ${
+                              className={` flex flex-col-reverse px-3 py-2 ${
                                 msg.isReceived
-                                  ? "bg-gray-100 text-gray-900 text-[16px]"
-                                  : "bg-gray-300 text-gray-900 text-[16px] text-left"
+                                  ? "bg-gray-100 text-gray-900 text-[16px]  rounded-r-lg rounded-tl-xl  font-serif "
+                                  : "bg-gray-300 text-gray-900 text-[16px] text-left  rounded-l-lg rounded-tr-xl"
                               }`}
                             >
                               <span className="block text-xs mt-1 text-gray-500">
