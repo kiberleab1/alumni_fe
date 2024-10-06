@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Table } from "reactstrap";
 import { TfiEmail } from "react-icons/tfi";
 import { FaCheck, FaUserFriends, FaUserPlus } from "react-icons/fa";
-import { FcBusinessman, FcBusinesswoman, FcCancel } from "react-icons/fc";
+import { FcAcceptDatabase, FcBusinessman, FcBusinesswoman, FcCancel } from "react-icons/fc";
 import { getImageBaseUrl, requestConnection, updateConnection } from "src/api";
 import { useMutation, useQueryClient } from "react-query";
 import { ToastContainer, toast } from "react-toastify";
@@ -51,14 +51,20 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
     },
   });
 
-  const handleCancelRequest = () => {
+  const handleAction = (connection, status) => {
     const updateData = {
-      status: "declined",
-      id: profile?.connection_data?.id,
+      status,
+      id: connection.id,
     };
     updateConnectionStatus(updateData);
 
-    toast.info("Connection Request canceled.");
+    if (status === "accepted") {
+      toast.success(`You have become friends with ${profile?.user_data?.name}!`);
+    } else if (status === "declined") {
+      toast.info(
+        `You have declined the request from ${profile?.user_data?.name}.`
+      );
+    }
   };
 
   const renderConnectionButton = () => {
@@ -85,22 +91,46 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
     ) {
       return (
         <div className="flex flex-rows gap-2 items-center justify-center w-full">
-          <button
-            className="bg-gray-50 w-1/2 text-black hover:bg-green-100  border-solid border-2 border-sky-500 py-2 xl:px-4 rounded-l-lg mt-4 flex justify-center items-center gap-2"
-            disabled
-          >
-            <FaCheck className="text-green-600" />{" "}
-            <span className="text-sm line-clamp-1">Request Sent</span>
-          </button>
-          <button
-            className="bg-gray-50  text-black hover:bg-red-100 w-1/2 border-solid border-2 border-sky-500   xl:px-4 py-2 rounded-l-lg mt-4 flex xl:justify-center xl:items-center gap-1"
-            onClick={handleCancelRequest}
-          >
-            <FcCancel className="" />
-            <span className="text-sm  w-[100%] line-clamp-1">
-              Cancel request
-            </span>
-          </button>
+          {profile?.connection_data?.status === "pending" && profile?.connection_data?.requesting_user_id == profile?.user_id ? (
+            <>
+              <button
+                className="bg-gray-50 w-1/2 text-black hover:bg-white-100  border-solid border-2 border-white-100 py-2 xl:px-4 rounded-l-lg mt-4 flex justify-center items-center gap-2"
+                disabled
+              >
+                <FaCheck className="text-green-600" />{" "}
+                <span className="text-sm line-clamp-1">Request Recived </span>
+              </button>
+              <button
+                className="bg-gray-50  text-black hover:bg-green-100 w-1/2 border-solid border-2 border-sky-500   xl:px-4 py-2 rounded-l-lg mt-4 flex xl:justify-center xl:items-center gap-1"
+                onClick={() => handleAction(profile?.connection_data, "accepted")}
+              >
+                <FcAcceptDatabase className="" />
+                <span className="text-sm  w-[100%] line-clamp-1">
+                  Accept request
+                </span>
+              </button>
+            </>
+          )
+            : (
+              <>
+                <button
+                  className="bg-gray-50 w-1/2 text-black hover:bg-white-100  border-solid border-2 border-white-100 py-2 xl:px-4 rounded-l-lg mt-4 flex justify-center items-center gap-2"
+                  disabled
+                >
+                  <FaCheck className="text-green-600" />{" "}
+                  <span className="text-sm line-clamp-1">Request Sent</span>
+                </button>
+                <button
+                  className="bg-gray-50  text-black hover:bg-red-100 w-1/2 border-solid border-2 border-sky-500   xl:px-4 py-2 rounded-l-lg mt-4 flex xl:justify-center xl:items-center gap-1"
+                  onClick={() => handleAction(profile?.connection_data, "declined")}
+                >
+                  <FcCancel className="" />
+                  <span className="text-sm  w-[100%] line-clamp-1">
+                    Cancel request
+                  </span>
+                </button>
+              </>
+            )}
         </div>
       );
     } else if (
@@ -133,7 +163,7 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
           <div className="absolute w-full h-36 top-0 bg-black -z-0 "></div>
           <div className="relative rounded-full mt-4 border-4 border-white w-52 h-52 flex items-center justify-center ">
             {profile?.user_photo &&
-            profile?.user_photo.startsWith("uploads/") ? (
+              profile?.user_photo.startsWith("uploads/") ? (
               <img
                 src={getImageBaseUrl(profile?.user_photo)}
                 alt={profile?.user_id}

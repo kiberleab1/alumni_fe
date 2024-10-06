@@ -95,7 +95,7 @@ export default function ChatUi({ userId }) {
               second: "numeric",
               hour12: true,
             };
-            const formattedTime = date.toLocaleTimeString("en-US", options);
+            const formattedTime = date.toLocaleDateString("en-US", options) ;
 
             return {
               ...acc,
@@ -142,7 +142,7 @@ export default function ChatUi({ userId }) {
         ...prevHistory,
         [from_user_id]: [
           ...(prevHistory[from_user_id] || []),
-          { message, isReceived: true, time: new Date().toLocaleDateString() },
+          { message, isReceived: true, time: new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString() },
         ],
       }));
     };
@@ -204,7 +204,7 @@ export default function ChatUi({ userId }) {
           {
             message: message.trim(),
             isReceived: false,
-            time: new Date().toLocaleDateString(),
+            time: new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString(),
           },
         ],
       }));
