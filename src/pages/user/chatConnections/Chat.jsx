@@ -425,12 +425,13 @@ export default function ChatUi({ userId }) {
                     (msg, index) => (
                       <div
                         key={index}
-                        className={`p-1 ${
+                        className={` p-1 ${
                           msg.isReceived ? "text-left" : "text-right"
                         }`}
                       >
-                        <div className="inline-block max-w-[90%] lg:max-w-[70%] ">
+                        <div className=" inline-block max-w-[90%] lg:max-w-[70%] ">
                           {/* Display images first */}
+
                           {msg.images && msg.images.length > 0 && (
                             <div className="flex flex-col gap-">
                               {msg.images.map((file, idx) => {
@@ -516,7 +517,7 @@ export default function ChatUi({ userId }) {
                           )}
                           {msg.message && (
                             <p
-                              className={`flex flex-col-reverse px-3 py-2   rounded-lg font-serif ${
+                              className={` flex flex-col-reverse px-3 py-2   rounded-lg font-serif ${
                                 msg.isReceived
                                   ? "bg-gray-100 text-gray-500 text-[16px]"
                                   : "bg-gray-900 text-gray-300 text-[16px] text-left"
@@ -529,6 +530,7 @@ export default function ChatUi({ userId }) {
                             </p>
                           )}
                         </div>
+
                         {/* <span className="block text-xs mt-1 ml-1 text-gray-500">
                           {msg.time}
                         </span> */}
