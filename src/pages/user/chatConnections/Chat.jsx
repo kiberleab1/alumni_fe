@@ -575,8 +575,8 @@ export default function ChatUi({ userId }) {
                               <p
                                 className={` flex flex-col-reverse px-3 py-2 ${
                                   msg.isReceived
-                                    ? "bg-gray-100 text-gray-900 text-[16px]  rounded-r-lg rounded-tl-xl  font-serif "
-                                    : "bg-gray-300 text-gray-900 text-[16px] text-left  rounded-l-lg rounded-tr-xl"
+                                    ? "bg-gray-100 text-gray-900 text-[16px]  rounded-r-lg rounded-tl-2xl  font-serif "
+                                    : "bg-gray-300 text-gray-900 text-[16px] text-left  rounded-l-lg rounded-tr-2xl"
                                 }`}
                                 style={{
                                   textAlign: msg.isReceived ? "left" : "left",
