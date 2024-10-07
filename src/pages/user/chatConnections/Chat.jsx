@@ -456,7 +456,7 @@ export default function ChatUi({ userId }) {
                     return (
                       <div
                         key={index}
-                        className={`p-3 flex ${msg.isReceived ? "justify-start" : "justify-end"} w-full`}
+                        className={`p-1 ${msg.isReceived ? "justify-start" : "justify-end"} w-full`}
                       >
                         <div className={`inline-block max-w-[90%] lg:max-w-[70%] ${isLongMessage ? "block w-full" : ""} rounded-lg p-2 relative`}>
 
@@ -529,7 +529,7 @@ export default function ChatUi({ userId }) {
                             </>
                           ) : (
                             <p
-                              className={`px-4 py-2 rounded-lg ${msg.isReceived ? "bg-gray-100 text-black" : "bg-gray-900 text-white"}`}
+                              className={`flex flex-col-reverse px-3 py-2 ${msg.isReceived ? "bg-gray-100 text-gray-900 text-[16px]  rounded-r-lg rounded-tl-xl  font-serif" : "bg-gray-300 text-gray-900 text-[16px] text-left  rounded-l-lg rounded-tr-xl"}`}
                               style={{
                                 textAlign: msg.isReceived ? "left" : "left",
                                 alignSelf: msg.isReceived ? "flex-start" : "flex-end",
