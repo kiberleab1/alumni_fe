@@ -349,8 +349,8 @@ export default function ChatUi({ userId }) {
       return input;
     }
 
-    const firstPart = input.slice(0, 5);
-    const lastPart = input.slice(-9);
+    const firstPart = input.slice(0, 14);
+    const lastPart = input.slice(-10);
 
     return `${firstPart}...${lastPart}`;
   }
