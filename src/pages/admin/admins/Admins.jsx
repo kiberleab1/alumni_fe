@@ -26,29 +26,23 @@ import useAOS from "src/pages/user/aos";
 
 export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
   const [, setAdminRoleId] = useState(null);
-  const [institutionAdmins, setInstitutionAdmins] = useState([]);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAdmin, setSelectedAdmin] = useState(null);
   const queryClient = useQueryClient();
 
   const { isError, data, isLoading } = useQuery(
-    ["getRoleByName", "getAllinstituteAdmins"],
+    ["getAllinstituteAdmins", currentPage],
     async () => {
       const roleData = await getRoleByName({ name: "admin" });
       const admin_role_id = roleData.data?.id;
       setAdminRoleId(admin_role_id);
 
-      const instituteAdminsData = await getAllInstituteAdmins({
-        pageNumber: 1,
-        pageSize: 10,
-        value: admin_role_id,
-      });
+      const instituteAdminsData = await getAllInstituteAdmins({pageNumber: currentPage, pageSize: itemsPerPage, value: admin_role_id});
       const admins = instituteAdminsData.data.users.map((user) => ({
         ...user,
       }));
-      setInstitutionAdmins(admins);
       return { roleData, instituteAdminsData, admins };
     },
     { keepPreviousData: true }
@@ -94,13 +88,9 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
     }
   };
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = institutionAdmins.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
-  const totalPages = Math.ceil(institutionAdmins.length / itemsPerPage);
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
+  const indexOfLastItem = Math.min(currentPage * itemsPerPage, data?.instituteAdminsData.data.total_items);
+  const totalPages = Math.ceil(data?.instituteAdminsData.data.total_items / itemsPerPage);
 
   const paginate = (pageNumber) => {
     if (pageNumber < 1 || pageNumber > totalPages) return;
@@ -125,7 +115,7 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
         <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
           <div className="min-w-full">
             <div className="overflow-x-auto">
-              <div className="table-container" style={{ maxHeight: "500px" }}>
+              <div className="table-container" style={{ maxHeight: "900px" }}>
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead
                     className="sticky top-0 bg-gray-100 z-10 font-serif"
@@ -174,7 +164,7 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
                     className="bg-white divide-y divide-gray-200"
                     data-aos="fade-down"
                   >
-                    {currentItems.map((admin) => (
+                    {data?.admins.map((admin) => (
                       <tr key={admin.email}>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm font-serif text-gray-900 text-start">
@@ -230,7 +220,7 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
             onPaginate={paginate}
             indexOfFirstItem={indexOfFirstItem}
             indexOfLastItem={indexOfLastItem}
-            dataLength={institutionAdmins.length}
+            dataLength={data?.instituteAdminsData.data.total_items}
           />
         </div>
         {selectedAdmin && (
@@ -245,216 +235,5 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
         {/* <StatData /> */}
       </div>
     </QueryResult>
-  );
-}
-
-function StatData() {
-  return (
-    <ul
-      role="list"
-      className="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-4 xl:gap-x-8 mt-5"
-    >
-      <li key="1" className="overflow-hidden rounded-xl border border-gray-200">
-        <div className="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
-          <UserIcon className="h-12 w-12 flex-none rounded-lg bg-white text-green-900 object-cover ring-1 ring-gray-100/10" />
-          <div className="text-sm font-medium leading-6 text-gray-900">
-            Recently Active Admins
-          </div>
-        </div>
-        <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Bahir Dar University
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">2000</div>
-            </dd>
-          </div>
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Addis Ababa Commercial College
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">1980</div>
-            </dd>
-          </div>
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Addis Ababa Science and Technology University
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">1657</div>
-            </dd>
-          </div>
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Mekelle Business College
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">1200</div>
-            </dd>
-          </div>
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Jimma Engineering College
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">870</div>
-            </dd>
-          </div>
-        </dl>
-      </li>
-      <li key="2" className="overflow-hidden rounded-xl border border-gray-200">
-        <div className="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
-          <BuildingLibraryIcon className="h-12 w-12 flex-none rounded-lg bg-white text-blue-900 object-cover ring-1 ring-gray-100/10" />
-          <div className="text-sm font-medium leading-6 text-gray-900">
-            Most Number of Institutions with admin
-          </div>
-        </div>
-        <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Bahir Dar University
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">2000</div>
-            </dd>
-          </div>
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Addis Ababa Commercial College
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">1980</div>
-            </dd>
-          </div>
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Addis Ababa Science and Technology University
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">1657</div>
-            </dd>
-          </div>
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Mekelle Business College
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">1200</div>
-            </dd>
-          </div>
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Jimma Engineering College
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">870</div>
-            </dd>
-          </div>
-        </dl>
-      </li>
-      <li key="4" className="overflow-hidden rounded-xl border border-gray-200">
-        <div className="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
-          <AdjustmentsHorizontalIcon className="h-12 w-12 flex-none rounded-lg bg-white text-pink-900 object-cover ring-1 ring-gray-100/10" />
-          <div className="text-sm font-medium leading-6 text-gray-900">
-            Recently Added Admins
-          </div>
-        </div>
-        <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Bahir Dar University
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">2000</div>
-            </dd>
-          </div>
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Addis Ababa Commercial College
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">1980</div>
-            </dd>
-          </div>
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Addis Ababa Science and Technology University
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">1657</div>
-            </dd>
-          </div>
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Mekelle Business College
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">1200</div>
-            </dd>
-          </div>
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Jimma Engineering College
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">870</div>
-            </dd>
-          </div>
-        </dl>
-      </li>
-
-      <li key="3" className="overflow-hidden rounded-xl border border-gray-200">
-        <div className="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
-          <CalendarDaysIcon className="h-12 w-12 flex-none rounded-lg bg-white text-orange-900 object-cover ring-1 ring-gray-100/10" />
-          <div className="text-sm font-medium leading-6 text-gray-900">
-            Most Event Organized
-          </div>
-        </div>
-        <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Bahir Dar University
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">2000</div>
-            </dd>
-          </div>
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Addis Ababa Commercial College
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">1980</div>
-            </dd>
-          </div>
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Addis Ababa Science and Technology University
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">1657</div>
-            </dd>
-          </div>
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Mekelle Business College
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">1200</div>
-            </dd>
-          </div>
-          <div className="flex justify-between gap-x-4 py-3">
-            <dt className="font-mono font-medium text-gray-900">
-              Jimma Engineering College
-            </dt>
-            <dd className="text-gray-700">
-              <div className="font-medium text-gray-900">870</div>
-            </dd>
-          </div>
-        </dl>
-      </li>
-    </ul>
   );
 }

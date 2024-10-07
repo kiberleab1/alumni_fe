@@ -38,7 +38,7 @@ const Pagination = ({
           <p className="text-lg font-sans text-gray-700">
             Showing{" "}
             <span className="text-lg text-teal-600">
-              {indexOfFirstItem + 1}
+              {indexOfFirstItem}
             </span>{" "}
             to{" "}
             <span className="text-lg text-teal-600">
