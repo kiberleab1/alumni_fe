@@ -1,32 +1,21 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
-import {
-  FaBinoculars,
-  FaFileAlt,
-  FaFileCsv,
-  FaFilePdf,
-  FaRocketchat,
-  FaUserEdit,
-} from "react-icons/fa";
+import { FaFileAlt, FaFilePdf } from "react-icons/fa";
 import {
   IoIosArrowDropdown,
-  IoIosSend,
   IoMdArrowRoundBack,
+  IoMdArrowUp,
 } from "react-icons/io";
 import {
   IoChatbubbleEllipsesSharp,
   IoClose,
-  IoCloseSharp,
-  IoCloudDownloadOutline,
-  IoSend,
   IoTelescope,
-  IoWoman,
 } from "react-icons/io5";
 import { MdAutoDelete, MdOutlineAttachFile, MdTagFaces } from "react-icons/md";
 import "./css.css";
 import { BsFiletypeCsv } from "react-icons/bs";
-import img from "../../../assets/images/testimonial/3.jpg";
+
 import { GiUnfriendlyFire } from "react-icons/gi";
 import { useQuery, useQueryClient } from "react-query";
 import {
@@ -58,7 +47,15 @@ export default function ChatUi({ userId }) {
   const itemsPerPage = 8;
   const queryClient = useQueryClient();
   const userToken = getUserToken();
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
+  const handleImageClick = () => {
+    setIsFullScreen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsFullScreen(false);
+  };
   const { isError, data, isLoading, refetch } = useQuery(
     [
       "myConnectionRequests",
@@ -451,15 +448,15 @@ export default function ChatUi({ userId }) {
                 />
               </div>
               {isOptionOpen && (
-                <div className=" absolute rounded-md right-2 mt-11 ml-5 w-52 bg-white border border-gray-300 shadow-lg z-50 ">
-                  <div className=" absolute right-1  rotate-45 -translate-y-1/3 w-6 h-6   bg-white overflow-x-hidden -z-40"></div>
-                  <ul className="text-black p-2 z-10">
-                    <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100 z-50 overflow-hidden text-xs ">
+                <div className=" absolute   rounded-md right-12 mt-14 ml-5 w-60 bg-gray-400 border border-gray-300 shadow-lg z-50 ">
+                  <div className=" absolute right-4  rotate-45 -translate-y-1/3 w-6 h-6   bg-gray-400 overflow-x-hidden -z-40"></div>
+                  <ul className="text-black p-1 ">
+                    <li className=" px-2 py-2 flex flex-row gap-2 hover:bg-gray-100 hover:rounded-xl  z-50 overflow-hidden text-xs ">
                       <GiUnfriendlyFire className="text-xl overflow-hidden " />
                       Unfriend {selectedChat?.user?.name}
                     </li>
-                    <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100 z-50 overflow-hidden text-xs ">
-                      <MdAutoDelete className="text-xl overflow-hidden " />
+                    <li className=" px-2 py-2 flex flex-row gap-2 hover:bg-gray-100 hover:rounded-xl  z-50 overflow-hidden text-xs ">
+                      <MdAutoDelete className="text-xl " />
                       Clear History
                     </li>
                   </ul>
@@ -475,7 +472,7 @@ export default function ChatUi({ userId }) {
                       return (
                         <div
                           key={index}
-                          className={`p-1 flex ${
+                          className={`p- flex ${
                             msg.isReceived ? "justify-start" : "justify-end"
                           } w-full`}
                         >
@@ -510,11 +507,27 @@ export default function ChatUi({ userId }) {
                                   ".bmp",
                                   ".webp",
                                 ].some((ext) => msg.message.endsWith(ext)) ? (
-                                  <img
-                                    src={getImageBaseUrl(msg.message)}
-                                    alt="Sent file"
-                                    className="rounded-lg w-full h-auto object-cover mb-1"
-                                  />
+                                  <div>
+                                    <img
+                                      src={getImageBaseUrl(msg.message)}
+                                      alt="Sent file"
+                                      className="rounded-lg w-full h-auto object-cover mb-1 cursor-pointer"
+                                      onClick={handleImageClick}
+                                    />
+
+                                    {isFullScreen && (
+                                      <div
+                                        className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center p-4 justify-center"
+                                        onClick={handleCloseModal}
+                                      >
+                                        <img
+                                          src={getImageBaseUrl(msg.message)}
+                                          alt="Full screen"
+                                          className="max-w-full max-h-full object-contain"
+                                        />
+                                      </div>
+                                    )}
+                                  </div>
                                 ) : null}
 
                                 {msg.message.endsWith(".pdf") ? (
@@ -576,7 +589,7 @@ export default function ChatUi({ userId }) {
                                 className={` flex flex-col-reverse px-3 py-2 ${
                                   msg.isReceived
                                     ? "bg-gray-100 text-gray-900 text-[16px]  rounded-r-lg rounded-tl-2xl  font-serif "
-                                    : "bg-gray-300 text-gray-900 text-[16px] text-left  rounded-l-lg rounded-tr-2xl"
+                                    : "bg-gray-300 text-gray-900 text-[16px] text-left  rounded-l-2xl rounded-tr-2xl"
                                 }`}
                                 style={{
                                   textAlign: msg.isReceived ? "left" : "left",
@@ -590,7 +603,7 @@ export default function ChatUi({ userId }) {
                                 {msg.message}
                               </p>
                             )}
-                            <span className="block text-xs mt-1 text-gray-500 text-center">
+                            <span className="block text-xs mt-1 text-gray-500 text-end">
                               {msg.time}
                             </span>
                           </div>
@@ -601,35 +614,31 @@ export default function ChatUi({ userId }) {
 
                   <div ref={messagesEndRef} />
                 </div>
-                <div>
-                  <div className="flex flex-wrap gap-2 bg-black "></div>
-                  <div className="flex flex-wrap gap-3 mt-4">
-                    {selectedFiles.map((file, index) =>
-                      renderFilePreview(file, index)
-                    )}
-                  </div>
+                <div className="flex flex-wrap gap-2 bg-gray-200 mt-2 rounded-xl">
+                  {selectedFiles.length > 0 && (
+                    <div className="flex flex-wrap gap-3 mb-2">
+                      {selectedFiles.map((file, index) =>
+                        renderFilePreview(file, index)
+                      )}
+                    </div>
+                  )}
 
-                  <div className="flex items-center border-t p- m-1 bg-gray-100 rounded-lg">
+                  <div className="flex w-full items-end justify-between border-t mt- bg-gray-400  rounded-2xl m- relative p- focus-within:bg-gray-400">
                     <label
                       htmlFor="file-upload"
-                      className="cursor-pointer bg-inherit text-2xl  py-2 rounded-lg flex flex-row"
+                      className="cursor-pointer bg-inherit text-2xl py-2 rounded-lg flex mb-2"
                     >
-                      <MdOutlineAttachFile className="text-black" />
+                      <MdOutlineAttachFile className="text-white text-2.5xl" />
                       <input
                         type="file"
                         accept="image/*,application/pdf,.csv,.txt"
                         onChange={handleFileUpload}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            onSendMessage();
-                          }
-                        }}
                         className="hidden"
                         id="file-upload"
                         multiple
                       />
                     </label>
+
                     <textarea
                       ref={textareaRef}
                       value={message}
@@ -637,14 +646,17 @@ export default function ChatUi({ userId }) {
                       onChange={(e) => setMessage(e.target.value)}
                       onKeyDown={handleKeyDown}
                       placeholder="Type a message..."
-                      className="flex-1 p-1 border-none rounded-r-none w-[100%] rounded-l-lg bg-gray-100 text-black resize-none overflow-hidden no-scrollbar"
+                      style={{ height: "auto", maxHeight: "200px" }}
+                      className="w-full text-lg pl-4 p-2 bg-gray-400 text-gray-800 resize-none overflow-y-scroll no-scrollbar rounded-lg placeholder-gray-900 focus:bg-gray-400 focus:placeholder-gray-500 h-fit mb-2"
                     />
-                    <div className="flex flex-row transform bg-gray-900 hover:bg-gray-400 p-3 rounded-r-lg group">
-                      <div className="flex flex-row items-center justify-center">
-                        <span onClick={onSendMessage} className="bg-inherit ">
-                          <IoSend className="text-gray-50 group-hover:text-gray-900 text-xl " />
-                        </span>
-                      </div>
+
+                    <div className=" bg-gray-500 hover:bg-gray-700 p-2 rounded-full group mb-1 ml-1">
+                      <span
+                        onClick={onSendMessage}
+                        className="flex items-center justify-center"
+                      >
+                        <IoMdArrowUp className="text-white group-hover:text-gray-200 text-3xl" />
+                      </span>
                     </div>
                   </div>
                 </div>
