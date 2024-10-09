@@ -18,14 +18,18 @@ export default function DepartmentPage({
   onCreateDepartmentClick,
   onDepartmentEditClick,
 }) {
-
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { isError, data, isLoading, refetch } = useQuery(["getDepartments", currentPage],
+  const { isError, data, isLoading, refetch } = useQuery(
+    ["getDepartments", currentPage],
     async () => {
-      return await getDepartments({ pageNumber: currentPage, pageSize: itemsPerPage });
-    });
+      return await getDepartments({
+        pageNumber: currentPage,
+        pageSize: itemsPerPage,
+      });
+    }
+  );
 
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>

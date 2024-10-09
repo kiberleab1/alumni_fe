@@ -8,8 +8,11 @@ import {
   LinkIcon,
   PhoneIcon,
 } from "@heroicons/react/24/outline";
+import { IoReturnDownBack } from "react-icons/io5";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 export default function EditInstitute({ institute }) {
+  const [currentChild, setCurrentChild] = useState(0);
   const [addressError, setAddressError] = useState(null);
   const [instituteError, setInstituteError] = useState(null);
   const [instituteTypes, setInstituteTypes] = useState([
@@ -133,6 +136,8 @@ export default function EditInstitute({ institute }) {
       const result = await updateAddress(addressFields);
       toast.success("Address updated successfully!");
       setAddressError();
+      setCurrentChild(1);
+      setFormStep(1);
       console.log("Update address result:", result.data);
     } catch (error) {
       toast.success("Error updating address!");
@@ -192,6 +197,7 @@ export default function EditInstitute({ institute }) {
       const result = await updateInstitute(instituteData);
       toast.success("Institute updated successfully!");
       setInstituteError();
+      setCurrentChild(0);
       console.log("Update Institute result:", result.data);
     } catch (error) {
       toast.success("Error updating Institute!");
@@ -202,35 +208,46 @@ export default function EditInstitute({ institute }) {
 
   if (isFetching) return <div>Loading...</div>;
   if (isError) return <div>Error: {error.message}</div>;
+  const [formStep, setFormStep] = useState(5);
+  const handleNext = () => {
+    setFormStep(2);
+  };
+  console.log(formStep);
+  console.log(currentChild);
 
+  const handleBack = () => {
+    setFormStep(1);
+  };
   return (
-    <div className="space-y-10 divide-y divide-gray-900/10">
-      <div className="flex flex-col md:flex-row space-y-10 md:space-y-0 md:space-x-10">
-        <div className="px-4 sm:px-0 flex-1">
-          <div>
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
+    <div className="relative flex items-center justify-center w-full min-h-screen">
+      <div
+        className={` transition-all  duration-1000 ease-in-out flex items-center justify-center m-auto ${
+          currentChild === 0
+            ? "transform translate-x-0 opacity-100 z-50  w-full"
+            : "transform translate-x-full opacity-0 hidden z-0"
+        }`}
+      >
+        <div className="w-[100%] 2xl:w-[60%]">
+          <form className="bg-white sm:w-full sm:p-6 shadow-sm sm:rounded-xl font-serif border">
+            <h1 className="text-2xl text-center text-gray-800 font-serif mb-2">
               Address Information
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              Please provide updated and accurate address information of the
-              institute
-            </p>
-          </div>
-          <form className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl mt-4">
-            <div className="px-4 py-6 sm:p-8">
-              <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div className="sm:col-span-3">
-                  <label
-                    htmlFor="country"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Country
-                  </label>
-                  <div className="mt-2">
+            </h1>
+            <div className="px-4 py-6 sm:p-8 flex items-center justify-center">
+              <div className="grid max-w-2xl  gap-x-6 gap-y-8 ">
+                <div className="sm:col-span-3 w-80 mt-2">
+                  <div className="mt-">
+                    {" "}
+                    <label
+                      htmlFor="country"
+                      className="block mb-2 text-gray-600 text-start"
+                    >
+                      Country
+                    </label>
                     <input
                       type="text"
                       name="country"
                       id="country"
+                      placeholder="Where do you live (country)?"
                       required
                       value={addressFields.country}
                       onChange={(e) =>
@@ -239,22 +256,24 @@ export default function EditInstitute({ institute }) {
                           country: e.target.value,
                         })
                       }
-                      className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
                     />
                   </div>
                 </div>
-                <div className="sm:col-span-3">
-                  <label
-                    htmlFor="region"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Region
-                  </label>
+                <div className="sm:col-span-3 w-80">
                   <div className="mt-2">
+                    <label
+                      htmlFor="region"
+                      className="block mb-2 text-gray-600 text-start"
+                    >
+                      Region
+                    </label>
+
                     <input
                       type="text"
                       name="region"
                       id="region"
+                      placeholder="Which state/region?"
                       required
                       value={addressFields.region}
                       onChange={(e) =>
@@ -263,14 +282,14 @@ export default function EditInstitute({ institute }) {
                           region: e.target.value,
                         })
                       }
-                      className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
                     />
                   </div>
                 </div>
                 <div className="sm:col-span-6">
                   <label
                     htmlFor="city"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block mb-2 text-gray-600 text-start"
                   >
                     City
                   </label>
@@ -279,6 +298,7 @@ export default function EditInstitute({ institute }) {
                       type="text"
                       name="city"
                       id="city"
+                      placeholder="What city?"
                       required
                       value={addressFields.city}
                       onChange={(e) =>
@@ -287,74 +307,78 @@ export default function EditInstitute({ institute }) {
                           city: e.target.value,
                         })
                       }
-                      className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
                     />
                   </div>
                 </div>
                 <div className="sm:col-span-6">
                   <label
                     htmlFor="house-number"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block mb-2 text-gray-600 text-start"
                   >
                     House Number
                   </label>
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      name="house-number"
-                      id="house-number"
-                      value={addressFields.house_number}
-                      onChange={(e) =>
-                        setAddressFields({
-                          ...addressFields,
-                          house_number: e.target.value,
-                        })
-                      }
-                      className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                    />
+                  <input
+                    type="text"
+                    name="house-number"
+                    id="house-number"
+                    placeholder="What's your house number?"
+                    value={addressFields.houseNumber}
+                    onChange={(e) =>
+                      setAddressFields({
+                        ...addressFields,
+                        houseNumber: e.target.value,
+                      })
+                    }
+                    className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
+                  />
+                </div>
+                <div className="sm:col-span-6 ">
+                  {addressError && (
+                    <p className="text-red-600 font-mono">{addressError}</p>
+                  )}
+                  <div className="flex space-x-4">
+                    <button
+                      type="button"
+                      className="text-sm font-semibold leading-6 text-gray-100 w-1/2 bg-red-500 py-2 rounded-md"
+                      onClick={handleAddressClear}
+                    >
+                      Clear
+                    </button>
+                    <button
+                      type="button"
+                      className="flex items-center justify-center w-1/2 rounded-md bg-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 font-serif"
+                      onClick={handleAddressSubmit}
+                    >
+                      Save
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-start gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
-              {addressError && (
-                <p className="text-red-600 font-mono">{addressError}</p>
-              )}
-              <button
-                type="button"
-                className="text-sm font-semibold leading-6 text-gray-100"
-                onClick={handleAddressClear}
-              >
-                Cancele
-              </button>
-              <button
-                type="button"
-                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                onClick={handleAddressSubmit}
-              >
-                Update
-              </button>
-            </div>
           </form>
         </div>
+      </div>
 
-        <div className="px-4 sm:px-0 flex-1">
-          <div>
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Institute Information
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              Please make sure every input is correct and accurately describes
-              the institute.
-            </p>
-          </div>
+      <div
+        className={`relative w-full transition-all duration-1000 ease-in-out  flex  justify-center  ${
+          currentChild === 1
+            ? "transform translate-y-0 opacity-100 z-50"
+            : "transform translate-y-full opacity-0 z-0 hidden"
+        }`}
+      >
+        <div className="w-[90%] xl:w-[60%]  ">
+          {" "}
           <form className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-            <div className="px-4 py-6 sm:p-8">
-              <div className="grid max-w-full grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div className="sm:col-span-2">
+            <h1 className="text-2xl font- text-center text-gray-800 font-serif mb-4">
+              Institute Information
+            </h1>
+            <div className="px-4 py-6 sm:p-">
+              <div className="grid max-w-full grid-cols-1 gap-x-6 xl:gap-x-8 gap-y-4 xl:gap-y-8 sm:grid-cols-6">
+                <div className="sm:col-span-2 mb-1">
                   <label
                     htmlFor="institute-name"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block mb-2 text-gray-600 text-start"
                   >
                     Institute Name
                   </label>
@@ -373,14 +397,14 @@ export default function EditInstitute({ institute }) {
                       }
                       autoComplete="institute_name"
                       placeholder="Institute Name"
-                      className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
                     />
                   </div>
                 </div>
-                <div className="sm:col-span-2">
+                <div className="sm:col-span-2 mb-1">
                   <label
                     htmlFor="institute-name"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block mb-2 text-gray-600 text-start"
                   >
                     Institute Email
                   </label>
@@ -397,15 +421,39 @@ export default function EditInstitute({ institute }) {
                           email: e.target.value,
                         })
                       }
-                      className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
                       placeholder="Email Address"
                     />
                   </div>
                 </div>
-                <div className="sm:col-span-2">
+                <div className="sm:col-span-2 mb-1">
                   <label
                     htmlFor="institute-name"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block mb-2 text-gray-600 text-start"
+                  >
+                    Institute Sub url
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      name="sub_url"
+                      id="sub_url"
+                      value={instituteFields.sub_url}
+                      onChange={(e) =>
+                        setInstituteFields({
+                          ...instituteFields,
+                          sub_url: e.target.value,
+                        })
+                      }
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
+                      placeholder="Phone Number"
+                    />
+                  </div>
+                </div>
+                <div className="sm:col-span-2 mb-1">
+                  <label
+                    htmlFor="institute-name"
+                    className="block mb-2 text-gray-600 text-start"
                   >
                     Institute Phone Number
                   </label>
@@ -422,39 +470,15 @@ export default function EditInstitute({ institute }) {
                           phone: e.target.value,
                         })
                       }
-                      className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
                       placeholder="Phone Number"
                     />
                   </div>
                 </div>
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="institute-starting-year"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Institute Starting Year
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="date"
-                      name="institute-starting-year"
-                      id="institute-starting-year"
-                      required
-                      value={instituteFields.instituteStartingYear}
-                      onChange={(e) =>
-                        setInstituteFields({
-                          ...instituteFields,
-                          instituteStartingYear: e.target.value,
-                        })
-                      }
-                      className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                    />
-                  </div>
-                </div>
-                <div className="sm:col-span-2">
+                <div className="sm:col-span-2 mb-1">
                   <label
                     htmlFor="institute-name"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block mb-2 text-gray-600 text-start"
                   >
                     Institute website
                   </label>
@@ -470,15 +494,15 @@ export default function EditInstitute({ institute }) {
                           website: e.target.value,
                         })
                       }
-                      className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
                       placeholder="website Link"
                     />
                   </div>
                 </div>
-                <div className="sm:col-span-2">
+                <div className="sm:col-span-2 mb-1">
                   <label
                     htmlFor="institute-name"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block mb-2 text-gray-600 text-start"
                   >
                     Institute Type
                   </label>
@@ -491,7 +515,7 @@ export default function EditInstitute({ institute }) {
                           type: e.target.value,
                         })
                       }
-                      className="mt-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-5 font-medium font-mono"
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
                     >
                       {instituteTypes.map((type) => (
                         <option key={type} value={type}>
@@ -500,11 +524,11 @@ export default function EditInstitute({ institute }) {
                       ))}
                     </select>
                   </div>
-                </div>
-                <div className="sm:col-span-2">
+                </div>{" "}
+                <div className="sm:col-span-2 mb-1">
                   <label
                     htmlFor="president_name"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block mb-2 text-gray-600 text-start"
                   >
                     Institute President Name
                   </label>
@@ -520,15 +544,15 @@ export default function EditInstitute({ institute }) {
                           president_name: e.target.value,
                         })
                       }
-                      className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
                       placeholder="President Name"
                     />
                   </div>
-                </div>
-                <div className="sm:col-span-2">
+                </div>{" "}
+                <div className="sm:col-span-2 mb-1">
                   <label
                     htmlFor="number_of_students"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block mb-2 text-gray-600 text-start"
                   >
                     Institute Number Of Students
                   </label>
@@ -544,15 +568,15 @@ export default function EditInstitute({ institute }) {
                           number_of_students: e.target.value,
                         })
                       }
-                      className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
                       placeholder="Number Of Students"
                     />
                   </div>
-                </div>
-                <div className="sm:col-span-2">
+                </div>{" "}
+                <div className="sm:col-span-2 mb-1">
                   <label
                     htmlFor="number_of_alumni"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block mb-2 text-gray-600 text-start"
                   >
                     Institute Number Of Alumni
                   </label>
@@ -568,7 +592,7 @@ export default function EditInstitute({ institute }) {
                           number_of_alumni: e.target.value,
                         })
                       }
-                      className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
                       placeholder="Number Of Alumni"
                     />
                   </div>
@@ -576,7 +600,7 @@ export default function EditInstitute({ institute }) {
                 <div className="sm:col-span-6">
                   <label
                     htmlFor="institute-accreditations"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block mb-2 text-gray-600 text-start"
                   >
                     Institute Accreditations
                   </label>
@@ -584,7 +608,7 @@ export default function EditInstitute({ institute }) {
                     <textarea
                       id="institute-accreditations"
                       name="institute-accreditations"
-                      rows="3"
+                      rows={2}
                       required
                       value={instituteFields.accreditations}
                       onChange={(e) =>
@@ -593,14 +617,14 @@ export default function EditInstitute({ institute }) {
                           accreditations: e.target.value,
                         })
                       }
-                      className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
                     ></textarea>
                   </div>
                 </div>
                 <div className="sm:col-span-6">
                   <label
                     htmlFor="institute-description"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block mb-2 text-gray-600 text-start"
                   >
                     Institute Description
                   </label>
@@ -608,7 +632,7 @@ export default function EditInstitute({ institute }) {
                     <textarea
                       id="institute-description"
                       name="institute-description"
-                      rows="3"
+                      rows={2}
                       required
                       value={instituteFields.instituteDescription}
                       onChange={(e) =>
@@ -617,14 +641,14 @@ export default function EditInstitute({ institute }) {
                           instituteDescription: e.target.value,
                         })
                       }
-                      className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
                     ></textarea>
                   </div>
                 </div>
                 <div className="sm:col-span-6">
                   <label
                     htmlFor="institute-contact-info"
-                    className="block text-sm font-medium leading-6 text-gray-900"
+                    className="block mb-2 text-gray-600 text-start"
                   >
                     Institute Contact Info
                   </label>
@@ -640,7 +664,7 @@ export default function EditInstitute({ institute }) {
                           twitter: e.target.value,
                         })
                       }
-                      className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
                       placeholder="Twitter Link"
                     />
                     <input
@@ -654,7 +678,7 @@ export default function EditInstitute({ institute }) {
                           linkedin: e.target.value,
                         })
                       }
-                      className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
                       placeholder="LinkedIn Link"
                     />
                     <input
@@ -668,7 +692,7 @@ export default function EditInstitute({ institute }) {
                           telegram: e.target.value,
                         })
                       }
-                      className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
                       placeholder="Telegram Link"
                     />
                     <input
@@ -682,7 +706,7 @@ export default function EditInstitute({ institute }) {
                           facebook: e.target.value,
                         })
                       }
-                      className="col-span-2 sm:col-span-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
                       placeholder="Facebook Link"
                     />
                   </div>
@@ -693,25 +717,30 @@ export default function EditInstitute({ institute }) {
               {instituteError && (
                 <p className="text-red-600 font-mono">{instituteError}</p>
               )}
-              <button
-                type="button"
-                className="text-sm font-semibold leading-6 text-gray-100"
-                onClick={handleInstituteClear}
-              >
-                Clear
-              </button>
-              <button
-                type="button"
-                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                disabled={disableInstitutionSection}
-                onClick={handleInstituteSubmit}
-              >
-                Save
-              </button>
+
+              <div className="flex space-x-4">
+                <button
+                  type="button"
+                  className="text-sm font-semibold leading-6 text-gray-100 w-1/2 bg-red-500 py-2 rounded-md"
+                  onClick={handleInstituteClear}
+                >
+                  Clear
+                </button>
+
+                <button
+                  type="button"
+                  className="flex items-center justify-center w-1/2 rounded-md bg-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 font-mono"
+                  onClick={handleInstituteSubmit}
+                  disabled={disableInstitutionSection}
+                >
+                  Save
+                </button>
+              </div>
             </div>
           </form>
         </div>
       </div>
+      {/* </div> */}
 
       <div>
         <ToastContainer />

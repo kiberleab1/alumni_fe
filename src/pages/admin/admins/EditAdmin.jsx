@@ -225,6 +225,7 @@ export default function EditAdmin({ admin }) {
     try {
       const result = await updateAddress(addressFields);
       toast.success("Address updated successfully!");
+      setCurrentChild(1);
       setAddressError();
       console.log("Update address result:", result.data);
     } catch (error) {
@@ -259,6 +260,7 @@ export default function EditAdmin({ admin }) {
     try {
       const result = await updateAddress(placeOfBirthFields);
       toast.success("Address updated successfully!");
+      setCurrentChild(2);
       setAddressError();
       console.log("Update address result:", result.data);
     } catch (error) {
@@ -308,6 +310,7 @@ export default function EditAdmin({ admin }) {
       console.log(adminData);
       const result = await updateAdmin(adminData);
       toast.success("Admin saved successfully!");
+      setCurrentChild(0);
       setAdminError();
     } catch (error) {
       toast.error("Error saving admin!");
@@ -315,371 +318,399 @@ export default function EditAdmin({ admin }) {
       console.error("Error saving admin", error);
     }
   };
-
+  const [currentChild, setCurrentChild] = useState(2);
   return (
-    <div className="flex flex-wrap">
-      {/* Address Information Form Component */}
-      <div className="w-full md:w-1/4 ml-4 mr-5">
-        <div className="px-4 sm:px-0">
-          <h2 className="text-base font-semibold leading-7 text-gray-900 font-mono">
-            Address Information
-          </h2>
-          <p className="mt-1 text-sm leading-6 text-gray-600 font-mono">
-            Please provide updated and accurate address information of the Admin
-          </p>
-        </div>
-        <form className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-          <div className="px-4 py-6 sm:p-8">
-            <div className="max-w-2xl">
-              <div className="mb-4">
-                <label
-                  htmlFor="country"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Country
-                </label>
-                <input
-                  type="text"
-                  name="country"
-                  id="country"
-                  required
-                  value={addressFields.country}
-                  onChange={(e) =>
-                    setAddressFields({
-                      ...addressFields,
-                      country: e.target.value,
-                    })
-                  }
-                  className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="region"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Region
-                </label>
-                <input
-                  type="text"
-                  name="region"
-                  id="region"
-                  required
-                  value={addressFields.region}
-                  onChange={(e) =>
-                    setAddressFields({
-                      ...addressFields,
-                      region: e.target.value,
-                    })
-                  }
-                  className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="city"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  City
-                </label>
-                <input
-                  type="text"
-                  name="city"
-                  id="city"
-                  required
-                  value={addressFields.city}
-                  onChange={(e) =>
-                    setAddressFields({ ...addressFields, city: e.target.value })
-                  }
-                  className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="house-number"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  House Number
-                </label>
-                <input
-                  type="text"
-                  name="house-number"
-                  id="house-number"
-                  value={addressFields.house_number}
-                  onChange={(e) =>
-                    setAddressFields({
-                      ...addressFields,
-                      house_number: e.target.value,
-                    })
-                  }
-                  className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
-            {addressError && (
-              <p className="text-red-600 font-mono">{addressError}</p>
-            )}
-            <button
-              type="button"
-              className="text-sm font-semibold leading-6 text-gray-100 font-mono"
-              onClick={handleAddressClear}
-            >
-              Reset
-            </button>
-            <button
-              type="button"
-              className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 font-mono"
-              onClick={handleAddressSubmit}
-            >
-              Update
-            </button>
-          </div>
-        </form>
-      </div>
-
-      {/* Admin Place Of Birth Information Form Component */}
-      <div className="w-full md:w-1/4 mr-10">
-        <div className="px-4 sm:px-0">
-          <h2 className="text-base font-semibold leading-7 text-gray-900 font-mono">
-            Admin Place Of Birth Information
-          </h2>
-          <p className="mt-1 text-sm leading-6 text-gray-600 font-mono">
-            Please provide updated and accurate place of birth information of
-            the admin
-          </p>
-        </div>
-
-        <form className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-          <div className="px-4 py-6 sm:p-8">
-            <div className="max-w-2xl">
-              <div className="mb-4">
-                <label
-                  htmlFor="country"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Country
-                </label>
-                <input
-                  type="text"
-                  name="country"
-                  id="country"
-                  required
-                  value={placeOfBirthFields.country}
-                  onChange={(e) =>
-                    setPlaceOfBirthFields({
-                      ...placeOfBirthFields,
-                      country: e.target.value,
-                    })
-                  }
-                  className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="region"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Region
-                </label>
-                <input
-                  type="text"
-                  name="region"
-                  id="region"
-                  required
-                  value={placeOfBirthFields.region}
-                  onChange={(e) =>
-                    setPlaceOfBirthFields({
-                      ...placeOfBirthFields,
-                      region: e.target.value,
-                    })
-                  }
-                  className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="city"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  City
-                </label>
-                <input
-                  type="text"
-                  name="city"
-                  id="city"
-                  required
-                  value={placeOfBirthFields.city}
-                  onChange={(e) =>
-                    setPlaceOfBirthFields({
-                      ...placeOfBirthFields,
-                      city: e.target.value,
-                    })
-                  }
-                  className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="house-number"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  House Number
-                </label>
-                <input
-                  type="text"
-                  name="house-number"
-                  id="house-number"
-                  value={placeOfBirthFields.house_number}
-                  onChange={(e) =>
-                    setPlaceOfBirthFields({
-                      ...placeOfBirthFields,
-                      house_number: e.target.value,
-                    })
-                  }
-                  className="block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 font-medium font-mono"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
-            {placeOfBirthError && (
-              <p className="text-red-600 font-mono">{placeOfBirthError}</p>
-            )}
-            <button
-              type="button"
-              className="text-sm font-semibold leading-6 text-gray-100 font-mono"
-              onClick={handlePlaceOfBirthClear}
-            >
-              Reset
-            </button>
-            <button
-              type="button"
-              className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 font-mono"
-              onClick={handlePlaceOfBirthSubmit}
-            >
-              Update
-            </button>
-          </div>
-        </form>
-      </div>
-
-      {/* Admin Information Form Component */}
-      <div className="w-full md:w-2/5">
-        <div className="px-4 sm:px-0">
-          <h2 className="text-base font-semibold leading-7 text-gray-900 font-mono">
-            Admin Information
-          </h2>
-          <p className="mt-1 text-sm leading-6 text-gray-600 font-mono">
-            Please make sure every input is correct and accurately describes the
-            admin.
-          </p>
-        </div>
-        <form className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-          <div className="px-4 py-6 sm:p-8">
-            <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-8">
-              {Object.keys(adminFields).map((field, index) => (
-                <div key={index}>
-                  <label
-                    htmlFor={field}
-                    className="block text-sm font-medium leading-5 text-gray-900"
-                  >
-                    {field.charAt(0).toUpperCase() + field.slice(1)}
-                  </label>
-                  {field === "dateOfBirth" && (
-                    <input
-                      id={field}
-                      type="date"
-                      value={adminFields[field]}
-                      onChange={(e) =>
-                        setAdminFields({
-                          ...adminFields,
-                          [field]: e.target.value,
-                        })
-                      }
-                      className="mt-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-5 font-medium font-mono"
-                    />
-                  )}
-                  {field === "role" && (
-                    <select
-                      id={field}
-                      value={adminFields[field]}
-                      onChange={(e) =>
-                        setAdminFields({
-                          ...adminFields,
-                          [field]: e.target.value,
-                        })
-                      }
-                      className="mt-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-5 font-medium font-mono"
-                    >
-                      {roles.map((role) => (
-                        <option key={role.roleId} value={role.roleId}>
-                          {role.roleName}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                  {field === "institute" && (
-                    <select
-                      id={field}
-                      value={adminFields[field]}
-                      onChange={(e) =>
-                        setAdminFields({
-                          ...adminFields,
-                          [field]: e.target.value,
-                        })
-                      }
-                      className="mt-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-5 font-medium font-mono"
-                    >
-                      {institutions.map((institute) => (
-                        <option key={institute.id} value={institute.id}>
-                          {institute.name}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                  {field !== "dateOfBirth" &&
-                    field !== "role" &&
-                    field !== "institute" && (
+    <div className="relative flex items-center justify-center m-auto  w-[100%] h- ">
+      <div className="relative w-[70vw] h-[80vh] flex items-center justify-center top-[20%]  ">
+        {/* First Form */}
+        <div
+          className={`absolute  transition-all duration-1000 ease-in-out  flex items-center justify-center m-auto  ${
+            currentChild === 0
+              ? "transform translate-x-0 opacity-100 z-50 w-full"
+              : "transform translate-x-full opacity-0 hidden z-0"
+          }`}
+        >
+          {" "}
+          <div className=" ">
+            <form className="bg-white w-96 sm:w-full sm:p-6 shadow-sm  ring-gray-900/5 sm:rounded-xl font-serif border  ">
+              <h1 className="text-2xl font- text-center text-gray-800 font-serif mb-2">
+                Address Information
+              </h1>
+              <div className="px-4 py-6 sm:p-8 flex items-center justify-center">
+                <div className="grid max-w-2xl  gap-x-6 gap-y-8 ">
+                  <div className="sm:col-span-3 w-80 mt-2">
+                    <div className="">
+                      {" "}
+                      <label
+                        htmlFor="country"
+                        className="block mb-2 text-gray-600 text-start"
+                      >
+                        Country
+                      </label>
                       <input
-                        id={field}
-                        type={field === "password" ? "password" : "text"}
-                        value={adminFields[field]}
+                        type="text"
+                        name="country"
+                        id="country"
+                        required
+                        value={addressFields.country}
                         onChange={(e) =>
-                          setAdminFields({
-                            ...adminFields,
-                            [field]: e.target.value,
+                          setAddressFields({
+                            ...addressFields,
+                            country: e.target.value,
                           })
                         }
-                        className="mt-1 block w-full bg-white border-gray-500 rounded-md border-1 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-5 font-medium font-mono"
+                        className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
                       />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-3 w-80">
+                    <div className="mt-2">
+                      <label
+                        htmlFor="region"
+                        className="block mb-2 text-gray-600 text-start"
+                      >
+                        Region
+                      </label>
+                      <input
+                        type="text"
+                        name="region"
+                        id="region"
+                        required
+                        value={addressFields.region}
+                        onChange={(e) =>
+                          setAddressFields({
+                            ...addressFields,
+                            region: e.target.value,
+                          })
+                        }
+                        className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
+                      />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-6">
+                    <label
+                      htmlFor="city"
+                      className="block mb-2 text-gray-600 text-start"
+                    >
+                      City
+                    </label>
+                    <div className="mt-2">
+                      {" "}
+                      <input
+                        type="text"
+                        name="city"
+                        id="city"
+                        required
+                        value={addressFields.city}
+                        onChange={(e) =>
+                          setAddressFields({
+                            ...addressFields,
+                            city: e.target.value,
+                          })
+                        }
+                        className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
+                      />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-6">
+                    <label
+                      htmlFor="house-number"
+                      className="block mb-2 text-gray-600 text-start"
+                    >
+                      House Number
+                    </label>
+                    <input
+                      type="text"
+                      name="house-number"
+                      id="house-number"
+                      value={addressFields.house_number}
+                      onChange={(e) =>
+                        setAddressFields({
+                          ...addressFields,
+                          house_number: e.target.value,
+                        })
+                      }
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
+                    />
+                  </div>{" "}
+                  <div className="sm:col-span-6 ">
+                    {addressError && (
+                      <p className="text-red-600 font-mono">{addressError}</p>
                     )}
-                </div>
-              ))}
-            </div>
+                    <div className="flex space-x-4">
+                      {" "}
+                      <button
+                        type="button"
+                        className="text-sm font-semibold leading-6 text-gray-100 w-1/2 bg-red-500 py-2 rounded-md"
+                        onClick={handleAddressClear}
+                      >
+                        Reset
+                      </button>
+                      <button
+                        type="button"
+                        className="flex items-center justify-center w-1/2 rounded-md bg-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 font-serif"
+                        onClick={handleAddressSubmit}
+                      >
+                        Update
+                      </button>
+                    </div>
+                  </div>
+                </div>{" "}
+              </div>
+            </form>
           </div>
-          <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
-            {adminError && (
-              <p className="text-red-600 font-mono">{adminError}</p>
-            )}
+        </div>
 
-            <button
-              type="button"
-              className="text-sm font-semibold leading-6 text-gray-100 font-mono"
-              onClick={handleAdminClear}
-            >
-              Reset
-            </button>
-            <button
-              type="button"
-              className="font-mono rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              onClick={handleAdminSubmit}
-            >
-              Update
-            </button>
+        <div
+          className={`absolute  w-full   transition-all duration-1000 ease-in-out h-[90vh] flex items-center justify-center  ${
+            currentChild === 1
+              ? "transform translate-y-0 opacity-100 z-50"
+              : "transform translate-y-full opacity-0 z-0"
+          }`}
+        >
+          {/* Admin Place Of Birth Information Form Component */}
+          <div className="relative  ">
+            <form className="bg- shadow-sm w-[95%] xl:w-[100%] ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 m-auto">
+              <h1 className="text-2xl font- text-center text-gray-800 font-serif mb-2">
+                Admin Place Of Birth Information
+              </h1>
+              <div className="px-4 py-6 sm:p-8">
+                <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-8">
+                  <div>
+                    <label
+                      htmlFor="country"
+                      className="block mb-2 text-gray-600 text-start"
+                    >
+                      Country
+                    </label>
+                    <input
+                      type="text"
+                      name="country"
+                      id="country"
+                      required
+                      value={placeOfBirthFields.country}
+                      onChange={(e) =>
+                        setPlaceOfBirthFields({
+                          ...placeOfBirthFields,
+                          country: e.target.value,
+                        })
+                      }
+                      className="block w-96 bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label
+                      htmlFor="region"
+                      className="block mb-2 text-gray-600 text-start"
+                    >
+                      Region
+                    </label>
+                    <input
+                      type="text"
+                      name="region"
+                      id="region"
+                      required
+                      value={placeOfBirthFields.region}
+                      onChange={(e) =>
+                        setPlaceOfBirthFields({
+                          ...placeOfBirthFields,
+                          region: e.target.value,
+                        })
+                      }
+                      className="block w-96 bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label
+                      htmlFor="city"
+                      className="block mb-2 text-gray-600 text-start"
+                    >
+                      City
+                    </label>
+                    <input
+                      type="text"
+                      name="city"
+                      id="city"
+                      required
+                      value={placeOfBirthFields.city}
+                      onChange={(e) =>
+                        setPlaceOfBirthFields({
+                          ...placeOfBirthFields,
+                          city: e.target.value,
+                        })
+                      }
+                      className="block w-96 bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label
+                      htmlFor="house-number"
+                      className="block mb-2 text-gray-600 text-start"
+                    >
+                      House Number
+                    </label>
+                    <input
+                      type="text"
+                      name="house-number"
+                      id="house-number"
+                      value={placeOfBirthFields.house_number}
+                      onChange={(e) =>
+                        setPlaceOfBirthFields({
+                          ...placeOfBirthFields,
+                          house_number: e.target.value,
+                        })
+                      }
+                      className="block w-96 bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
+                {placeOfBirthError && (
+                  <p className="text-red-600 font-mono">{placeOfBirthError}</p>
+                )}
+                <div className="flex space-x-4">
+                  {" "}
+                  <button
+                    type="button"
+                    className="text-sm font-semibold leading-6 text-gray-100 w-1/2 bg-red-500 py-2 rounded-md"
+                    onClick={handlePlaceOfBirthClear}
+                  >
+                    Reset
+                  </button>
+                  <button
+                    type="button"
+                    className="flex items-center justify-center w-1/2 rounded-md bg-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 font-mono"
+                    onClick={handlePlaceOfBirthSubmit}
+                  >
+                    Update
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
+
+        {/* Admin Information Form Component */}
+        <div
+          className={` absolute  w-96 sm:w-full transition-all duration-1000 ease-in-out  ${
+            currentChild === 2
+              ? "transform translate-x-0 opacity-100 z-50"
+              : "transform translate-x-full opacity-0 z-0"
+          }`}
+        >
+          <div className="px- w">
+            <form className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 font-serif mx-auto">
+              <h1 className="text-2xl font- text-center text-gray-800 font-serif  w-auto mb-2">
+                Admin Information
+              </h1>
+              <div className="px- py- sm:p-8">
+                <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-8">
+                  {Object.keys(adminFields).map((field, index) => (
+                    <div key={index}>
+                      <label
+                        htmlFor={field}
+                        className="block mb-2 text-gray-600 text-start"
+                      >
+                        {field.charAt(0).toUpperCase() + field.slice(1)}
+                      </label>
+                      {field === "dateOfBirth" && (
+                        <input
+                          id={field}
+                          type="date"
+                          value={adminFields[field]}
+                          onChange={(e) =>
+                            setAdminFields({
+                              ...adminFields,
+                              [field]: e.target.value,
+                            })
+                          }
+                          className="block w- bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
+                        />
+                      )}
+                      {field === "role" && (
+                        <select
+                          id={field}
+                          value={adminFields[field]}
+                          onChange={(e) =>
+                            setAdminFields({
+                              ...adminFields,
+                              [field]: e.target.value,
+                            })
+                          }
+                          className="block w-96 bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
+                        >
+                          {roles.map((role) => (
+                            <option key={role.roleId} value={role.roleId}>
+                              {role.roleName}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                      {field === "institute" && (
+                        <select
+                          id={field}
+                          value={adminFields[field]}
+                          onChange={(e) =>
+                            setAdminFields({
+                              ...adminFields,
+                              [field]: e.target.value,
+                            })
+                          }
+                          className="block w-96 bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
+                        >
+                          {institutions.map((institute) => (
+                            <option key={institute.id} value={institute.id}>
+                              {institute.name}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                      {field !== "dateOfBirth" &&
+                        field !== "role" &&
+                        field !== "institute" && (
+                          <input
+                            id={field}
+                            type={field === "password" ? "password" : "text"}
+                            value={adminFields[field]}
+                            onChange={(e) =>
+                              setAdminFields({
+                                ...adminFields,
+                                [field]: e.target.value,
+                              })
+                            }
+                            className="block w-96 bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
+                          />
+                        )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
+                {adminError && (
+                  <p className="text-red-600 font-mono">{adminError}</p>
+                )}
+                <div className="flex space-x-4">
+                  {" "}
+                  <button
+                    type="button"
+                    className="text-sm font-semibold leading-6 text-gray-100 w-1/2 bg-red-500 py-2 rounded-md"
+                    onClick={handleAdminClear}
+                  >
+                    Reset
+                  </button>
+                  <button
+                    type="button"
+                    className="flex items-center justify-center w-1/2 rounded-md bg-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 font-mono"
+                    onClick={handleAdminSubmit}
+                  >
+                    Update
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
 
       <div>
