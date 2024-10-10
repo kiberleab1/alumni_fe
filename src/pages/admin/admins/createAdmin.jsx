@@ -268,8 +268,8 @@ export default function CreateAdminPage() {
           }`}
         >
           <div className="w-[100%] xl:w-[50%]">
-            <form className="bg-white sm:w-full sm:p-6 shadow-sm sm:rounded-xl font-serif border">
-              <h1 className="text-2xl text-center text-gray-800 font-serif mb-2">
+            <form className="bg-white sm:w-full py-3 sm:p-6 shadow-sm rounded-xl font-serif border">
+              <h1 className="text-2xl text-center text-gray-800 font-serif mt-2">
                 Address Information
               </h1>
               <div className="px-4 py-6 sm:p-8">
@@ -297,7 +297,7 @@ export default function CreateAdminPage() {
                       className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
-                  <div className="mb-4">
+                  <div className="mb-3">
                     <label
                       htmlFor="region"
                       className="block mb-2 text-gray-600 text-start"
@@ -322,7 +322,7 @@ export default function CreateAdminPage() {
                   </div>
                 </div>
 
-                <div className="w-full">
+                <div className="w-full mb-3">
                   <label
                     htmlFor="city"
                     className="block mb-2 text-gray-600 text-start"
@@ -346,7 +346,7 @@ export default function CreateAdminPage() {
                   />
                 </div>
 
-                <div className="w-full">
+                <div className="w-full mb-8">
                   <label
                     htmlFor="house-number"
                     className="block mb-2 text-gray-600 text-start"
@@ -405,9 +405,9 @@ export default function CreateAdminPage() {
           }`}
         >
           {/* <div className="bg-yellow-200 p-4 rounded-md">Second Child</div> */}
-          <div className="w-[90%] xl:w-[60%] bg-black ">
-            <form className="bg-white sm:w-full sm:p-6 shadow-sm sm:rounded-xl font-serif border">
-              <h1 className="text-2xl text-center text-gray-800 font-serif mb-2">
+          <div className="w-[90%] xl:w-[60%] ">
+            <form className="bg-white sm:w-full py-4 sm:p-6 shadow-sm rounded-xl font-serif border">
+              <h1 className="text-2xl text-center text-gray-800 font-serif mt-2">
                 Admin Place Of Birth Information
               </h1>
               <div className="px-4 py-6 sm:p-8">
@@ -535,8 +535,8 @@ export default function CreateAdminPage() {
               : "transform translate-x-full opacity-0 hidden z-0"
           }`}
         >
-          <div className="px-2  bg- w-[80%]">
-            <form className="bg-white  shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl font-serif mx-auto max-h-screen overflow-y-auto">
+          <div className="w-[100%] xl:w-[60%]  ">
+            <form className="bg-white border p-3 px-3 shadow-sm ring-1 ring-gray-900/5 rounded-xl font-serif mx-auto max-h-screen overflow-y-auto">
               <h1 className="text-2xl text-center text-gray-800 font-serif md:mb-4">
                 Admin Information
               </h1>
@@ -636,11 +636,13 @@ export default function CreateAdminPage() {
                   ))}
                 </div>
               </div>
-              <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
+              <div className="flex flex-col xl:flex-row items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
                 {adminError && (
-                  <p className="text-red-600 font-mono">{adminError}</p>
+                  <p className="text-red-600 font-mono line-clamp-1">
+                    {adminError}
+                  </p>
                 )}
-                <div className="flex space-x-4">
+                <div className="flex space-x-4 mt-2">
                   <button
                     type="button"
                     className="text-sm font-semibold leading-6 text-gray-100 w-1/2 bg-red-500 py-2 rounded-md"

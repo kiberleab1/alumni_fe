@@ -112,8 +112,8 @@ export default function CreateDepartment() {
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
       <div className=" flex items-center justify-center w-full min-h-screen ">
-        <div className="w-[100%] lg:w-[50%]">
-          <form className="bg-white sm:w-full sm:p-6 shadow-sm sm:rounded-xl font-serif border">
+        <div className="w-[100%] xl:w-[50%] p-2">
+          <form className="bg-white sm:w-full p-2 sm:p-6 shadow-sm sm:rounded-xl font-serif border">
             <h1 className="text-2xl text-center text-gray-800 font-serif mb-2">
               Department Information
             </h1>{" "}
@@ -336,11 +336,13 @@ export default function CreateDepartment() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
+            <div className="flex flex-col lg:flex-row  items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
               {departmentError && (
-                <p className="text-red-600 font-mono">{departmentError}</p>
+                <p className="text-red-600 font-mono w-full">
+                  {departmentError}
+                </p>
               )}
-              <div className="flex space-x-4">
+              <div className="flex space-x-4 mt-2">
                 {" "}
                 <button
                   type="button"

@@ -123,13 +123,13 @@ export default function EditDepartment({ department }) {
 
   return (
     <div className=" flex items-center justify-center w-full min-h-screen ">
-      <div className="w-[100%] lg:w-[50%]">
-        <form className="bg-white sm:w-full sm:p-6 shadow-sm sm:rounded-xl font-serif border">
+      <div className="w-[100%] xl:w-[50%] p-2">
+        <form className="bg-white sm:w-full p-2 sm:p-6 shadow-sm sm:rounded-xl font-serif border">
           <h1 className="text-2xl text-center text-gray-800 font-serif mb-2">
             Department Information
           </h1>
           <div className="px-4 py-6 sm:p-8">
-            <div className="grid grid-cols- gap-y- sm:grid-cols-2 sm:gap-x-6 sm:gap-y-8 mb-4">
+            <div className="grid grid-cols- gap-y-2 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-8 mb-4">
               <div>
                 <label
                   htmlFor="department-name"
@@ -348,7 +348,7 @@ export default function EditDepartment({ department }) {
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
+          <div className="flex flex-col lg:flex-row  items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
             {departmentError && (
               <p className="text-red-600 font-mono">{departmentError}</p>
             )}

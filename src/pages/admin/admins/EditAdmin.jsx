@@ -320,26 +320,25 @@ export default function EditAdmin({ admin }) {
   };
   const [currentChild, setCurrentChild] = useState(2);
   return (
-    <div className="relative flex items-center justify-center m-auto  w-[100%] h- ">
-      <div className="relative w-[70vw] h-[80vh] flex items-center justify-center top-[20%]  ">
+    <div className="relative flex items-center justify-center m-auto  w-[100%] min-h-screen ">
+      <div className="relative w-full xl:w-[70vw] h-full flex items-center justify-center    ">
         {/* First Form */}
         <div
-          className={`absolute  transition-all duration-1000 ease-in-out  flex items-center justify-center m-auto  ${
+          className={`relative transition-all  duration-1000 ease-in-out flex items-center justify-center m-auto ${
             currentChild === 0
-              ? "transform translate-x-0 opacity-100 z-50 w-full"
+              ? "transform translate-x-0 opacity-100 z-50  w-full"
               : "transform translate-x-full opacity-0 hidden z-0"
           }`}
         >
-          {" "}
-          <div className=" ">
-            <form className="bg-white w-96 sm:w-full sm:p-6 shadow-sm  ring-gray-900/5 sm:rounded-xl font-serif border  ">
-              <h1 className="text-2xl font- text-center text-gray-800 font-serif mb-2">
+          <div className="w-[100%] 2xl:w-[60%]">
+            <form className="bg-white  p-4 px-3 sm:w-full  sm:p-6 shadow-sm rounded-xl font-serif border">
+              <h1 className="text-2xl text-center text-gray-800 font-serif mb-2">
                 Address Information
               </h1>
               <div className="px-4 py-6 sm:p-8 flex items-center justify-center">
-                <div className="grid max-w-2xl  gap-x-6 gap-y-8 ">
-                  <div className="sm:col-span-3 w-80 mt-2">
-                    <div className="">
+                <div className="grid max-w-2xl  gap-x-6 gap-y-2 xl:gap-y-2 ">
+                  <div className="sm:col-span-3 w-80 mb-2">
+                    <div className="mt-2">
                       {" "}
                       <label
                         htmlFor="country"
@@ -359,11 +358,11 @@ export default function EditAdmin({ admin }) {
                             country: e.target.value,
                           })
                         }
-                        className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
+                        className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 "
                       />
                     </div>
                   </div>
-                  <div className="sm:col-span-3 w-80">
+                  <div className="sm:col-span-3 w-80 mb-2">
                     <div className="mt-2">
                       <label
                         htmlFor="region"
@@ -387,7 +386,7 @@ export default function EditAdmin({ admin }) {
                       />
                     </div>
                   </div>
-                  <div className="sm:col-span-6">
+                  <div className="sm:col-span-6 mb-2">
                     <label
                       htmlFor="city"
                       className="block mb-2 text-gray-600 text-start"
@@ -412,7 +411,7 @@ export default function EditAdmin({ admin }) {
                       />
                     </div>
                   </div>
-                  <div className="sm:col-span-6">
+                  <div className="sm:col-span-6 mb-2">
                     <label
                       htmlFor="house-number"
                       className="block mb-2 text-gray-600 text-start"
@@ -437,7 +436,7 @@ export default function EditAdmin({ admin }) {
                     {addressError && (
                       <p className="text-red-600 font-mono">{addressError}</p>
                     )}
-                    <div className="flex space-x-4">
+                    <div className="flex space-x-4 mt-2">
                       {" "}
                       <button
                         type="button"
@@ -462,21 +461,21 @@ export default function EditAdmin({ admin }) {
         </div>
 
         <div
-          className={`absolute  w-full   transition-all duration-1000 ease-in-out h-[90vh] flex items-center justify-center  ${
+          className={`relative  w-full   transition-all duration-1000 ease-in-out h-[90vh] flex items-center justify-center  ${
             currentChild === 1
               ? "transform translate-y-0 opacity-100 z-50"
-              : "transform translate-y-full opacity-0 z-0"
+              : "transform translate-y-full hidden opacity-0 z-0"
           }`}
         >
           {/* Admin Place Of Birth Information Form Component */}
-          <div className="relative  ">
-            <form className="bg- shadow-sm w-[95%] xl:w-[100%] ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 m-auto">
-              <h1 className="text-2xl font- text-center text-gray-800 font-serif mb-2">
+          <div className="w-[100%] xl:w-[60%] ">
+            <form className="bg-white sm:w-full sm:p-6 shadow-sm rounded-xl font-serif border">
+              <h1 className="text-2xl mt-4 text-center text-gray-800 font-serif mb-2">
                 Admin Place Of Birth Information
               </h1>
-              <div className="px-4 py-6 sm:p-8">
-                <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-8">
-                  <div>
+              <div className="px-4 xl:py-6 p-4 sm:p-8">
+                <div className="grid grid-cols-1  xl:gap-y-6 gap-y-2 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-8">
+                  <div className="mb-2">
                     <label
                       htmlFor="country"
                       className="block mb-2 text-gray-600 text-start"
@@ -495,10 +494,10 @@ export default function EditAdmin({ admin }) {
                           country: e.target.value,
                         })
                       }
-                      className="block w-96 bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
                     />
                   </div>
-                  <div className="mb-4">
+                  <div className="mb-2">
                     <label
                       htmlFor="region"
                       className="block mb-2 text-gray-600 text-start"
@@ -517,10 +516,10 @@ export default function EditAdmin({ admin }) {
                           region: e.target.value,
                         })
                       }
-                      className="block w-96 bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
                     />
                   </div>
-                  <div className="mb-4">
+                  <div className="mb-2">
                     <label
                       htmlFor="city"
                       className="block mb-2 text-gray-600 text-start"
@@ -539,7 +538,7 @@ export default function EditAdmin({ admin }) {
                           city: e.target.value,
                         })
                       }
-                      className="block w-96 bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
                     />
                   </div>
                   <div className="mb-4">
@@ -560,12 +559,12 @@ export default function EditAdmin({ admin }) {
                           house_number: e.target.value,
                         })
                       }
-                      className="block w-96 bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
+                      className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
                     />
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
+              <div className="flex flex-col lg:flex-row items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
                 {placeOfBirthError && (
                   <p className="text-red-600 font-mono">{placeOfBirthError}</p>
                 )}
@@ -593,19 +592,19 @@ export default function EditAdmin({ admin }) {
 
         {/* Admin Information Form Component */}
         <div
-          className={` absolute  w-96 sm:w-full transition-all duration-1000 ease-in-out  ${
+          className={`absolute flex items-center justify-center m-auto w-96 sm:w-full transition-all duration-1000 ease-in-out${
             currentChild === 2
               ? "transform translate-x-0 opacity-100 z-50"
-              : "transform translate-x-full opacity-0 z-0"
+              : "transform translate-x-full opacity-0 hidden z-0"
           }`}
         >
-          <div className="px- w">
-            <form className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 font-serif mx-auto">
-              <h1 className="text-2xl font- text-center text-gray-800 font-serif  w-auto mb-2">
+          <div className="w-[90%] xl:w-[60%]  ">
+            <form className="bg-white border py-4 px-2 lg:px-4 shadow-sm ring-1 ring-gray-900/5 rounded-xl font-serif mx-auto ">
+              <h1 className="text-2xl text-center text-gray-800 font-serif md:mb-4 mt-3">
                 Admin Information
               </h1>
-              <div className="px- py- sm:p-8">
-                <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-8">
+              <div className="px-4 md:py-6 sm:px-8">
+                <div className="grid grid-cols-1 md:gap-y-6 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-8">
                   {Object.keys(adminFields).map((field, index) => (
                     <div key={index}>
                       <label
@@ -625,7 +624,7 @@ export default function EditAdmin({ admin }) {
                               [field]: e.target.value,
                             })
                           }
-                          className="block w- bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
+                          className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
                         />
                       )}
                       {field === "role" && (
@@ -638,7 +637,7 @@ export default function EditAdmin({ admin }) {
                               [field]: e.target.value,
                             })
                           }
-                          className="block w-96 bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
+                          className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
                         >
                           {roles.map((role) => (
                             <option key={role.roleId} value={role.roleId}>
@@ -657,7 +656,7 @@ export default function EditAdmin({ admin }) {
                               [field]: e.target.value,
                             })
                           }
-                          className="block w-96 bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
+                          className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
                         >
                           {institutions.map((institute) => (
                             <option key={institute.id} value={institute.id}>
@@ -679,18 +678,20 @@ export default function EditAdmin({ admin }) {
                                 [field]: e.target.value,
                               })
                             }
-                            className="block w-96 bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  "
+                            className="block w-full bg-white border-gray-500 focus:outline-none rounded-md focus:border-blue-500 border-1 px-4 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
                           />
                         )}
                     </div>
                   ))}
                 </div>
               </div>
-              <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
+              <div className="flex flex-col lg:flex-row  items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
                 {adminError && (
-                  <p className="text-red-600 font-mono">{adminError}</p>
+                  <p className="text-red-600 font-mono line-clamp-2">
+                    {adminError}
+                  </p>
                 )}
-                <div className="flex space-x-4">
+                <div className="flex space-x-4 mt-3">
                   {" "}
                   <button
                     type="button"
