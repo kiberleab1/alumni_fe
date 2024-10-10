@@ -128,7 +128,7 @@ export default function EditDepartment({ department }) {
           <h1 className="text-2xl text-center text-gray-800 font-serif mb-2">
             Department Information
           </h1>
-          <div className="px-4 py-6 sm:p-8">
+          <div className="px-6 xl:px-10 py-6 sm:p-8">
             <div className="grid grid-cols- gap-y-2 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-8 mb-4">
               <div>
                 <label
