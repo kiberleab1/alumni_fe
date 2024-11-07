@@ -45,20 +45,20 @@ export default function Modal({
                   <p className="text-sm text-gray-500">{message}</p>
                 </div>
 
-                <div className="mt-4 flex justify-end">
-                  <button
-                    type="button"
-                    className="inline-flex justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
-                    onClick={confirmAction}
-                  >
-                    Confirm
-                  </button>
+                <div className="mt-4 flex justify-end gap-2">
                   <button
                     type="button"
                     className="ml-2 inline-flex justify-center rounded-md border border-transparent bg-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
                     onClick={closeModal}
                   >
                     Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="inline-flex justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                    onClick={confirmAction}
+                  >
+                    Confirm
                   </button>
                 </div>
               </Dialog.Panel>

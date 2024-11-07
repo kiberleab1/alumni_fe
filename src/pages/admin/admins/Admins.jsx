@@ -39,7 +39,11 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
       const admin_role_id = roleData.data?.id;
       setAdminRoleId(admin_role_id);
 
-      const instituteAdminsData = await getAllInstituteAdmins({pageNumber: currentPage, pageSize: itemsPerPage, value: admin_role_id});
+      const instituteAdminsData = await getAllInstituteAdmins({
+        pageNumber: currentPage,
+        pageSize: itemsPerPage,
+        value: admin_role_id,
+      });
       const admins = instituteAdminsData.data.users.map((user) => ({
         ...user,
       }));
@@ -89,8 +93,13 @@ export default function AdminsPage({ onAddAdminClick, onAdminEditClick }) {
   };
 
   const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
-  const indexOfLastItem = Math.min(currentPage * itemsPerPage, data?.instituteAdminsData.data.total_items);
-  const totalPages = Math.ceil(data?.instituteAdminsData.data.total_items / itemsPerPage);
+  const indexOfLastItem = Math.min(
+    currentPage * itemsPerPage,
+    data?.instituteAdminsData.data.total_items
+  );
+  const totalPages = Math.ceil(
+    data?.instituteAdminsData.data.total_items / itemsPerPage
+  );
 
   const paginate = (pageNumber) => {
     if (pageNumber < 1 || pageNumber > totalPages) return;

@@ -37,10 +37,7 @@ const Pagination = ({
         <div className="hidden xl:flex sm:flex-1 sm:items-center sm:justify-start">
           <p className="text-lg font-sans text-gray-700">
             Showing{" "}
-            <span className="text-lg text-teal-600">
-              {indexOfFirstItem}
-            </span>{" "}
-            to{" "}
+            <span className="text-lg text-teal-600">{indexOfFirstItem}</span> to{" "}
             <span className="text-lg text-teal-600">
               {Math.min(indexOfLastItem, dataLength)}
             </span>{" "}

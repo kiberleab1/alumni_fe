@@ -26,9 +26,15 @@ export default function InstitutionsPage({
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { isError, data, isLoading, refetch } = useQuery(["getInstitutions", currentPage], async () => {
-    return await getInstitutes({ pageNumber: currentPage, pageSize: itemsPerPage });
-  });
+  const { isError, data, isLoading, refetch } = useQuery(
+    ["getInstitutions", currentPage],
+    async () => {
+      return await getInstitutes({
+        pageNumber: currentPage,
+        pageSize: itemsPerPage,
+      });
+    }
+  );
 
   return (
     <QueryResult isLoading={isLoading} isError={isError} data={data}>
@@ -65,7 +71,6 @@ function ListInstitutions({
   const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalItems);
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   let currentItems = institutes.slice(indexOfFirstItem, indexOfLastItem);
-
 
   // Change page
   const paginate = (pageNumber) => {
@@ -107,10 +112,9 @@ function ListInstitutions({
     }
   };
 
-
   institutes = parseContactInfo(institutes);
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col pb-4">
       <IconHeaderWithButton
         title="Institutions"
         Icon={BiSolidInstitution}
@@ -281,4 +285,3 @@ function ListInstitutions({
     </div>
   );
 }
-
