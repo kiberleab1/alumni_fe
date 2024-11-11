@@ -134,7 +134,7 @@ export default function ChatUi({ userId }) {
 
     ws.current.onopen = () => {
       console.log("Connected to WebSocket server");
-      ws.current.send(JSON.stringify({ type: "register", user_id: userId }));
+      ws.current.send(JSON.stringify({ type: "register", user_id: userToken?.user?.id }));
     };
 
     ws.current.onmessage = (event) => {
@@ -186,8 +186,40 @@ export default function ChatUi({ userId }) {
 
       try {
         const response = await sendFiles(formData);
+        console.log(response)
         if (response) {
           const result = await response?.data;
+
+          if (result?.url_list.length > 0) {
+            for (let i = 0; i < result?.url_list.length; i++) {
+              const messageData = {
+                from_user_id: userToken?.user?.id,
+                to_user_id: to_user_id,
+                message: result?.url_list[i],
+                createdAt: new Date().toLocaleTimeString(),
+              };
+
+              ws.current.send(JSON.stringify(messageData));
+              setChatHistory((prevHistory) => ({
+                ...prevHistory,
+                [to_user_id]: [
+                  ...(prevHistory[to_user_id] || []),
+                  {
+                    message: result?.url_list[i],
+                    isReceived: false,
+                    time:
+                      new Date().toLocaleDateString() +
+                      " " +
+                      new Date().toLocaleTimeString(),
+                  },
+                ],
+              }));
+            }
+
+            setMessage("");
+            setSelectedFiles([]);
+            success = true;
+          }
           setSelectedFiles([]);
           success = true;
         }
@@ -359,9 +391,8 @@ export default function ChatUi({ userId }) {
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
       <div className="flex h-[95vh] w-[] ">
         <div
-          className={`w-[100%] md:w-1/3  md:p-4 md:border-r overflow-y-scroll no-scrollbar ${
-            selectedChat?.user.name ? "hidden md:block" : "block"
-          }`}
+          className={`w-[100%] md:w-1/3  md:p-4 md:border-r overflow-y-scroll no-scrollbar ${selectedChat?.user.name ? "hidden md:block" : "block"
+            }`}
         >
           <h2 className="text-xl font-medium mb-4 border-b-2">Connections</h2>
           {connectionList.length < 1 ? (
@@ -382,11 +413,10 @@ export default function ChatUi({ userId }) {
                   setChatSelected(connectionList[name].user?.name);
                   setMessage("");
                 }}
-                className={`p-3 mb-2 rounded-lg cursor-pointer hover:bg-gray-200 ${
-                  selectedChat?.user.name === connectionList[name].user?.name
+                className={`p-3 mb-2 rounded-lg cursor-pointer hover:bg-gray-200 ${selectedChat?.user.name === connectionList[name].user?.name
                     ? "bg-gray-300"
                     : "bg-gray-100"
-                }`}
+                  }`}
               >
                 <div className="flex flex-row items-center gap-2">
                   <img
@@ -402,10 +432,10 @@ export default function ChatUi({ userId }) {
                     </h3>
                     <p className="text-gray-500 text-start line-clamp-1 text-[.8rem]">
                       {connectionList[name].messages &&
-                      connectionList[name].messages.length > 0
+                        connectionList[name].messages.length > 0
                         ? connectionList[name].messages[
-                            connectionList[name].messages.length - 1
-                          ]?.message
+                          connectionList[name].messages.length - 1
+                        ]?.message
                         : "No messages"}
                     </p>
                   </div>
@@ -425,9 +455,8 @@ export default function ChatUi({ userId }) {
         </div>
 
         <div
-          className={`w-full md:w-2/3  md:p-4 flex flex-col justify-between ${
-            selectedChat?.user.name ? "block" : "hidden md:block"
-          }`}
+          className={`w-full md:w-2/3  md:p-4 flex flex-col justify-between ${selectedChat?.user.name ? "block" : "hidden md:block"
+            }`}
         >
           {selectedChat?.user?.name ? (
             <>
@@ -472,14 +501,12 @@ export default function ChatUi({ userId }) {
                       return (
                         <div
                           key={index}
-                          className={`p- flex ${
-                            msg.isReceived ? "justify-start" : "justify-end"
-                          } w-full`}
+                          className={`p- flex ${msg.isReceived ? "justify-start" : "justify-end"
+                            } w-full`}
                         >
                           <div
-                            className={`inline-block max-w-[90%] lg:max-w-[70%] ${
-                              isLongMessage ? "block w-full" : ""
-                            } rounded-lg p-2 relative`}
+                            className={`inline-block max-w-[90%] lg:max-w-[70%] ${isLongMessage ? "block w-full" : ""
+                              } rounded-lg p-2 relative`}
                           >
                             {/* <div className={`${msg.isReceived ? "text-left" : "text-right"} mb-2`}>
                             <div className="inline-block relative group">
@@ -497,7 +524,7 @@ export default function ChatUi({ userId }) {
                           </div> */}
 
                             {msg.message &&
-                            msg.message.startsWith("uploads/") ? (
+                              msg.message.startsWith("uploads/") ? (
                               <>
                                 {[
                                   ".jpg",
@@ -586,11 +613,10 @@ export default function ChatUi({ userId }) {
                               </>
                             ) : (
                               <p
-                                className={` flex flex-col-reverse px-3 py-2 ${
-                                  msg.isReceived
+                                className={` flex flex-col-reverse px-3 py-2 ${msg.isReceived
                                     ? "bg-gray-100 text-gray-900 text-[16px]  rounded-r-lg rounded-tl-2xl  font-serif "
                                     : "bg-gray-300 text-gray-900 text-[16px] text-left  rounded-l-2xl rounded-tr-2xl"
-                                }`}
+                                  }`}
                                 style={{
                                   textAlign: msg.isReceived ? "left" : "left",
                                   alignSelf: msg.isReceived
