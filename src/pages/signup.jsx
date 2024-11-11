@@ -28,6 +28,7 @@ export default function SignupPage() {
     </>
   );
 }
+import "react-datepicker/dist/react-datepicker.css";
 
 const SignupForm = () => {
   const navigate = useNavigate();
@@ -135,19 +136,19 @@ const SignupForm = () => {
     },
   };
   const addressFormFields = {
-    country: {
+    addresscountry: {
       label: "Country",
       placeholder: "Country",
     },
-    region: {
+    addressregion: {
       label: "Region",
       placeholder: "Region",
     },
-    city: {
+    addresscity: {
       label: "City",
       placeholder: "City",
     },
-    house_number: {
+    addresshouse_number: {
       label: "House Number",
       placeholder: "House Number",
     },
@@ -167,7 +168,18 @@ const SignupForm = () => {
     ),
     onSubmit: async (values) => {
       console.log("Form values address:", values);
-      const result = await createAddress(values);
+      const keyMapping = {
+        addresscity: "city",
+        addresscountry: "country",
+        addresshouse_number: "house_number",
+        addressregion: "region",
+      };
+      const renamedAddress = Object.keys(values).reduce((acc, key) => {
+        const newKey = keyMapping[key] || key;
+        acc[newKey] = values[key];
+        return acc;
+      }, {});
+      const result = await createAddress(renamedAddress);
       if (result.data) {
         setAddressData(result.data.id);
       }
@@ -230,12 +242,13 @@ const SignupForm = () => {
   });
   const calculateProgress = () => {
     const totalFields = 16;
-
     const mergedObj = {
       ...addressFormValueAndImplmentation.values,
       ...birthFormValueAndImplmentation.values,
       ...userInFoValueAndImplmentation.values,
     };
+    console.log(mergedObj);
+
     const filledFields = Object.values(mergedObj).filter(
       (value) => value !== ""
     ).length;
@@ -256,23 +269,23 @@ const SignupForm = () => {
     }
   };
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-black">
       <div className="flex items-center justify-center min-h-screen">
-        <div className="p-4 xl:p-14 max-w-2xl  my-auto border border-sky-500 transition-all duration-700">
-          <div className="sticky top-2 mt-2 z-0 w-90 bg-gray-200 rounded-full h-2.5 mb-4 overflow-hidden">
+        <div className="px-4 py-5 xl:p-14 max-w-2xl  my-auto border border-gray-800 transition-all duration-700 rounded-xl bg-gray-800">
+          <div className="sticky top-2 mt-2 z-0 w-90 bg-gray-400 rounded-full h-2.5 mb-4 overflow-hidden">
             <div
               className="bg-green-900 h-2.5 z-0 rounded-full transition-all duration-700 "
               style={{ width: `${calculateProgress()}%` }}
             ></div>
           </div>
           {stepOne && (
-            <div className="transition-all duration-700">
+            <div className="transition-all duration-700 ">
               <div>
-                <h1 className="text-xl text-left font-bold">
+                <h1 className="text-xl text-left font-bold text-gray-400">
                   Address Information
                 </h1>
                 <div className="flex items-center justify-between mb-4 ">
-                  <p className="mt-1 text-sm leading-6 text-gray-600 font-mono text-left">
+                  <p className="mt-1 text-sm leading-6 text-gray-500 font-mono text-left">
                     Please provide updated and accurate information
                   </p>
                   <span className="ml-7 text-sm font-semibold text-gray-800">
@@ -294,7 +307,7 @@ const SignupForm = () => {
                       >
                         <label
                           htmlFor={field}
-                          className="block text-left text-black mb-2 font-medium"
+                          className="block text-left text-gray-400 mb-2 font-medium"
                         >
                           {addressFormFields[field].label}
                         </label>
@@ -306,7 +319,7 @@ const SignupForm = () => {
                             field
                           )}
                           placeholder={addressFormFields[field].placeholder}
-                          className="form-input w-full px-3 py-2 placeholder-gray-400 text-black border rounded bg-white"
+                          className="form-input w-full px-3 py-2 placeholder-gray-800 text-black  rounded bg-gray-600 focus:border focus:border-e-white"
                         />
                         {addressFormValueAndImplmentation.touched[field] &&
                         addressFormValueAndImplmentation.errors[field] ? (
@@ -329,7 +342,7 @@ const SignupForm = () => {
                     </button>
                     <button
                       type="submit"
-                      className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-gray-800 hover:bg-gray-600 active:bg-green-400 "
+                      className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-gray-950 hover:bg-gray-600 active:bg-green-400 "
                     >
                       <span className=" ">Next</span>
                       <span className="hidden absolute ml-9 group-hover:inline pl-2">
@@ -350,17 +363,17 @@ const SignupForm = () => {
                     className="mr-2 text-5xl text-green-800 transition ease-in-out delay-150 transform hover:-translate-y-1 hover:scale-110 hover:bg-green-900 hover:text-white duration-300 p-1 rounded"
                   />
 
-                  <h1 className="text-xl font-bold">
+                  <h1 className="text-xl font-bold text-gray-400">
                     User Place Of Birth Information
                   </h1>
                 </div>
 
                 <div className="flex items-center justify-between mb-4">
-                  <p className="mt-1 text-sm leading-6 text-gray-600 font-mono text-left">
+                  <p className="mt-1 text-sm leading-6 text-gray-500 font-mono text-left">
                     Please provide updated and accurate information
                   </p>
 
-                  <span className="ml-7 text-sm font-semibold text-gray-800">
+                  <span className="ml-7 text-sm font-semibold text-gray-500">
                     Step 2/3
                   </span>
                 </div>
@@ -379,7 +392,7 @@ const SignupForm = () => {
                       >
                         <label
                           htmlFor={field}
-                          className="block text-left text-black mb-2 font-medium"
+                          className="block text-left text-gray-400 mb-2 font-medium"
                         >
                           {birthFormFields[field].label}
                         </label>
@@ -391,7 +404,7 @@ const SignupForm = () => {
                             field
                           )}
                           placeholder={birthFormFields[field].placeholder}
-                          className="form-input w-full px-3 py-2 placeholder-gray-400 text-black border rounded bg-white"
+                          className="form-input w-full px-3 py-2 placeholder-gray-800 text-black  rounded bg-gray-600 focus:border focus:border-e-white"
                         />
                         {birthFormValueAndImplmentation.touched[field] &&
                         birthFormValueAndImplmentation.errors[field] ? (
@@ -412,7 +425,7 @@ const SignupForm = () => {
                     </button>
                     <button
                       type="submit"
-                      className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-gray-800 hover:bg-gray-600 active:bg-green-400 "
+                      className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-gray-950 hover:bg-gray-600 active:bg-green-400 "
                     >
                       <span className=" ">Next</span>
                       <span className="hidden absolute ml-9 group-hover:inline pl-2">
@@ -434,11 +447,13 @@ const SignupForm = () => {
                       className="mr-2 text-5xl text-green-800 transition ease-in-out delay-150 transform hover:-translate-y-1 hover:scale-110 hover:bg-green-900 hover:text-white duration-300 p-1 rounded"
                     />
 
-                    <h1 className="text-xl font-bold">User Information</h1>
+                    <h1 className="text-xl font-bold text-gray-400">
+                      User Information
+                    </h1>
                   </div>
 
                   <div className="flex items-center justify-between mb-4">
-                    <p className="mt-1 text-sm leading-6 text-gray-600 font-mono text-left">
+                    <p className="mt-1 text-sm leading-6 text-gray-500 font-mono text-left">
                       Please provide updated and accurate information
                     </p>
 
@@ -450,24 +465,24 @@ const SignupForm = () => {
                     onSubmit={userInFoValueAndImplmentation.handleSubmit}
                     className="space-y-4"
                   >
-                    <div className="flex flex-wrap -mx-2">
+                    <div className="flex flex-wrap -mx-2 ">
                       {Object.keys(userInformationFields).map(
                         (field, index) => (
                           <div
                             key={field}
                             className={
-                              index < 3
-                                ? "w-1/3  space-x-2"
-                                : "w-full" && index == 3
-                                ? "w-1/2  space-x-2"
-                                : "w-full" && index == 4
-                                ? "w-1/2  space-x-2"
-                                : "w-full"
+                              index < 2
+                                ? "w-full md:w-1/2 space-x-2  pr-1"
+                                : index === 3
+                                ? "w-1/2 space-x-2 pr-1"
+                                : index === 4
+                                ? "w-1/2 space-x-2 px-1"
+                                : "w-full px-1"
                             }
                           >
                             <label
                               htmlFor={field}
-                              className="block text-left text-black mb-2 font-medium "
+                              className="block text-left text-gray-400 mb-2 font-medium "
                             >
                               {userInformationFields[field].label}
                             </label>
@@ -478,7 +493,7 @@ const SignupForm = () => {
                                 {...userInFoValueAndImplmentation.getFieldProps(
                                   field
                                 )}
-                                className="form-select w-full px-2 py-2 placeholder-gray-400 text-black border rounded bg-white"
+                                className="form-select w-full px-2 py-2 placeholder-gray-800 text-black  rounded bg-gray-600 focus:border focus:border-e-white"
                               >
                                 <option value="" label="Select Gender" />
                                 {userInformationFields[field].options.map(
@@ -516,7 +531,7 @@ const SignupForm = () => {
                                     date
                                   )
                                 }
-                                className="form-input w-full px-5 py-2 pl-7 placeholder-gray-400 text-black border rounded bg-white justify:center item-center "
+                                className="form-input w-full px-5 py-2 pl-7 placeholder-gray-800 text-black border rounded bg-gray-800 justify:center item-center "
                                 placeholderText={
                                   userInformationFields[field].placeholder
                                 }
@@ -538,7 +553,7 @@ const SignupForm = () => {
                                 placeholder={
                                   userInformationFields[field].placeholder
                                 }
-                                className="form-input w-full px-3 py-2 placeholder-gray-400 text-black border rounded bg-white"
+                                className="form-input w-full px-3 py-2 placeholder-gray-800 rounded bg-gray-600 text-black focus:border focus:border-e-white"
                               />
                             )}
                             {userInFoValueAndImplmentation.touched[field] &&
@@ -554,7 +569,7 @@ const SignupForm = () => {
                     <div className="flex justify-between w-full">
                       <button
                         type="button"
-                        className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-red-900 hover:bg-red-700 active:bg-red-400 text-white py-2 px-4 rounded"
+                        className="relative group inline-flex  items-center  transition duration-300 ease-in-out  bg-red-900 hover:bg-red-700 active:bg-red-400 text-white py-2 px-4 rounded"
                         onClick={() =>
                           userInFoValueAndImplmentation.resetForm()
                         }
@@ -563,7 +578,7 @@ const SignupForm = () => {
                       </button>
                       <button
                         type="submit"
-                        className="ml-auto text-white rounded transition duration-300 ease-in-out  bg-gray-800 hover:bg-gray-600 active:bg-green-400"
+                        className="ml-auto text-white rounded transition duration-300 ease-in-out  bg-gray-950 hover:bg-gray-600 active:bg-green-400"
                       >
                         Sumbit
                       </button>
