@@ -96,13 +96,15 @@ const LoginForm = () => {
     setPasswordVisible((prevState) => !prevState);
   };
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black">
+    <div className="min-h-screen flex items-center justify-center bg-gray-300">
       <div className=" border-sky-500  transition-all  duration-700">
-        <div className="transition-all duration-700  flex flex-col justify-center items-center">
-          <div className=" bg-gray-800 md:w-2/3 rounded-xl px-4 m-2 ">
-            <div className="text-2xl flex  text-center items-center justify-center font-bold m-auto">
-              {" "}
-              <MdOutlinePeople className="text-8xl" />{" "}
+        <div className="transition-all duration-700  flex flex-col justify-center items-center bg-gray-400 rounded-xl mx-2">
+          <div className=" md:w-2/3 rounded-xl px-4  ">
+            <div className="text-2xl flex  text-center items-end justify-center font-bold m-auto">
+              <MdOutlinePeople className="text-8xl text-gray-500" />
+              <h2 className="mb-3 font-serif text-3xl text-gray-500">
+                Welcome back
+              </h2>
             </div>
             <div className="flex items-center justify-between mb- "></div>
 
@@ -112,10 +114,10 @@ const LoginForm = () => {
             >
               <div className="flex flex-wrap -mx-2 gap-1 ">
                 {Object.keys(loginFormFields).map((field) => (
-                  <div key={field} className="w-full  ">
+                  <div key={field} className="w-full">
                     <label
                       htmlFor={field}
-                      className="block text-left text-white mb-2 font-medium"
+                      className="block text-left text-white mb-1 font-medium font-serif"
                     >
                       {loginFormFields[field].label}
                     </label>
@@ -149,7 +151,7 @@ const LoginForm = () => {
                             ? "Password"
                             : loginFormFields[field].placeholder
                         }
-                        className="form-input w-full pl-12 pr-14 py-2 placeholder-gray-100 text-black border rounded bg-gray-600"
+                        className="form-input w-full pl-12 pr-14 py-2 placeholder-gray-200 text-black  border rounded bg-gray-400 focus:border focus:bg-gray-500"
                       />
 
                       {field === "password" && (
@@ -168,22 +170,22 @@ const LoginForm = () => {
 
                     {loginFormValueAndImplmentation.touched[field] &&
                     loginFormValueAndImplmentation.errors[field] ? (
-                      <div className="text-red-500 text-sm">
+                      <div className="text-red-500 text-sm flex items-end justify-end">
                         {loginFormValueAndImplmentation.errors[field]}
                       </div>
                     ) : null}
                   </div>
                 ))}
               </div>
-              <div className="block  overflow-hidden space-x-4 0 ">
+              <div className="block  overflow-hidden 0 pt-4 ">
                 <button
                   type="submit"
-                  className="transition duration-300 ease-in-out hover:scale-95 bg-gray-600 hover:bg-gray-600 text-white py-2 rounded w-full active:bg-gray-300 p-2"
+                  className="transition duration-300 ease-in-out hover:scale-95 bg-green-700 hover:bg-gray-600 text-white py-2 rounded w-full active:bg-gray-300 "
                 >
                   Login
                 </button>
 
-                <div className="mt-2 text-sm leading-6 text-gray-600 w-[80%] font-mono text-left flex items-center justify-center">
+                <div className="mt-3 text-sm leading-6 text-gray-600 w-[95%] font-mono text-left flex items-center justify-start">
                   <p className="ml-2">
                     <a href="/landing/program/register" className="pr-2">
                       Register
