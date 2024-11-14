@@ -29,9 +29,9 @@ import QueryResult from "src/components/utils/queryResults";
 import { getUserToken } from "src/helpers/globalStorage";
 import { BiDotsHorizontalRounded, BiDotsVerticalRounded } from "react-icons/bi";
 
-export default function ChatUi({ userId }) {
+export default function ChatUi({ chat }) {
   const [isOptionOpen, setOptionOpen] = useState(false);
-  const [selectedChat, setSelectedChat] = useState(null);
+  const [selectedChat, setSelectedChat] = useState(chat);
   const [chatSelected, setChatSelected] = useState("");
   const [chatHistory, setChatHistory] = useState({});
   const [message, setMessage] = useState("");
@@ -165,7 +165,7 @@ export default function ChatUi({ userId }) {
     return () => {
       ws.current.close();
     };
-  }, [userId]);
+  }, [chat?.user_id]);
 
   useEffect(() => {
     if (messagesEndRef.current) {

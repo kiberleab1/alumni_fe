@@ -15,7 +15,7 @@ import { TiMessages } from "react-icons/ti";
 import { FcAcceptDatabase } from "react-icons/fc";
 import { BiStopCircle } from "react-icons/bi";
 import { UserIcon } from "@heroicons/react/24/outline";
-export default function ConnectionNetwork() {
+export default function ConnectionNetwork({ onSelectChatClick }) {
   const [activeTab, setActiveTab] = useState("connections");
   const [currentPage, setCurrentPage] = useState(1);
   const [pendingFilterType, setPendingFilterType] = useState("all");
@@ -190,7 +190,7 @@ export default function ConnectionNetwork() {
                             </p>
                           </div>
                         </div>
-                        <button className="bg-gray-100 font-serif text-black py-1 px-3 rounded flex flex-row gap-2 justify-end items-end mt-auto mb-auto hover:bg-gray-300">
+                        <button className="bg-gray-100 font-serif text-black py-1 px-3 rounded flex flex-row gap-2 justify-end items-end mt-auto mb-auto hover:bg-gray-300" onClick={() => onSelectChatClick(connection)}>
                           <TiMessages className="flex items-center justify-center m-auto" />{" "}
                           <span className="hidden sm:flex items-center justify-center m-auto">
                             Message

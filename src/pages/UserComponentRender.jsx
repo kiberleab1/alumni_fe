@@ -43,6 +43,8 @@ export default function ComponentRender({ page, onPageSet }) {
   const [selectedJobHistory, setSelectedJobHistory] = useState(null);
   const [selectedAlumni, setSelectedAlumni] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedChat, setSelectedChat] = useState(null);
+  const [selectedConnection, setSelectedConnection] = useState(null);
   const [selectedNews, setSelectedNews] = useState(null);
   const [
     selectedDocumentVerificationRequest,
@@ -78,11 +80,21 @@ export default function ComponentRender({ page, onPageSet }) {
         setSelectedNews(news);
         onPageSet("News Detail");
       }}
+      onSelectChatClick={(chat) => {
+        setSelectedChat(chat);
+        onPageSet("Chat");
+      }}
+      onSelectedConnectionClick={(connection) => {
+        setSelectedConnection(connection);
+        onPageSet("My Connections");
+      }}
       jobHistory={selectedJobHistory}
       alumni={selectedAlumni}
       document={selectedDocumentVerificationRequest}
       event={selectedEvent}
       news={selectedNews}
+      chat={selectedChat}
+      connection={selectedConnection}
       onCreatePodcastClick={() => onPageSet("Create Alumni")}
       onEditPodcastClick={() => {}}
     />

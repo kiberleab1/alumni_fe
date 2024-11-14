@@ -12,7 +12,7 @@ import { FaUserPlus } from "react-icons/fa";
 import Pagination from "src/components/pagination/paginationUpdated";
 import { paginate } from "src/components/pagination/paginationUtils";
 
-const AlumniGrid = ({ onCreateAlumniClick }) => {
+const AlumniGrid = ({ onCreateAlumniClick, onSelectChatClick }) => {
   const itemsPerPage = 15;
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -194,6 +194,7 @@ const AlumniGrid = ({ onCreateAlumniClick }) => {
               profile={selectedAlumni}
               isOpen={isModalOpen}
               onClose={closeModal}
+              onSelectChatClick={onSelectChatClick}
             />
           )}
         </div>{" "}
