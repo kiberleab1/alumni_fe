@@ -19,7 +19,7 @@ const Pagination: React.FC<PaginationProps> = ({
   paginate,
 }) => {
   return (
-    <div className="absolute flex justify-end  items-center bottom-0 left-1/2 transform -translate-x-[50%] xl:-translate-x-[40%] min-w-[90%] xl:min-w-[60%] p-2">
+    <div className="absolute flex justify-end  items-center bottom-0 left-1/2 transform -translate-x-[50%] xl:-translate-x-[40%] min-w-[90%] xl:min-w-[60%] p-2 ">
       <div className="hidden xl:flex sm:flex-1 sm:items-center sm:justify-start">
         <p className="text-lg font-sans text-gray-700">
           Showing{" "}

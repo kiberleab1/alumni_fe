@@ -1,6 +1,6 @@
 // @ts-ignore
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import { deleteEvent, filterEvents, getImageBaseUrl } from "src/api";
@@ -11,6 +11,7 @@ import {
   TbSortAscending,
   TbSortDescending,
 } from "react-icons/tb";
+
 import { SlCalender } from "react-icons/sl";
 import {
   IoIosArrowBack,
@@ -100,13 +101,14 @@ function ListEvent({
 
   const handleApplyFilters = () => {
     applyFilters();
-    setIsDropdownOpen(false);
+    setIsDropdownOpen((prev) => !prev);
   };
 
   const handleClearFilters = () => {
     setSelectedFilter({ type: null, value: null });
     setPendingFilterType(null);
     setPendingFilterValue(null);
+    setIsDropdownOpen((prev) => !prev);
   };
   useAOS({ duration: 1200, once: true });
 
@@ -118,10 +120,11 @@ function ListEvent({
     if (pageNumber < 1 || pageNumber > totalPages) return;
     setCurrentPage(pageNumber);
   };
+
   return (
-    <div className="flex flex-col bg-gray-20 rounded-lg w-full">
-      <div className="top-0 sm:flex sm:items-center justify-end flex flex-row z-50 relative ">
-        <div className="flex flex-row gap-1 items-center">
+    <>
+      <div className="pt-0 sm:flex sm:items-center justify-end flex flex-end z-100 w-full ">
+        <div className="flex flex-row gap-1 items-center ">
           <div className="grid gap-2">
             <input
               id="institute-filter"
@@ -133,7 +136,7 @@ function ListEvent({
                 selectedFilter.type === "institute" ? selectedFilter.value : ""
               }
               onFocus={() => setIsDropdownOpen(true)}
-              onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
+              // onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
               onChange={(e) => handleFilterChange("institute", e.target.value)}
             />
           </div>
@@ -149,7 +152,10 @@ function ListEvent({
           </div>
         </div>
 
-        <div className="absolute right-0 top-11">
+        <div
+          className="absolute right-2 top-40  md:right-8 lg:top-28  xl:top-26 z-50"
+          // onClick={() => setIsDropdownOpen(true)}
+        >
           {isDropdownOpen && (
             <div className="  bg-white shadow-lg p-6 rounded-md z-50 w-80">
               <div className="mt-4 grid gap-4">
@@ -250,7 +256,7 @@ function ListEvent({
 
                 <div className="flex justify-end gap-2">
                   <button
-                    className="px-4 py-2 text-gray-100 border border-gray-300 rounded-md hover:bg-gray-50"
+                    className="px-4 py-2 text-gray-400 border border-gray-300 rounded-md hover:bg-gray-50"
                     onClick={handleClearFilters}
                   >
                     Clear Filters
@@ -267,74 +273,87 @@ function ListEvent({
           )}
         </div>
       </div>
-      <div className=" mt-6 container w-full z-10" data-aos="fade-down">
-        <div className="flex flex-wrap items-center gap-4 overflow-y-scroll no-scrollbar m-auto content-start">
-          {eventsData?.map((val, idx) => (
-            <div
-              className="relative w-full sm:w-[320px] bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105 mx-3 md:mx-4 my-4"
-              key={idx}
-            >
-              <div className="h-[520px]">
-                <div
-                  className="bg-cover bg-center"
-                  style={{
-                    backgroundImage: `url(${getImageBaseUrl(val.image)})`,
-                  }}
-                ></div>
-                <div className="p-4">
-                  <h2 className="text-md text-start font-bold mb-3 line-clamp-2">
-                    {val.title}
-                  </h2>
-                  <div className="flex items-center text-gray-600 mb-2 space-x-2">
-                    <div className="flex flex-row gap-1 md:gap-2 items-center">
-                      <SlCalender />
-                      <span className="line-clamp-1">
-                        {formatInputDate(val.time)}
-                      </span>
+      <div
+        className="flex flex-col justify-between bg-gray-20 rounded-lg  min-h-screen py-5 "
+        onClick={() => setIsDropdownOpen(false)}
+      >
+        <div className=" mt- z-10  w-full h-[]  " data-aos="fade-down">
+          <div className="flex flex-wrap items-center justify-center gap-2 overflow-y-scroll no-scrollbar m-auto content-start ">
+            {eventsData?.map((val, idx) => (
+              <div
+                className="relative w-full sm:w-[430px] bg-white rounded-lg shadow-md overflow-hidden transform transition duration-500 hover:scale-105 mx-3 md:mx-4 my-2"
+                key={idx}
+                // ref={dropdownRef}
+              >
+                <div className="h-[430px]">
+                  {/* <div
+                    className="bg-cover bg-center p-2"
+                    style={{
+                      backgroundImage: `url(https://images.unsplash.com/photo-1516802273409-68526ee1bdd6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600)`,
+                    }}
+                    // style={{
+                    //   backgroundImage: `url(${getImageBaseUrl(val.image)})`,
+                    // }}
+                  ></div> */}
+                  <img
+                    src={`${getImageBaseUrl(val.image)}`}
+                    className="h-[200px] w-full bg-cover"
+                  />
+                  <div className="px-4 pt-2">
+                    <h6 className="text-md text-start font-bold mb-3 line-clamp-2 ">
+                      {val.title}
+                    </h6>
+                    <div className="flex items-center text-gray-600 mb-2 space-x-2">
+                      <div className="flex flex-row gap-2 md:gap-2 items-center">
+                        <SlCalender />
+                        <span className="line-clamp-1 text-start">
+                          {formatInputDate(val.time)}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center text-gray-600 mb-2 space-x-2 ">
-                    <div className="flex flex-row gap-2 items-center line-clamp-1">
-                      <CiLocationOn />
-                      <span>{val.venue}</span>
+                    <div className="flex items-center text-gray-600 mb-2 space-x-2 ">
+                      <div className="flex flex-row gap-2 items-center line-clamp-1">
+                        <CiLocationOn className="" />
+                        <span className="text-start">{val.venue}</span>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex text-gray-600 space-x-2 line-clamp-2">
-                    <div className="flex flex-row gap-2 ">
-                      <TbArrowZigZag />
-                      <span className="text-start">{val.instituteName}</span>
+                    <div className="flex text-gray-600 space-x-2 line-clamp-2">
+                      <div className="flex flex-row gap-2 ">
+                        <TbArrowZigZag />
+                        <span className="text-start">{val.instituteName}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="absolute flex bottom-0 items-center p-4">
-                <a
-                  href={val.link}
-                  className="relative inline-flex items-center justify-center px-3 py-2 text-lg font-medium tracking-tighter text-white bg-gray-800 rounded-md group"
-                >
-                  <span className="absolute inset-0 w-full h-full mt-1 ml-1 transition-all duration-300 ease-in-out bg-gray-600 rounded-md group-hover:mt-0 group-hover:ml-0"></span>
-                  <span className="absolute inset-0 w-full h-full bg-white rounded-md"></span>
-                  <span className="absolute inset-0 w-full h-full transition-all duration-200 ease-in-out delay-100 bg-purple-600 rounded-md opacity-0 group-hover:opacity-100"></span>
-                  <span
-                    className="relative text-black transition-colors duration-200 ease-in-out delay-100 group-hover:text-gray-300"
-                    onClick={() => onEventsDetailClick(val)}
+                <div className="absolute flex bottom-0 items-center p-4">
+                  <a
+                    href={val.link}
+                    className="relative inline-flex items-center justify-center px-3 py-2 text-lg font-medium tracking-tighter text-white bg-gray-800 rounded-md group"
                   >
-                    Learn More
-                  </span>
-                </a>
+                    <span className="absolute inset-0 w-full h-full mt-1 ml-1 transition-all duration-300 ease-in-out bg-gray-600 rounded-md group-hover:mt-0 group-hover:ml-0"></span>
+                    <span className="absolute inset-0 w-full h-full bg-white rounded-md"></span>
+                    <span className="absolute inset-0 w-full h-full transition-all duration-200 ease-in-out delay-100 bg-purple-600 rounded-md opacity-0 group-hover:opacity-100"></span>
+                    <span
+                      className="relative text-black transition-colors duration-200 ease-in-out delay-100 group-hover:text-gray-300"
+                      onClick={() => onEventsDetailClick(val)}
+                    >
+                      Learn More
+                    </span>
+                  </a>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        indexOfFirstItem={indexOfFirstItem}
-        indexOfLastItem={indexOfLastItem}
-        totalItems={eventsData?.data?.total_items}
-        paginate={paginate}
-      />
-    </div>
+            ))}
+          </div>
+        </div>{" "}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          indexOfFirstItem={indexOfFirstItem}
+          indexOfLastItem={indexOfLastItem}
+          totalItems={eventsData?.data?.total_items}
+          paginate={paginate}
+        />
+      </div>{" "}
+    </>
   );
 }

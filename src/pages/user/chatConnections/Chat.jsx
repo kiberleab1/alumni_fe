@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
 import { FaFileAlt, FaFilePdf } from "react-icons/fa";
+import { VscClose } from "react-icons/vsc";
 import {
   IoIosArrowDropdown,
   IoMdArrowRoundBack,
@@ -44,17 +45,20 @@ export default function ChatUi({ userId }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pendingFilterType, setPendingFilterType] = useState("all");
   const [pendingFilterValue, setPendingFilterValue] = useState("accepted");
+  const [currentImage, setCurrentImage] = useState(null);
   const itemsPerPage = 8;
   const queryClient = useQueryClient();
   const userToken = getUserToken();
   const [isFullScreen, setIsFullScreen] = useState(false);
 
-  const handleImageClick = () => {
+  const handleImageClick = (imageUrl) => {
     setIsFullScreen(true);
+    setCurrentImage(imageUrl);
   };
 
   const handleCloseModal = () => {
     setIsFullScreen(false);
+    setCurrentImage(null);
   };
   const { isError, data, isLoading, refetch } = useQuery(
     [
@@ -134,7 +138,9 @@ export default function ChatUi({ userId }) {
 
     ws.current.onopen = () => {
       console.log("Connected to WebSocket server");
-      ws.current.send(JSON.stringify({ type: "register", user_id: userToken?.user?.id }));
+      ws.current.send(
+        JSON.stringify({ type: "register", user_id: userToken?.user?.id })
+      );
     };
 
     ws.current.onmessage = (event) => {
@@ -186,7 +192,7 @@ export default function ChatUi({ userId }) {
 
       try {
         const response = await sendFiles(formData);
-        console.log(response)
+        console.log(response);
         if (response) {
           const result = await response?.data;
 
@@ -391,8 +397,9 @@ export default function ChatUi({ userId }) {
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
       <div className="flex h-[95vh] w-[] ">
         <div
-          className={`w-[100%] md:w-1/3  md:p-4 md:border-r overflow-y-scroll no-scrollbar ${selectedChat?.user.name ? "hidden md:block" : "block"
-            }`}
+          className={`w-[100%] md:w-1/3  md:p-4 md:border-r overflow-y-scroll no-scrollbar ${
+            selectedChat?.user.name ? "hidden md:block" : "block"
+          }`}
         >
           <h2 className="text-xl font-medium mb-4 border-b-2">Connections</h2>
           {connectionList.length < 1 ? (
@@ -413,10 +420,11 @@ export default function ChatUi({ userId }) {
                   setChatSelected(connectionList[name].user?.name);
                   setMessage("");
                 }}
-                className={`p-3 mb-2 rounded-lg cursor-pointer hover:bg-gray-200 ${selectedChat?.user.name === connectionList[name].user?.name
+                className={`p-3 mb-2 rounded-lg cursor-pointer hover:bg-gray-200 ${
+                  selectedChat?.user.name === connectionList[name].user?.name
                     ? "bg-gray-300"
                     : "bg-gray-100"
-                  }`}
+                }`}
               >
                 <div className="flex flex-row items-center gap-2">
                   <img
@@ -432,10 +440,10 @@ export default function ChatUi({ userId }) {
                     </h3>
                     <p className="text-gray-500 text-start line-clamp-1 text-[.8rem]">
                       {connectionList[name].messages &&
-                        connectionList[name].messages.length > 0
+                      connectionList[name].messages.length > 0
                         ? connectionList[name].messages[
-                          connectionList[name].messages.length - 1
-                        ]?.message
+                            connectionList[name].messages.length - 1
+                          ]?.message
                         : "No messages"}
                     </p>
                   </div>
@@ -455,8 +463,9 @@ export default function ChatUi({ userId }) {
         </div>
 
         <div
-          className={`w-full md:w-2/3  md:p-4 flex flex-col justify-between ${selectedChat?.user.name ? "block" : "hidden md:block"
-            }`}
+          className={`w-full md:w-2/3  md:p-4 flex flex-col justify-between ${
+            selectedChat?.user.name ? "block" : "hidden md:block"
+          }`}
         >
           {selectedChat?.user?.name ? (
             <>
@@ -501,12 +510,14 @@ export default function ChatUi({ userId }) {
                       return (
                         <div
                           key={index}
-                          className={`p- flex ${msg.isReceived ? "justify-start" : "justify-end"
-                            } w-full`}
+                          className={`p- flex ${
+                            msg.isReceived ? "justify-start" : "justify-end"
+                          } w-full`}
                         >
                           <div
-                            className={`inline-block max-w-[90%] lg:max-w-[70%] ${isLongMessage ? "block w-full" : ""
-                              } rounded-lg p-2 relative`}
+                            className={`inline-block max-w-[90%] lg:max-w-[70%] ${
+                              isLongMessage ? "block w-full" : ""
+                            } rounded-lg p-2 relative`}
                           >
                             {/* <div className={`${msg.isReceived ? "text-left" : "text-right"} mb-2`}>
                             <div className="inline-block relative group">
@@ -524,9 +535,10 @@ export default function ChatUi({ userId }) {
                           </div> */}
 
                             {msg.message &&
-                              msg.message.startsWith("uploads/") ? (
+                            msg.message.startsWith("uploads/") ? (
                               <>
                                 {[
+                                  ".JPG",
                                   ".jpg",
                                   ".jpeg",
                                   ".png",
@@ -539,18 +551,26 @@ export default function ChatUi({ userId }) {
                                       src={getImageBaseUrl(msg.message)}
                                       alt="Sent file"
                                       className="rounded-lg w-full h-auto object-cover mb-1 cursor-pointer"
-                                      onClick={handleImageClick}
+                                      onClick={() =>
+                                        handleImageClick(
+                                          getImageBaseUrl(msg.message)
+                                        )
+                                      }
                                     />
 
-                                    {isFullScreen && (
+                                    {isFullScreen && currentImage && (
                                       <div
                                         className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center p-4 justify-center"
                                         onClick={handleCloseModal}
                                       >
+                                        <div className="absolute text-white right-10 top-3 text-4xl">
+                                          <VscClose />
+                                        </div>
                                         <img
-                                          src={getImageBaseUrl(msg.message)}
+                                          src={currentImage}
                                           alt="Full screen"
                                           className="max-w-full max-h-full object-contain"
+                                          onClick={(e) => e.stopPropagation()}
                                         />
                                       </div>
                                     )}
@@ -558,34 +578,40 @@ export default function ChatUi({ userId }) {
                                 ) : null}
 
                                 {msg.message.endsWith(".pdf") ? (
-                                  <div className="bg-red-900 p-2 rounded-lg text-white flex items-center space-x-2">
-                                    <FaFilePdf className="text-xl" />
-                                    <a
-                                      href={getImageBaseUrl(msg.message)}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="underline"
-                                    >
-                                      {formatString(
-                                        msg.message.split("uploads/")[1]
-                                      )}
-                                    </a>
+                                  <div className=" rounded-lg text-white flex justify-end space-x-2 w-auto">
+                                    <div className="flex flex-row gap-2 px-4 py-3 bg-red-900 rounded-lg">
+                                      {" "}
+                                      <FaFilePdf className="text-xl" />
+                                      <a
+                                        href={getImageBaseUrl(msg.message)}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-gray-300"
+                                      >
+                                        {formatString(
+                                          msg.message.split("uploads/")[1]
+                                        )}
+                                      </a>
+                                    </div>
                                   </div>
                                 ) : null}
 
                                 {msg.message.endsWith(".csv") ? (
-                                  <div className="bg-green-900 p-2 rounded-lg text-white flex items-center space-x-2">
-                                    <BsFiletypeCsv className="text-xl" />
-                                    <a
-                                      href={getImageBaseUrl(msg.message)}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="underline"
-                                    >
-                                      {formatString(
-                                        msg.message.split("uploads/")[1]
-                                      )}
-                                    </a>
+                                  <div className="  rounded-lg text-white flex justify-end space-x-2 w-auto">
+                                    <div className="flex flex-row gap-2 px-4 py-3 bg-green-900 rounded-lg">
+                                      {" "}
+                                      <BsFiletypeCsv className="text-xl" />
+                                      <a
+                                        href={getImageBaseUrl(msg.message)}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-gray-300"
+                                      >
+                                        {formatString(
+                                          msg.message.split("uploads/")[1]
+                                        )}
+                                      </a>
+                                    </div>
                                   </div>
                                 ) : null}
 
@@ -613,10 +639,11 @@ export default function ChatUi({ userId }) {
                               </>
                             ) : (
                               <p
-                                className={` flex flex-col-reverse px-3 py-2 ${msg.isReceived
+                                className={` flex flex-col-reverse px-3 py-2 ${
+                                  msg.isReceived
                                     ? "bg-gray-100 text-gray-900 text-[16px]  rounded-r-lg rounded-tl-2xl  font-serif "
                                     : "bg-gray-300 text-gray-900 text-[16px] text-left  rounded-l-2xl rounded-tr-2xl"
-                                  }`}
+                                }`}
                                 style={{
                                   textAlign: msg.isReceived ? "left" : "left",
                                   alignSelf: msg.isReceived
@@ -649,12 +676,12 @@ export default function ChatUi({ userId }) {
                     </div>
                   )}
 
-                  <div className="flex w-full items-end justify-between border-t mt- bg-gray-400  rounded-2xl m- relative p- focus-within:bg-gray-400">
+                  <div className="flex w-full items-end justify-between border-t mt- overflow-hidden bg-gray-600  rounded-xl m- relative p- focus-within:bg-gray-500">
                     <label
                       htmlFor="file-upload"
                       className="cursor-pointer bg-inherit text-2xl py-2 rounded-lg flex mb-2"
                     >
-                      <MdOutlineAttachFile className="text-white text-2.5xl" />
+                      <MdOutlineAttachFile className="text-gray-100 text-2.5xl translate rotate-45 hover:text-gray-900 pl-1" />
                       <input
                         type="file"
                         accept="image/*,application/pdf,.csv,.txt"
@@ -673,10 +700,10 @@ export default function ChatUi({ userId }) {
                       onKeyDown={handleKeyDown}
                       placeholder="Type a message..."
                       style={{ height: "auto", maxHeight: "200px" }}
-                      className="w-full text-lg pl-4 p-2 bg-gray-400 text-gray-800 resize-none overflow-y-scroll no-scrollbar rounded-lg placeholder-gray-900 focus:bg-gray-400 focus:placeholder-gray-500 h-fit mb-2"
+                      className="w-full text-lg pl-4 p-2 bg-gray-600 text-gray-800 resize-none overflow-y-scroll no-scrollbar rounded-lg placeholder-gray-400 focus:bg-gray-500 focus:placeholder-gray-500 h-fit mb-2"
                     />
 
-                    <div className=" bg-gray-500 hover:bg-gray-700 p-2 rounded-full group mb-1 ml-1">
+                    <div className=" bg-gray-500 hover:bg-gray-700 p-2.5 h-fit rounded-xl  group flex justify-center items-center m-auto">
                       <span
                         onClick={onSendMessage}
                         className="flex items-center justify-center"
