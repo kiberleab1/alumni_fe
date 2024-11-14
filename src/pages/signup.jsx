@@ -1,5 +1,11 @@
 import { useQueryClient, useMutation, useQuery } from "react-query";
-import { createAddress, getInstitutes, getRoleByName, getRoles, signup } from "src/api";
+import {
+  createAddress,
+  getInstitutes,
+  getRoleByName,
+  getRoles,
+  signup,
+} from "src/api";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Container, Row, Col, FormGroup, Label, Button } from "reactstrap";
@@ -22,6 +28,7 @@ export default function SignupPage() {
     </>
   );
 }
+import "react-datepicker/dist/react-datepicker.css";
 
 const SignupForm = () => {
   const navigate = useNavigate();
@@ -38,7 +45,7 @@ const SignupForm = () => {
     onSuccess: () => {
       queryClient.invalidateQueries("signup");
       toast.success("Signup success. Welcome to the alumni system!");
-  
+
       setTimeout(() => {
         navigate("/landing/program/login");
       }, 1000);
@@ -83,7 +90,7 @@ const SignupForm = () => {
       placeholder: "House Number",
     },
   };
-  console.log(roles)
+
   const userInformationFields = {
     first_name: {
       label: "First Name",
@@ -91,7 +98,7 @@ const SignupForm = () => {
       type: "text",
     },
     middle_name: {
-      label: "Middl eName",
+      label: "Middle Name",
       placeholder: "Middle Name",
       type: "text",
     },
@@ -129,19 +136,19 @@ const SignupForm = () => {
     },
   };
   const addressFormFields = {
-    country: {
+    addresscountry: {
       label: "Country",
       placeholder: "Country",
     },
-    region: {
+    addressregion: {
       label: "Region",
       placeholder: "Region",
     },
-    city: {
+    addresscity: {
       label: "City",
       placeholder: "City",
     },
-    house_number: {
+    addresshouse_number: {
       label: "House Number",
       placeholder: "House Number",
     },
@@ -161,11 +168,22 @@ const SignupForm = () => {
     ),
     onSubmit: async (values) => {
       console.log("Form values address:", values);
-      const result = await createAddress(values);
-      if(result.data){
-        setAddressData(result.data.id)        
+      const keyMapping = {
+        addresscity: "city",
+        addresscountry: "country",
+        addresshouse_number: "house_number",
+        addressregion: "region",
+      };
+      const renamedAddress = Object.keys(values).reduce((acc, key) => {
+        const newKey = keyMapping[key] || key;
+        acc[newKey] = values[key];
+        return acc;
+      }, {});
+      const result = await createAddress(renamedAddress);
+      if (result.data) {
+        setAddressData(result.data.id);
       }
-      // submit here
+
       setstepOne(false);
       setstepTwo(true);
       setstepThree(false);
@@ -187,10 +205,10 @@ const SignupForm = () => {
     onSubmit: async (values) => {
       console.log("Form values birth:", values);
       const result = await createAddress(values);
-      if(result.data){
-        setBirthPlaceAddress(result.data.id)        
+      if (result.data) {
+        setBirthPlaceAddress(result.data.id);
       }
-      // submit here
+
       setstepOne(false);
       setstepTwo(false);
       setstepThree(true);
@@ -210,10 +228,10 @@ const SignupForm = () => {
       }, {})
     ),
     onSubmit: async (values) => {
-      values['role_id'] =  roles;
-      values['address_id'] =  addressData;
-      values['birth_place_id'] =  birthPlaceAddress;
-      values['institute_id'] =  "714642fd-c7d5-4372-9c57-17858b4c1933";
+      values["role_id"] = roles;
+      values["address_id"] = addressData;
+      values["birth_place_id"] = birthPlaceAddress;
+      values["institute_id"] = "714642fd-c7d5-4372-9c57-17858b4c1933";
 
       console.log("Form values user info:", values);
       // submit here
@@ -224,12 +242,13 @@ const SignupForm = () => {
   });
   const calculateProgress = () => {
     const totalFields = 16;
-
     const mergedObj = {
       ...addressFormValueAndImplmentation.values,
       ...birthFormValueAndImplmentation.values,
       ...userInFoValueAndImplmentation.values,
     };
+    console.log(mergedObj);
+
     const filledFields = Object.values(mergedObj).filter(
       (value) => value !== ""
     ).length;
@@ -250,23 +269,23 @@ const SignupForm = () => {
     }
   };
   return (
-    <div className="min-h-screen">
-      <div className="flex items-center  justify-center  my-[10%]">
-        <div className=" p-8 max-w-2xl mt-16 mx-auto border border-sky-500 transition-all duration-700">
-          <div className="sticky top-2 mt-2 z-0 w-90 bg-gray-200 rounded-full h-2.5 mb-4 overflow-hidden">
+    <div className="min-h-screen bg-gray-300">
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="px-4 py-5 xl:p-14 max-w-2xl  my-auto border border-gray-800 transition-all duration-700 rounded-xl bg-gray-200 space-y-11">
+          <div className="sticky top-2 mt-2 z-0 w-90 bg-gray-400 rounded-full h-2.5 mb-6 overflow-hidden">
             <div
               className="bg-green-900 h-2.5 z-0 rounded-full transition-all duration-700 "
               style={{ width: `${calculateProgress()}%` }}
             ></div>
           </div>
           {stepOne && (
-            <div className="transition-all duration-700">
+            <div className="transition-all duration-700 ">
               <div>
-                <h1 className="text-xl text-left font-bold">
+                <h1 className="text-xl text-left font-bold text-gray-600">
                   Address Information
                 </h1>
                 <div className="flex items-center justify-between mb-4 ">
-                  <p className="mt-1 text-sm leading-6 text-gray-600 font-mono text-left">
+                  <p className="mt-1 text-sm leading-6 text-gray-500 font-mono text-left">
                     Please provide updated and accurate information
                   </p>
                   <span className="ml-7 text-sm font-semibold text-gray-800">
@@ -282,13 +301,13 @@ const SignupForm = () => {
                     {Object.keys(addressFormFields).map((field, index) => (
                       <div
                         key={field}
-                        className={`px-2 ${
+                        className={`px-2 py-2 ${
                           index < 2 ? "w-full md:w-1/2" : "w-full"
                         }`}
                       >
                         <label
                           htmlFor={field}
-                          className="block text-left text-black mb-2 font-medium"
+                          className="block text-left text-gray-500 mb- font-sans font-normal"
                         >
                           {addressFormFields[field].label}
                         </label>
@@ -300,21 +319,21 @@ const SignupForm = () => {
                             field
                           )}
                           placeholder={addressFormFields[field].placeholder}
-                          className="form-input w-full px-3 py-2 placeholder-gray-400 text-black border rounded bg-white"
+                          className="form-input w-full px-3 py-2 placeholder-gray-800 text-black  rounded bg-gray-300 focus:border focus:border-black"
                         />
                         {addressFormValueAndImplmentation.touched[field] &&
                         addressFormValueAndImplmentation.errors[field] ? (
-                          <div className="text-red-500 text-sm">
+                          <div className="text-red-500 text-sm flex items-end justify-end">
                             {addressFormValueAndImplmentation.errors[field]}
                           </div>
                         ) : null}
                       </div>
                     ))}
                   </div>
-                  <div className="flex justify-between w-full">
+                  <div className="flex justify-between w-full mt-4">
                     <button
                       type="button"
-                      className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-red-900 hover:bg-red-700 active:bg-red-400 text-white py-2 px-4 rounded"
+                      className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-red-900 hover:bg-red-700 active:bg-red-400"
                       onClick={() =>
                         addressFormValueAndImplmentation.resetForm()
                       }
@@ -323,7 +342,7 @@ const SignupForm = () => {
                     </button>
                     <button
                       type="submit"
-                      className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-gray-800 hover:bg-gray-600 active:bg-green-400 "
+                      className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-gray-950 hover:bg-gray-600 active:bg-green-400 "
                     >
                       <span className=" ">Next</span>
                       <span className="hidden absolute ml-9 group-hover:inline pl-2">
@@ -341,20 +360,20 @@ const SignupForm = () => {
                 <div className="flex items-center">
                   <FaLongArrowAltLeft
                     onClick={() => toPrevForm(stepTwo, "stepTwo")}
-                    className="mr-2 text-5xl text-green-800 transition ease-in-out delay-150 transform hover:-translate-y-1 hover:scale-110 hover:bg-green-900 hover:text-white duration-300 p-1 rounded"
+                    className="mr-2 text-5xl text-green-100 transition ease-in-out delay-150 transform hover:-translate-y-1 hover:scale-110 bg-green-900 hover:bg-green-800 hover:text-white duration-300 p-1 rounded"
                   />
 
-                  <h1 className="text-xl font-bold">
+                  <h1 className="text-xl font-bold text-gray-600">
                     User Place Of Birth Information
                   </h1>
                 </div>
 
                 <div className="flex items-center justify-between mb-4">
-                  <p className="mt-1 text-sm leading-6 text-gray-600 font-mono text-left">
+                  <p className="mt-1 text-sm leading-6 text-gray-500 font-mono text-left">
                     Please provide updated and accurate information
                   </p>
 
-                  <span className="ml-7 text-sm font-semibold text-gray-800">
+                  <span className="ml-7 text-sm font-semibold text-gray-500">
                     Step 2/3
                   </span>
                 </div>
@@ -367,13 +386,13 @@ const SignupForm = () => {
                     {Object.keys(birthFormFields).map((field, index) => (
                       <div
                         key={field}
-                        className={`px-2 ${
+                        className={`px-2 mb-2 ${
                           index < 2 ? "w-full md:w-1/2" : "w-full"
                         }`}
                       >
                         <label
                           htmlFor={field}
-                          className="block text-left text-black mb-2 font-medium"
+                          className="block text-left text-gray-500  font-sans font-normal"
                         >
                           {birthFormFields[field].label}
                         </label>
@@ -385,28 +404,28 @@ const SignupForm = () => {
                             field
                           )}
                           placeholder={birthFormFields[field].placeholder}
-                          className="form-input w-full px-3 py-2 placeholder-gray-400 text-black border rounded bg-white"
+                          className="form-input w-full px-3 py-2 placeholder-gray-400 text-gray-600  rounded bg-gray-300 focus:border focus:border-black"
                         />
                         {birthFormValueAndImplmentation.touched[field] &&
                         birthFormValueAndImplmentation.errors[field] ? (
-                          <div className="text-red-500 text-sm">
+                          <div className="text-red-500 text-sm flex items-end justify-end">
                             {birthFormValueAndImplmentation.errors[field]}
                           </div>
                         ) : null}
                       </div>
                     ))}
                   </div>
-                  <div className="flex justify-between w-full">
+                  <div className="flex justify-between w-full mt-4">
                     <button
                       type="button"
-                      className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-red-900 hover:bg-red-700 active:bg-red-400 text-white py-2 px-4 rounded"
+                      className="relative group inline-flex  items-center   transition duration-300 ease-in-out  bg-red-900 hover:bg-red-700 active:bg-red-400 text-white py-2 px-4 rounded"
                       onClick={() => birthFormValueAndImplmentation.resetForm()}
                     >
                       Clear
                     </button>
                     <button
                       type="submit"
-                      className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-gray-800 hover:bg-gray-600 active:bg-green-400 "
+                      className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-gray-950 hover:bg-gray-600 active:bg-green-400 "
                     >
                       <span className=" ">Next</span>
                       <span className="hidden absolute ml-9 group-hover:inline pl-2">
@@ -425,14 +444,16 @@ const SignupForm = () => {
                   <div className="flex items-center">
                     <FaLongArrowAltLeft
                       onClick={() => toPrevForm(stepThree, "stepThree")}
-                      className="mr-2 text-5xl text-green-800 transition ease-in-out delay-150 transform hover:-translate-y-1 hover:scale-110 hover:bg-green-900 hover:text-white duration-300 p-1 rounded"
+                      className="mr-2 text-5xl text-green-100 transition ease-in-out delay-150 transform hover:-translate-y-1 hover:scale-110 bg-green-900 hover:bg-green-800 hover:text-white duration-300 p-1 rounded"
                     />
 
-                    <h1 className="text-xl font-bold">User Information</h1>
+                    <h1 className="text-xl font-bold text-gray-600">
+                      User Information
+                    </h1>
                   </div>
 
                   <div className="flex items-center justify-between mb-4">
-                    <p className="mt-1 text-sm leading-6 text-gray-600 font-mono text-left">
+                    <p className="mt- text-sm leading-6 text-gray-500 font-mono text-left">
                       Please provide updated and accurate information
                     </p>
 
@@ -442,26 +463,26 @@ const SignupForm = () => {
                   </div>
                   <form
                     onSubmit={userInFoValueAndImplmentation.handleSubmit}
-                    className="space-y-4"
+                    className="space-y-8"
                   >
-                    <div className="flex flex-wrap -mx-2">
+                    <div className="flex flex-wrap -mx-2 ">
                       {Object.keys(userInformationFields).map(
                         (field, index) => (
                           <div
                             key={field}
                             className={
-                              index < 3
-                                ? "w-1/3  space-x-2"
-                                : "w-full" && index == 3
-                                ? "w-1/2  space-x-2"
-                                : "w-full" && index == 4
-                                ? "w-1/2  space-x-2"
-                                : "w-full"
+                              index < 2
+                                ? "w-full md:w-1/2 space-x-2  pr-1 mb-2"
+                                : index === 3
+                                ? "w-1/2 space-x-2 pr-1 mb-2"
+                                : index === 4
+                                ? "w-1/2 space-x-2 px-1 mb-2"
+                                : "w-full px-1 mb-2"
                             }
                           >
                             <label
                               htmlFor={field}
-                              className="block text-left text-black mb-2 font-medium "
+                              className="block text-left text-gray-600 mb-1 font-sans font-normal ml-2 "
                             >
                               {userInformationFields[field].label}
                             </label>
@@ -472,7 +493,7 @@ const SignupForm = () => {
                                 {...userInFoValueAndImplmentation.getFieldProps(
                                   field
                                 )}
-                                className="form-select w-full px-2 py-2 placeholder-gray-400 text-black border rounded bg-white"
+                                className="form-select w-full px-2 py-2 placeholder-gray-800 text-black  rounded bg-gray-300 focus:border focus:border-black"
                               >
                                 <option value="" label="Select Gender" />
                                 {userInformationFields[field].options.map(
@@ -486,41 +507,45 @@ const SignupForm = () => {
                                   )
                                 )}
                               </select>
-                            ) : field === "dateOfBirth" ? (
-                              <DatePicker
-                                openToDate={new Date()}
-                                maxDate={new Date()}
-                                showIcon={true}
-                                toggleCalendarOnIconClick
-                                dateFormat="dd-MM-yyyy"
-                                id={field}
-                                name={field}
-                                selected={
-                                  userInFoValueAndImplmentation.values[field]
-                                    ? new Date(
-                                        userInFoValueAndImplmentation.values[
-                                          field
-                                        ]
-                                      )
-                                    : null
-                                }
-                                onChange={(date) =>
-                                  userInFoValueAndImplmentation.setFieldValue(
-                                    field,
-                                    date
-                                  )
-                                }
-                                className="form-input w-full px-5 py-2 pl-7 placeholder-gray-400 text-black border rounded bg-white justify:center item-center "
-                                placeholderText={
-                                  userInformationFields[field].placeholder
-                                }
-                                icon={
-                                  <i
-                                    className="fa fa-calendar  "
-                                    aria-hidden="true"
-                                  ></i>
-                                }
-                              />
+                            ) : field == "date_of_birth" ? (
+                              <div className="flex justify-start items-center">
+                                {" "}
+                                <DatePicker
+                                  openToDate={new Date()}
+                                  maxDate={new Date()}
+                                  showIcon={true}
+                                  toggleCalendarOnIconClick
+                                  dateFormat="dd-MM-yyyy"
+                                  id={field}
+                                  name={field}
+                                  selected={
+                                    userInFoValueAndImplmentation.values[field]
+                                      ? new Date(
+                                          userInFoValueAndImplmentation.values[
+                                            field
+                                          ]
+                                        )
+                                      : null
+                                  }
+                                  onChange={(date) =>
+                                    userInFoValueAndImplmentation.setFieldValue(
+                                      field,
+                                      date
+                                    )
+                                  }
+                                  className="form-input w-full px-5 py-2 pl-4 placeholder-gray-800 text-black border rounded bg-gray-300 flex justify-center item-center "
+                                  // placeholderText={
+                                  //   userInformationFields[field].placeholder
+                                  // }
+                                  placeholderText={`1998-09-28`}
+                                  icon={
+                                    <i
+                                      className="fa fa-calendar flex 0 m-auto my-1 "
+                                      aria-hidden="true"
+                                    ></i>
+                                  }
+                                />
+                              </div>
                             ) : (
                               <input
                                 id={field}
@@ -532,12 +557,12 @@ const SignupForm = () => {
                                 placeholder={
                                   userInformationFields[field].placeholder
                                 }
-                                className="form-input w-full px-3 py-2 placeholder-gray-400 text-black border rounded bg-white"
+                                className="form-input w-full px-3 py-2 placeholder-gray-500 rounded bg-gray-300 text-black focus:border focus:border-black mb-2 "
                               />
                             )}
                             {userInFoValueAndImplmentation.touched[field] &&
                             userInFoValueAndImplmentation.errors[field] ? (
-                              <div className="text-red-500 text-sm">
+                              <div className="text-red-500 text-sm flex items-end justify-end">
                                 {userInFoValueAndImplmentation.errors[field]}
                               </div>
                             ) : null}
@@ -545,10 +570,11 @@ const SignupForm = () => {
                         )
                       )}
                     </div>
+
                     <div className="flex justify-between w-full">
                       <button
                         type="button"
-                        className="relative group inline-flex  items-center  text-white py-2 px-8 rounded transition duration-300 ease-in-out  bg-red-900 hover:bg-red-700 active:bg-red-400 text-white py-2 px-4 rounded"
+                        className="relative group inline-flex  items-center  transition duration-300 ease-in-out  bg-red-900 hover:bg-red-700 active:bg-red-400 text-white py-2 px-4 rounded"
                         onClick={() =>
                           userInFoValueAndImplmentation.resetForm()
                         }
@@ -557,7 +583,7 @@ const SignupForm = () => {
                       </button>
                       <button
                         type="submit"
-                        className="ml-auto text-white rounded transition duration-300 ease-in-out  bg-gray-800 hover:bg-gray-600 active:bg-green-400"
+                        className="ml-auto text-white rounded transition duration-300 ease-in-out  bg-gray-950 hover:bg-gray-600 active:bg-green-400"
                       >
                         Sumbit
                       </button>
@@ -1018,7 +1044,6 @@ const SignupForm = () => {
         </Container> */}
       {/* </div> */}
       <ToastContainer />
-
     </div>
   );
 };
