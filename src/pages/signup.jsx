@@ -507,41 +507,45 @@ const SignupForm = () => {
                                   )
                                 )}
                               </select>
-                            ) : field === "dateOfBirth" ? (
-                              <DatePicker
-                                openToDate={new Date()}
-                                maxDate={new Date()}
-                                showIcon={true}
-                                toggleCalendarOnIconClick
-                                dateFormat="dd-MM-yyyy"
-                                id={field}
-                                name={field}
-                                selected={
-                                  userInFoValueAndImplmentation.values[field]
-                                    ? new Date(
-                                        userInFoValueAndImplmentation.values[
-                                          field
-                                        ]
-                                      )
-                                    : null
-                                }
-                                onChange={(date) =>
-                                  userInFoValueAndImplmentation.setFieldValue(
-                                    field,
-                                    date
-                                  )
-                                }
-                                className="form-input w-full px-5 py-2 pl-7 placeholder-gray-800 text-black border rounded bg-gray-300 justify:center item-center "
-                                placeholderText={
-                                  userInformationFields[field].placeholder
-                                }
-                                icon={
-                                  <i
-                                    className="fa fa-calendar  "
-                                    aria-hidden="true"
-                                  ></i>
-                                }
-                              />
+                            ) : field == "date_of_birth" ? (
+                              <div className="flex justify-start items-center">
+                                {" "}
+                                <DatePicker
+                                  openToDate={new Date()}
+                                  maxDate={new Date()}
+                                  showIcon={true}
+                                  toggleCalendarOnIconClick
+                                  dateFormat="dd-MM-yyyy"
+                                  id={field}
+                                  name={field}
+                                  selected={
+                                    userInFoValueAndImplmentation.values[field]
+                                      ? new Date(
+                                          userInFoValueAndImplmentation.values[
+                                            field
+                                          ]
+                                        )
+                                      : null
+                                  }
+                                  onChange={(date) =>
+                                    userInFoValueAndImplmentation.setFieldValue(
+                                      field,
+                                      date
+                                    )
+                                  }
+                                  className="form-input w-full px-5 py-2 pl-4 placeholder-gray-800 text-black border rounded bg-gray-300 flex justify-center item-center "
+                                  // placeholderText={
+                                  //   userInformationFields[field].placeholder
+                                  // }
+                                  placeholderText={`1998-09-28`}
+                                  icon={
+                                    <i
+                                      className="fa fa-calendar flex 0 m-auto my-1 "
+                                      aria-hidden="true"
+                                    ></i>
+                                  }
+                                />
+                              </div>
                             ) : (
                               <input
                                 id={field}
@@ -566,6 +570,7 @@ const SignupForm = () => {
                         )
                       )}
                     </div>
+
                     <div className="flex justify-between w-full">
                       <button
                         type="button"
