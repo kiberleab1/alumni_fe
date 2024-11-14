@@ -360,7 +360,7 @@ const SignupForm = () => {
                 <div className="flex items-center">
                   <FaLongArrowAltLeft
                     onClick={() => toPrevForm(stepTwo, "stepTwo")}
-                    className="mr-2 text-5xl text-green-800 transition ease-in-out delay-150 transform hover:-translate-y-1 hover:scale-110 hover:bg-green-900 hover:text-white duration-300 p-1 rounded"
+                    className="mr-2 text-5xl text-green-100 transition ease-in-out delay-150 transform hover:-translate-y-1 hover:scale-110 bg-green-900 hover:bg-green-800 hover:text-white duration-300 p-1 rounded"
                   />
 
                   <h1 className="text-xl font-bold text-gray-600">
@@ -444,7 +444,7 @@ const SignupForm = () => {
                   <div className="flex items-center">
                     <FaLongArrowAltLeft
                       onClick={() => toPrevForm(stepThree, "stepThree")}
-                      className="mr-2 text-5xl text-green-800 transition ease-in-out delay-150 transform hover:-translate-y-1 hover:scale-110 hover:bg-green-900 hover:text-white duration-300 p-1 rounded"
+                      className="mr-2 text-5xl text-green-100 transition ease-in-out delay-150 transform hover:-translate-y-1 hover:scale-110 bg-green-900 hover:bg-green-800 hover:text-white duration-300 p-1 rounded"
                     />
 
                     <h1 className="text-xl font-bold text-gray-600">
