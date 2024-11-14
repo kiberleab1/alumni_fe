@@ -11,80 +11,6 @@ import {
   TbSortAscending,
   TbSortDescending,
 } from "react-icons/tb";
-const eventsDatas = [
-  {
-    id: 1,
-    image: "https://via.placeholder.com/300x200.png?text=Event+1",
-    title: "Innovative Tech Summit 2024",
-    time: "2024-11-20",
-    venue: "Tech Valley Convention Center, CA",
-    instituteName: "California Tech Institute",
-    link: "https://example.com/event1",
-  },
-  {
-    id: 2,
-    image: "https://via.placeholder.com/300x200.png?text=Event+2",
-    title: "Global Health and Wellness Fair",
-    time: "2024-12-05",
-    venue: "Wellness Arena, TX",
-    instituteName: "Health and Fitness University",
-    link: "https://example.com/event2",
-  },
-  {
-    id: 3,
-    image: "https://via.placeholder.com/300x200.png?text=Event+3",
-    title: "Design Thinking Workshop",
-    time: "2024-12-15",
-    venue: "Creative Hub, NY",
-    instituteName: "Design School of America",
-    link: "https://example.com/event3",
-  },
-  {
-    id: 4,
-    image: "https://via.placeholder.com/300x200.png?text=Event+4",
-    title: "AI and Machine Learning Conference",
-    time: "2024-11-25",
-    venue: "Innovation Center, WA",
-    instituteName: "AI Research Institute",
-    link: "https://example.com/event4",
-  },
-  {
-    id: 5,
-    image: "https://via.placeholder.com/300x200.png?text=Event+5",
-    title: "Sustainability Forum 2024",
-    time: "2024-12-10",
-    venue: "Eco World Auditorium, FL",
-    instituteName: "Green Future University",
-    link: "https://example.com/event5",
-  },
-  {
-    id: 3,
-    image: "https://via.placeholder.com/300x200.png?text=Event+3",
-    title: "Design Thinking Workshop",
-    time: "2024-12-15",
-    venue: "Creative Hub, NY",
-    instituteName: "Design School of America",
-    link: "https://example.com/event3",
-  },
-  {
-    id: 4,
-    image: "https://via.placeholder.com/300x200.png?text=Event+4",
-    title: "AI and Machine Learning Conference",
-    time: "2024-11-25",
-    venue: "Innovation Center, WA",
-    instituteName: "AI Research Institute",
-    link: "https://example.com/event4",
-  },
-  {
-    id: 5,
-    image: "https://via.placeholder.com/300x200.png?text=Event+5",
-    title: "Sustainability Forum 2024",
-    time: "2024-12-10",
-    venue: "Eco World Auditorium, FL",
-    instituteName: "Green Future University",
-    link: "https://example.com/event5",
-  },
-];
 
 import { SlCalender } from "react-icons/sl";
 import {
@@ -194,21 +120,6 @@ function ListEvent({
     if (pageNumber < 1 || pageNumber > totalPages) return;
     setCurrentPage(pageNumber);
   };
-  // const dropdownRef = useRef(null);
-
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-  //       setIsDropdownOpen(false);
-  //     }
-  //   };
-
-  //   document.addEventListener("mousedown", handleClickOutside);
-
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, []);
 
   return (
     <>
@@ -363,27 +274,31 @@ function ListEvent({
         </div>
       </div>
       <div
-        className="flex flex-col justify-between bg-gray-20 rounded-lg  min-h-[] py-5 "
+        className="flex flex-col justify-between bg-gray-20 rounded-lg  min-h-screen py-5 "
         onClick={() => setIsDropdownOpen(false)}
       >
-        <div className=" mt-   z-10  w-full h-[] " data-aos="fade-down">
-          <div className="flex flex-wrap items-center gap-2 overflow-y-scroll no-scrollbar m-auto content-start ">
-            {eventsDatas?.map((val, idx) => (
+        <div className=" mt- z-10  w-full h-[]  " data-aos="fade-down">
+          <div className="flex flex-wrap items-center justify-center gap-2 overflow-y-scroll no-scrollbar m-auto content-start ">
+            {eventsData?.map((val, idx) => (
               <div
-                className="relative w-full sm:w-[320px] bg-white rounded-lg shadow-md overflow-hidden transform transition duration-500 hover:scale-105 mx-3 md:mx-4 my-2"
+                className="relative w-full sm:w-[430px] bg-white rounded-lg shadow-md overflow-hidden transform transition duration-500 hover:scale-105 mx-3 md:mx-4 my-2"
                 key={idx}
                 // ref={dropdownRef}
               >
                 <div className="h-[430px]">
-                  <div
-                    className="bg-cover bg-center"
+                  {/* <div
+                    className="bg-cover bg-center p-2"
                     style={{
                       backgroundImage: `url(https://images.unsplash.com/photo-1516802273409-68526ee1bdd6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600)`,
                     }}
                     // style={{
                     //   backgroundImage: `url(${getImageBaseUrl(val.image)})`,
                     // }}
-                  ></div>
+                  ></div> */}
+                  <img
+                    src={`${getImageBaseUrl(val.image)}`}
+                    className="h-[200px] w-full bg-cover"
+                  />
                   <div className="px-4 pt-2">
                     <h6 className="text-md text-start font-bold mb-3 line-clamp-2 ">
                       {val.title}
@@ -391,15 +306,15 @@ function ListEvent({
                     <div className="flex items-center text-gray-600 mb-2 space-x-2">
                       <div className="flex flex-row gap-2 md:gap-2 items-center">
                         <SlCalender />
-                        <span className="line-clamp-1">
+                        <span className="line-clamp-1 text-start">
                           {formatInputDate(val.time)}
                         </span>
                       </div>
                     </div>
                     <div className="flex items-center text-gray-600 mb-2 space-x-2 ">
                       <div className="flex flex-row gap-2 items-center line-clamp-1">
-                        <CiLocationOn />
-                        <span>{val.venue}</span>
+                        <CiLocationOn className="" />
+                        <span className="text-start">{val.venue}</span>
                       </div>
                     </div>
                     <div className="flex text-gray-600 space-x-2 line-clamp-2">
