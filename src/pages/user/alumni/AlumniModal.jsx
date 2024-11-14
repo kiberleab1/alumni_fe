@@ -14,10 +14,26 @@ import { BiMessageAltDetail } from "react-icons/bi";
 import { IoCloseOutline } from "react-icons/io5";
 import { MdOutlineCloseFullscreen } from "react-icons/md";
 
-const AlumniModal = ({ isOpen, onClose, profile }) => {
+const AlumniModal = ({ isOpen, onClose, profile, onSelectChatClick }) => {
   if (!isOpen) return null;
 
   const queryClient = useQueryClient();
+  const user_connection_profile = {
+    id: profile?.id,
+    user_id: profile?.user_id,
+    requesting_user_id: profile?.user_id,
+    status: profile?.status,
+    createdat: profile?.createdat,
+    updatedat: profile?.updatedat,
+    user: profile?.user_data,
+    alumni: {
+      user_id: profile?.user_id,
+      degree: profile?.degree,
+      graduation_year:  profile?.graduation_year,
+      user_photo: profile?.user_photo
+    }
+  };
+  
   const mutation = useMutation(requestConnection, {
     onSuccess: () => {
       queryClient.invalidateQueries("requestConnection");
@@ -98,7 +114,7 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
                 disabled
               >
                 <FaCheck className="text-green-600" />{" "}
-                <span className="text-sm line-clamp-1">Request Recived </span>
+                <span className="text-sm line-clamp-1">Request Received</span>
               </button>
               <button
                 className="bg-gray-50  text-black hover:bg-green-100 w-1/2 border-solid border-2 border-sky-500   xl:px-4 py-2 rounded-l-lg mt-4 flex xl:justify-center xl:items-center gap-1"
@@ -110,27 +126,27 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
                 </span>
               </button>
             </>
-          )
-            : (
-              <>
-                <button
-                  className="bg-gray-50 w-1/2 text-black hover:bg-white-100  border-solid border-2 border-white-100 py-2 xl:px-4 rounded-l-lg mt-4 flex justify-center items-center gap-2"
-                  disabled
-                >
-                  <FaCheck className="text-green-600" />{" "}
-                  <span className="text-sm line-clamp-1">Request Sent</span>
-                </button>
-                <button
-                  className="bg-gray-50  text-black hover:bg-red-100 w-1/2 border-solid border-2 border-sky-500   xl:px-4 py-2 rounded-l-lg mt-4 flex xl:justify-center xl:items-center gap-1"
-                  onClick={() => handleAction(profile?.connection_data, "declined")}
-                >
-                  <FcCancel className="" />
-                  <span className="text-sm  w-[100%] line-clamp-1">
-                    Cancel request
-                  </span>
-                </button>
-              </>
-            )}
+          ) 
+          : (
+            <>
+              <button
+                className="bg-gray-50 w-1/2 text-black hover:bg-white-100  border-solid border-2 border-white-100 py-2 xl:px-4 rounded-l-lg mt-4 flex justify-center items-center gap-2"
+                disabled
+              >
+                <FaCheck className="text-green-600" />{" "}
+                <span className="text-sm line-clamp-1">Request Sent</span>
+              </button>
+              <button
+                className="bg-gray-50  text-black hover:bg-red-100 w-1/2 border-solid border-2 border-sky-500   xl:px-4 py-2 rounded-l-lg mt-4 flex xl:justify-center xl:items-center gap-1"
+                onClick={() => handleAction(profile?.connection_data, "declined")}
+              >
+                <FcCancel className="" />
+                <span className="text-sm  w-[100%] line-clamp-1">
+                  Cancel request
+                </span>
+              </button>
+            </>
+          )}
         </div>
       );
     } else if (
@@ -139,7 +155,9 @@ const AlumniModal = ({ isOpen, onClose, profile }) => {
     ) {
       return (
         <div className="text-green-500 font-bold py-2 px-2 mt-2 w-full">
-          <button className="flex-row w-full bg-white hover:bg-blue-700  text-black border-2 border-sky-500 justify-center font-serif text-lg py-2 px-4 rounded-l-lg mt-2 flex items-center gap-2">
+          <button className="flex-row w-full bg-white hover:bg-blue-700 text-black border-2 border-sky-500 justify-center font-serif text-lg py-2 px-4 rounded-l-lg mt-2 flex items-center gap-2"
+            onClick={() => onSelectChatClick(user_connection_profile)}
+          >
             <BiMessageAltDetail className="text-sky-500 text-xl" /> Message
           </button>
         </div>
