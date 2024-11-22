@@ -14,8 +14,13 @@ import { FaUserEdit, FaUserFriends } from "react-icons/fa";
 import { FaCodePullRequest } from "react-icons/fa6";
 import { LuServer } from "react-icons/lu";
 import { IoMdClose } from "react-icons/io";
+import AlumniProfileModal from "./alumniProfileModal";
 
-const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick, onSelectedConnectionClick }) => {
+const AlumniProfile = ({
+  onCreateAlumniClick,
+  onEditAlumniClick,
+  onSelectedConnectionClick,
+}) => {
   const [isOpen, setIsOpen] = useState(true);
   const [isOptionOpen, setOptionOpen] = useState(false);
   const [absolutePos, setabsolutePos] = useState(false);
@@ -32,7 +37,6 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick, onSelectedConne
   };
   const toggleDropdown = () => {
     setOptionOpen((prev) => !prev);
-    console.log(isOptionOpen);
   };
   SlOptionsVertical;
   const toggleOverlay = () => {
@@ -45,7 +49,20 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick, onSelectedConne
       once: false,
     });
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const alumniData = [
+    { title: "Phone Number" },
+    { title: "Email Address" },
+    { title: "Job History" },
+    { title: "Institute Details" },
+  ];
+
+  const openModal = () => {
+    setIsModalOpen(true);
+    setOptionOpen(false);
+  };
+  const closeModal = () => setIsModalOpen(false);
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
       {data != null && data?.data && data?.data?.graduation_year ? (
@@ -71,20 +88,29 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick, onSelectedConne
                   <FaUserEdit className="text-xl overflow-hidden " />
                   Edit
                 </li>
-                <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100" onClick={() => onSelectedConnectionClick(data?.data)}>
+                <li
+                  className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100"
+                  onClick={() => onSelectedConnectionClick(data?.data)}
+                >
                   {" "}
-                  <FaUserFriends className="text-xl " />  <span className="text-sm">Connections </span>
+                  <FaUserFriends className="text-xl " />{" "}
+                  <span className="text-sm">Connections </span>
                 </li>
-                <li className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100">
+                <li
+                  className="px-4 py-2 flex flex-row gap-3 hover:bg-gray-100"
+                  onClick={openModal}
+                >
                   {" "}
-                  <FaCodePullRequest className="text-xl " /> <span className="text-sm">Privecy Settings</span>
+                  <FaCodePullRequest className="text-xl " />{" "}
+                  <span className="text-sm">Privecy Settings</span>
                 </li>
                 <li
                   className=" xl:hidden px-4 py-2 flex flex-row gap-3 hover:bg-gray-100"
                   onClick={toggleOverlay}
                 >
                   {" "}
-                  <LuServer className="text-xl " />  <span className="text-sm">Additional Information</span>
+                  <LuServer className="text-xl " />{" "}
+                  <span className="text-sm">Additional Information</span>
                 </li>
               </ul>
             </div>
@@ -106,11 +132,9 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick, onSelectedConne
               className="w-40 h-40 md:w-52 md:h-52 rounded-full mt-3 object-cover z-40 border-4 border-gray-100 shadow-lg shadow-blue-500/50 "
             />
           </div>
-
           <h2 className="text-2xl xl:4xl mt-2 font-lora">
             {data?.data?.user_data?.name}
           </h2>
-
           <div className="flex items-center hover:text-blue-700 mt-">
             <a
               className="text-lg text-gray-500 flex flex-row gap-2 font-serif"
@@ -120,7 +144,6 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick, onSelectedConne
               {data?.data?.user_data?.email}
             </a>
           </div>
-
           {/* <div className="flex items-center hover:text-blue-700">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -143,9 +166,7 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick, onSelectedConne
               {data?.data?.user_data?.phone_number}
             </a>
           </div> */}
-
           <div className="border-b w-1/2 my-2 border-gray-300"></div>
-
           <div className="relative w-full max-w-[1150px] overflow-hidden">
             <div className="flex flex-row justify-start mx-auto transition-all duration-500 ease-in-out ">
               <div
@@ -433,7 +454,6 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick, onSelectedConne
               )}
             </div>
           )}
-
           {absolutePos && (
             <div className="absolute h-full w-[100%] xl:hidden top-0 z-50 bg-gray-100 flex items-center justify-center">
               <button
@@ -526,7 +546,7 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick, onSelectedConne
                 </div>
               </div>
             </div>
-          )}
+          )}{" "}
         </div>
       ) : (
         <div className="flex items-center justify-center min-h-screen bg-white">
@@ -548,7 +568,17 @@ const AlumniProfile = ({ onCreateAlumniClick, onEditAlumniClick, onSelectedConne
             </button>
           </div>
         </div>
-      )}
+      )}{" "}
+      <div className="flex flex-col items-center justify-center  bg-gray-100">
+        <AlumniProfileModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          alumniData={alumniData}
+          alumniName={data?.data?.user_data?.name}
+          alumniImg={data?.data?.user_photo}
+          alumniEmail={data?.data?.user_data?.email}
+        />
+      </div>
     </QueryResult>
   );
 };
