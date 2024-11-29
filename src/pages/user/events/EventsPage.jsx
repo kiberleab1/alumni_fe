@@ -20,11 +20,12 @@ import {
 } from "react-icons/io";
 import { FiFilter } from "react-icons/fi";
 import { MdDriveFileRenameOutline, MdLockReset } from "react-icons/md";
-import image from "../../../assets/images/testimonial/2.jpg";
+import imagess from "../../../assets/images/testimonial/2.jpg";
 import useAOS from "../aos";
 import { formatInputDate } from "src/utils/utils";
 import Pagination from "src/components/pagination/paginationUpdated";
 import { FaFilter } from "react-icons/fa";
+import { FaLocationDot } from "react-icons/fa6";
 export default function EventsPage({ onEventsDetailClick }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [filterType, setFilterType] = useState("all");
@@ -274,18 +275,18 @@ function ListEvent({
         </div>
       </div>
       <div
-        className="flex flex-col justify-between bg-gray-20 rounded-lg  min-h-screen py-5 "
+        className="flex flex-col justify-between rounded-lg  min-h-screen pb-5 "
         onClick={() => setIsDropdownOpen(false)}
       >
-        <div className=" mt- z-10  w-full h-[]  " data-aos="fade-down">
-          <div className="flex flex-wrap items-center justify-center gap-2 overflow-y-scroll no-scrollbar m-auto content-start ">
+        <div className=" mt- z-10  w-full h-[]" data-aos="fade-down">
+          <div className="flex flex-wrap   justify- items-center justify- gap-4 overflow-y-scroll no-scrollbar m-auto content-start p-4">
             {eventsData?.map((val, idx) => (
               <div
-                className="relative w-full sm:w-[430px] bg-white rounded-lg shadow-md overflow-hidden transform transition duration-500 hover:scale-105 mx-3 md:mx-4 my-2"
+                className="relative w-full sm:w-[350px] bg-neutral-50 overflow-visible  rounded-lg shadow-lg hover:shadow-2xl transition-transform duration-[700ms] hover:scale-105 hover:rotate hover:bg-neutral-100 gap-2"
                 key={idx}
                 // ref={dropdownRef}
               >
-                <div className="h-[430px]">
+                <div className=" ">
                   {/* <div
                     className="bg-cover bg-center p-2"
                     style={{
@@ -295,51 +296,63 @@ function ListEvent({
                     //   backgroundImage: `url(${getImageBaseUrl(val.image)})`,
                     // }}
                   ></div> */}
-                  <img
-                    src={`${getImageBaseUrl(val.image)}`}
-                    className="h-[200px] w-full bg-cover"
-                  />
-                  <div className="px-4 pt-2">
-                    <h6 className="text-md text-start font-bold mb-3 line-clamp-2 ">
+                  <div className="w-full h-full px-4 pt-4 mb-2">
+                    <img
+                      src={`${getImageBaseUrl(val.image)}`}
+                      // src={imagess}
+                      className="h-[220px] w-full object-cover rounded-lg mb-2 "
+                      // className="h-[200px] w-full bg-cover"
+                    />
+                  </div>
+                  <div className="px-4 mb-2 h-14">
+                    <h4 className="text-xl font-semibold text-black text-start line-clamp-2 font-serif">
                       {val.title}
-                    </h6>
-                    <div className="flex items-center text-gray-600 mb-2 space-x-2">
-                      <div className="flex flex-row gap-2 md:gap-2 items-center">
-                        <SlCalender />
-                        <span className="line-clamp-1 text-start">
+                    </h4>
+                  </div>
+                  <div className="px-4 ">
+                    <div className="flex items-center text-gray-600 mb-2 space-x-2 ">
+                      <div className="flex flex-row gap-3 md:gap-2  ">
+                        <SlCalender className="text-2xl text-gray-900" />
+                        <span className=" text-start text-gray-700 text-lg line-clamp-2 font-serif">
                           {formatInputDate(val.time)}
                         </span>
                       </div>
                     </div>
                     <div className="flex items-center text-gray-600 mb-2 space-x-2 ">
-                      <div className="flex flex-row gap-2 items-center line-clamp-1">
-                        <CiLocationOn className="" />
-                        <span className="text-start">{val.venue}</span>
+                      <div className="flex flex-row gap-3 md:items-center line-clamp-1">
+                        <CiLocationOn className="text-2xl text-gray-900" />
+                        <span className="line-clamp-2 text-start text-gray-700 text-lg font-serif ">
+                          {val.venue}
+                        </span>
                       </div>
                     </div>
                     <div className="flex text-gray-600 space-x-2 line-clamp-2">
-                      <div className="flex flex-row gap-2 ">
-                        <TbArrowZigZag />
-                        <span className="text-start">{val.instituteName}</span>
+                      <div className="flex flex-row gap-3 ">
+                        <TbArrowZigZag className="text-2xl text-gray-900" />
+                        <span className="line-clamp-2 text-start text-gray-700 text-lg font-serif">
+                          {val.instituteName}
+                        </span>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="absolute flex bottom-0 items-center p-4">
-                  <a
-                    href={val.link}
-                    className="relative inline-flex items-center justify-center px-3 py-2 text-lg font-medium tracking-tighter text-white bg-gray-800 rounded-md group"
-                  >
-                    <span className="absolute inset-0 w-full h-full mt-1 ml-1 transition-all duration-300 ease-in-out bg-gray-600 rounded-md group-hover:mt-0 group-hover:ml-0"></span>
-                    <span className="absolute inset-0 w-full h-full bg-white rounded-md"></span>
-                    <span className="absolute inset-0 w-full h-full transition-all duration-200 ease-in-out delay-100 bg-purple-600 rounded-md opacity-0 group-hover:opacity-100"></span>
-                    <span
-                      className="relative text-black transition-colors duration-200 ease-in-out delay-100 group-hover:text-gray-300"
-                      onClick={() => onEventsDetailClick(val)}
+                <div className="relative pt-1 ">
+                  <div className=" flex bottom-0 items-center px-4 py-3">
+                    <a
+                      href={val.link}
+                      className="relative inline-flex items-center justify-center px-3 py-1 text-lg font-medium tracking-tighter text-white bg-gray-800 rounded-md group"
                     >
-                      Learn More
-                    </span>
-                  </a>
+                      <span className="absolute inset-0 w-full h-full mt-1 ml-1 transition-all duration-300 ease-in-out bg-gray-400 rounded-md group-hover:mt-0 group-hover:ml-0"></span>
+                      <span className="absolute inset-0 w-full h-full bg-gray-800 rounded-md"></span>
+                      <span className="absolute inset-0 w-full h-full transition-all duration-200 ease-in-out delay-100 bg-purple-600 rounded-md opacity-0 group-hover:opacity-100"></span>
+                      <span
+                        className="relative text-gray-200 transition-colors duration-200 ease-in-out delay-100 group-hover:text-gray-300 font-mono px-4 animate-pulse"
+                        onClick={() => onEventsDetailClick(val)}
+                      >
+                        Details
+                      </span>
+                    </a>
+                  </div>
                 </div>
               </div>
             ))}
