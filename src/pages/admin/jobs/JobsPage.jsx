@@ -22,10 +22,11 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
   const queryClient = useQueryClient();
 
   const { isError, data, isLoading } = useQuery(
-    ["getAllJobs"],
+    ["getAllJobs", currentPage],
     async () => {
-      const jobsData = await getAllJobs({ pageNumber: 1, pageSize: 10 });
+      const jobsData = await getAllJobs({ pageNumber: currentPage, pageSize: itemsPerPage });
       setJobs(jobsData.data.jobs);
+      console.log(jobsData);
       return jobsData;
     },
     { keepPreviousData: true }
@@ -68,10 +69,14 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
     }
   };
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = jobs.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(jobs.length / itemsPerPage);
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
+  const indexOfLastItem = Math.min(
+    currentPage * itemsPerPage,
+    data?.data.total_items
+  );
+  const totalPages = Math.ceil(
+    data?.data.total_items / itemsPerPage
+  );
 
   const paginate = (pageNumber) => {
     if (pageNumber < 1 || pageNumber > totalPages) return;
@@ -92,7 +97,7 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
         <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
           <div className="min-w-full">
             <div className="overflow-x-auto">
-              <div className="table-container" style={{ maxHeight: "500px" }}>
+              <div className="table-container" style={{ maxHeight: "900px" }}>
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead
                     className="sticky top-0 bg-gray-100 z-10 font-serif"
@@ -147,7 +152,7 @@ export default function JobsPage({ onCreateJobClick, onEditJobClick }) {
                     className="bg-white divide-y divide-gray-200"
                     data-aos="fade-down"
                   >
-                    {currentItems.map((job) => (
+                    {data?.data?.jobs.map((job) => (
                       <tr key={job.id}>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm font-medium text-gray-900 text-start">

@@ -15,18 +15,18 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 
 export default function StaffPage({ onCreateStaffClick, onEditStaffClick }) {
   const [staffs, setStaffs] = useState([]);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedStaff, setSelectedStaff] = useState(null);
   const queryClient = useQueryClient();
 
   const { isError, data, isLoading } = useQuery(
-    ["getAllStaff"],
+    ["getAllStaff", currentPage],
     async () => {
-      const staffData = await getAllStaff({ pageNumber: 1, pageSize: 10 });
+      const staffData = await getAllStaff({ pageNumber: currentPage, pageSize: itemsPerPage });
       setStaffs(staffData.data.staff);
-      return staffData;
+      return staffData.data;
     },
     { keepPreviousData: true }
   );
@@ -72,10 +72,14 @@ export default function StaffPage({ onCreateStaffClick, onEditStaffClick }) {
     }
   };
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = staffs.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(staffs.length / itemsPerPage);
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage + 1;
+  const indexOfLastItem = Math.min(
+    currentPage * itemsPerPage,
+    data?.total_items
+  );
+  const totalPages = Math.ceil(
+    data?.total_items / itemsPerPage
+  );
 
   const paginate = (pageNumber) => {
     if (pageNumber < 1 || pageNumber > totalPages) return;
@@ -95,7 +99,7 @@ export default function StaffPage({ onCreateStaffClick, onEditStaffClick }) {
         <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
           <div className="min-w-full">
             <div className="overflow-x-auto">
-              <div className="table-container" style={{ maxHeight: "500px" }}>
+              <div className="table-container" style={{ maxHeight: "900px" }}>
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead
                     className="sticky top-0 bg-gray-100 z-10 font-serif"
@@ -156,7 +160,7 @@ export default function StaffPage({ onCreateStaffClick, onEditStaffClick }) {
                     className="bg-white divide-y divide-gray-200"
                     data-aos="fade-down"
                   >
-                    {currentItems.map((staff) => (
+                    {data?.staff.map((staff) => (
                       <tr key={staff.id}>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm font-medium text-gray-900 text-start">
@@ -180,12 +184,12 @@ export default function StaffPage({ onCreateStaffClick, onEditStaffClick }) {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm text-gray-600">
-                            {staff.department_id ? staff.department_id : "N/A"}
+                            {staff.department_name ? staff.department_name : "N/A"}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm text-gray-600">
-                            {staff.institute_id ? staff.institute_id : "N/A"}
+                            {staff.institute_name ? staff.institute_name : "N/A"}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-start">

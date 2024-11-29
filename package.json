@@ -32,6 +32,7 @@
     "prop-types": "^15.8.1",
     "quill": "^2.0.2",
     "react": "^18.2.0",
+    "react-apexcharts": "^1.5.0",
     "react-datepicker": "^6.6.0",
     "react-dom": "^18.2.0",
     "react-google-maps": "^9.4.5",
@@ -49,10 +50,10 @@
     "reactstrap-formik": "^1.0.9",
     "sass": "1.63.3",
     "slick-carousel": "^1.8.1",
+    "socket.io-client": "^4.8.0",
     "tw-elements-react": "1.0.0-alpha-end",
     "uuid": "^9.0.1",
     "web-vitals": "2.1.4",
-    "socket.io-client": "^4.8.0",
     "yup": "^1.4.0"
   },
   "devDependencies": {
