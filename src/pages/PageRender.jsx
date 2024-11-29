@@ -49,9 +49,10 @@ import AdminListMissionPage from "./admin/webcontent/mission/ListMisssionsPage";
 import CreateMissionContent from "./admin/webcontent/mission/CreateMissionPage";
 import AdminListVisionPage from "./admin/webcontent/vission/ListVisionsPage";
 import CreateVisionContent from "./admin/webcontent/vission/CreatevisionPage";
+import { Dashboard } from "./admin/Dashboard";
 
 const componentsMap = {
-  Dashboard: AdminsPage,
+  Dashboard: Dashboard,
   Settings: SettingsPage,
   Admins: AdminsPage,
   "Create Admin": CreateAdmin,
