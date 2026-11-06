@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
   getAddressById,
@@ -685,7 +685,6 @@ export default function EditUser({ user }) {
       </div>
 
       <div>
-        <ToastContainer />
       </div>
     </div>
   );

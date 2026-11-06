@@ -1,738 +1,905 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
-import { useRef } from "react";
-import { FaFileAlt, FaFilePdf } from "react-icons/fa";
-import { VscClose } from "react-icons/vsc";
-import {
-  IoIosArrowDropdown,
-  IoMdArrowRoundBack,
-  IoMdArrowUp,
-} from "react-icons/io";
-import {
-  IoChatbubbleEllipsesSharp,
-  IoClose,
-  IoTelescope,
-} from "react-icons/io5";
-import { MdAutoDelete, MdOutlineAttachFile, MdTagFaces } from "react-icons/md";
-import "./css.css";
-import { BsFiletypeCsv } from "react-icons/bs";
-
-import { GiUnfriendlyFire } from "react-icons/gi";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
-  myConnectionRequests,
-  getChatHistory,
+  ArrowDownTrayIcon,
+  ArrowLeftIcon,
+  ChatBubbleLeftRightIcon,
+  CheckIcon,
+  ClipboardDocumentIcon,
+  DocumentIcon,
+  ExclamationCircleIcon,
+  MagnifyingGlassIcon,
+  PaperAirplaneIcon,
+  PaperClipIcon,
+  PhotoIcon,
+  TrashIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+import {
+  apiErrorMessage,
+  getConversations,
   getImageBaseUrl,
-  sendFiles,
+  getMessages,
+  markChatRead,
+  sendChatMessageHttp,
+  uploadChatFiles,
 } from "src/api";
-import QueryResult from "src/components/utils/queryResults";
-import { getUserToken } from "src/helpers/globalStorage";
-import { BiDotsHorizontalRounded, BiDotsVerticalRounded } from "react-icons/bi";
+import { useRealtime, useSocketEvent } from "src/lib/realtime";
+import { useBlockUser } from "src/pages/user/settings/SettingsPage";
+import {
+  Avatar,
+  CountBadge,
+  EmptyState,
+  SkeletonRow,
+  Spinner,
+  clockTime,
+  cx,
+  dayLabel,
+  fileSize,
+  timeAgo,
+} from "src/components/ui";
+
+const MAX_TEXT = 4000;
+const MAX_FILE_MB = 15;
+const PAGE = 30;
+const uid = () => `c-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+const isImage = (a) => (a.mime ? a.mime.startsWith("image/") : /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(a.key || a.name));
+
+/** Resolve the peer from whatever the caller handed us (network card, directory modal, legacy connection). */
+function peerFromProp(chat) {
+  if (!chat) return null;
+  if (chat.peer) return chat.peer;
+  if (chat.user?.id) return chat.user;
+  const id = chat.alumni?.user_id || chat.user_id;
+  return id ? { id: String(id), name: chat.user?.name || "Member", photo: chat.alumni?.user_photo } : null;
+}
 
 export default function ChatUi({ chat }) {
-  const [isOptionOpen, setOptionOpen] = useState(false);
-  const [selectedChat, setSelectedChat] = useState(chat);
-  const [chatSelected, setChatSelected] = useState("");
-  const [chatHistory, setChatHistory] = useState({});
-  const [message, setMessage] = useState("");
-  const [selectedImages, setSelectedImages] = useState([]);
-  const [visibleChats, setVisibleChats] = useState(10);
-  const messagesEndRef = useRef(null);
-  const [selectedFiles, setSelectedFiles] = useState([]);
-  const chatUsers = Object.keys(chatHistory);
-  const ws = useRef(null);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pendingFilterType, setPendingFilterType] = useState("all");
-  const [pendingFilterValue, setPendingFilterValue] = useState("accepted");
-  const [currentImage, setCurrentImage] = useState(null);
-  const itemsPerPage = 8;
+  const { me, emit, fire, status, isOnline, presence, setUnreadChats } = useRealtime();
+  const myId = String(me?.id || "");
   const queryClient = useQueryClient();
-  const userToken = getUserToken();
-  const [isFullScreen, setIsFullScreen] = useState(false);
 
-  const handleImageClick = (imageUrl) => {
-    setIsFullScreen(true);
-    setCurrentImage(imageUrl);
-  };
+  const [activePeer, setActivePeer] = useState(() => peerFromProp(chat));
+  const [search, setSearch] = useState("");
+  const [typingFrom, setTypingFrom] = useState({}); // peerId -> timestamp
 
-  const handleCloseModal = () => {
-    setIsFullScreen(false);
-    setCurrentImage(null);
-  };
-  const { isError, data, isLoading, refetch } = useQuery(
-    [
-      "myConnectionRequests",
-      currentPage,
-      pendingFilterType,
-      pendingFilterValue,
-    ],
-    async () => {
-      return await myConnectionRequests({
-        pageNumber: currentPage,
-        pageSize: itemsPerPage,
-        filterKeyword: pendingFilterType,
-        value: pendingFilterValue,
+  const { data: convData, isLoading: convLoading } = useQuery("conversations", getConversations, {
+    staleTime: 15_000,
+    refetchOnWindowFocus: true,
+  });
+  const conversations = useMemo(() => convData?.items || [], [convData]);
+
+  // open the conversation requested by another page (e.g. "Message" button)
+  useEffect(() => {
+    const p = peerFromProp(chat);
+    if (p) setActivePeer(p);
+  }, [chat]);
+
+  // keep the active peer's card fresh once the conversation list loads
+  useEffect(() => {
+    if (!activePeer) return;
+    const c = conversations.find((x) => x.peer.id === activePeer.id);
+    if (c && (c.peer.name !== activePeer.name || c.peer.photo !== activePeer.photo)) setActivePeer(c.peer);
+  }, [conversations]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useSocketEvent("typing", ({ from, is_typing }) => {
+    setTypingFrom((t) => {
+      const next = { ...t };
+      if (is_typing) next[from] = Date.now();
+      else delete next[from];
+      return next;
+    });
+  });
+  // expire stale typing flags (lost "stop typing" events)
+  useEffect(() => {
+    const t = setInterval(() => {
+      setTypingFrom((cur) => {
+        const now = Date.now();
+        const next = Object.fromEntries(Object.entries(cur).filter(([, ts]) => now - ts < 6000));
+        return Object.keys(next).length === Object.keys(cur).length ? cur : next;
       });
-    },
-    { keepPreviousData: true }
-  );
-
-  const connectionList = data?.data?.connections || [];
-  const totalItems = data?.data?.total_items || 0;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-  useEffect(() => {
-    if (selectedChat) {
-      const fetchChatHistory = async () => {
-        const { data: chat_history_data } = await getChatHistory({
-          from_user_id: userToken?.user?.id,
-          to_user_id: selectedChat?.alumni?.user_id,
-        });
-
-        const formattedChatHistory = chat_history_data.reduce(
-          (acc, message) => {
-            const isReceived = message.from_user_id !== userToken?.user?.id;
-            const date = new Date(message.createdAt);
-
-            const options = {
-              hour: "numeric",
-              minute: "numeric",
-              second: "numeric",
-              hour12: true,
-            };
-            const formattedTime = date.toLocaleDateString("en-US", options);
-
-            return {
-              ...acc,
-              [selectedChat.alumni.user_id]: [
-                ...(acc[selectedChat.alumni.user_id] || []),
-                {
-                  message: message.message,
-                  isReceived,
-                  time: formattedTime,
-                },
-              ],
-            };
-          },
-          {}
-        );
-
-        setChatHistory((prevHistory) => ({
-          ...prevHistory,
-          ...formattedChatHistory,
-        }));
-      };
-
-      setChatHistory((prevHistory) => ({
-        ...prevHistory,
-        [selectedChat.alumni.user_id]: [],
-      }));
-
-      fetchChatHistory();
-    }
-  }, [selectedChat, userToken?.user?.id]);
-
-  useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:4000");
-
-    ws.current.onopen = () => {
-      console.log("Connected to WebSocket server");
-      ws.current.send(
-        JSON.stringify({ type: "register", user_id: userToken?.user?.id })
-      );
-    };
-
-    ws.current.onmessage = (event) => {
-      const receivedMessage = JSON.parse(event.data);
-      const { from_user_id, message } = receivedMessage;
-      setChatHistory((prevHistory) => ({
-        ...prevHistory,
-        [from_user_id]: [
-          ...(prevHistory[from_user_id] || []),
-          {
-            message,
-            isReceived: true,
-            time:
-              new Date().toLocaleDateString() +
-              " " +
-              new Date().toLocaleTimeString(),
-          },
-        ],
-      }));
-    };
-
-    return () => {
-      ws.current.close();
-    };
-  }, [chat?.user_id]);
-
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [chatHistory]);
-
-  const onSendMessage = async () => {
-    if (!message.trim() && selectedFiles.length === 0) return;
-    if (!selectedChat) return;
-
-    const to_user_id = selectedChat?.alumni?.user_id;
-
-    let success = false;
-
-    if (selectedFiles.length > 0) {
-      const formData = new FormData();
-      formData.append("from_user_id", userToken?.user?.id);
-      formData.append("to_user_id", to_user_id);
-
-      selectedFiles.forEach((file, index) => {
-        formData.append(`files`, file);
-      });
-
-      try {
-        const response = await sendFiles(formData);
-        console.log(response);
-        if (response) {
-          const result = await response?.data;
-
-          if (result?.url_list.length > 0) {
-            for (let i = 0; i < result?.url_list.length; i++) {
-              const messageData = {
-                from_user_id: userToken?.user?.id,
-                to_user_id: to_user_id,
-                message: result?.url_list[i],
-                createdAt: new Date().toLocaleTimeString(),
-              };
-
-              ws.current.send(JSON.stringify(messageData));
-              setChatHistory((prevHistory) => ({
-                ...prevHistory,
-                [to_user_id]: [
-                  ...(prevHistory[to_user_id] || []),
-                  {
-                    message: result?.url_list[i],
-                    isReceived: false,
-                    time:
-                      new Date().toLocaleDateString() +
-                      " " +
-                      new Date().toLocaleTimeString(),
-                  },
-                ],
-              }));
-            }
-
-            setMessage("");
-            setSelectedFiles([]);
-            success = true;
-          }
-          setSelectedFiles([]);
-          success = true;
-        }
-      } catch (error) {
-        console.error("Error uploading files:", error);
-      }
-    }
-
-    if (message.trim()) {
-      const messageData = {
-        from_user_id: userToken?.user?.id,
-        to_user_id: to_user_id,
-        message: message.trim(),
-        createdAt: new Date().toLocaleTimeString(),
-      };
-
-      ws.current.send(JSON.stringify(messageData));
-
-      setChatHistory((prevHistory) => ({
-        ...prevHistory,
-        [to_user_id]: [
-          ...(prevHistory[to_user_id] || []),
-          {
-            message: message.trim(),
-            isReceived: false,
-            time:
-              new Date().toLocaleDateString() +
-              " " +
-              new Date().toLocaleTimeString(),
-          },
-        ],
-      }));
-      setMessage("");
-      setSelectedFiles([]);
-      success = true;
-    }
-    let previousChat = selectedChat;
-    setSelectedChat(null);
-    setSelectedChat(previousChat);
-  };
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        onSendMessage();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
+    }, 2000);
+    return () => clearInterval(t);
   }, []);
 
-  const textareaRef = useRef(null);
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  }, [message]);
+  const online = useCallback(
+    (peer) => (peer?.id in presence ? isOnline(peer.id) : !!peer?.online),
+    [presence, isOnline]
+  );
 
-  const handleBackClick = () => {
-    setSelectedChat(null);
-    refetch();
-  };
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      onSendMessage();
-    }
-  };
-
-  const handleFileUpload = (event) => {
-    const files = Array.from(event.target.files);
-    setSelectedFiles((prevFiles) => [...prevFiles, ...files]);
-  };
-  const handleRemoveImage = (indexToRemove) => {
-    setSelectedImages((prevImages) =>
-      prevImages.filter((_, index) => index !== indexToRemove)
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return conversations;
+    return conversations.filter((c) =>
+      [c.peer.name, c.peer.email, c.peer.department_name].filter(Boolean).some((v) => v.toLowerCase().includes(q))
     );
-  };
-  const handleRemoveFile = (indexToRemove) => {
-    setSelectedFiles((prevFiles) =>
-      prevFiles.filter((_, index) => index !== indexToRemove)
-    );
-  };
-  const toggleDropdown = () => {
-    setOptionOpen((prev) => !prev);
-    console.log(isOptionOpen);
-  };
-  const renderFilePreview = (file, index) => {
-    if (!file || !file.name) {
-      console.error("File or file name is missing:", file);
-      return null;
-    }
+  }, [conversations, search]);
 
-    const fileURL = URL.createObjectURL(file);
+  const activeConv = conversations.find((c) => c.peer.id === activePeer?.id);
 
-    const fileExtension = file.name.split(".").pop().toLowerCase();
-
-    if (file.type.startsWith("image/")) {
-      return (
-        <div key={index} className="relative w-fit">
-          <img
-            src={fileURL}
-            alt={`Selected ${file.name}`}
-            className="w-40 h-24 object-cover rounded-lg mb-1"
-          />
-          <button
-            className="absolute top-0 right-0 transform -translate-y-3 translate-x-3  bg-red-500 text-white rounded-full p-1"
-            onClick={() => handleRemoveFile(index)}
-          >
-            <IoClose className="w-4 h-4" />
-          </button>
-        </div>
-      );
-    } else if (file.type === "application/pdf") {
-      return (
-        <div key={index} className="relative bg-red-900 rounded-lg ">
-          <div className="flex flex-row gap-2 p-2 rounded-lg ">
-            <span>
-              <FaFilePdf className="text-3xl text-white" />
-            </span>{" "}
-            <p> {formatString(file.name)}</p>
-          </div>
-          <button
-            className="absolute top-0 right-0 transform -translate-y-3 translate-x-3  bg-red-500 text-white rounded-full p-1"
-            onClick={() => handleRemoveFile(index)}
-          >
-            <IoClose className="w-4 h-4" />
-          </button>
-        </div>
-      );
-    } else if (fileExtension === "csv" || fileExtension === "txt") {
-      return (
-        <div key={index} className="relative">
-          <div className="bg-green-900 flex flex-row gap-2   p-2 rounded-lg">
-            <div className="flex flex-row gap-2">
-              <span>
-                <BsFiletypeCsv className="text-3xl text-white" />
-              </span>{" "}
-              <p> {formatString(file.name)}</p>
-            </div>
-          </div>
-          <button
-            className="absolute top-0 right-0 transform -translate-y-3 translate-x-3  bg-red-500 text-white rounded-full p-1"
-            onClick={() => handleRemoveFile(index)}
-          >
-            <IoClose className="w-4 h-4" />
-          </button>
-        </div>
-      );
-    }
-  };
-  function formatString(input) {
-    if (input.length <= 15) {
-      return input;
-    }
-
-    const firstPart = input.slice(0, 14);
-    const lastPart = input.slice(-10);
-
-    return `${firstPart}...${lastPart}`;
-  }
+  const onThreadRead = useCallback(
+    (peerId) => {
+      queryClient.setQueryData("conversations", (old) => {
+        if (!old) return old;
+        const conv = old.items.find((c) => c.peer.id === peerId);
+        if (conv?.unread) setUnreadChats((n) => Math.max(0, n - conv.unread));
+        return { ...old, items: old.items.map((c) => (c.peer.id === peerId ? { ...c, unread: 0 } : c)) };
+      });
+    },
+    [queryClient, setUnreadChats]
+  );
 
   return (
-    <QueryResult isError={isError} isLoading={isLoading} data={data}>
-      <div className="flex h-[95vh] w-[] ">
-        <div
-          className={`w-[100%] md:w-1/3  md:p-4 md:border-r overflow-y-scroll no-scrollbar ${
-            selectedChat?.user.name ? "hidden md:block" : "block"
-          }`}
+    <div className="ui-scope h-[calc(100vh-6.5rem)] min-h-[480px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="flex h-full">
+        {/* ------------------------------------------------ conversation list */}
+        <aside
+          className={cx(
+            "flex w-full flex-col border-r border-slate-200 md:w-80 lg:w-96",
+            activePeer ? "hidden md:flex" : "flex"
+          )}
         >
-          <h2 className="text-xl font-medium mb-4 border-b-2">Connections</h2>
-          {connectionList.length < 1 ? (
-            <div className="flex flex-col  text-center gap-2  m-auto rounded-lg p-6 ">
-              <IoTelescope className="m-auto text-black text-4xl" />
-
-              <p className="text-gray-600 text-xl">
-                {" "}
-                You have no Connections history
-              </p>
+          <div className="border-b border-slate-200 p-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-slate-900">Messages</h2>
+              <ConnectionPill status={status} />
             </div>
-          ) : (
-            Object.keys(connectionList).map((name) => (
-              <div
-                key={name}
-                onClick={() => {
-                  setSelectedChat(connectionList[name]);
-                  setChatSelected(connectionList[name].user?.name);
-                  setMessage("");
-                }}
-                className={`p-3 mb-2 rounded-lg cursor-pointer hover:bg-gray-200 ${
-                  selectedChat?.user.name === connectionList[name].user?.name
-                    ? "bg-gray-300"
-                    : "bg-gray-100"
-                }`}
-              >
-                <div className="flex flex-row items-center gap-2">
-                  <img
-                    src={getImageBaseUrl(
-                      connectionList[name].alumni?.user_photo
+            <label className="relative mt-3 block">
+              <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search people"
+                className="w-full rounded-lg border-0 bg-slate-100 py-2 pl-9 pr-3 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-brand"
+              />
+            </label>
+          </div>
+
+          <ul className="flex-1 overflow-y-auto">
+            {convLoading && [0, 1, 2, 3, 4].map((i) => <SkeletonRow key={i} />)}
+            {!convLoading && filtered.length === 0 && (
+              <EmptyState
+                icon={ChatBubbleLeftRightIcon}
+                title={search ? "No matches" : "No conversations yet"}
+                description={
+                  search ? "Try a different name." : "Connect with fellow alumni and they'll show up here, ready to chat."
+                }
+              />
+            )}
+            {filtered.map((c) => {
+              const typing = !!typingFrom[c.peer.id];
+              const lm = c.last_message;
+              const mine = lm && lm.from_user_id === myId;
+              return (
+                <li key={c.peer.id}>
+                  <button
+                    onClick={() => setActivePeer(c.peer)}
+                    className={cx(
+                      "flex w-full items-center gap-3 px-4 py-3 text-left transition",
+                      activePeer?.id === c.peer.id ? "bg-brand-soft" : "hover:bg-slate-50"
                     )}
-                    alt="profile"
-                    className="w-12 h-12 rounded-full mr-2"
-                  />
-                  <div>
-                    <h3 className="font-semibold text-gray-800 text-start">
-                      {connectionList[name].user?.name}
-                    </h3>
-                    <p className="text-gray-500 text-start line-clamp-1 text-[.8rem]">
-                      {connectionList[name].messages &&
-                      connectionList[name].messages.length > 0
-                        ? connectionList[name].messages[
-                            connectionList[name].messages.length - 1
-                          ]?.message
-                        : "No messages"}
-                    </p>
-                  </div>
+                  >
+                    <Avatar name={c.peer.name} photo={c.peer.photo} online={online(c.peer)} />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-baseline justify-between gap-2">
+                        <p className={cx("truncate text-sm", c.unread ? "font-semibold text-slate-900" : "font-medium text-slate-800")}>
+                          {c.peer.name}
+                        </p>
+                        <span className="shrink-0 text-xs text-slate-400">{timeAgo(c.last_activity)}</span>
+                      </div>
+                      <div className="flex items-center justify-between gap-2">
+                        <p className={cx("truncate text-sm", c.unread ? "text-slate-800" : "text-slate-500")}>
+                          {typing ? (
+                            <span className="italic text-link">typing…</span>
+                          ) : lm ? (
+                            <>
+                              {mine && "You: "}
+                              {previewText(lm)}
+                            </>
+                          ) : (
+                            <span className="text-slate-400">Say hello 👋</span>
+                          )}
+                        </p>
+                        <CountBadge count={c.unread} />
+                      </div>
+                    </div>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </aside>
+
+        {/* ---------------------------------------------------------- thread */}
+        <section className={cx("min-w-0 flex-1 flex-col", activePeer ? "flex" : "hidden md:flex")}>
+          {activePeer ? (
+            <Thread
+              key={activePeer.id}
+              peer={activePeer}
+              myId={myId}
+              me={me}
+              emit={emit}
+              fire={fire}
+              socketOnline={status === "online"}
+              peerOnline={online(activePeer)}
+              peerTyping={!!typingFrom[activePeer.id]}
+              canSend={activeConv ? activeConv.connected || ["admin", "super_admin"].includes(me?.role_name) : true}
+              onBack={() => setActivePeer(null)}
+              onRead={onThreadRead}
+            />
+          ) : (
+            <EmptyState
+              icon={ChatBubbleLeftRightIcon}
+              title="Your messages"
+              description="Pick a conversation on the left to start chatting."
+            />
+          )}
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function previewText(m) {
+  if (m.is_deleted) return "Message deleted";
+  if (m.text) return m.text;
+  const n = m.attachments?.length || 0;
+  if (!n) return "";
+  return n === 1 ? (isImage(m.attachments[0]) ? "📷 Photo" : `📎 ${m.attachments[0].name}`) : `📎 ${n} attachments`;
+}
+
+function ConnectionPill({ status }) {
+  if (status === "online") return null;
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
+      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />
+      {status === "connecting" ? "Connecting…" : "Reconnecting…"}
+    </span>
+  );
+}
+
+/* ======================================================================== */
+
+function Thread({ peer, myId, me, emit, fire, socketOnline, peerOnline, peerTyping, canSend, onBack, onRead }) {
+  const [messages, setMessages] = useState([]);
+  const [hasMore, setHasMore] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loadingOlder, setLoadingOlder] = useState(false);
+  const [lightbox, setLightbox] = useState(null);
+  const scrollRef = useRef(null);
+  const stickToBottom = useRef(true);
+  const prevHeight = useRef(null);
+
+  const upsert = useCallback((msg) => {
+    setMessages((list) => {
+      const i = list.findIndex((m) => m.id === msg.id || (msg.client_id && m.client_id === msg.client_id));
+      if (i === -1) return [...list, msg];
+      const copy = list.slice();
+      copy[i] = { ...copy[i], ...msg, _status: undefined };
+      return copy;
+    });
+  }, []);
+
+  const markRead = useCallback(() => {
+    if (document.visibilityState !== "visible") return;
+    emit("message:read", { peer_id: peer.id })
+      .catch(() => markChatRead(peer.id))
+      .then(() => onRead(peer.id))
+      .catch(() => {});
+  }, [emit, peer.id, onRead]);
+
+  // initial page
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    getMessages({ peerId: peer.id, limit: PAGE })
+      .then((res) => {
+        if (cancelled) return;
+        setMessages(res.messages);
+        setHasMore(res.has_more);
+        stickToBottom.current = true;
+        markRead();
+      })
+      .catch((err) => !cancelled && toast.error(apiErrorMessage(err, "Couldn't load messages")))
+      .finally(() => !cancelled && setLoading(false));
+    return () => {
+      cancelled = true;
+    };
+  }, [peer.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // when the tab becomes visible again, mark what arrived meanwhile as read
+  useEffect(() => {
+    const fn = () => document.visibilityState === "visible" && markRead();
+    document.addEventListener("visibilitychange", fn);
+    return () => document.removeEventListener("visibilitychange", fn);
+  }, [markRead]);
+
+  const loadOlder = useCallback(async () => {
+    if (!hasMore || loadingOlder || !messages.length) return;
+    setLoadingOlder(true);
+    prevHeight.current = scrollRef.current?.scrollHeight || null;
+    try {
+      const res = await getMessages({ peerId: peer.id, before: messages[0].created_at, limit: PAGE });
+      setMessages((list) => [...res.messages, ...list]);
+      setHasMore(res.has_more);
+    } catch (err) {
+      toast.error(apiErrorMessage(err));
+    } finally {
+      setLoadingOlder(false);
+    }
+  }, [hasMore, loadingOlder, messages, peer.id]);
+
+  // keep scroll anchored: bottom for new messages, same spot after loading older
+  useLayoutEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    if (prevHeight.current != null) {
+      el.scrollTop = el.scrollHeight - prevHeight.current;
+      prevHeight.current = null;
+    } else if (stickToBottom.current) {
+      el.scrollTop = el.scrollHeight;
+    }
+  }, [messages, peerTyping]);
+
+  const onScroll = (e) => {
+    const el = e.currentTarget;
+    stickToBottom.current = el.scrollHeight - el.scrollTop - el.clientHeight < 120;
+    if (el.scrollTop < 80) loadOlder();
+  };
+
+  // live events for this thread
+  useSocketEvent("message:new", (msg) => {
+    const inThread =
+      (msg.from_user_id === peer.id && msg.to_user_id === myId) ||
+      (msg.from_user_id === myId && msg.to_user_id === peer.id);
+    if (!inThread) return;
+    upsert(msg);
+    if (msg.from_user_id === peer.id) markRead();
+  });
+  useSocketEvent("message:read", ({ reader_id, read_at }) => {
+    if (reader_id !== peer.id) return;
+    setMessages((list) => list.map((m) => (m.from_user_id === myId && !m.read_at ? { ...m, read_at } : m)));
+  });
+  useSocketEvent("message:deleted", ({ id }) => {
+    setMessages((list) => list.map((m) => (m.id === id ? { ...m, is_deleted: true, text: null, attachments: [] } : m)));
+  });
+
+  /* ----------------------------------------------------------- sending */
+  const sendText = useCallback(
+    async (text, existingClientId) => {
+      const client_id = existingClientId || uid();
+      stickToBottom.current = true;
+      upsert({
+        id: client_id,
+        client_id,
+        from_user_id: myId,
+        to_user_id: peer.id,
+        text,
+        attachments: [],
+        created_at: new Date().toISOString(),
+        _status: "sending",
+      });
+      try {
+        const saved = socketOnline
+          ? await emit("message:send", { to: peer.id, text, client_id })
+          : await sendChatMessageHttp({ to: peer.id, text, client_id });
+        upsert(saved);
+      } catch (err) {
+        // socket hiccup -> one HTTP retry before giving up
+        if (err.code === "OFFLINE" || err.code === "TIMEOUT") {
+          try {
+            upsert(await sendChatMessageHttp({ to: peer.id, text, client_id }));
+            return;
+          } catch (httpErr) {
+            err = httpErr;
+          }
+        }
+        setMessages((list) =>
+          list.map((m) => (m.client_id === client_id ? { ...m, _status: "failed", _error: apiErrorMessage(err, err.message) } : m))
+        );
+      }
+    },
+    [emit, myId, peer.id, socketOnline, upsert]
+  );
+
+  const sendFiles = useCallback(
+    async (files, text) => {
+      const client_id = uid();
+      stickToBottom.current = true;
+      upsert({
+        id: client_id,
+        client_id,
+        from_user_id: myId,
+        to_user_id: peer.id,
+        text: text || null,
+        attachments: files.map((f) => ({ name: f.name, mime: f.type, size: f.size, _local: URL.createObjectURL(f) })),
+        created_at: new Date().toISOString(),
+        _status: "sending",
+        _progress: 0,
+      });
+      try {
+        const saved = await uploadChatFiles({
+          to: peer.id,
+          files,
+          text,
+          client_id,
+          onProgress: (p) =>
+            setMessages((list) => list.map((m) => (m.client_id === client_id ? { ...m, _progress: p } : m))),
+        });
+        upsert(saved);
+      } catch (err) {
+        setMessages((list) =>
+          list.map((m) => (m.client_id === client_id ? { ...m, _status: "failed", _error: apiErrorMessage(err) } : m))
+        );
+      }
+    },
+    [myId, peer.id, upsert]
+  );
+
+  const retry = (m) => {
+    setMessages((list) => list.filter((x) => x.client_id !== m.client_id));
+    if (m.text && !m.attachments?.length) sendText(m.text, m.client_id);
+    else toast.info("Please re-attach the files and send again.");
+  };
+
+  const unsend = async (m) => {
+    try {
+      await emit("message:delete", { id: m.id });
+    } catch (err) {
+      toast.error(apiErrorMessage(err, err.message));
+    }
+  };
+
+  /* ---------------------------------------------------------- rendering */
+  const lastSeenMine = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].from_user_id === myId && messages[i].read_at) return messages[i].id;
+    }
+    return null;
+  }, [messages, myId]);
+
+  const rows = useMemo(() => {
+    const out = [];
+    let lastDay = null;
+    messages.forEach((m, i) => {
+      const day = new Date(m.created_at).toDateString();
+      if (day !== lastDay) {
+        out.push({ type: "day", key: `d-${day}`, label: dayLabel(m.created_at) });
+        lastDay = day;
+      }
+      const next = messages[i + 1];
+      const prev = messages[i - 1];
+      const near = (a, b) => a && b && a.from_user_id === b.from_user_id && Math.abs(new Date(a.created_at) - new Date(b.created_at)) < 5 * 60_000 && new Date(a.created_at).toDateString() === new Date(b.created_at).toDateString();
+      out.push({ type: "msg", key: m.id, m, first: !near(prev, m), last: !near(m, next) });
+    });
+    return out;
+  }, [messages]);
+
+  const subtitle = peerTyping
+    ? "typing…"
+    : peerOnline
+    ? "Online"
+    : [peer.department_name, peer.graduation_year && `Class of ${peer.graduation_year}`].filter(Boolean).join(" · ") || "Offline";
+
+  const block = useBlockUser(() => onBack?.());
+  return (
+    <>
+      <header className="flex items-center gap-3 border-b border-slate-200 px-4 py-3">
+        <button onClick={onBack} className="-ml-1 rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 md:hidden" aria-label="Back">
+          <ArrowLeftIcon className="h-5 w-5" />
+        </button>
+        <Avatar name={peer.name} photo={peer.photo} online={peerOnline} />
+        <div className="min-w-0">
+          <p className="truncate font-semibold text-slate-900">{peer.name}</p>
+          <p className={cx("truncate text-xs", peerTyping ? "text-link" : peerOnline ? "text-emerald-600" : "text-slate-500")}>
+            {subtitle}
+          </p>
+        </div>
+        <button
+          onClick={() => window.confirm(`Block ${peer.name}? They won't be able to message or connect with you, and they aren't told.`) && block.mutate(peer.id)}
+          disabled={block.isLoading}
+          className="ml-auto rounded-lg px-2.5 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50"
+        >
+          Block
+        </button>
+      </header>
+
+      <div ref={scrollRef} onScroll={onScroll} className="flex-1 overflow-y-auto bg-slate-50 px-3 py-4 sm:px-6">
+        {loading ? (
+          <div className="flex h-full items-center justify-center text-slate-400">
+            <Spinner className="h-6 w-6" />
+          </div>
+        ) : (
+          <>
+            {loadingOlder && (
+              <div className="flex justify-center py-2 text-slate-400">
+                <Spinner />
+              </div>
+            )}
+            {!hasMore && messages.length > 0 && (
+              <p className="pb-4 text-center text-xs text-slate-400">This is the beginning of your conversation with {peer.name}.</p>
+            )}
+            {messages.length === 0 && (
+              <EmptyState
+                icon={ChatBubbleLeftRightIcon}
+                title={`Start a conversation with ${peer.name.split(" ")[0]}`}
+                description="Messages are private between the two of you."
+              />
+            )}
+            {rows.map((r) =>
+              r.type === "day" ? (
+                <div key={r.key} className="my-4 flex items-center gap-3">
+                  <div className="h-px flex-1 bg-slate-200" />
+                  <span className="text-xs font-medium text-slate-500">{r.label}</span>
+                  <div className="h-px flex-1 bg-slate-200" />
+                </div>
+              ) : (
+                <Bubble
+                  key={r.key}
+                  m={r.m}
+                  mine={r.m.from_user_id === myId}
+                  first={r.first}
+                  last={r.last}
+                  peer={peer}
+                  me={me}
+                  seen={r.m.id === lastSeenMine}
+                  onRetry={retry}
+                  onDelete={unsend}
+                  onOpenImage={setLightbox}
+                />
+              )
+            )}
+            {peerTyping && (
+              <div className="mt-2 flex items-end gap-2">
+                <Avatar name={peer.name} photo={peer.photo} size="xs" />
+                <div className="rounded-2xl rounded-bl-md bg-white px-4 py-3 shadow-sm ring-1 ring-slate-200">
+                  <span className="flex gap-1">
+                    {[0, 150, 300].map((d) => (
+                      <span key={d} className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400" style={{ animationDelay: `${d}ms` }} />
+                    ))}
+                  </span>
                 </div>
               </div>
-            ))
-          )}
+            )}
+          </>
+        )}
+      </div>
 
-          {visibleChats < chatUsers.length && (
+      {canSend ? (
+        <Composer peerId={peer.id} fire={fire} onSendText={sendText} onSendFiles={sendFiles} />
+      ) : (
+        <div className="border-t border-slate-200 bg-white px-4 py-4 text-center text-sm text-slate-500">
+          You&apos;re no longer connected with {peer.name}. Reconnect to send messages.
+        </div>
+      )}
+
+      {lightbox && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4" onClick={() => setLightbox(null)}>
+          <button className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white hover:bg-white/20" aria-label="Close">
+            <XMarkIcon className="h-6 w-6" />
+          </button>
+          <img src={lightbox} alt="" className="max-h-full max-w-full rounded-lg object-contain" onClick={(e) => e.stopPropagation()} />
+        </div>
+      )}
+    </>
+  );
+}
+
+function Bubble({ m, mine, first, last, peer, seen, onRetry, onDelete, onOpenImage }) {
+  const [menu, setMenu] = useState(false);
+  const failed = m._status === "failed";
+  const sending = m._status === "sending";
+  const images = (m.attachments || []).filter(isImage);
+  const files = (m.attachments || []).filter((a) => !isImage(a));
+  const urlOf = (a) => a._local || getImageBaseUrl(a.key);
+
+  return (
+    <div className={cx("group flex items-end gap-2", mine ? "justify-end" : "justify-start", first ? "mt-3" : "mt-0.5")}>
+      {!mine && (last ? <Avatar name={peer.name} photo={peer.photo} size="xs" /> : <span className="w-7 shrink-0" />)}
+
+      <div className={cx("flex max-w-[80%] flex-col sm:max-w-[65%]", mine ? "items-end" : "items-start")}>
+        <div className="relative flex items-center gap-1">
+          {mine && !m.is_deleted && !sending && !failed && (
+            <MessageMenu open={menu} setOpen={setMenu} text={m.text} onDelete={() => onDelete(m)} align="right" />
+          )}
+          <div
+            className={cx(
+              "overflow-hidden rounded-2xl text-sm shadow-sm",
+              m.is_deleted
+                ? "bg-transparent px-3.5 py-2 italic text-slate-400 ring-1 ring-slate-200"
+                : mine
+                ? cx("bg-brand text-brand-ink", last && "rounded-br-md", failed && "bg-rose-500")
+                : cx("bg-white text-slate-800 ring-1 ring-slate-200", last && "rounded-bl-md"),
+              sending && "opacity-70"
+            )}
+          >
+            {m.is_deleted ? (
+              "This message was deleted"
+            ) : (
+              <>
+                {images.length > 0 && (
+                  <div className={cx("grid gap-0.5", images.length > 1 ? "grid-cols-2" : "grid-cols-1")}>
+                    {images.map((a, i) => (
+                      <button key={i} onClick={() => !a._local && onOpenImage(urlOf(a))} className="block">
+                        <img src={urlOf(a)} alt={a.name} className="max-h-64 w-full object-cover" loading="lazy" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {files.map((a, i) => (
+                  <a
+                    key={i}
+                    href={a._local ? undefined : urlOf(a)}
+                    target="_blank"
+                    rel="noreferrer"
+                    download={a.name}
+                    className={cx(
+                      "m-1.5 flex items-center gap-3 rounded-xl px-3 py-2",
+                      mine ? "bg-white/15 hover:bg-white/25" : "bg-slate-100 hover:bg-slate-200"
+                    )}
+                  >
+                    <DocumentIcon className="h-8 w-8 shrink-0 opacity-80" />
+                    <span className="min-w-0">
+                      <span className="block max-w-[12rem] truncate font-medium">{a.name}</span>
+                      <span className="text-xs opacity-75">{fileSize(a.size)}</span>
+                    </span>
+                    {!a._local && <ArrowDownTrayIcon className="h-4 w-4 shrink-0 opacity-75" />}
+                  </a>
+                ))}
+                {m.text && <p className="whitespace-pre-wrap break-words px-3.5 py-2 leading-relaxed">{linkify(m.text, mine)}</p>}
+                {sending && m._progress !== undefined && (
+                  <div className="h-1 bg-white/30">
+                    <div className="h-1 bg-white transition-all" style={{ width: `${m._progress}%` }} />
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+          {!mine && !m.is_deleted && (
+            <MessageMenu open={menu} setOpen={setMenu} text={m.text} align="left" />
+          )}
+        </div>
+
+        {(last || failed || seen) && (
+          <div className="mt-1 flex items-center gap-1 px-1 text-[11px] text-slate-400">
+            {failed ? (
+              <button onClick={() => onRetry(m)} className="flex items-center gap-1 font-medium text-rose-600 hover:underline" title={m._error}>
+                <ExclamationCircleIcon className="h-3.5 w-3.5" /> Not sent · Retry
+              </button>
+            ) : (
+              <>
+                <span>{sending ? "Sending…" : clockTime(m.created_at)}</span>
+                {mine && !sending && !m.is_deleted && (
+                  <span className={cx("flex", m.read_at ? "text-link" : "text-slate-400")} title={m.read_at ? "Seen" : "Sent"}>
+                    <CheckIcon className="h-3.5 w-3.5" />
+                    {m.read_at && <CheckIcon className="-ml-2 h-3.5 w-3.5" />}
+                  </span>
+                )}
+                {seen && <span className="text-link">Seen</span>}
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function MessageMenu({ open, setOpen, text, onDelete, align }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!open) return undefined;
+    const close = (e) => !ref.current?.contains(e.target) && setOpen(false);
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [open, setOpen]);
+  if (!text && !onDelete) return null;
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="rounded-full p-1 text-slate-400 opacity-0 transition hover:bg-slate-200 hover:text-slate-600 focus:opacity-100 group-hover:opacity-100"
+        aria-label="Message options"
+      >
+        <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+        </svg>
+      </button>
+      {open && (
+        <div
+          className={cx(
+            "absolute bottom-full z-20 mb-1 w-36 overflow-hidden rounded-lg bg-white py-1 text-sm shadow-lg ring-1 ring-slate-200",
+            align === "right" ? "right-0" : "left-0"
+          )}
+        >
+          {text && (
             <button
-              onClick={() => setVisibleChats((prev) => prev + 10)}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 w-full"
+              className="flex w-full items-center gap-2 px-3 py-2 text-slate-700 hover:bg-slate-50"
+              onClick={() => {
+                navigator.clipboard?.writeText(text);
+                toast.success("Copied", { autoClose: 1200 });
+                setOpen(false);
+              }}
             >
-              See more
+              <ClipboardDocumentIcon className="h-4 w-4" /> Copy
+            </button>
+          )}
+          {onDelete && (
+            <button
+              className="flex w-full items-center gap-2 px-3 py-2 text-rose-600 hover:bg-rose-50"
+              onClick={() => {
+                setOpen(false);
+                onDelete();
+              }}
+            >
+              <TrashIcon className="h-4 w-4" /> Unsend
             </button>
           )}
         </div>
+      )}
+    </div>
+  );
+}
 
-        <div
-          className={`w-full md:w-2/3  md:p-4 flex flex-col justify-between ${
-            selectedChat?.user.name ? "block" : "hidden md:block"
-          }`}
-        >
-          {selectedChat?.user?.name ? (
-            <>
-              <div className="flex justify-between items-center mb-4 w-[100%] px-2 py-2 bg-gray-200 rounded-xl  text-black">
-                <div className="flex flex-row items-center gap-1 ml-4">
-                  {" "}
-                  <IoMdArrowRoundBack
-                    className="text-black md:hidden text-2xl  rounded-lg"
-                    onClick={handleBackClick}
-                  />
-                  <h2 className="text-2xl font-bold">
-                    {selectedChat?.user?.name}
-                  </h2>
-                </div>
-                <IoIosArrowDropdown
-                  className="text-3xl hover:text-cyan-500 "
-                  onClick={() => toggleDropdown()}
-                />
-              </div>
-              {isOptionOpen && (
-                <div className=" absolute   rounded-md right-12 mt-14 ml-5 w-60 bg-gray-400 border border-gray-300 shadow-lg z-50 ">
-                  <div className=" absolute right-4  rotate-45 -translate-y-1/3 w-6 h-6   bg-gray-400 overflow-x-hidden -z-40"></div>
-                  <ul className="text-black p-1 ">
-                    <li className=" px-2 py-2 flex flex-row gap-2 hover:bg-gray-100 hover:rounded-xl  z-50 overflow-hidden text-xs ">
-                      <GiUnfriendlyFire className="text-xl overflow-hidden " />
-                      Unfriend {selectedChat?.user?.name}
-                    </li>
-                    <li className=" px-2 py-2 flex flex-row gap-2 hover:bg-gray-100 hover:rounded-xl  z-50 overflow-hidden text-xs ">
-                      <MdAutoDelete className="text-xl " />
-                      Clear History
-                    </li>
-                  </ul>
+const URL_RE = /(https?:\/\/[^\s]+)/g;
+function linkify(text, mine) {
+  return text.split(URL_RE).map((part, i) =>
+    /^https?:\/\//.test(part) ? (
+      <a key={i} href={part} target="_blank" rel="noreferrer noopener" className={cx("underline", mine ? "text-white" : "text-link")}>
+        {part}
+      </a>
+    ) : (
+      part
+    )
+  );
+}
+
+/* ---------------------------------------------------------------- composer */
+function Composer({ peerId, fire, onSendText, onSendFiles }) {
+  const [text, setText] = useState("");
+  const [files, setFiles] = useState([]);
+  const taRef = useRef(null);
+  const fileRef = useRef(null);
+  const typingRef = useRef({ sent: 0, timer: null });
+
+  useEffect(() => {
+    const ta = taRef.current;
+    if (!ta) return;
+    ta.style.height = "auto";
+    ta.style.height = `${Math.min(ta.scrollHeight, 160)}px`;
+  }, [text]);
+
+  useEffect(() => () => clearTimeout(typingRef.current.timer), []);
+
+  const stopTyping = useCallback(() => {
+    clearTimeout(typingRef.current.timer);
+    if (typingRef.current.sent) {
+      fire("typing", { to: peerId, is_typing: false });
+      typingRef.current.sent = 0;
+    }
+  }, [fire, peerId]);
+
+  const onType = (value) => {
+    setText(value.slice(0, MAX_TEXT));
+    const now = Date.now();
+    if (now - typingRef.current.sent > 2500) {
+      fire("typing", { to: peerId, is_typing: true });
+      typingRef.current.sent = now;
+    }
+    clearTimeout(typingRef.current.timer);
+    typingRef.current.timer = setTimeout(stopTyping, 3000);
+  };
+
+  const addFiles = (list) => {
+    const incoming = Array.from(list || []);
+    const tooBig = incoming.filter((f) => f.size > MAX_FILE_MB * 1024 * 1024);
+    if (tooBig.length) toast.warn(`${tooBig.map((f) => f.name).join(", ")} exceed${tooBig.length === 1 ? "s" : ""} ${MAX_FILE_MB} MB`);
+    setFiles((cur) => [...cur, ...incoming.filter((f) => f.size <= MAX_FILE_MB * 1024 * 1024)].slice(0, 10));
+  };
+
+  const submit = () => {
+    const body = text.trim();
+    if (!body && !files.length) return;
+    if (files.length) onSendFiles(files, body);
+    else onSendText(body);
+    setText("");
+    setFiles([]);
+    stopTyping();
+    taRef.current?.focus();
+  };
+
+  return (
+    <div
+      className="border-t border-slate-200 bg-white p-3"
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={(e) => {
+        e.preventDefault();
+        addFiles(e.dataTransfer.files);
+      }}
+    >
+      {files.length > 0 && (
+        <div className="mb-2 flex gap-2 overflow-x-auto pb-1">
+          {files.map((f, i) => (
+            <div key={i} className="relative shrink-0">
+              {f.type.startsWith("image/") ? (
+                <img src={URL.createObjectURL(f)} alt={f.name} className="h-16 w-16 rounded-lg object-cover ring-1 ring-slate-200" />
+              ) : (
+                <div className="flex h-16 w-36 items-center gap-2 rounded-lg bg-slate-100 px-2 text-xs text-slate-700">
+                  <DocumentIcon className="h-6 w-6 shrink-0 text-slate-500" />
+                  <span className="min-w-0">
+                    <span className="block truncate font-medium">{f.name}</span>
+                    <span className="text-slate-500">{fileSize(f.size)}</span>
+                  </span>
                 </div>
               )}
-              <div className="flex flex-col h-full overflow-y-scroll no-scrollbar font-sans">
-                <div className="flex-1 md:bg-gray-200 rounded-lg">
-                  {chatHistory[selectedChat?.alumni?.user_id]?.map(
-                    (msg, index) => {
-                      const isLongMessage =
-                        msg.message && msg.message.length > 100;
-
-                      return (
-                        <div
-                          key={index}
-                          className={`p- flex ${
-                            msg.isReceived ? "justify-start" : "justify-end"
-                          } w-full`}
-                        >
-                          <div
-                            className={`inline-block max-w-[90%] lg:max-w-[70%] ${
-                              isLongMessage ? "block w-full" : ""
-                            } rounded-lg p-2 relative`}
-                          >
-                            {/* <div className={`${msg.isReceived ? "text-left" : "text-right"} mb-2`}>
-                            <div className="inline-block relative group">
-                              <button className="text-gray-500">
-                                <BiDotsHorizontalRounded />
-                              </button>
-                              <div className="absolute mt-2 w-28 bg-white border border-gray-300 rounded-md shadow-lg hidden group-hover:block z-10">
-                                <ul className="text-black p-2">
-                                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Delete</li>
-                                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Copy</li>
-                                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Forward</li>
-                                </ul>
-                              </div>
-                            </div>
-                          </div> */}
-
-                            {msg.message &&
-                            msg.message.startsWith("uploads/") ? (
-                              <>
-                                {[
-                                  ".JPG",
-                                  ".jpg",
-                                  ".jpeg",
-                                  ".png",
-                                  ".gif",
-                                  ".bmp",
-                                  ".webp",
-                                ].some((ext) => msg.message.endsWith(ext)) ? (
-                                  <div>
-                                    <img
-                                      src={getImageBaseUrl(msg.message)}
-                                      alt="Sent file"
-                                      className="rounded-lg w-full h-auto object-cover mb-1 cursor-pointer"
-                                      onClick={() =>
-                                        handleImageClick(
-                                          getImageBaseUrl(msg.message)
-                                        )
-                                      }
-                                    />
-
-                                    {isFullScreen && currentImage && (
-                                      <div
-                                        className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center p-4 justify-center"
-                                        onClick={handleCloseModal}
-                                      >
-                                        <div className="absolute text-white right-10 top-3 text-4xl">
-                                          <VscClose />
-                                        </div>
-                                        <img
-                                          src={currentImage}
-                                          alt="Full screen"
-                                          className="max-w-full max-h-full object-contain"
-                                          onClick={(e) => e.stopPropagation()}
-                                        />
-                                      </div>
-                                    )}
-                                  </div>
-                                ) : null}
-
-                                {msg.message.endsWith(".pdf") ? (
-                                  <div className=" rounded-lg text-white flex justify-end space-x-2 w-auto">
-                                    <div className="flex flex-row gap-2 px-4 py-3 bg-red-900 rounded-lg">
-                                      {" "}
-                                      <FaFilePdf className="text-xl" />
-                                      <a
-                                        href={getImageBaseUrl(msg.message)}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-gray-300"
-                                      >
-                                        {formatString(
-                                          msg.message.split("uploads/")[1]
-                                        )}
-                                      </a>
-                                    </div>
-                                  </div>
-                                ) : null}
-
-                                {msg.message.endsWith(".csv") ? (
-                                  <div className="  rounded-lg text-white flex justify-end space-x-2 w-auto">
-                                    <div className="flex flex-row gap-2 px-4 py-3 bg-green-900 rounded-lg">
-                                      {" "}
-                                      <BsFiletypeCsv className="text-xl" />
-                                      <a
-                                        href={getImageBaseUrl(msg.message)}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-gray-300"
-                                      >
-                                        {formatString(
-                                          msg.message.split("uploads/")[1]
-                                        )}
-                                      </a>
-                                    </div>
-                                  </div>
-                                ) : null}
-
-                                {[
-                                  ".doc",
-                                  ".docx",
-                                  ".xls",
-                                  ".xlsx",
-                                  ".txt",
-                                ].some((ext) => msg.message.endsWith(ext)) ? (
-                                  <div className="bg-blue-900 p-2 rounded-lg text-white flex items-center space-x-2">
-                                    <FaFileAlt className="text-xl" />
-                                    <a
-                                      href={getImageBaseUrl(msg.message)}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="underline"
-                                    >
-                                      {formatString(
-                                        msg.message.split("uploads/")[1]
-                                      )}
-                                    </a>
-                                  </div>
-                                ) : null}
-                              </>
-                            ) : (
-                              <p
-                                className={` flex flex-col-reverse px-3 py-2 ${
-                                  msg.isReceived
-                                    ? "bg-gray-100 text-gray-900 text-[16px]  rounded-r-lg rounded-tl-2xl  font-serif "
-                                    : "bg-gray-300 text-gray-900 text-[16px] text-left  rounded-l-2xl rounded-tr-2xl"
-                                }`}
-                                style={{
-                                  textAlign: msg.isReceived ? "left" : "left",
-                                  alignSelf: msg.isReceived
-                                    ? "flex-start"
-                                    : "flex-end",
-                                  height: isLongMessage ? "auto" : "initial",
-                                  minHeight: isLongMessage ? "100px" : "auto",
-                                }}
-                              >
-                                {msg.message}
-                              </p>
-                            )}
-                            <span className="block text-xs mt-1 text-gray-500 text-end">
-                              {msg.time}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    }
-                  )}
-
-                  <div ref={messagesEndRef} />
-                </div>
-                <div className="flex flex-wrap gap-2 bg-gray-200 mt-2 rounded-xl">
-                  {selectedFiles.length > 0 && (
-                    <div className="flex flex-wrap gap-3 mb-2">
-                      {selectedFiles.map((file, index) =>
-                        renderFilePreview(file, index)
-                      )}
-                    </div>
-                  )}
-
-                  <div className="flex w-full items-end justify-between border-t mt- overflow-hidden bg-gray-600  rounded-xl m- relative p- focus-within:bg-gray-500">
-                    <label
-                      htmlFor="file-upload"
-                      className="cursor-pointer bg-inherit text-2xl py-2 rounded-lg flex mb-2"
-                    >
-                      <MdOutlineAttachFile className="text-gray-100 text-2.5xl translate rotate-45 hover:text-gray-900 pl-1" />
-                      <input
-                        type="file"
-                        accept="image/*,application/pdf,.csv,.txt"
-                        onChange={handleFileUpload}
-                        className="hidden"
-                        id="file-upload"
-                        multiple
-                      />
-                    </label>
-
-                    <textarea
-                      ref={textareaRef}
-                      value={message}
-                      rows={1}
-                      onChange={(e) => setMessage(e.target.value)}
-                      onKeyDown={handleKeyDown}
-                      placeholder="Type a message..."
-                      style={{ height: "auto", maxHeight: "200px" }}
-                      className="w-full text-lg pl-4 p-2 bg-gray-600 text-gray-800 resize-none overflow-y-scroll no-scrollbar rounded-lg placeholder-gray-400 focus:bg-gray-500 focus:placeholder-gray-500 h-fit mb-2"
-                    />
-
-                    <div className=" bg-gray-500 hover:bg-gray-700 p-2.5 h-fit rounded-xl  group flex justify-center items-center m-auto">
-                      <span
-                        onClick={onSendMessage}
-                        className="flex items-center justify-center"
-                      >
-                        <IoMdArrowUp className="text-white group-hover:text-gray-200 text-3xl" />
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="relative text-center bg-inherit  bg-gray-100  h-full">
-              <div className="face2  mt-4">
-                <div className="sad mt-2 w-8 h-2  !border-none inline-block ">
-                  <IoChatbubbleEllipsesSharp className="text-8xl text-gray-600 " />
-                </div>
-              </div>
-              <div className="shadow move inset-x-0 bottom-0 h-2 bg-gray-300 "></div>
-              <div className="message mt-4">
-                <p className="text-gray-600 text-lg fony-serf uppercase">
-                  {" "}
-                  you haven't select chat history{" "}
-                </p>
-              </div>
+              <button
+                onClick={() => setFiles((cur) => cur.filter((_, j) => j !== i))}
+                className="absolute -right-1.5 -top-1.5 rounded-full bg-slate-800 p-0.5 text-white hover:bg-slate-900"
+                aria-label={`Remove ${f.name}`}
+              >
+                <XMarkIcon className="h-3.5 w-3.5" />
+              </button>
             </div>
+          ))}
+        </div>
+      )}
+      <div className="flex items-end gap-2">
+        <button
+          onClick={() => fileRef.current?.click()}
+          className="rounded-full p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+          aria-label="Attach files"
+          title="Attach photos or files"
+        >
+          <PaperClipIcon className="h-5 w-5" />
+        </button>
+        <input
+          ref={fileRef}
+          type="file"
+          multiple
+          hidden
+          accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip"
+          onChange={(e) => {
+            addFiles(e.target.files);
+            e.target.value = "";
+          }}
+        />
+        <div className="flex-1 rounded-2xl bg-slate-100 px-4 py-2 focus-within:bg-white focus-within:ring-2 focus-within:ring-brand">
+          <textarea
+            ref={taRef}
+            rows={1}
+            value={text}
+            onChange={(e) => onType(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+                e.preventDefault();
+                submit();
+              }
+            }}
+            onPaste={(e) => {
+              const pasted = Array.from(e.clipboardData?.files || []);
+              if (pasted.length) addFiles(pasted);
+            }}
+            placeholder="Write a message…"
+            className="block max-h-40 w-full resize-none border-0 bg-transparent p-0 text-sm text-slate-900 placeholder:text-slate-400 focus:ring-0"
+          />
+          {text.length > MAX_TEXT - 300 && (
+            <p className="mt-1 text-right text-[11px] text-slate-400">
+              {text.length}/{MAX_TEXT}
+            </p>
           )}
         </div>
+        <button
+          onClick={submit}
+          disabled={!text.trim() && !files.length}
+          className="rounded-full bg-brand p-2.5 text-white shadow-sm transition hover:bg-brand-hover disabled:bg-slate-200 disabled:text-slate-400"
+          aria-label="Send"
+        >
+          {files.length ? <PhotoIcon className="h-5 w-5" /> : <PaperAirplaneIcon className="h-5 w-5" />}
+        </button>
       </div>
-    </QueryResult>
+      <p className="mt-1.5 hidden px-12 text-[11px] text-slate-400 sm:block">Enter to send · Shift + Enter for a new line · drop files to attach</p>
+    </div>
   );
 }

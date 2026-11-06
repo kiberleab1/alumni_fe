@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "react-query";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -523,7 +523,6 @@ export default function CreateAlumni() {
         </div>
 
         <div>
-          <ToastContainer />
         </div>
       </div>
     </QueryResult>

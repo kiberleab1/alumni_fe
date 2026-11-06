@@ -17,24 +17,18 @@ const API_BASE_URl = import.meta.env.VITE_BASE_URL;
 const IMAGE_API_URL = import.meta.env?.VITE_IMAGE_BASE_URL;
 const BASE_URL = window.location.origin + "/";
 
+const INSTITUTE_SLUG = import.meta.env?.VITE_INSTITUTE_SLUG;
+
 axios.interceptors.request.use(
   (config) => {
-    try {
-      const { token, user } = getUserToken();
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-
-      config.headers.User = JSON.stringify(user);
-      if (user) {
-        config.headers["user-type"] = user.role_name;
-      }
-    } catch (error) {
-      //TODO dev
-      // config.headers.Authorization = "Bearer dev";
-
-      return config;
+    // NB: the whole user object used to be sent in a "User" header on every
+    // request – leaking PII and breaking on non-ASCII names. Only the bearer
+    // token is needed; the server resolves identity and role itself.
+    const stored = getUserToken();
+    if (stored?.token) {
+      config.headers.Authorization = `Bearer ${stored.token}`;
     }
+    if (INSTITUTE_SLUG) config.headers["X-Institute-Slug"] = INSTITUTE_SLUG;
     return config;
   },
   (error) => {
@@ -55,14 +49,18 @@ axios.interceptors.response.use(
     return Promise.reject(response);
   },
   (error) => {
-    console.log(error);
-    if (error.response.status === 401) {
-      localStorage.removeItem("_user");
-      // window.location.reload();
-    }
-    if (error?.request && !error?.response) {
-      // connection failure
-      // alert("Connection Error");
+    const status = error?.response?.status;
+    const code = error?.response?.data?.error?.code;
+    // session is gone (expired / logged out elsewhere / account suspended):
+    // clear it and send the user to the login page once.
+    const SESSION_CODES = ["TOKEN_EXPIRED", "TOKEN_INVALID", "SESSION_REVOKED", "TOKEN_MISSING"];
+    if ((status === 401 && SESSION_CODES.includes(code)) || (status === 403 && code?.startsWith("ACCOUNT_"))) {
+      if (getUserToken()) {
+        localStorage.removeItem("userData");
+        if (!window.location.pathname.includes("/login")) {
+          window.location.href = "/login?expired=1";
+        }
+      }
     }
     return Promise.reject(error);
   }
@@ -826,4 +824,212 @@ export async function sendFiles(messageData) {
     },
   });
   return response;
+}
+
+/* ------------------------------------------------------------------ */
+/* Shared helpers                                                       */
+/* ------------------------------------------------------------------ */
+
+/** Human-readable message from any API error (new and legacy shapes). */
+export function apiErrorMessage(error, fallback = "Something went wrong. Please try again.") {
+  const data = error?.response?.data;
+  if (!error?.response) return "Can't reach the server. Check your connection.";
+  return data?.error?.message || data?.message || (typeof data === "string" && data) || fallback;
+}
+
+export const API_ORIGIN = (() => {
+  try {
+    return new URL(API_BASE_URl).origin;
+  } catch {
+    return window.location.origin;
+  }
+})();
+
+/* ------------------------------------------------------------------ */
+/* Account                                                              */
+/* ------------------------------------------------------------------ */
+export async function getMe() {
+  return (await axios.get(`${API_BASE_URl}/me`)).data.data;
+}
+export async function logout() {
+  try {
+    await axios.post(`${API_BASE_URl}/logout`);
+  } catch {
+    /* already logged out server-side */
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Connections                                                          */
+/* ------------------------------------------------------------------ */
+// type: accepted | incoming | outgoing
+export async function listConnections({ type = "accepted", search = "", pageNumber = 1, pageSize = 20 }) {
+  const params = new URLSearchParams({ type, search, pageNumber, pageSize });
+  return (await axios.get(`${API_BASE_URl}/connections?${params}`)).data;
+}
+export async function getConnectionCounts() {
+  return (await axios.get(`${API_BASE_URl}/connections/counts`)).data.data;
+}
+export async function getConnectionStatus(user_id) {
+  return (await axios.get(`${API_BASE_URl}/connections/status?user_id=${user_id}`)).data.data;
+}
+export async function getConnectionSuggestions(limit = 12) {
+  return (await axios.get(`${API_BASE_URl}/connections/suggestions?limit=${limit}`)).data.items;
+}
+export async function sendConnectionRequest({ user_id, message }) {
+  return (await axios.post(`${API_BASE_URl}/connections`, { user_id, message })).data.data;
+}
+// status: accepted | declined | cancelled
+export async function respondToConnection({ id, status }) {
+  return (await axios.patch(`${API_BASE_URl}/connections/${id}`, { status })).data.data;
+}
+export async function removeConnection({ id, user_id }) {
+  const url = id ? `${API_BASE_URl}/connections/${id}` : `${API_BASE_URl}/connections?user_id=${user_id}`;
+  return (await axios.delete(url)).data.data;
+}
+
+/* ------------------------------------------------------------------ */
+/* Chat                                                                 */
+/* ------------------------------------------------------------------ */
+export async function getConversations() {
+  return (await axios.get(`${API_BASE_URl}/chat/conversations`)).data;
+}
+export async function getMessages({ peerId, before, limit = 30 }) {
+  const params = new URLSearchParams({ with: peerId, limit });
+  if (before) params.set("before", before);
+  return (await axios.get(`${API_BASE_URl}/chat/history?${params}`)).data;
+}
+export async function markChatRead(peer_id) {
+  return (await axios.post(`${API_BASE_URl}/chat/read`, { peer_id })).data.data;
+}
+export async function sendChatMessageHttp({ to, text, client_id }) {
+  return (await axios.post(`${API_BASE_URl}/chat/messages`, { to, text, client_id })).data.data;
+}
+export async function deleteChatMessage(id) {
+  return (await axios.delete(`${API_BASE_URl}/chat/messages/${id}`)).data.data;
+}
+export async function getChatUnreadCount() {
+  return (await axios.get(`${API_BASE_URl}/chat/unread-count`)).data.data.unread;
+}
+/** Upload attachments; the server stores one message and pushes it to both sides. */
+export async function uploadChatFiles({ to, files, text, client_id, onProgress }) {
+  const form = new FormData();
+  form.append("to_user_id", to);
+  if (text) form.append("text", text);
+  if (client_id) form.append("client_id", client_id);
+  files.forEach((f) => form.append("files", f));
+  const res = await axios.post(`${API_BASE_URl}/chat/sendFiles?to_user_id=${to}`, form, {
+    headers: { "Content-Type": "multipart/form-data" },
+    onUploadProgress: (e) => onProgress && e.total && onProgress(Math.round((e.loaded / e.total) * 100)),
+  });
+  return res.data.data;
+}
+
+/* ------------------------------------------------------------------ */
+/* Notifications                                                        */
+/* ------------------------------------------------------------------ */
+export async function getNotifications({ pageNumber = 1, pageSize = 20 } = {}) {
+  return (await axios.get(`${API_BASE_URl}/notifications?pageNumber=${pageNumber}&pageSize=${pageSize}`)).data;
+}
+export async function markNotificationsRead({ ids, all }) {
+  return (await axios.post(`${API_BASE_URl}/notifications/read`, { ids, all })).data.data;
+}
+
+/* ------------------------------------------------------------------ */
+/* Event RSVP                                                           */
+/* ------------------------------------------------------------------ */
+export async function getEventAttendance(eventId) {
+  return (await axios.get(`${API_BASE_URl}/events/${eventId}/attendance`)).data.data;
+}
+/** status: "going" | "maybe" | "not_going" → updated attendance summary */
+export async function setEventRsvp({ eventId, status }) {
+  return (await axios.put(`${API_BASE_URl}/events/${eventId}/rsvp`, { status })).data.data;
+}
+export async function clearEventRsvp(eventId) {
+  return (await axios.delete(`${API_BASE_URl}/events/${eventId}/rsvp`)).data.data;
+}
+export async function getEventAttendees({ eventId, status = "going", scope = "all", search = "", pageNumber = 1, pageSize = 24 }) {
+  const q = new URLSearchParams({ status, scope, search, pageNumber, pageSize });
+  return (await axios.get(`${API_BASE_URl}/events/${eventId}/attendees?${q}`)).data;
+}
+export async function getMyEvents(when = "upcoming") {
+  return (await axios.get(`${API_BASE_URl}/me/events?when=${when}`)).data.data;
+}
+/** Downloads a file through the authenticated client (keeps institute headers). */
+async function downloadVia(url, fallbackName) {
+  const res = await axios.get(url, { responseType: "blob" });
+  const match = /filename="([^"]+)"/.exec(res.headers["content-disposition"] || "");
+  const href = URL.createObjectURL(res.data);
+  const a = Object.assign(document.createElement("a"), { href, download: match?.[1] || fallbackName });
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(href), 1000);
+}
+export const downloadEventCalendar = (eventId) => downloadVia(`${API_BASE_URl}/events/${eventId}/calendar.ics`, "event.ics");
+export const exportEventAttendees = (eventId) => downloadVia(`${API_BASE_URl}/events/${eventId}/attendees/export`, "attendees.csv");
+
+/* ------------------------------------------------------------------ */
+/* Member settings: notifications, privacy, blocking, account           */
+/* ------------------------------------------------------------------ */
+export async function getMySettings() {
+  return (await axios.get(`${API_BASE_URl}/me/settings`)).data.data;
+}
+/** partial: { notifications?: {cat: {in_app, email}}, privacy?: {...}, directory_visible? } */
+export async function updateMySettings(patch) {
+  return (await axios.put(`${API_BASE_URl}/me/settings`, patch)).data.data;
+}
+export async function getBlockedUsers() {
+  return (await axios.get(`${API_BASE_URl}/me/blocks`)).data.data;
+}
+export async function blockUser(userId) {
+  return (await axios.post(`${API_BASE_URl}/me/blocks`, { user_id: userId })).data.data;
+}
+export async function unblockUser(userId) {
+  return (await axios.delete(`${API_BASE_URl}/me/blocks/${userId}`)).data.data;
+}
+export async function getMySessions() {
+  return (await axios.get(`${API_BASE_URl}/me/sessions`)).data.data;
+}
+export async function revokeOtherSessions() {
+  return (await axios.post(`${API_BASE_URl}/me/sessions/revoke-all`)).data;
+}
+export async function changeMyPassword({ current_password, new_password }) {
+  return (await axios.post(`${API_BASE_URl}/changePassword`, { current_password, new_password })).data;
+}
+export async function deactivateMyAccount(password) {
+  return (await axios.post(`${API_BASE_URl}/me/deactivate`, { password })).data;
+}
+
+/* ------------------------------------------------------------------ */
+/* Theming                                                              */
+/* ------------------------------------------------------------------ */
+/** { theme, vars, font_url } – the member's effective (published) theme */
+export async function getTheme() {
+  return (await axios.get(`${API_BASE_URl}/theme`)).data.data;
+}
+const themeScope = ({ scope = "institute", institute_id } = {}) => ({ scope, ...(institute_id && { institute_id }) });
+export async function getThemeEditor(scope) {
+  const q = new URLSearchParams(themeScope(scope));
+  return (await axios.get(`${API_BASE_URl}/admin/theme?${q}`)).data.data;
+}
+export async function saveThemeDraft(scope, draft) {
+  return (await axios.put(`${API_BASE_URl}/admin/theme`, { ...themeScope(scope), draft })).data.data;
+}
+export async function publishTheme(scope) {
+  return (await axios.post(`${API_BASE_URl}/admin/theme/publish`, themeScope(scope))).data.data;
+}
+export async function discardThemeDraft(scope) {
+  return (await axios.post(`${API_BASE_URl}/admin/theme/discard`, themeScope(scope))).data.data;
+}
+export async function restoreTheme(scope, index) {
+  return (await axios.post(`${API_BASE_URl}/admin/theme/restore`, { ...themeScope(scope), index })).data.data;
+}
+export async function setThemeLocks(locks) {
+  return (await axios.put(`${API_BASE_URl}/admin/theme/locks`, { locks })).data.data;
+}
+export async function uploadThemeLogo(file) {
+  const form = new FormData();
+  form.append("image", file);
+  return (await axios.post(`${API_BASE_URl}/admin/theme/logo`, form, { headers: { "Content-Type": "multipart/form-data" } })).data.data;
 }

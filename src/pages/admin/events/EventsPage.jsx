@@ -32,7 +32,7 @@ export default function EventsPage({ onCreateEventClick, onEditEventClick }) {
 
 function ListEvent({ eventsData, onCreateEventClick, onEditEventClick }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
@@ -91,7 +91,7 @@ function ListEvent({ eventsData, onCreateEventClick, onEditEventClick }) {
       <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
         <div className="min-w-full">
           <div className="overflow-x-auto">
-            <div className="table-container" style={{ maxHeight: "500px" }}>
+            <div className="table-container" style={{ maxHeight: "900px" }}>
               <table className="min-w-full divide-y divide-gray-200">
                 <thead
                   className="sticky top-0 bg-gray-100 z-10 font-serif"
@@ -150,7 +150,7 @@ function ListEvent({ eventsData, onCreateEventClick, onEditEventClick }) {
                     <tr key={event.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-start">
                         <div className="text-sm font-medium text-gray-900">
-                          {event.id}
+                          {event.title}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-start">

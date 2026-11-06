@@ -4,9 +4,9 @@ import { Table } from "reactstrap";
 import { TfiEmail } from "react-icons/tfi";
 import { FaCheck, FaUserFriends, FaUserPlus } from "react-icons/fa";
 import { FcAcceptDatabase, FcBusinessman, FcBusinesswoman, FcCancel } from "react-icons/fc";
-import { getImageBaseUrl, requestConnection, updateConnection } from "src/api";
-import { useMutation, useQueryClient } from "react-query";
-import { ToastContainer, toast } from "react-toastify";
+import { apiErrorMessage, getConnectionStatus, getImageBaseUrl, respondToConnection, sendConnectionRequest } from "src/api";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -15,153 +15,120 @@ import { IoCloseOutline } from "react-icons/io5";
 import { MdOutlineCloseFullscreen } from "react-icons/md";
 
 const AlumniModal = ({ isOpen, onClose, profile, onSelectChatClick }) => {
+  const queryClient = useQueryClient();
+  const peerId = profile?.user_id ? String(profile.user_id) : null;
+  const peerName = profile?.user_data?.name || "this member";
+
+  // live relationship with this person (the list row may be stale)
+  const { data: rel, isLoading: relLoading } = useQuery(
+    ["connectionStatus", peerId],
+    () => getConnectionStatus(peerId),
+    { enabled: !!isOpen && !!peerId, staleTime: 5_000 }
+  );
+
+  const refresh = () => {
+    queryClient.invalidateQueries(["connectionStatus", peerId]);
+    queryClient.invalidateQueries("filterAlumniProfile");
+    queryClient.invalidateQueries("connections");
+    queryClient.invalidateQueries("connectionCounts");
+  };
+  const onError = (err) => {
+    toast.error(apiErrorMessage(err, "Something went wrong, please try again."));
+    refresh();
+  };
+
+  const connect = useMutation(sendConnectionRequest, {
+    onSuccess: (data) => {
+      toast.success(data.auto_accepted ? `You're now connected with ${peerName}!` : "Connection request sent!");
+      refresh();
+    },
+    onError,
+  });
+  const respond = useMutation(respondToConnection, {
+    onSuccess: (data) => {
+      if (data.status === "accepted") toast.success(`You're now connected with ${peerName}!`);
+      else if (data.status === "declined") toast.info(`You declined the request from ${peerName}.`);
+      else toast.info("Request withdrawn.");
+      refresh();
+    },
+    onError,
+  });
+
+  // NB: must come after every hook – returning earlier broke the rules of hooks
   if (!isOpen) return null;
 
-  const queryClient = useQueryClient();
-  const user_connection_profile = {
-    id: profile?.id,
-    user_id: profile?.user_id,
-    requesting_user_id: profile?.user_id,
-    status: profile?.status,
-    createdat: profile?.createdat,
-    updatedat: profile?.updatedat,
-    user: profile?.user_data,
-    alumni: {
-      user_id: profile?.user_id,
-      degree: profile?.degree,
-      graduation_year:  profile?.graduation_year,
-      user_photo: profile?.user_photo
-    }
-  };
-  
-  const mutation = useMutation(requestConnection, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("requestConnection");
-      toast.success("Connection Request successfully!");
-    },
-    onError: (err) => {
-      console.error(err);
-      if (
-        err?.response?.data?.message &&
-        err?.response?.data?.message === "Request already sent."
-      ) {
-        toast.warning(err?.response?.data?.message);
-      } else {
-        toast.error("An error occurred while sending the request.");
-      }
-    },
-  });
-
-  const handleSubmit = () => {
-    mutation.mutate(profile.user_id);
-  };
-
-  const { mutate: updateConnectionStatus } = useMutation(updateConnection, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("requestConnection");
-    },
-    onError: (error) => {
-      queryClient.invalidateQueries("requestConnection");
-      console.error("Error request action:", error);
-      toast.error("Error in request action!");
-    },
-  });
-
-  const handleAction = (connection, status) => {
-    const updateData = {
-      status,
-      id: connection.id,
-    };
-    updateConnectionStatus(updateData);
-
-    if (status === "accepted") {
-      toast.success(`You have become friends with ${profile?.user_data?.name}!`);
-    } else if (status === "declined") {
-      toast.info(
-        `You have declined the request from ${profile?.user_data?.name}.`
-      );
-    }
-  };
+  const busy = connect.isLoading || respond.isLoading;
+  const connectionId = rel?.connection?.id;
+  const btn =
+    "w-full mt-4 flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition disabled:opacity-60";
 
   const renderConnectionButton = () => {
-    if (
-      (typeof profile?.connection_data === "string" &&
-        profile?.connection_data === "No Connection Data") ||
-      (typeof profile?.connection_data === "object" &&
-        profile?.connection_data?.status === "declined")
-    ) {
-      return (
-        <div className="flex flex-rows gap-2 items-center justify-center w-full ">
+    if (relLoading || !rel) {
+      return <div className="mt-4 h-10 w-full animate-pulse rounded-lg bg-gray-100" />;
+    }
+    switch (rel.state) {
+      case "self":
+        return null;
+      case "connected":
+        return (
           <button
-            className="bg-sky-50 hover:bg-sky-100 border-2 border-sky-500 w-1/2 justify-center  py-2 px-4 rounded-l-lg mt-4 flex items-center gap-2"
-            onClick={handleSubmit}
+            className={`${btn} bg-brand text-brand-ink hover:bg-brand-hover`}
+            onClick={() => onSelectChatClick({ peer: { id: peerId, name: peerName, photo: profile?.user_photo } })}
           >
-            <FaUserPlus className="text-sky-900" />{" "}
-            <span className="text-black">Send Request</span>
+            <BiMessageAltDetail className="text-xl" /> Message
           </button>
-        </div>
-      );
-    } else if (
-      typeof profile?.connection_data === "object" &&
-      profile?.connection_data?.status === "pending"
-    ) {
-      return (
-        <div className="flex flex-rows gap-2 items-center justify-center w-full">
-          {profile?.connection_data?.status === "pending" && profile?.connection_data?.requesting_user_id == profile?.user_id ? (
-            <>
-              <button
-                className="bg-gray-50 w-1/2 text-black hover:bg-white-100  border-solid border-2 border-white-100 py-2 xl:px-4 rounded-l-lg mt-4 flex justify-center items-center gap-2"
-                disabled
-              >
-                <FaCheck className="text-green-600" />{" "}
-                <span className="text-sm line-clamp-1">Request Received</span>
-              </button>
-              <button
-                className="bg-gray-50  text-black hover:bg-green-100 w-1/2 border-solid border-2 border-sky-500   xl:px-4 py-2 rounded-l-lg mt-4 flex xl:justify-center xl:items-center gap-1"
-                onClick={() => handleAction(profile?.connection_data, "accepted")}
-              >
-                <FcAcceptDatabase className="" />
-                <span className="text-sm  w-[100%] line-clamp-1">
-                  Accept request
-                </span>
-              </button>
-            </>
-          ) 
-          : (
-            <>
-              <button
-                className="bg-gray-50 w-1/2 text-black hover:bg-white-100  border-solid border-2 border-white-100 py-2 xl:px-4 rounded-l-lg mt-4 flex justify-center items-center gap-2"
-                disabled
-              >
-                <FaCheck className="text-green-600" />{" "}
-                <span className="text-sm line-clamp-1">Request Sent</span>
-              </button>
-              <button
-                className="bg-gray-50  text-black hover:bg-red-100 w-1/2 border-solid border-2 border-sky-500   xl:px-4 py-2 rounded-l-lg mt-4 flex xl:justify-center xl:items-center gap-1"
-                onClick={() => handleAction(profile?.connection_data, "declined")}
-              >
-                <FcCancel className="" />
-                <span className="text-sm  w-[100%] line-clamp-1">
-                  Cancel request
-                </span>
-              </button>
-            </>
-          )}
-        </div>
-      );
-    } else if (
-      typeof profile?.connection_data === "object" &&
-      profile?.connection_data?.status === "accepted"
-    ) {
-      return (
-        <div className="text-green-500 font-bold py-2 px-2 mt-2 w-full">
-          <button className="flex-row w-full bg-white hover:bg-blue-700 text-black border-2 border-sky-500 justify-center font-serif text-lg py-2 px-4 rounded-l-lg mt-2 flex items-center gap-2"
-            onClick={() => onSelectChatClick(user_connection_profile)}
-          >
-            <BiMessageAltDetail className="text-sky-500 text-xl" /> Message
-          </button>
-        </div>
-      );
+        );
+      case "pending_received":
+        return (
+          <div className="flex w-full gap-2">
+            <button
+              disabled={busy}
+              className={`${btn} bg-emerald-600 text-white hover:bg-emerald-700`}
+              onClick={() => respond.mutate({ id: connectionId, status: "accepted" })}
+            >
+              <FaCheck /> Accept request
+            </button>
+            <button
+              disabled={busy}
+              className={`${btn} border border-gray-300 bg-white text-gray-700 hover:bg-gray-50`}
+              onClick={() => respond.mutate({ id: connectionId, status: "declined" })}
+            >
+              Ignore
+            </button>
+          </div>
+        );
+      case "pending_sent":
+        return (
+          <div className="flex w-full gap-2">
+            <button disabled className={`${btn} bg-gray-100 text-gray-600`}>
+              <FaCheck className="text-green-600" /> Request sent
+            </button>
+            <button
+              disabled={busy}
+              className={`${btn} border border-rose-200 bg-white text-rose-600 hover:bg-rose-50`}
+              onClick={() => respond.mutate({ id: connectionId, status: "cancelled" })}
+            >
+              Withdraw
+            </button>
+          </div>
+        );
+      default:
+        return (
+          <div className="w-full">
+            <button
+              disabled={busy}
+              className={`${btn} bg-brand text-brand-ink hover:bg-brand-hover`}
+              onClick={() => connect.mutate({ user_id: peerId })}
+            >
+              <FaUserPlus /> Connect
+            </button>
+            {rel.mutual_connections > 0 && (
+              <p className="mt-2 text-center text-xs text-gray-500">
+                {rel.mutual_connections} mutual connection{rel.mutual_connections > 1 ? "s" : ""}
+              </p>
+            )}
+          </div>
+        );
     }
   };
 
@@ -195,7 +162,7 @@ const AlumniModal = ({ isOpen, onClose, profile, onSelectChatClick }) => {
               <FcBusinessman className="w-full h-full rounded-full " />
             )}
 
-            <div className="absolute bottom-0 right-0 transform -translate-y-2/3 translate-x-3 border-2 border-sky-400 rounded-full">
+            <div className="absolute bottom-0 right-0 transform -translate-y-2/3 translate-x-3 border-2 border-brand rounded-full">
               <div className="bg-white text-sky-300 p-1 rounded-full  w-10 h-10  flex items-center justify-center font-extrabold text-3xl outline-offset-4">
                 <FaUserPlus className="bg-black hover:bg-gray-500  w-full h-full rounded-full" />
               </div>
@@ -298,7 +265,6 @@ const AlumniModal = ({ isOpen, onClose, profile, onSelectChatClick }) => {
         </div>
       </div>
       <div>
-        <ToastContainer />
       </div>
     </div>
   );

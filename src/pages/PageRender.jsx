@@ -50,10 +50,12 @@ import CreateMissionContent from "./admin/webcontent/mission/CreateMissionPage";
 import AdminListVisionPage from "./admin/webcontent/vission/ListVisionsPage";
 import CreateVisionContent from "./admin/webcontent/vission/CreatevisionPage";
 import { Dashboard } from "./admin/Dashboard";
+import BrandingPage from "./admin/branding/BrandingPage";
 
 const componentsMap = {
   Dashboard: Dashboard,
   Settings: SettingsPage,
+  Branding: BrandingPage,
   Admins: AdminsPage,
   "Create Admin": CreateAdmin,
   "Edit Admin": EditAdmin,

@@ -18,6 +18,7 @@ import NewsDetailPage from "./user/news/NewsDetailPage";
 import EditAlumni from "./user/alumni/EditAlumni";
 import ChatUi from "./user/chatConnections/Chat";
 import ConnectionNetwork from "./user/chatConnections/alumniNetwork";
+import SettingsPage from "./user/settings/SettingsPage";
 const componentsMap = {
   Profile: AlumniProfile,
   Users: Users,
@@ -37,9 +38,10 @@ const componentsMap = {
   "News Detail": NewsDetailPage,
   Chat: ChatUi,
   "My Connections": ConnectionNetwork,
+  Settings: SettingsPage,
 };
 
-export default function ComponentRender({ page, onPageSet }) {
+export default function ComponentRender({ page, onPageSet, navParams }) {
   const [selectedJobHistory, setSelectedJobHistory] = useState(null);
   const [selectedAlumni, setSelectedAlumni] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -95,6 +97,8 @@ export default function ComponentRender({ page, onPageSet }) {
       news={selectedNews}
       chat={selectedChat}
       connection={selectedConnection}
+      navParams={navParams}
+      onBackToEvents={() => onPageSet("Events")}
       onCreatePodcastClick={() => onPageSet("Create Alumni")}
       onEditPodcastClick={() => {}}
     />

@@ -13,6 +13,7 @@ import {
   InboxArrowDownIcon,
   StarIcon,
   MicrophoneIcon,
+  SwatchIcon,
 } from "@heroicons/react/24/outline";
 import CreateAdminPage from "src/pages/admin/admins/createAdmin";
 import CreatePodcast from "src/pages/admin/podcast/podcast";
@@ -68,6 +69,7 @@ const role_maps = {
       current: false,
       comp: CreatePodcast,
     },
+    { name: "Branding", href: "#", icon: SwatchIcon, current: false },
   ],
   admin: [
     {
@@ -119,6 +121,7 @@ const role_maps = {
       current: false,
       comp: CreatePodcast,
     },
+    { name: "Branding", href: "#", icon: SwatchIcon, current: false },
   ],
   aumni: [
     {

@@ -6,7 +6,7 @@ import {
   updateJobHistory,
   getInstitutes,
 } from "src/api";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useQuery } from "react-query";
 import useAOS from "../aos";
@@ -253,7 +253,6 @@ export default function EditJobHistory({ jobHistory }) {
       </div>
 
       <div>
-        <ToastContainer />
       </div>
     </div>
   );

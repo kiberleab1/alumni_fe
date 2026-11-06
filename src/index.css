@@ -81,3 +81,111 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/*
+ * Opt-in reset for the redesigned UI (shell, chat, network, login).
+ * The rules above come from the Vite starter template (#root is centred and
+ * every <button> gets a grey background/border). Legacy pages may rely on
+ * them, so instead of deleting them we neutralise them inside .ui-scope.
+ * :where() keeps specificity at zero, so Tailwind utilities still win.
+ */
+:where(.ui-scope) {
+  text-align: left;
+}
+:where(.ui-scope) button {
+  background-color: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+:where(.ui-scope) button:hover {
+  border-color: transparent;
+}
+
+/* Admin-authored HTML (event/news descriptions), sanitised before render.
+   Tailwind's preflight strips list/heading styles, so restore readable ones. */
+.rich-text > * + * { margin-top: 0.75em; }
+.rich-text h1, .rich-text h2, .rich-text h3 { font-weight: 600; color: #0f172a; line-height: 1.3; }
+.rich-text h1 { font-size: 1.25em; } .rich-text h2 { font-size: 1.15em; } .rich-text h3 { font-size: 1.05em; }
+.rich-text ul { list-style: disc; padding-left: 1.25em; }
+.rich-text ol { list-style: decimal; padding-left: 1.25em; }
+.rich-text a { color: #0369a1; text-decoration: underline; }
+.rich-text img { max-width: 100%; height: auto; border-radius: 0.75rem; }
+.rich-text blockquote { border-left: 3px solid #cbd5e1; padding-left: 1em; color: #475569; }
+
+/*
+ * Bootstrap (loaded globally for the admin/legacy pages) ships spacing utilities
+ * with the SAME class names as Tailwind but a different scale, all !important
+ * (.p-5 = 3rem vs Tailwind 1.25rem). Inside the redesigned UI we restore
+ * Tailwind's values. Sizes 0-2 and auto are identical in both, so only 3-5 are
+ * listed. Generated: keep in sync with tailwind spacing if it is customised.
+ */
+.ui-scope .p-3{padding:0.75rem!important}
+.ui-scope .p-4{padding:1rem!important}
+.ui-scope .p-5{padding:1.25rem!important}
+.ui-scope .px-3{padding-left:0.75rem!important;padding-right:0.75rem!important}
+.ui-scope .px-4{padding-left:1rem!important;padding-right:1rem!important}
+.ui-scope .px-5{padding-left:1.25rem!important;padding-right:1.25rem!important}
+.ui-scope .py-3{padding-top:0.75rem!important;padding-bottom:0.75rem!important}
+.ui-scope .py-4{padding-top:1rem!important;padding-bottom:1rem!important}
+.ui-scope .py-5{padding-top:1.25rem!important;padding-bottom:1.25rem!important}
+.ui-scope .pt-3{padding-top:0.75rem!important}
+.ui-scope .pt-4{padding-top:1rem!important}
+.ui-scope .pt-5{padding-top:1.25rem!important}
+.ui-scope .pb-3{padding-bottom:0.75rem!important}
+.ui-scope .pb-4{padding-bottom:1rem!important}
+.ui-scope .pb-5{padding-bottom:1.25rem!important}
+.ui-scope .m-3{margin:0.75rem!important}
+.ui-scope .m-4{margin:1rem!important}
+.ui-scope .m-5{margin:1.25rem!important}
+.ui-scope .mx-3{margin-left:0.75rem!important;margin-right:0.75rem!important}
+.ui-scope .mx-4{margin-left:1rem!important;margin-right:1rem!important}
+.ui-scope .mx-5{margin-left:1.25rem!important;margin-right:1.25rem!important}
+.ui-scope .my-3{margin-top:0.75rem!important;margin-bottom:0.75rem!important}
+.ui-scope .my-4{margin-top:1rem!important;margin-bottom:1rem!important}
+.ui-scope .my-5{margin-top:1.25rem!important;margin-bottom:1.25rem!important}
+.ui-scope .mt-3{margin-top:0.75rem!important}
+.ui-scope .mt-4{margin-top:1rem!important}
+.ui-scope .mt-5{margin-top:1.25rem!important}
+.ui-scope .mb-3{margin-bottom:0.75rem!important}
+.ui-scope .mb-4{margin-bottom:1rem!important}
+.ui-scope .mb-5{margin-bottom:1.25rem!important}
+.ui-scope .gap-3{gap:0.75rem!important}
+.ui-scope .gap-4{gap:1rem!important}
+.ui-scope .gap-5{gap:1.25rem!important}
+
+/*
+ * Institute theme. Defaults match the platform default theme so the first
+ * paint is right; src/lib/theme.jsx overwrites them on :root from GET /theme.
+ */
+:root {
+  --brand: #0369a1;
+  --brand-rgb: 3 105 161;
+  --brand-hover: #035d8e;
+  --brand-ink: #ffffff;
+  --brand-soft: rgb(3 105 161 / 0.1);
+  --link: #0369a1;
+  --accent: #b45309;
+  --side-bg: #0f172a;
+  --side-fg: #c4cad3;
+  --side-hover: rgb(255 255 255 / 0.08);
+  --side-active: rgb(255 255 255 / 0.14);
+  --side-active-fg: #ffffff;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+/* corner style follows the theme inside the redesigned member UI */
+.ui-scope .rounded-2xl,
+.ui-scope .rounded-3xl,
+.ui-scope.rounded-2xl {
+  border-radius: var(--radius);
+}
+.ui-scope .rounded-xl,
+.ui-scope .rounded-lg,
+.ui-scope.rounded-xl {
+  border-radius: var(--radius-sm);
+}

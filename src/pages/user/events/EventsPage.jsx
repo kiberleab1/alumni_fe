@@ -26,6 +26,7 @@ import { formatInputDate } from "src/utils/utils";
 import Pagination from "src/components/pagination/paginationUpdated";
 import { FaFilter } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
+import MyEventsStrip from "./MyEventsStrip";
 export default function EventsPage({ onEventsDetailClick }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [filterType, setFilterType] = useState("all");
@@ -60,6 +61,7 @@ export default function EventsPage({ onEventsDetailClick }) {
   return (
     <QueryResult isError={isError} isLoading={isLoading} data={data}>
       <div>
+        <MyEventsStrip onOpen={(event) => onEventsDetailClick(event)} />
         <ListEvent
           eventsData={data?.data?.events}
           onEventsDetailClick={(event) => onEventsDetailClick(event)}
