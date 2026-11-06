@@ -10,7 +10,7 @@ import { Avatar, CountBadge, EmptyState, Spinner, cx, timeAgo } from "src/compon
  * Bell with live unread badge. `onOpenItem(notification)` lets the shell
  * navigate (e.g. connection request -> My Connections).
  */
-export default function NotificationBell({ onOpenItem }) {
+export default function NotificationBell({ onOpenItem, onSeeAll }) {
   const { unreadNotifs, setUnreadNotifs } = useRealtime();
   const queryClient = useQueryClient();
   const { data, isLoading } = useQuery("notifications", () => getNotifications({ pageSize: 15 }), {
@@ -93,6 +93,17 @@ export default function NotificationBell({ onOpenItem }) {
                   ))
                 )}
               </div>
+              {onSeeAll && (
+                <button
+                  onClick={() => {
+                    close();
+                    onSeeAll();
+                  }}
+                  className="block w-full border-t border-slate-100 px-4 py-2.5 text-center text-sm font-semibold text-link hover:bg-slate-50"
+                >
+                  See all notifications
+                </button>
+              )}
             </Popover.Panel>
           </Transition>
         </>

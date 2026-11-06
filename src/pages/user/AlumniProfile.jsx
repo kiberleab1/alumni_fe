@@ -25,10 +25,11 @@ const AlumniProfile = ({
   const [isOptionOpen, setOptionOpen] = useState(false);
   const [absolutePos, setabsolutePos] = useState(false);
 
-  const user_id = "92faa361-3246-4f11-acae-cdb599a0d200";
+  // NB: this used to load a hard-coded user id, so every member saw the same
+  // person's profile. Without an id the API returns the signed-in member's own.
   const { isError, data, isLoading } = useQuery(
-    ["getAlumniProfileById"],
-    () => getAlumniProfileById(user_id),
+    ["getAlumniProfileById", "me"],
+    () => getAlumniProfileById(),
     { keepPreviousData: true, refetchOnWindowFocus: false }
   );
 

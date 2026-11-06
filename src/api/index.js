@@ -235,8 +235,21 @@ export async function login({ email, password, ip_address }) {
   };
 
   const response = await axios.post(`${API_BASE_URl}/login`, data);
-  console.log(response);
   return response;
+}
+
+/* account recovery: links in these e-mails point at the pages in pages/auth */
+export async function requestPasswordReset(email) {
+  return (await axios.post(`${API_BASE_URl}/passwordRecover`, { email })).data;
+}
+export async function resetPasswordWithToken({ token, new_password }) {
+  return (await axios.post(`${API_BASE_URl}/passwordReset`, { token, new_password })).data;
+}
+export async function verifyEmailToken(token) {
+  return (await axios.post(`${API_BASE_URl}/verify-email`, { token })).data;
+}
+export async function acceptInvite({ token, new_password }) {
+  return (await axios.post(`${API_BASE_URl}/accept-invite`, { token, new_password })).data;
 }
 
 export async function sendEmail({
@@ -670,9 +683,10 @@ export async function getAllAlumni({ pageNumber, pageSize }) {
   return result;
 }
 
+/** no id: the signed-in member's own profile */
 export async function getAlumniProfileById(user_id) {
   const result = await axios.get(
-    `${API_BASE_URl}/getAlumniProfileById?id=${user_id}`
+    `${API_BASE_URl}/getAlumniProfileById${user_id ? `?id=${user_id}` : ""}`
   );
   return result;
 }
@@ -1032,4 +1046,141 @@ export async function uploadThemeLogo(file) {
   const form = new FormData();
   form.append("image", file);
   return (await axios.post(`${API_BASE_URl}/admin/theme/logo`, form, { headers: { "Content-Type": "multipart/form-data" } })).data.data;
+}
+
+/* ------------------------------------------------------------------ */
+/* Career history                                                       */
+/* ------------------------------------------------------------------ */
+const qs = (o) => new URLSearchParams(Object.entries(o).filter(([, v]) => v !== undefined && v !== null && v !== "")).toString();
+export async function getMyCareer() {
+  return (await axios.get(`${API_BASE_URl}/me/career`)).data.data;
+}
+export async function getUserCareer(userId) {
+  return (await axios.get(`${API_BASE_URl}/users/${userId}/career`)).data.data;
+}
+export async function savePosition(position) {
+  const { id, ...body } = position;
+  return id
+    ? (await axios.put(`${API_BASE_URl}/me/career/${id}`, body)).data.data
+    : (await axios.post(`${API_BASE_URl}/me/career`, body)).data.data;
+}
+export async function deletePosition(id) {
+  return (await axios.delete(`${API_BASE_URl}/me/career/${id}`)).data.data;
+}
+
+/* ------------------------------------------------------------------ */
+/* Jobs: saved + applications                                           */
+/* ------------------------------------------------------------------ */
+export async function getMemberJobs({ tab = "all", search = "", type = "", pageNumber = 1, pageSize = 20 } = {}) {
+  return (await axios.get(`${API_BASE_URl}/me/jobs?${qs({ tab, search, type, pageNumber, pageSize })}`)).data.data;
+}
+export async function getMemberJob(id) {
+  return (await axios.get(`${API_BASE_URl}/jobs/${id}`)).data.data;
+}
+/** status: saved | applied | interviewing | offer | closed, or null to remove */
+export async function trackJob({ id, status, note }) {
+  if (!status) return (await axios.delete(`${API_BASE_URl}/jobs/${id}/track`)).data.data;
+  return (await axios.put(`${API_BASE_URl}/jobs/${id}/track`, { status, ...(note !== undefined && { note }) })).data.data;
+}
+export async function getJobAlumni(id) {
+  return (await axios.get(`${API_BASE_URl}/jobs/${id}/alumni`)).data.data;
+}
+
+/* ------------------------------------------------------------------ */
+/* News engagement                                                      */
+/* ------------------------------------------------------------------ */
+export async function getMemberNews({ category = "", search = "", saved = false, pageNumber = 1, pageSize = 12 } = {}) {
+  return (await axios.get(`${API_BASE_URl}/me/news?${qs({ category, search, saved: saved || undefined, pageNumber, pageSize })}`)).data.data;
+}
+export async function getNewsDetail(id) {
+  return (await axios.get(`${API_BASE_URl}/news/${id}/detail`)).data.data;
+}
+export async function setNewsSaved({ id, saved }) {
+  return (await axios[saved ? "put" : "delete"](`${API_BASE_URl}/news/${id}/save`)).data.data;
+}
+export async function reactToNews({ id, reaction }) {
+  return (await axios.put(`${API_BASE_URl}/news/${id}/reaction`, { reaction })).data.data;
+}
+
+/* ------------------------------------------------------------------ */
+/* Mentorship                                                           */
+/* ------------------------------------------------------------------ */
+export async function getMyMentorProfile() {
+  return (await axios.get(`${API_BASE_URl}/me/mentor-profile`)).data.data;
+}
+export async function saveMyMentorProfile(profile) {
+  return (await axios.put(`${API_BASE_URl}/me/mentor-profile`, profile)).data.data;
+}
+export async function findMentors({ topic = "", search = "" } = {}) {
+  return (await axios.get(`${API_BASE_URl}/mentors?${qs({ topic, search })}`)).data.data;
+}
+export async function getMyMentorships() {
+  return (await axios.get(`${API_BASE_URl}/me/mentorships`)).data.data;
+}
+export async function requestMentor(body) {
+  return (await axios.post(`${API_BASE_URl}/mentorships`, body)).data.data;
+}
+/** action: accept | decline | cancel | complete */
+export async function respondMentorship({ id, action, response }) {
+  return (await axios.patch(`${API_BASE_URl}/mentorships/${id}`, { action, ...(response !== undefined && { response }) })).data.data;
+}
+
+/* ------------------------------------------------------------------ */
+/* Groups                                                               */
+/* ------------------------------------------------------------------ */
+export async function getGroups({ tab = "mine", search = "", kind = "" } = {}) {
+  return (await axios.get(`${API_BASE_URl}/groups?${qs({ tab, search, kind })}`)).data.data;
+}
+export async function createGroup(body) {
+  return (await axios.post(`${API_BASE_URl}/groups`, body)).data.data;
+}
+export async function getGroup(id) {
+  return (await axios.get(`${API_BASE_URl}/groups/${id}`)).data.data;
+}
+export async function setGroupMembership({ id, join }) {
+  return (await axios[join ? "post" : "delete"](`${API_BASE_URl}/groups/${id}/join`)).data.data;
+}
+export async function respondGroupRequest({ id, userId, approve }) {
+  return (await axios.patch(`${API_BASE_URl}/groups/${id}/requests/${userId}`, { approve })).data.data;
+}
+export async function getGroupMembers({ id, status = "active", search = "" }) {
+  return (await axios.get(`${API_BASE_URl}/groups/${id}/members?${qs({ status, search })}`)).data.data;
+}
+export async function getGroupPosts({ id, pageNumber = 1 }) {
+  return (await axios.get(`${API_BASE_URl}/groups/${id}/posts?pageNumber=${pageNumber}`)).data.data;
+}
+export async function createGroupPost({ id, body }) {
+  return (await axios.post(`${API_BASE_URl}/groups/${id}/posts`, { body })).data.data;
+}
+export async function deleteGroupPost({ id, postId }) {
+  return (await axios.delete(`${API_BASE_URl}/groups/${id}/posts/${postId}`)).data.data;
+}
+export async function pinGroupPost({ id, postId, pinned }) {
+  return (await axios.patch(`${API_BASE_URl}/groups/${id}/posts/${postId}`, { pinned })).data.data;
+}
+
+/* ------------------------------------------------------------------ */
+/* Notifications: unread / delete                                       */
+/* ------------------------------------------------------------------ */
+export async function markNotificationsUnread(ids) {
+  return (await axios.post(`${API_BASE_URl}/notifications/unread`, { ids })).data.data;
+}
+export async function deleteNotification(id) {
+  return (await axios.delete(`${API_BASE_URl}/notifications/${id}`)).data.data;
+}
+
+/* ------------------------------------------------------------------ */
+/* Member documents                                                     */
+/* ------------------------------------------------------------------ */
+export async function getMyDocuments() {
+  return (await axios.get(`${API_BASE_URl}/me/documents`)).data.data;
+}
+export async function requestDocument(body) {
+  return (await axios.post(`${API_BASE_URl}/me/documents`, body)).data.data;
+}
+export async function replyToDocument({ id, message }) {
+  return (await axios.post(`${API_BASE_URl}/me/documents/${id}/reply`, { message })).data.data;
+}
+export async function withdrawDocument(id) {
+  return (await axios.delete(`${API_BASE_URl}/me/documents/${id}`)).data.data;
 }

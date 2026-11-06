@@ -32,6 +32,7 @@ export default {
         },
       },
       fontFamily: { theme: "var(--font)" },
+      borderRadius: { theme: "var(--radius, 16px)" },
       keyframes: {
         moveCircle1: { "0%": { transform: "translate(0, 0)" }, "100%": { transform: "translate(100vw, 100vh)" } },
         moveCircle2: { "0%": { transform: "translate(0, 0)" }, "100%": { transform: "translate(-100vw, 100vh)" } },

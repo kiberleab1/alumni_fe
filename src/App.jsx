@@ -34,6 +34,7 @@ import { Navigate } from "react-router-dom";
 import NotFoundComponent from "./components/utils/notFound";
 import Footer from "./views/custom-components/sections/footer";
 import AlumniPodcast from "./pages/home/podcast/AlumniPodcast";
+import { AcceptInvitePage, ForgotPasswordPage, ResetPasswordPage, VerifyEmailPage } from "./pages/auth/AuthPages";
 // const hist = createBrowserHistory();
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,18 +45,15 @@ const queryClient = new QueryClient({
     },
   },
 });
-console.log(localStorage.getItem("userData"));
 const user = localStorage.getItem("userData");
 function App() {
   const activeUrl = window.location.pathname.trim().toLowerCase();
-  const pathsToDisableFooter = ["/user", "/login", "/register", "/admin"];
+  const pathsToDisableFooter = ["/user", "/login", "/register", "/admin", "/signup", "/forgot-password", "/reset-password", "/verify-email", "/accept-invite"];
 
   const activeUrlPath = pathsToDisableFooter.some((path) =>
     activeUrl.includes(path)
   );
 
-  console.log(activeUrlPath); // true or false based on the condition
-  console.log(activeUrl);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -81,13 +79,15 @@ function App() {
             {/* <Route path="/signin" element={<Signin />} /> */}
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
+            <Route path="/accept-invite" element={<AcceptInvitePage />} />
             <Route path="/alumni_profile" element={<Alumni_profile />} />
             <Route path="/asd" element={<CreateStaff />} />
             <Route path="/sdsds" element={<Directory />} />
-            <Route
-              path="/landing"
-              element={user ? <LandingLayout /> : <LoginPage />}
-            >
+            {/* public site: visitors can browse before signing in (design board 17) */}
+            <Route path="/landing" element={<LandingLayout />}>
               <Route index element={<LandingPage />} />
               <Route path="content" element={<ContentPage />} />
               <Route path="aboutus">

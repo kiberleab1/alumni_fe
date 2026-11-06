@@ -1,106 +1,104 @@
-import { useState } from "react";
+/**
+ * Member-area routes (mounted under /user/* by App.jsx).
+ *
+ * Older pages were written for the previous state-based navigation and take
+ * callback props (onEventsDetailClick, navParams…). The small adapters below
+ * translate those into URLs, so every page has an address and survives a
+ * refresh.
+ */
+import { Navigate, Route, Routes, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { PATHS, chatPath, eventPath } from "src/lib/nav";
 
-import NewsPage from "src/pages/user/news/AdminNewsPage";
-import EventsPage from "src/pages/user/events/EventsPage";
-import CreateJobHistory from "src/pages/user/jobs/CreateJobHistory";
-import EditJobHistory from "src/pages/user/jobs/EditJobHistory";
-import JobHistoryPage from "src/pages/user/jobs/JobHistoryPage";
-import EditUser from "src/pages/user/users/EditUser";
-import Users from "src/pages/user/users/Users";
-import RolePage from "src/pages/Role";
-import AlumniPage from "src/pages/user/alumni/AlumniPage";
-import DocumentVerificationPage from "src/pages//admin/documentVerification/DocumentVerificationPage";
-import JobsPage from "src/pages/user/jobs/JobsPage";
-import AlumniProfile from "./user/AlumniProfile";
-import CreateAlumni from "src/pages/user/alumni/CreateAlumni";
-import EventDetailPage from "./user/events/EventDetailPage";
-import NewsDetailPage from "./user/news/NewsDetailPage";
-import EditAlumni from "./user/alumni/EditAlumni";
+import HomePage from "./user/home/HomePage";
+import PeoplePage from "./user/people/PeoplePage";
 import ChatUi from "./user/chatConnections/Chat";
-import ConnectionNetwork from "./user/chatConnections/alumniNetwork";
+import JobsBoard from "./user/jobs/JobsBoard";
+import EventsPage from "./user/events/EventsPage";
+import EventDetailPage from "./user/events/EventDetailPage";
+import NewsPage from "./user/news/NewsPage";
+import NewsArticle from "./user/news/NewsArticle";
+import GroupsPage from "./user/groups/GroupsPage";
+import GroupDetail from "./user/groups/GroupDetail";
+import MentorshipPage from "./user/mentorship/MentorshipPage";
+import DocumentsPage from "./user/documents/DocumentsPage";
+import AlumniProfile from "./user/AlumniProfile";
+import CreateAlumni from "./user/alumni/CreateAlumni";
+import EditAlumni from "./user/alumni/EditAlumni";
+import CareerPage from "./user/career/CareerPage";
+import NotificationsPage from "./user/notifications/NotificationsPage";
 import SettingsPage from "./user/settings/SettingsPage";
-const componentsMap = {
-  Profile: AlumniProfile,
-  Users: Users,
-  "Edit User": EditUser,
-  Events: EventsPage,
-  News: NewsPage,
-  Email: RolePage,
-  Jobs: JobsPage,
-  "Jobs History": JobHistoryPage,
-  "Create JobHistory": CreateJobHistory,
-  "Edit JobHistory": EditJobHistory,
-  Alumni: AlumniPage,
-  "Create Alumni": CreateAlumni,
-  "Edit Alumni": EditAlumni,
-  "Document Verification": DocumentVerificationPage,
-  "Event Detail": EventDetailPage,
-  "News Detail": NewsDetailPage,
-  Chat: ChatUi,
-  "My Connections": ConnectionNetwork,
-  Settings: SettingsPage,
-};
 
-export default function ComponentRender({ page, onPageSet, navParams }) {
-  const [selectedJobHistory, setSelectedJobHistory] = useState(null);
-  const [selectedAlumni, setSelectedAlumni] = useState(null);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [selectedChat, setSelectedChat] = useState(null);
-  const [selectedConnection, setSelectedConnection] = useState(null);
-  const [selectedNews, setSelectedNews] = useState(null);
-  const [
-    selectedDocumentVerificationRequest,
-    setSelectedDocumentVerificationRequest,
-  ] = useState(null);
-  const ComponentToRender =
-    componentsMap[page] || (() => <div>Page not found</div>);
+function Messages() {
+  const [params] = useSearchParams();
+  const { state } = useLocation();
+  const peerId = params.get("with");
+  const chat = state?.peer ? { peer: state.peer } : peerId ? { peer: { id: peerId, name: state?.name || "Member" } } : null;
+  return <ChatUi chat={chat} />;
+}
 
+function Events() {
+  const navigate = useNavigate();
+  return <EventsPage onEventsDetailClick={(event) => navigate(eventPath(event.id), { state: { event } })} />;
+}
+
+function EventDetail() {
+  const { id } = useParams();
+  const { state } = useLocation();
+  const navigate = useNavigate();
+  return <EventDetailPage key={id} event={state?.event?.id === id ? state.event : null} navParams={{ eventId: id }} onBackToEvents={() => navigate(PATHS.events)} />;
+}
+
+function Profile() {
+  const navigate = useNavigate();
   return (
-    <ComponentToRender
-      onCreateJobHistoryClick={() => onPageSet("Create JobHistory")}
-      onCreateAlumniClick={() => onPageSet("Create Alumni")}
-      onCreateDocumentVerificationClick={() =>
-        onPageSet("Create Document Verification")
-      }
-      onEditJobHistoryClick={(jobHistory) => {
-        setSelectedJobHistory(jobHistory);
-        onPageSet("Edit JobHistory");
-      }}
-      onEditAlumniClick={(alumni) => {
-        setSelectedAlumni(alumni);
-        onPageSet("Edit Alumni");
-      }}
-      onEditDocumentVerififcationClick={(document) => {
-        setSelectedDocumentVerificationRequest(document);
-        onPageSet("Edit Document Verification");
-      }}
-      onEventsDetailClick={(event) => {
-        setSelectedEvent(event);
-        onPageSet("Event Detail");
-      }}
-      onNewsDetailClick={(news) => {
-        setSelectedNews(news);
-        onPageSet("News Detail");
-      }}
-      onSelectChatClick={(chat) => {
-        setSelectedChat(chat);
-        onPageSet("Chat");
-      }}
-      onSelectedConnectionClick={(connection) => {
-        setSelectedConnection(connection);
-        onPageSet("My Connections");
-      }}
-      jobHistory={selectedJobHistory}
-      alumni={selectedAlumni}
-      document={selectedDocumentVerificationRequest}
-      event={selectedEvent}
-      news={selectedNews}
-      chat={selectedChat}
-      connection={selectedConnection}
-      navParams={navParams}
-      onBackToEvents={() => onPageSet("Events")}
-      onCreatePodcastClick={() => onPageSet("Create Alumni")}
-      onEditPodcastClick={() => {}}
+    <AlumniProfile
+      onCreateAlumniClick={() => navigate(`${PATHS.profile}/create`)}
+      onEditAlumniClick={(alumni) => navigate(`${PATHS.profile}/edit`, { state: { alumni } })}
+      onSelectedConnectionClick={() => navigate(PATHS.people + "?tab=accepted")}
     />
+  );
+}
+
+function ProfileEdit() {
+  const { state } = useLocation();
+  // the edit form needs the loaded profile; after a refresh go back and reopen it
+  if (!state?.alumni) return <Navigate to={PATHS.profile} replace />;
+  return <EditAlumni alumni={state.alumni} />;
+}
+
+function Settings() {
+  const [params] = useSearchParams();
+  return <SettingsPage navParams={params.get("tab") ? { tab: params.get("tab") } : null} />;
+}
+
+
+export default function MemberRoutes() {
+  return (
+    <Routes>
+      <Route index element={<HomePage />} />
+      <Route path="people" element={<PeoplePage />} />
+      <Route path="messages" element={<Messages />} />
+      <Route path="jobs" element={<JobsBoard />} />
+      <Route path="events" element={<Events />} />
+      <Route path="events/:id" element={<EventDetail />} />
+      <Route path="news" element={<NewsPage />} />
+      <Route path="news/:id" element={<NewsArticle />} />
+      <Route path="groups" element={<GroupsPage />} />
+      <Route path="groups/:id" element={<GroupDetail />} />
+      <Route path="mentorship" element={<MentorshipPage />} />
+      <Route path="documents" element={<DocumentsPage />} />
+      <Route path="profile" element={<Profile />} />
+      <Route path="profile/create" element={<CreateAlumni />} />
+      <Route path="profile/edit" element={<ProfileEdit />} />
+      <Route path="career" element={<CareerPage />} />
+      <Route path="notifications" element={<NotificationsPage />} />
+      <Route path="settings" element={<Settings />} />
+      {/* old addresses */}
+      <Route path="alumni" element={<Navigate to={PATHS.people} replace />} />
+      <Route path="connections" element={<Navigate to={`${PATHS.people}?tab=accepted`} replace />} />
+      <Route path="chat" element={<Navigate to={PATHS.messages} replace />} />
+      <Route path="jobs-history" element={<Navigate to={PATHS.career} replace />} />
+      <Route path="*" element={<Navigate to={PATHS.home} replace />} />
+    </Routes>
   );
 }

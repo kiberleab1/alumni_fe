@@ -234,3 +234,147 @@ export function Segmented({ value, onChange, options, label, size = "md" }) {
 /** "message" from an API error (our { error: { message } } envelope or axios). */
 export const apiError = (err, fallback = "Something went wrong") =>
   err?.response?.data?.error?.message || err?.response?.data?.message || err?.message || fallback;
+
+/* --------------------------------------------------------------- layout */
+
+/** White rounded panel used by the redesigned pages. */
+export function Card({ className, children, ...props }) {
+  return (
+    <section {...props} className={cx("rounded-theme border border-slate-200 bg-white shadow-sm", className)}>
+      {children}
+    </section>
+  );
+}
+
+/** Page title row: title, optional subtitle and actions on the right. */
+export function PageHeader({ title, subtitle, actions }) {
+  return (
+    <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+      <div className="min-w-0">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">{title}</h1>
+        {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
+      </div>
+      {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+    </div>
+  );
+}
+
+/** Underlined tab bar: tabs = [{ value, label, count? }]. */
+export function Tabs({ value, onChange, tabs, className }) {
+  return (
+    <div role="tablist" className={cx("flex gap-1 overflow-x-auto border-b border-slate-200", className)}>
+      {tabs.map((t) => {
+        const on = t.value === value;
+        return (
+          <button
+            key={t.value}
+            role="tab"
+            type="button"
+            aria-selected={on}
+            onClick={() => onChange(t.value)}
+            className={cx(
+              "-mb-px inline-flex shrink-0 items-center gap-1.5 border-b-2 px-3 py-2.5 text-sm font-semibold transition",
+              on ? "border-brand text-link" : "border-transparent text-slate-500 hover:text-slate-800"
+            )}
+          >
+            {t.label}
+            {t.count ? <span className={cx("rounded-full px-1.5 text-[11px] leading-5", on ? "bg-brand-soft text-link" : "bg-slate-100 text-slate-600")}>{t.count}</span> : null}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Rounded filter chips: options = [{ value, label }]. */
+export function Chips({ value, onChange, options, label }) {
+  return (
+    <div role="radiogroup" aria-label={label} className="flex flex-wrap gap-2">
+      {options.map((o) => {
+        const on = o.value === value;
+        return (
+          <button
+            key={o.value}
+            type="button"
+            role="radio"
+            aria-checked={on}
+            onClick={() => onChange(o.value)}
+            className={cx(
+              "rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset transition",
+              on ? "bg-brand text-brand-ink ring-brand" : "bg-white text-slate-600 ring-slate-300 hover:bg-slate-50"
+            )}
+          >
+            {o.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Labelled form field wrapper. */
+export function Field({ label, hint, error, children, className, htmlFor }) {
+  return (
+    <div className={className}>
+      {label && (
+        <label htmlFor={htmlFor} className="mb-1 block text-sm font-medium text-slate-700">
+          {label}
+        </label>
+      )}
+      {children}
+      {error ? <p className="mt-1 text-xs text-rose-600">{error}</p> : hint ? <p className="mt-1 text-xs text-slate-500">{hint}</p> : null}
+    </div>
+  );
+}
+
+export const inputClass =
+  "block w-full rounded-lg border-0 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand disabled:bg-slate-50";
+
+/** Search box with a magnifier icon. */
+export function SearchInput({ value, onChange, placeholder = "Search", className }) {
+  return (
+    <div className={cx("relative", className)}>
+      <svg className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.45 4.39l3.08 3.08a.75.75 0 11-1.06 1.06l-3.08-3.08A7 7 0 012 9z" clipRule="evenodd" />
+      </svg>
+      <input type="search" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} aria-label={placeholder} className={cx(inputClass.replace("px-3", "pr-3"), "pl-9")} />
+    </div>
+  );
+}
+
+/** Small coloured pill. tone: slate | brand | green | amber | rose */
+const PILL = {
+  slate: "bg-slate-100 text-slate-700",
+  brand: "bg-brand-soft text-link",
+  green: "bg-emerald-50 text-emerald-700",
+  amber: "bg-amber-50 text-amber-800",
+  rose: "bg-rose-50 text-rose-700",
+};
+export function Pill({ tone = "slate", children, className }) {
+  return <span className={cx("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold", PILL[tone], className)}>{children}</span>;
+}
+
+/** Centered modal dialog (no portal library needed). */
+export function Modal({ open, onClose, title, children, footer, size = "md" }) {
+  if (!open) return null;
+  return (
+    <div className="ui-scope fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 p-0 sm:items-center sm:p-4" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+      <div role="dialog" aria-modal="true" aria-label={title} className={cx("max-h-[92vh] w-full overflow-y-auto rounded-t-2xl bg-white shadow-xl sm:rounded-2xl", size === "lg" ? "sm:max-w-2xl" : "sm:max-w-lg")}>
+        <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+          <h2 className="text-base font-semibold text-slate-900">{title}</h2>
+          <button type="button" onClick={onClose} className="rounded-lg p-1 text-slate-500 hover:bg-slate-100" aria-label="Close">
+            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" /></svg>
+          </button>
+        </div>
+        <div className="px-5 py-4">{children}</div>
+        {footer && <div className="flex justify-end gap-2 border-t border-slate-100 px-5 py-3">{footer}</div>}
+      </div>
+    </div>
+  );
+}
+
+/** "Mar 2021" style month label. */
+export function monthYear(date) {
+  if (!date) return "";
+  return new Date(date).toLocaleDateString(undefined, { month: "short", year: "numeric", timeZone: "UTC" });
+}
