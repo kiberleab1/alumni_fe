@@ -21,9 +21,8 @@ import GroupsPage from "./user/groups/GroupsPage";
 import GroupDetail from "./user/groups/GroupDetail";
 import MentorshipPage from "./user/mentorship/MentorshipPage";
 import DocumentsPage from "./user/documents/DocumentsPage";
-import AlumniProfile from "./user/AlumniProfile";
-import CreateAlumni from "./user/alumni/CreateAlumni";
-import EditAlumni from "./user/alumni/EditAlumni";
+import ProfilePage from "./user/profile/ProfilePage";
+import OnboardingPage from "./user/profile/OnboardingPage";
 import CareerPage from "./user/career/CareerPage";
 import NotificationsPage from "./user/notifications/NotificationsPage";
 import SettingsPage from "./user/settings/SettingsPage";
@@ -48,24 +47,6 @@ function EventDetail() {
   return <EventDetailPage key={id} event={state?.event?.id === id ? state.event : null} navParams={{ eventId: id }} onBackToEvents={() => navigate(PATHS.events)} />;
 }
 
-function Profile() {
-  const navigate = useNavigate();
-  return (
-    <AlumniProfile
-      onCreateAlumniClick={() => navigate(`${PATHS.profile}/create`)}
-      onEditAlumniClick={(alumni) => navigate(`${PATHS.profile}/edit`, { state: { alumni } })}
-      onSelectedConnectionClick={() => navigate(PATHS.people + "?tab=accepted")}
-    />
-  );
-}
-
-function ProfileEdit() {
-  const { state } = useLocation();
-  // the edit form needs the loaded profile; after a refresh go back and reopen it
-  if (!state?.alumni) return <Navigate to={PATHS.profile} replace />;
-  return <EditAlumni alumni={state.alumni} />;
-}
-
 function Settings() {
   const [params] = useSearchParams();
   return <SettingsPage navParams={params.get("tab") ? { tab: params.get("tab") } : null} />;
@@ -77,6 +58,8 @@ export default function MemberRoutes() {
     <Routes>
       <Route index element={<HomePage />} />
       <Route path="people" element={<PeoplePage />} />
+      <Route path="people/:userId" element={<ProfilePage />} />
+      <Route path="welcome" element={<OnboardingPage />} />
       <Route path="messages" element={<Messages />} />
       <Route path="jobs" element={<JobsBoard />} />
       <Route path="events" element={<Events />} />
@@ -87,9 +70,10 @@ export default function MemberRoutes() {
       <Route path="groups/:id" element={<GroupDetail />} />
       <Route path="mentorship" element={<MentorshipPage />} />
       <Route path="documents" element={<DocumentsPage />} />
-      <Route path="profile" element={<Profile />} />
-      <Route path="profile/create" element={<CreateAlumni />} />
-      <Route path="profile/edit" element={<ProfileEdit />} />
+      <Route path="profile" element={<ProfilePage />} />
+      {/* the old create/edit forms are replaced by onboarding and the profile editor */}
+      <Route path="profile/create" element={<Navigate to={PATHS.welcome} replace />} />
+      <Route path="profile/edit" element={<Navigate to={PATHS.profile} replace />} />
       <Route path="career" element={<CareerPage />} />
       <Route path="notifications" element={<NotificationsPage />} />
       <Route path="settings" element={<Settings />} />

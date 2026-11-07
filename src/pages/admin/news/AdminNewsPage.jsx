@@ -145,7 +145,7 @@ export default function NewsPage({ onCreateNewsClick, onNewsEditClick }) {
                     data-aos="fade-down"
                   >
                     {currentItems.map((news) => (
-                      <tr key={news.email}>
+                      <tr key={news.id}>
                         <td className="px-6 py-4 whitespace-nowrap text-start">
                           <div className="text-sm font-medium text-gray-600 text-start">
                             {news.id}{" "}

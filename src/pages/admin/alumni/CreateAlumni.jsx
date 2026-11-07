@@ -368,7 +368,6 @@ export default function CreateAlumni() {
         </div>
 
         <div>
-          <ToastContainer />
         </div>
       </div>
     </QueryResult>

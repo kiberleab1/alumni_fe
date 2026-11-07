@@ -18,6 +18,8 @@ import { deleteUserToken, getUserToken } from "src/helpers/globalStorage";
 import { useNavigate } from "react-router-dom";
 import { possibleNavigationMenus } from "src/helpers/role_maaping";
 import { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 // import { useLocation } from "react-router-dom";
 const navigationWithNoSubNavigation = [
   "Dashboard",
@@ -546,6 +548,8 @@ function SideBar() {
                 onPageSet={handlePageSet}
               />
             </div>
+            {/* one toast host for every admin page */}
+            <ToastContainer position="bottom-right" newestOnTop limit={4} />
           </main>
         </div>
       </div>

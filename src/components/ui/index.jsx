@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { getImageBaseUrl } from "src/api";
 
 export const cx = (...c) => c.filter(Boolean).join(" ");
@@ -377,4 +378,67 @@ export function Modal({ open, onClose, title, children, footer, size = "md" }) {
 export function monthYear(date) {
   if (!date) return "";
   return new Date(date).toLocaleDateString(undefined, { month: "short", year: "numeric", timeZone: "UTC" });
+}
+
+/**
+ * Free-text chips (skills, languages, topics). Enter or comma adds, Backspace
+ * on an empty field removes the last one; suggestions are optional quick picks.
+ */
+export function TagInput({ value = [], onChange, placeholder = "Type and press Enter", suggestions = [], max = 30, id, label }) {
+  const [draft, setDraft] = useState("");
+  const add = (raw) => {
+    const parts = String(raw)
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+    if (!parts.length) return;
+    const lower = new Set(value.map((v) => v.toLowerCase()));
+    const next = [...value];
+    for (const t of parts) if (!lower.has(t.toLowerCase()) && next.length < max) next.push(t.slice(0, 40)) && lower.add(t.toLowerCase());
+    onChange(next);
+    setDraft("");
+  };
+  const remove = (t) => onChange(value.filter((v) => v !== t));
+  const left = suggestions.filter((s) => !value.some((v) => v.toLowerCase() === s.toLowerCase())).slice(0, 8);
+  return (
+    <div>
+      <div className="flex min-h-[2.75rem] flex-wrap items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-2 py-1.5 focus-within:border-brand focus-within:ring-1 focus-within:ring-brand">
+        {value.map((t) => (
+          <span key={t} className="inline-flex items-center gap-1 rounded-full bg-brand-soft px-2.5 py-1 text-xs font-medium text-link">
+            {t}
+            <button type="button" onClick={() => remove(t)} className="rounded-full hover:bg-black/5" aria-label={`Remove ${t}`}>
+              <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5">
+                <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+              </svg>
+            </button>
+          </span>
+        ))}
+        <input
+          id={id}
+          aria-label={label || placeholder}
+          value={draft}
+          onChange={(e) => (e.target.value.endsWith(",") ? add(e.target.value) : setDraft(e.target.value))}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              add(draft);
+            } else if (e.key === "Backspace" && !draft && value.length) remove(value[value.length - 1]);
+          }}
+          onBlur={() => draft.trim() && add(draft)}
+          placeholder={value.length >= max ? "" : placeholder}
+          disabled={value.length >= max}
+          className="min-w-[8rem] flex-1 border-0 bg-transparent p-1 text-sm text-slate-900 placeholder:text-slate-400 focus:ring-0"
+        />
+      </div>
+      {left.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {left.map((s) => (
+            <button key={s} type="button" onClick={() => add(s)} className="rounded-full border border-dashed border-slate-300 px-2.5 py-0.5 text-xs text-slate-600 hover:border-slate-400 hover:text-slate-800">
+              + {s}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }

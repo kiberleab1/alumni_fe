@@ -364,7 +364,6 @@ export default function CreateDepartment() {
         </div>
 
         <div>
-          <ToastContainer />
         </div>
       </div>
     </QueryResult>

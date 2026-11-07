@@ -1,4 +1,6 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { profilePath } from "src/lib/nav";
 import { useState, useEffect } from "react";
 import { Table } from "reactstrap";
 import { TfiEmail } from "react-icons/tfi";
@@ -144,6 +146,11 @@ const AlumniModal = ({ isOpen, onClose, profile, onSelectChatClick }) => {
         >
           <MdOutlineCloseFullscreen className="text-2xl" />
         </button>
+        {peerId && (
+          <Link to={profilePath(peerId)} className="absolute left-4 top-3 z-40 text-sm font-semibold text-link hover:underline">
+            View full profile →
+          </Link>
+        )}
         <div className="relative flex flex-col items-center ">
           <div className="absolute w-full h-36 top-0 bg-black -z-0 "></div>
           <div className="relative rounded-full mt-4 border-4 border-white w-52 h-52 flex items-center justify-center ">

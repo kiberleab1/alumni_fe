@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import { ChatBubbleLeftRightIcon, LightBulbIcon, SparklesIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 import { findMentors, getMyMentorProfile, getMyMentorships, requestMentor, respondMentorship, saveMyMentorProfile } from "src/api";
 import { useSocketEvent } from "src/lib/realtime";
-import { chatPath } from "src/lib/nav";
+import { chatPath, profilePath } from "src/lib/nav";
 import { Avatar, Button, Card, Chips, EmptyState, Field, Modal, PageHeader, Pill, SearchInput, SkeletonRow, Switch, Tabs, apiError, cx, inputClass, timeAgo } from "src/components/ui";
 
 const FORMATS = { chat: "Chat", video: "Video call", in_person: "In person" };
@@ -98,7 +98,7 @@ function FindMentors() {
               <div className="flex items-start gap-3">
                 <Avatar name={m.user.name} photo={m.user.photo} size="md" online={m.user.online} />
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-slate-900">{m.user.name}</p>
+                  <Link to={profilePath(m.user.id)} className="font-semibold text-slate-900 hover:underline">{m.user.name}</Link>
                   <p className="text-sm text-slate-600">{m.headline || m.current_role || m.user.department_name}</p>
                   {m.user.graduation_year && <p className="text-xs text-slate-500">Class of {m.user.graduation_year}</p>}
                 </div>

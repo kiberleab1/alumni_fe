@@ -13,7 +13,7 @@ export default function CreateJobHistory() {
   const [institutions, setInstitutions] = useState([]);
   const [departmentError, setDepartmentError] = useState("");
   const [jobHistoryFields, setJobHistoryFields] = useState({
-    user_id: "92faa361-3246-4f11-acae-cdb599a0d200",
+    user_id: "",
     title: "",
     description: "",
     status: "",
@@ -23,7 +23,7 @@ export default function CreateJobHistory() {
 
   const clearJobHistoryFields = () => {
     setJobHistoryFields({
-      user_id: "92faa361-3246-4f11-acae-cdb599a0d200",
+      user_id: "",
       title: "",
       description: "",
       status: "",
@@ -248,7 +248,7 @@ export default function CreateJobHistory() {
       </div>
 
       <div>
-        <ToastContainer />
+
       </div>
     </div>
   );

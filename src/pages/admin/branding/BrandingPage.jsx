@@ -180,7 +180,6 @@ export default function BrandingPage() {
   return (
     <div className="ui-scope min-h-screen bg-slate-100 font-sans text-slate-900">
       {/* the admin shell has no global toast container */}
-      <ToastContainer position="bottom-right" newestOnTop limit={3} />
       <header className="sticky top-0 z-20 flex flex-wrap items-center gap-3 border-b border-slate-200 bg-white px-5 py-4 sm:px-7">
         <div className="min-w-[14rem] flex-1">
           <h1 className="text-xl font-bold">Branding &amp; theme</h1>

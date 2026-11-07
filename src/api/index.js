@@ -327,8 +327,6 @@ export async function getRoleByName({ name }) {
         "Content-Type": "application/json",
       },
     });
-    console.log(response);
-    console.log(name);
     return response;
   } catch (error) {
     console.error("Error fetching roles:", error);
@@ -916,8 +914,8 @@ export async function getMessages({ peerId, before, limit = 30 }) {
 export async function markChatRead(peer_id) {
   return (await axios.post(`${API_BASE_URl}/chat/read`, { peer_id })).data.data;
 }
-export async function sendChatMessageHttp({ to, text, client_id }) {
-  return (await axios.post(`${API_BASE_URl}/chat/messages`, { to, text, client_id })).data.data;
+export async function sendChatMessageHttp({ to, text, client_id, reply_to }) {
+  return (await axios.post(`${API_BASE_URl}/chat/messages`, { to, text, client_id, reply_to })).data.data;
 }
 export async function deleteChatMessage(id) {
   return (await axios.delete(`${API_BASE_URl}/chat/messages/${id}`)).data.data;
@@ -926,11 +924,12 @@ export async function getChatUnreadCount() {
   return (await axios.get(`${API_BASE_URl}/chat/unread-count`)).data.data.unread;
 }
 /** Upload attachments; the server stores one message and pushes it to both sides. */
-export async function uploadChatFiles({ to, files, text, client_id, onProgress }) {
+export async function uploadChatFiles({ to, files, text, client_id, reply_to, onProgress }) {
   const form = new FormData();
   form.append("to_user_id", to);
   if (text) form.append("text", text);
   if (client_id) form.append("client_id", client_id);
+  if (reply_to) form.append("reply_to", reply_to);
   files.forEach((f) => form.append("files", f));
   const res = await axios.post(`${API_BASE_URl}/chat/sendFiles?to_user_id=${to}`, form, {
     headers: { "Content-Type": "multipart/form-data" },
@@ -1183,4 +1182,57 @@ export async function replyToDocument({ id, message }) {
 }
 export async function withdrawDocument(id) {
   return (await axios.delete(`${API_BASE_URl}/me/documents/${id}`)).data.data;
+}
+
+/* ------------------------------------------------------------ profile + onboarding */
+export async function getMyProfile() {
+  return (await axios.get(`${API_BASE_URl}/me/profile`)).data.data;
+}
+export async function saveMyProfile(body) {
+  return (await axios.put(`${API_BASE_URl}/me/profile`, body)).data.data;
+}
+export async function uploadProfilePhoto(file) {
+  const fd = new FormData();
+  fd.append("image", file);
+  return (await axios.put(`${API_BASE_URl}/me/profile/photo`, fd)).data.data;
+}
+export async function finishOnboarding() {
+  return (await axios.post(`${API_BASE_URl}/me/onboarding/done`)).data.data;
+}
+export async function getUserProfile(userId) {
+  return (await axios.get(`${API_BASE_URl}/users/${userId}/profile`)).data.data;
+}
+
+/* ------------------------------------------------------------ chat extras */
+export async function respondChatRequest({ peerId, action }) {
+  return (await axios.post(`${API_BASE_URl}/chat/requests/${peerId}`, { action })).data.data;
+}
+export async function updateConversation({ peerId, ...body }) {
+  return (await axios.patch(`${API_BASE_URl}/chat/conversations/${peerId}`, body)).data.data;
+}
+export async function reactToMessage({ id, emoji }) {
+  return (await axios.post(`${API_BASE_URl}/chat/messages/${id}/reactions`, { emoji })).data.data;
+}
+export async function reportMessage({ id, reason, details, block }) {
+  return (await axios.post(`${API_BASE_URl}/chat/messages/${id}/report`, { reason, details, block })).data.data;
+}
+
+/* ------------------------------------------------------------ admin queues */
+export async function getAdminDocuments({ status = "open", search = "", page = 1 } = {}) {
+  const params = new URLSearchParams({ status, search, page });
+  return (await axios.get(`${API_BASE_URl}/admin/documents?${params}`)).data;
+}
+export async function updateDocumentStatus({ id, status, comment }) {
+  return (await axios.put(`${API_BASE_URl}/updateVerificationRequest`, { id, status, comment })).data;
+}
+export async function getMessageReports({ status = "open", page = 1 } = {}) {
+  return (await axios.get(`${API_BASE_URl}/admin/message-reports?status=${status}&page=${page}`)).data.data;
+}
+export async function resolveMessageReport({ id, status, note }) {
+  return (await axios.patch(`${API_BASE_URl}/admin/message-reports/${id}`, { status, note })).data.data;
+}
+
+/** public landing page: numbers, next events, latest stories for this institute */
+export async function getPublicHome() {
+  return (await axios.get(`${API_BASE_URl}/public/home`)).data.data;
 }

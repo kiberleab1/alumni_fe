@@ -195,7 +195,7 @@ export default function CreateTestimonialComp({ item }) {
       </form>
 
       <div>
-        <ToastContainer />
+
       </div>
     </div>
   );

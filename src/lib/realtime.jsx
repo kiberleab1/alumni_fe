@@ -71,9 +71,19 @@ export function RealtimeProvider({ children }) {
       }
     });
 
+    // the server count leaves out muted conversations and message requests
+    let countTimer = null;
+    const recount = () => {
+      clearTimeout(countTimer);
+      countTimer = setTimeout(() => getChatUnreadCount().then(setUnreadChats).catch(() => {}), 300);
+    };
     socket.on("message:new", (msg) => {
-      if (String(msg.to_user_id) === String(me?.id)) setUnreadChats((n) => n + 1);
+      if (String(msg.to_user_id) === String(me?.id)) recount();
       queryClient.invalidateQueries("conversations");
+    });
+    socket.on("conversation:update", () => {
+      queryClient.invalidateQueries("conversations");
+      recount();
     });
     socket.on("message:read", (evt) => {
       // my own read (from any tab) lowers my badge; recompute from server

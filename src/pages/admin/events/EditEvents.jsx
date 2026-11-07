@@ -17,7 +17,7 @@ export default function EditEvents({ event }) {
   const eventTimeFormatedDate = formatInputDate(event.time);
 
   const [eventFormData, setEventFormData] = useState({
-    ownerAdminId: "804323f3-fbe1-480d-88cf-37c4c680a71b",
+    ownerAdminId: "",
     ownerInstituteId: event.ownerInstituteId ? event.ownerInstituteId : "",
     title: event.title ? event.title : "",
     description: event.description ? event.description : "",
@@ -59,7 +59,6 @@ export default function EditEvents({ event }) {
     e.preventDefault();
     const formData = new FormData();
     formData.append("id", event.id);
-    formData.append("ownerAdminId", eventFormData.ownerAdminId);
     formData.append("ownerInstituteId", eventFormData.ownerInstituteId);
     formData.append("title", eventFormData.title);
     formData.append("venue", eventFormData.venue);
@@ -315,7 +314,7 @@ export default function EditEvents({ event }) {
                 className="text-sm font-semibold leading-6 text-gray-100"
                 onClick={() =>
                   setEventFormData({
-                    ownerAdminId: "804323f3-fbe1-480d-88cf-37c4c680a71b",
+                    ownerAdminId: "",
                     ownerInstituteId: "",
                     title: "",
                     description: "",
@@ -340,7 +339,6 @@ export default function EditEvents({ event }) {
           </form>
         </div>
         <div>
-          <ToastContainer />
         </div>
         <div className="max-w-xs mx-auto bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-500 hover:scale-105 hover:shadow-2xl">
           <div className="relative">

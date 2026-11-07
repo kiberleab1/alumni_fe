@@ -6,7 +6,7 @@ import { ArrowLeftIcon, ChatBubbleLeftRightIcon, LockClosedIcon, MapPinIcon, Rec
 import { MapPinIcon as PinSolid } from "@heroicons/react/24/solid";
 import { createGroupPost, deleteGroupPost, getGroup, getGroupMembers, getGroupPosts, pinGroupPost, respondGroupRequest, setGroupMembership } from "src/api";
 import { useSocketEvent } from "src/lib/realtime";
-import { PATHS, chatPath } from "src/lib/nav";
+import { PATHS, chatPath, profilePath } from "src/lib/nav";
 import { Avatar, Button, Card, EmptyState, Pill, SearchInput, SkeletonRow, Spinner, Tabs, apiError, cx, inputClass, timeAgo } from "src/components/ui";
 import { KIND } from "./GroupsPage";
 
@@ -74,7 +74,7 @@ function Posts({ group }) {
               <Avatar name={p.author.name} photo={p.author.photo} size="sm" />
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-sm font-semibold text-slate-900">{p.author.name}</p>
+                  <Link to={profilePath(p.author.id)} className="text-sm font-semibold text-slate-900 hover:underline">{p.author.name}</Link>
                   {p.author.graduation_year && <span className="text-xs text-slate-500">Class of {p.author.graduation_year}</span>}
                   <span className="text-xs text-slate-400">· {timeAgo(p.created_at)}</span>
                   {p.pinned && (
@@ -136,7 +136,7 @@ function Members({ group, status = "active" }) {
               <Avatar name={m.user.name} photo={m.user.photo} size="sm" online={m.user.online} />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold text-slate-900">
-                  {m.user.name} {m.role === "admin" && <Pill tone="brand">Admin</Pill>}
+                  <Link to={profilePath(m.user.id)} className="hover:underline">{m.user.name}</Link> {m.role === "admin" && <Pill tone="brand">Admin</Pill>}
                 </p>
                 <p className="truncate text-xs text-slate-500">{[m.user.department_name, m.user.graduation_year && `Class of ${m.user.graduation_year}`].filter(Boolean).join(" · ")}</p>
               </div>

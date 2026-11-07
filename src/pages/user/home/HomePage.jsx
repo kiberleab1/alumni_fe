@@ -1,14 +1,13 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import { ArrowRightIcon, BriefcaseIcon, CalendarDaysIcon, CheckCircleIcon, LightBulbIcon, NewspaperIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import {
-  getAlumniProfileById,
   getConnectionSuggestions,
   getMemberJobs,
   getMemberNews,
-  getMyCareer,
   getMyEvents,
+  getMyProfile,
   getMyMentorships,
   getImageBaseUrl,
   listConnections,
@@ -16,7 +15,7 @@ import {
   sendConnectionRequest,
 } from "src/api";
 import { useRealtime } from "src/lib/realtime";
-import { PATHS, chatPath, eventPath, jobPath, newsPath, peoplePath } from "src/lib/nav";
+import { PATHS, chatPath, eventPath, jobPath, newsPath, peoplePath, profilePath } from "src/lib/nav";
 import { Avatar, Button, Card, Pill, apiError, cx, timeAgo } from "src/components/ui";
 
 const greeting = () => {
@@ -24,20 +23,12 @@ const greeting = () => {
   return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
 };
 
-/** Profile checklist: what's missing and where to fix it. */
+/** Profile checklist: what's missing and where to fix it (computed by the API). */
+const STEP_TARGET = { profile: PATHS.welcome, career: PATHS.career };
 function useProfileSteps() {
-  const profile = useQuery(["getAlumniProfileById", "me"], () => getAlumniProfileById(), { staleTime: 60_000 });
-  const career = useQuery("myCareer", getMyCareer, { staleTime: 60_000 });
-  const p = profile.data?.data;
-  const hasProfile = !!p?.user_id;
-  const steps = [
-    { label: "Create your alumni profile", done: hasProfile, to: hasProfile ? PATHS.profile : `${PATHS.profile}/create` },
-    { label: "Add a profile photo", done: !!p?.user_photo, to: PATHS.profile },
-    { label: "List your skills", done: !!(p?.Skills || p?.skills), to: PATHS.profile },
-    { label: "Write a short bio", done: !!p?.description, to: PATHS.profile },
-    { label: "Add your current or last job", done: (career.data?.items || []).length > 0, to: PATHS.career },
-  ];
-  return { steps, loading: profile.isLoading || career.isLoading };
+  const profile = useQuery("myProfile", getMyProfile, { staleTime: 60_000 });
+  const steps = (profile.data?.completeness?.checks || []).map((c) => ({ label: c.label, done: c.done, to: STEP_TARGET[c.key] || PATHS.profile }));
+  return { steps, loading: profile.isLoading, onboarding: !!profile.data?.onboarding?.needed };
 }
 
 function Section({ title, to, linkLabel = "See all", icon: Icon, children, className }) {
@@ -64,7 +55,7 @@ export default function HomePage() {
   const { me, pendingRequests } = useRealtime();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { steps, loading: stepsLoading } = useProfileSteps();
+  const { steps, loading: stepsLoading, onboarding } = useProfileSteps();
   const done = steps.filter((s) => s.done).length;
 
   const requests = useQuery(["connections", "incoming", "home"], () => listConnections({ type: "incoming", pageSize: 3 }), { staleTime: 15_000 });
@@ -96,6 +87,9 @@ export default function HomePage() {
 
   const incomingRequests = requests.data?.items || requests.data?.data || [];
   const mentorAsks = mentorship.data?.incoming?.length || 0;
+
+  // first sign-in without a profile: start the short setup instead
+  if (onboarding) return <Navigate to={PATHS.welcome} replace />;
 
   return (
     <div className="ui-scope mx-auto max-w-6xl space-y-5">
@@ -227,7 +221,7 @@ export default function HomePage() {
                   <li key={c.id} className="flex items-center gap-3">
                     <Avatar name={c.user?.name} photo={c.user?.photo} size="sm" />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-slate-900">{c.user?.name}</p>
+                      <Link to={profilePath(c.user?.id)} className="block truncate text-sm font-semibold text-slate-900 hover:underline">{c.user?.name}</Link>
                       <p className="truncate text-xs text-slate-500">{[c.user?.department_name, c.user?.graduation_year && `Class of ${c.user.graduation_year}`].filter(Boolean).join(" · ")}</p>
                     </div>
                     <Button size="sm" onClick={() => respond.mutate({ id: c.id, status: "accepted" })} disabled={respond.isLoading}>
@@ -263,7 +257,7 @@ export default function HomePage() {
                   <li key={s.user.id} className="flex items-center gap-3">
                     <Avatar name={s.user.name} photo={s.user.photo} size="sm" online={s.user.online} />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-slate-900">{s.user.name}</p>
+                      <Link to={profilePath(s.user.id)} className="block truncate text-sm font-semibold text-slate-900 hover:underline">{s.user.name}</Link>
                       <p className="truncate text-xs text-slate-500">{s.reasons?.[0] || s.user.department_name || "Fellow alumni"}</p>
                     </div>
                     <Button size="sm" variant="secondary" onClick={() => connect.mutate(s.user.id)} disabled={connect.isLoading}>

@@ -194,7 +194,6 @@ export default function CreatePodcastComp({ item }) {
       </form>
 
       <div>
-        <ToastContainer />
       </div>
     </div>
   );

@@ -374,7 +374,7 @@ export default function EditDepartment({ department }) {
       </div>
 
       <div>
-        <ToastContainer />
+
       </div>
     </div>
   );

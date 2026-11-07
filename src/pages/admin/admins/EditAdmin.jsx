@@ -715,7 +715,7 @@ export default function EditAdmin({ admin }) {
       </div>
 
       <div>
-        <ToastContainer />
+
       </div>
     </div>
   );

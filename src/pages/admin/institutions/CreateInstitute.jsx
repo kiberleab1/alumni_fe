@@ -734,7 +734,7 @@ export default function CreateInstitutionPage() {
       {/* </div> */}
 
       <div>
-        <ToastContainer />
+
       </div>
     </div>
   );

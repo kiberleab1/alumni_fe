@@ -664,7 +664,6 @@ export default function CreateStaff() {
         </div>
 
         <div>
-          <ToastContainer />
         </div>
       </div>
     </QueryResult>

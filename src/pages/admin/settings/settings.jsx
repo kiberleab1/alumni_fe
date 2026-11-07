@@ -304,7 +304,7 @@ const SettingsPage = () => {
             >
                 Save Changes
             </button>
-            <ToastContainer />
+
 
         </div>
     );

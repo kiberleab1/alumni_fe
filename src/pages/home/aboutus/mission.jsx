@@ -75,9 +75,9 @@ const Mission = () => {
                 <h1 className="text-black text-2xl font-bold text-center mb-4 font-sans">
                   {card.title}
                 </h1>
-                <p className="text-gray-900 text-center p-2">
+                <div className="text-gray-900 text-center p-2">
                   {card.description}
-                </p>
+                </div>
               </div>
             </div>
           </div>

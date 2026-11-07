@@ -760,7 +760,7 @@ export default function EditInstitute({ institute }) {
       {/* </div> */}
 
       <div>
-        <ToastContainer />
+
       </div>
     </div>
   );

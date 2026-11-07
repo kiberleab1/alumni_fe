@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { profilePath } from "src/lib/nav";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -262,7 +264,7 @@ function PersonCard({ user, online, subtitle, note, children, extra }) {
       <div className="flex items-start gap-3">
         <Avatar name={user.name} photo={user.photo} size="lg" online={online} />
         <div className="min-w-0 flex-1">
-          <p className="truncate font-semibold text-slate-900">{user.name}</p>
+          <Link to={profilePath(user.id)} className="block truncate font-semibold text-slate-900 hover:underline">{user.name}</Link>
           {meta.length > 0 && <p className="mt-0.5 line-clamp-2 text-sm text-slate-600">{meta.join(" · ")}</p>}
           {subtitle && <p className="mt-1 text-xs text-slate-400">{subtitle}</p>}
         </div>

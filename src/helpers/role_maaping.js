@@ -14,6 +14,7 @@ import {
   StarIcon,
   MicrophoneIcon,
   SwatchIcon,
+  FlagIcon,
 } from "@heroicons/react/24/outline";
 import CreateAdminPage from "src/pages/admin/admins/createAdmin";
 import CreatePodcast from "src/pages/admin/podcast/podcast";
@@ -58,6 +59,7 @@ const role_maps = {
       icon: ClipboardDocumentCheckIcon,
       current: false,
     },
+    { name: "Message Reports", href: "#", icon: FlagIcon, current: false },
     { name: "Events", href: "#", icon: CalendarIcon, current: false },
     { name: "News", href: "#", icon: NewspaperIcon, current: false },
     { name: "Email", href: "#", icon: InboxArrowDownIcon, current: false },
@@ -110,6 +112,7 @@ const role_maps = {
       icon: ClipboardDocumentCheckIcon,
       current: false,
     },
+    { name: "Message Reports", href: "#", icon: FlagIcon, current: false },
     { name: "Events", href: "#", icon: CalendarIcon, current: false },
     { name: "News", href: "#", icon: NewspaperIcon, current: false },
     { name: "Email", href: "#", icon: InboxArrowDownIcon, current: false },

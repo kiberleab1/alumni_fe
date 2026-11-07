@@ -685,7 +685,7 @@ export default function EditUser({ user }) {
       </div>
 
       <div>
-        <ToastContainer />
+
       </div>
     </div>
   );

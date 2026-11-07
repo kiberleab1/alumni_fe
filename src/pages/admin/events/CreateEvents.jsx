@@ -12,7 +12,7 @@ export default function CreateEvents() {
   const [VisibilityType] = useState(["All Alumni", "My alumni"]);
 
   const [eventFormData, setEventFormData] = useState({
-    ownerAdminId: "804323f3-fbe1-480d-88cf-37c4c680a71b",
+    ownerAdminId: "",
     ownerInstituteId: "",
     title: "",
     description: "",
@@ -57,7 +57,6 @@ export default function CreateEvents() {
   const handleSaveEventClick = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append("ownerAdminId", eventFormData.ownerAdminId);
     formData.append("ownerInstituteId", eventFormData.ownerInstituteId);
     formData.append("title", eventFormData.title);
     formData.append("venue", eventFormData.venue);
@@ -344,7 +343,7 @@ export default function CreateEvents() {
               className="text-sm font-semibold leading-6 text-gray-100"
               onClick={() =>
                 setEventFormData({
-                  ownerAdminId: "804323f3-fbe1-480d-88cf-37c4c680a71b",
+                  ownerAdminId: "",
                   ownerInstituteId: "",
                   title: "",
                   description: "",
@@ -370,7 +369,6 @@ export default function CreateEvents() {
         </form>
       </div>
       <div>
-        <ToastContainer />
       </div>
     </div>
   );

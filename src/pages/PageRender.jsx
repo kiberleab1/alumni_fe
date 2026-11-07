@@ -35,6 +35,7 @@ import CreateSlideShowPage from "./admin/webcontent/slideshow/CreateSlideShowPag
 import CreateGallaryPage from "./admin/webcontent/gallary/CreateGallaryPage";
 import AlumniPage from "./admin/alumni/AlumniPage";
 import DocumentVerificationPage from "./admin/documentVerification/DocumentVerificationPage";
+import MessageReportsPage from "./admin/reports/MessageReportsPage";
 import ComposeEmail from "./admin/emails/compose";
 import SettingsPage from "./admin/settings/settings";
 import CreateOurStoryForm from "./admin/webcontent/CreateOurStoryPage";
@@ -88,6 +89,7 @@ const componentsMap = {
   "Edit JobHistory": EditJobHistory,
   Alumni: AlumniPage,
   "Document Verification": DocumentVerificationPage,
+  "Message Reports": MessageReportsPage,
   "Create About us": CreateWebContent,
   "Create Slide Show": CreateSlideShowPage,
   "Create Gallery Show": CreateGallaryPage,
@@ -126,6 +128,7 @@ export default function ComponentRender({ page, onPageSet }) {
 
   return (
     <ComponentToRender
+      goTo={onPageSet}
       onAddAdminClick={() => onPageSet("Create Admin")}
       onCreateInstituteClick={() => onPageSet("Create Institute")}
       onCreateUserClick={() => onPageSet("Create User")}

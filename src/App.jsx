@@ -25,7 +25,7 @@ import LandingPage from "./pages/home/landing";
 import LoginPage from "./pages/login";
 import RolePage from "./pages/Role";
 import SideBar from "./pages/SideBar";
-import SignupPage from "./pages/signup";
+import SignupPage from "./pages/auth/SignupPage";
 import UserSideBar from "./pages/UserSideBar";
 import LandingEventsPage from "./pages/home/program/events";
 import LandingProfile from "./pages/home/program/profile";
@@ -106,7 +106,7 @@ function App() {
                 <Route path="profile" element={<Alumni_profile />} />
                 <Route path="members" element={<LandingMembersPage />} />
                 <Route path="login" element={<LoginPage />} />
-                <Route path="register" element={<SignupPage />} />
+                <Route path="register" element={<Navigate to="/signup" replace />} />
               </Route>
               <Route path="alumni">
                 <Route index element={<LandingProfile />} />

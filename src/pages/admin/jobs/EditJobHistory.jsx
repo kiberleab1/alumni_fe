@@ -246,7 +246,6 @@ export default function EditJobHistory({ jobHistory }) {
       </div>
 
       <div>
-        <ToastContainer />
       </div>
     </div>
   );

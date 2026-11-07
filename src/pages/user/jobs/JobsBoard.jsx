@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import DOMPurify from "dompurify";
 import { BookmarkIcon, BriefcaseIcon, BuildingOffice2Icon, ChatBubbleLeftRightIcon, ClockIcon, MapPinIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import { BookmarkIcon as BookmarkSolid } from "@heroicons/react/24/solid";
 import { getImageBaseUrl, getJobAlumni, getMemberJob, getMemberJobs, sendConnectionRequest, trackJob } from "src/api";
-import { chatPath } from "src/lib/nav";
+import { chatPath, profilePath } from "src/lib/nav";
 import { Avatar, Button, Card, Chips, EmptyState, Field, PageHeader, Pill, SearchInput, SkeletonRow, Spinner, Tabs, apiError, cx, inputClass, timeAgo } from "src/components/ui";
 
 const STATUS = [
@@ -149,7 +149,7 @@ function JobDetail({ id, onClose }) {
                 <li key={a.user.id} className="flex items-center gap-3">
                   <Avatar name={a.user.name} photo={a.user.photo} size="sm" online={a.user.online} />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-slate-900">{a.user.name}</p>
+                    <Link to={profilePath(a.user.id)} className="block truncate text-sm font-semibold text-slate-900 hover:underline">{a.user.name}</Link>
                     <p className="truncate text-xs text-slate-500">
                       {a.title}
                       {a.is_current ? "" : " (former)"}
