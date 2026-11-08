@@ -17,7 +17,10 @@ export default function LoginPage() {
     onSuccess: (res) => {
       const data = storeUserToken(res.data);
       // full reload so the app boots with the new session
-      window.location.href = HOME_BY_ROLE[data?.user?.role_name] || "/landing";
+      const home = HOME_BY_ROLE[data?.user?.role_name] || "/landing";
+      // ?next= from the public site (e.g. "Sign in to RSVP"); members' area only, never another site
+      const next = new URLSearchParams(window.location.search).get("next") || "";
+      window.location.href = home === "/user" && /^\/user(\/[\w\-/?=&]*)?$/.test(next) ? next : home;
     },
   });
 

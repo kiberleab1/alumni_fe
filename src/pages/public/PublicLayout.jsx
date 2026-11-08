@@ -1,0 +1,388 @@
+/**
+ * Shell for every public page: sticky header (logo, navigation, sign in /
+ * join, mobile menu), the page itself, and a footer with the institute's
+ * contact details. Wraps the pages in the theme so admin branding applies.
+ */
+import { useEffect, useState } from "react";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import { useQuery } from "react-query";
+import {
+  Bars3Icon,
+  EnvelopeIcon,
+  GlobeAltIcon,
+  PhoneIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+import { getPublic } from "src/api";
+import { ThemeProvider, useThemeInfo } from "src/lib/theme";
+import { cx } from "src/components/ui";
+import { getUserToken } from "src/helpers/globalStorage";
+import { Container, P } from "./kit";
+
+const NAV = [
+  { to: P.home, label: "Home", end: true },
+  { to: P.about, label: "About" },
+  { to: P.events, label: "Events" },
+  { to: P.news, label: "News" },
+  { to: P.jobs, label: "Jobs" },
+  { to: P.stories, label: "Stories" },
+  { to: P.podcasts, label: "Podcasts" },
+  { to: P.gallery, label: "Gallery" },
+  { to: P.contact, label: "Contact" },
+];
+
+function signedInHome() {
+  try {
+    const role = getUserToken()?.user?.role_name;
+    if (!role) return null;
+    return role === "admin" || role === "super_admin" ? "/admin" : "/user";
+  } catch {
+    return null;
+  }
+}
+
+function Brand({ onClick }) {
+  const { logoUrl, name } = useThemeInfo() || {};
+  const { data } = useQuery("publicHome", () => getPublic("home"), {
+    staleTime: 60_000,
+    retry: false,
+  });
+  const title = data?.institute?.name || name || "Alumni";
+  return (
+    <Link
+      to={P.home}
+      onClick={onClick}
+      className="flex min-w-0 items-center gap-3"
+    >
+      {logoUrl && (
+        <img
+          src={logoUrl}
+          alt=""
+          className="h-9 w-auto max-w-[120px] object-contain"
+        />
+      )}
+      <span className="min-w-0 leading-tight">
+        <span className="block truncate text-[15px] font-bold text-slate-900">
+          {title}
+        </span>
+        <span className="block text-xs font-medium text-slate-500">
+          Alumni network
+        </span>
+      </span>
+    </Link>
+  );
+}
+
+function Header() {
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const home = signedInHome();
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
+  useEffect(() => {
+    const on = () => setScrolled(window.scrollY > 8);
+    on();
+    window.addEventListener("scroll", on, { passive: true });
+    return () => window.removeEventListener("scroll", on);
+  }, []);
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  const link = ({ isActive }) =>
+    cx(
+      "rounded-lg px-3 py-2 text-sm font-medium transition",
+      isActive
+        ? "bg-brand-soft text-link"
+        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
+    );
+  // the menu panel is rendered next to the header, not inside it: the header's
+  // backdrop blur would make it the containing block for "fixed" children
+  return (
+    <>
+      <header
+        className={cx(
+          "sticky top-0 z-40 border-b bg-white/90 backdrop-blur transition",
+          scrolled ? "border-slate-200 shadow-sm" : "border-transparent",
+        )}
+      >
+        <Container className="flex h-16 items-center justify-between gap-4">
+          <Brand />
+          <nav
+            className="hidden items-center gap-0.5 xl:flex"
+            aria-label="Main"
+          >
+            {NAV.map((n) => (
+              <NavLink key={n.to} to={n.to} end={n.end} className={link}>
+                {n.label}
+              </NavLink>
+            ))}
+          </nav>
+          <div className="hidden items-center gap-2 xl:flex">
+            {home ? (
+              <a
+                href={home}
+                className="rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-hover"
+              >
+                Open the app
+              </a>
+            ) : (
+              <>
+                <a
+                  href={P.login}
+                  className="rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  Sign in
+                </a>
+                <a
+                  href={P.signup}
+                  className="rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-hover"
+                >
+                  Join
+                </a>
+              </>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            className="-mr-2 rounded-lg p-2 text-slate-700 hover:bg-slate-100 xl:hidden"
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            aria-label={open ? "Close menu" : "Open menu"}
+          >
+            {open ? (
+              <XMarkIcon className="h-6 w-6" />
+            ) : (
+              <Bars3Icon className="h-6 w-6" />
+            )}
+          </button>
+        </Container>
+      </header>
+      {open && (
+        <div
+          id="mobile-nav"
+          className="fixed inset-x-0 bottom-0 top-16 z-50 overflow-y-auto border-t border-slate-200 bg-white xl:hidden"
+        >
+          <nav className="flex flex-col gap-1 p-4" aria-label="Main">
+            {NAV.map((n) => (
+              <NavLink
+                key={n.to}
+                to={n.to}
+                end={n.end}
+                className={({ isActive }) =>
+                  cx(
+                    "rounded-xl px-4 py-3 text-base font-medium",
+                    isActive
+                      ? "bg-brand-soft text-link"
+                      : "text-slate-800 hover:bg-slate-50",
+                  )
+                }
+              >
+                {n.label}
+              </NavLink>
+            ))}
+          </nav>
+          <div className="grid gap-3 border-t border-slate-100 p-4">
+            {home ? (
+              <a
+                href={home}
+                className="rounded-xl bg-brand px-4 py-3 text-center text-sm font-semibold text-white"
+              >
+                Open the app
+              </a>
+            ) : (
+              <>
+                <a
+                  href={P.signup}
+                  className="rounded-xl bg-brand px-4 py-3 text-center text-sm font-semibold text-white"
+                >
+                  Join the network
+                </a>
+                <a
+                  href={P.login}
+                  className="rounded-xl px-4 py-3 text-center text-sm font-semibold text-slate-800 ring-1 ring-inset ring-slate-300"
+                >
+                  Sign in
+                </a>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+const SOCIAL_LABEL = {
+  facebook: "Facebook",
+  twitter: "X (Twitter)",
+  x: "X",
+  telegram: "Telegram",
+  linkedin: "LinkedIn",
+  instagram: "Instagram",
+  youtube: "YouTube",
+  tiktok: "TikTok",
+};
+
+function Footer() {
+  const { data } = useQuery("publicAbout", () => getPublic("about"), {
+    staleTime: 5 * 60_000,
+    retry: false,
+  });
+  const i = data?.institute;
+  const col = "text-sm text-slate-400 hover:text-white";
+  return (
+    <footer className="bg-slate-900 text-slate-300">
+      <Container className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="sm:col-span-2 lg:col-span-1">
+          <p className="text-lg font-bold text-white">
+            {i?.name || "Alumni network"}
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-slate-400">
+            The official alumni community: stay in touch with classmates, find
+            opportunities and give back.
+          </p>
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-white">Explore</p>
+          <ul className="mt-4 space-y-2.5">
+            {NAV.slice(1, 7).map((n) => (
+              <li key={n.to}>
+                <Link to={n.to} className={col}>
+                  {n.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-white">Members</p>
+          <ul className="mt-4 space-y-2.5">
+            <li>
+              <a href={P.signup} className={col}>
+                Join the network
+              </a>
+            </li>
+            <li>
+              <a href={P.login} className={col}>
+                Sign in
+              </a>
+            </li>
+            <li>
+              <a href="/forgot-password" className={col}>
+                Forgot password
+              </a>
+            </li>
+            <li>
+              <Link to={P.contact} className={col}>
+                Help &amp; contact
+              </Link>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-white">Get in touch</p>
+          <ul className="mt-4 space-y-2.5 text-sm">
+            {i?.email && (
+              <li>
+                <a
+                  href={`mailto:${i.email}`}
+                  className={cx(
+                    col,
+                    "inline-flex items-center gap-2 break-all",
+                  )}
+                >
+                  <EnvelopeIcon className="h-4 w-4 shrink-0" /> {i.email}
+                </a>
+              </li>
+            )}
+            {i?.phone && (
+              <li>
+                <a
+                  href={`tel:${i.phone.replace(/[^\d+]/g, "")}`}
+                  className={cx(col, "inline-flex items-center gap-2")}
+                >
+                  <PhoneIcon className="h-4 w-4 shrink-0" /> {i.phone}
+                </a>
+              </li>
+            )}
+            {i?.website && (
+              <li>
+                <a
+                  href={i.website}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={cx(col, "inline-flex items-center gap-2")}
+                >
+                  <GlobeAltIcon className="h-4 w-4 shrink-0" />{" "}
+                  {i.website
+                    .replace(/^https?:\/\/(www\.)?/, "")
+                    .replace(/\/$/, "")}
+                </a>
+              </li>
+            )}
+          </ul>
+          {i?.social?.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {i.social.map((s) => (
+                <a
+                  key={s.url}
+                  href={s.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-lg bg-white/5 px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white"
+                >
+                  {SOCIAL_LABEL[s.network] || s.network}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      </Container>
+      <div className="border-t border-white/10">
+        <Container className="flex flex-col gap-2 py-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            © {new Date().getFullYear()} {i?.name || "Alumni network"}. All
+            rights reserved.
+          </p>
+          <p>Built for alumni, by alumni.</p>
+        </Container>
+      </div>
+    </footer>
+  );
+}
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0); // block body: scrollTo may return a Promise, which React must not get
+  }, [pathname]);
+  return null;
+}
+
+export default function PublicLayout() {
+  return (
+    <ThemeProvider>
+      <div className="ui-scope flex min-h-screen flex-col bg-white font-theme text-slate-900 antialiased">
+        <ScrollToTop />
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:shadow"
+        >
+          Skip to content
+        </a>
+        <Header />
+        <main id="main" className="flex-1">
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
+    </ThemeProvider>
+  );
+}

@@ -9,31 +9,23 @@ import CustomComponents from "./views/custom-components/custom-components.jsx";
 
 import ComposeEmail from "./pages/admin/emails/compose";
 // import Signin from './pages/signin';
-import LandingLayout from "./LandingLayout";
 import CreateStaff from "./pages/admin/staff/CreateStaff";
 import Alumni_profile from "./pages/alumni_profile";
 import Directory from "./pages/directory";
-import AboutUsPage from "./pages/home/aboutus/aboutPage";
-import ContactUsPage from "./pages/home/aboutus/contactUsPage";
-import DirectoryPage from "./pages/home/aboutus/directoryPage";
-import GalleryPage from "./pages/home/aboutus/galleryPage";
-import NewsPage from "./pages/home/aboutus/newsPage";
-import ApplyForJobsPage from "./pages/home/career/applyForJobs";
-import CareerPage from "./pages/home/career/careerPage";
-import ContentPage from "./pages/home/content/contentPage";
 import LandingPage from "./pages/home/landing";
+import PublicLayout from "./pages/public/PublicLayout";
+import { EventDetailPage, EventsPage } from "./pages/public/EventsPages";
+import { ArticlePage, JobDetailPage, JobsPage, NewsPage } from "./pages/public/NewsJobsPages";
+import { AboutPage, ContactPage, GalleryPage, PodcastsPage, StoriesPage } from "./pages/public/InfoPages";
+import { LegacyContentRedirect, PublicNotFound } from "./pages/public/misc";
 import LoginPage from "./pages/login";
 import RolePage from "./pages/Role";
 import SideBar from "./pages/SideBar";
 import SignupPage from "./pages/auth/SignupPage";
 import UserSideBar from "./pages/UserSideBar";
-import LandingEventsPage from "./pages/home/program/events";
-import LandingProfile from "./pages/home/program/profile";
-import LandingMembersPage from "./pages/home/program/members";
 import { Navigate } from "react-router-dom";
 import NotFoundComponent from "./components/utils/notFound";
 import Footer from "./views/custom-components/sections/footer";
-import AlumniPodcast from "./pages/home/podcast/AlumniPodcast";
 import { AcceptInvitePage, ForgotPasswordPage, ResetPasswordPage, VerifyEmailPage } from "./pages/auth/AuthPages";
 // const hist = createBrowserHistory();
 const queryClient = new QueryClient({
@@ -48,11 +40,10 @@ const queryClient = new QueryClient({
 const user = localStorage.getItem("userData");
 function App() {
   const activeUrl = window.location.pathname.trim().toLowerCase();
-  const pathsToDisableFooter = ["/user", "/login", "/register", "/admin", "/signup", "/forgot-password", "/reset-password", "/verify-email", "/accept-invite"];
+  const pathsToDisableFooter = ["/landing", "/user", "/login", "/register", "/admin", "/signup", "/forgot-password", "/reset-password", "/verify-email", "/accept-invite"];
 
-  const activeUrlPath = pathsToDisableFooter.some((path) =>
-    activeUrl.includes(path)
-  );
+  // "/" redirects to the public site, which has its own footer
+  const activeUrlPath = activeUrl === "/" || pathsToDisableFooter.some((path) => activeUrl.includes(path));
 
 
   return (
@@ -86,37 +77,38 @@ function App() {
             <Route path="/alumni_profile" element={<Alumni_profile />} />
             <Route path="/asd" element={<CreateStaff />} />
             <Route path="/sdsds" element={<Directory />} />
-            {/* public site: visitors can browse before signing in (design board 17) */}
-            <Route path="/landing" element={<LandingLayout />}>
+            {/* public website: visitors can browse before signing in */}
+            <Route path="/landing" element={<PublicLayout />}>
               <Route index element={<LandingPage />} />
-              <Route path="content" element={<ContentPage />} />
-              <Route path="aboutus">
-                <Route index element={<AboutUsPage />} />
-                <Route path="contact" element={<ContactUsPage />} />
-                <Route path="directory" element={<DirectoryPage />} />
-                <Route path="gallery" element={<GalleryPage />} />
-                <Route path="news" element={<NewsPage />} />
-              </Route>
-              <Route path="events">
-                <Route index element={<LandingEventsPage />} />
-                <Route path="news" element={<NewsPage />} />
-              </Route>
-              <Route path="program">
-                <Route index element={<LandingEventsPage />} />
-                <Route path="profile" element={<Alumni_profile />} />
-                <Route path="members" element={<LandingMembersPage />} />
-                <Route path="login" element={<LoginPage />} />
-                <Route path="register" element={<Navigate to="/signup" replace />} />
-              </Route>
-              <Route path="alumni">
-                <Route index element={<LandingProfile />} />
-                <Route path="podcast" element={<AlumniPodcast />} />
-              </Route>
-              <Route path="career">
-                <Route index element={<CareerPage />} />
-                <Route path="apply" element={<ApplyForJobsPage />} />
-              </Route>
-              <Route path="*" element={<NotFoundComponent />} />
+              <Route path="about" element={<AboutPage />} />
+              <Route path="events" element={<EventsPage />} />
+              <Route path="events/:id" element={<EventDetailPage />} />
+              <Route path="news" element={<NewsPage />} />
+              <Route path="news/:id" element={<ArticlePage />} />
+              <Route path="jobs" element={<JobsPage />} />
+              <Route path="jobs/:id" element={<JobDetailPage />} />
+              <Route path="stories" element={<StoriesPage />} />
+              <Route path="podcasts" element={<PodcastsPage />} />
+              <Route path="gallery" element={<GalleryPage />} />
+              <Route path="contact" element={<ContactPage />} />
+              {/* old addresses (menus, emails, bookmarks) */}
+              <Route path="content" element={<LegacyContentRedirect />} />
+              <Route path="aboutus" element={<Navigate to="/landing/about" replace />} />
+              <Route path="aboutus/contact" element={<Navigate to="/landing/contact" replace />} />
+              <Route path="aboutus/directory" element={<Navigate to="/landing/about" replace />} />
+              <Route path="aboutus/gallery" element={<Navigate to="/landing/gallery" replace />} />
+              <Route path="aboutus/news" element={<Navigate to="/landing/news" replace />} />
+              <Route path="events/news" element={<Navigate to="/landing/news" replace />} />
+              <Route path="program" element={<Navigate to="/landing/events" replace />} />
+              <Route path="program/members" element={<Navigate to="/landing/about" replace />} />
+              <Route path="program/profile" element={<Navigate to="/landing/about" replace />} />
+              <Route path="program/login" element={<Navigate to="/login" replace />} />
+              <Route path="program/register" element={<Navigate to="/signup" replace />} />
+              <Route path="alumni" element={<Navigate to="/landing/stories" replace />} />
+              <Route path="alumni/podcast" element={<Navigate to="/landing/podcasts" replace />} />
+              <Route path="career" element={<Navigate to="/landing/jobs" replace />} />
+              <Route path="career/apply" element={<Navigate to="/landing/jobs" replace />} />
+              <Route path="*" element={<PublicNotFound />} />
             </Route>
             <Route path="/" element={<Navigate to="/landing" replace />} />
             <Route path="*" element={<NotFoundComponent />} />

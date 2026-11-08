@@ -1236,3 +1236,11 @@ export async function resolveMessageReport({ id, status, note }) {
 export async function getPublicHome() {
   return (await axios.get(`${API_BASE_URl}/public/home`)).data.data;
 }
+
+/** public website data (no sign-in needed); path like "events" or "news/<id>" */
+export async function getPublic(path, params) {
+  return (await axios.get(`${API_BASE_URl}/public/${path}`, { params })).data.data;
+}
+export async function sendContactMessage(body) {
+  return (await axios.post(`${API_BASE_URl}/public/contact`, body)).data.data;
+}

@@ -5,6 +5,10 @@
   html {
     @apply text-neutral-800;
   }
+  input, select, textarea {
+    background-color: #ffffff;
+    color: #0f172a;
+  }
   html.dark {
     @apply text-neutral-50;
     @apply bg-neutral-800;
@@ -17,9 +21,11 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* the app has one light theme; "light dark" made browsers on dark-mode
+     computers paint form fields black behind dark text */
+  color-scheme: light;
+  color: #213547;
+  background-color: #ffffff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -69,7 +75,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
+/* light values always (no dark theme) */
   :root {
     color: #213547;
     background-color: #ffffff;
@@ -80,7 +86,6 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
 
 /*
  * Opt-in reset for the redesigned UI (shell, chat, network, login).

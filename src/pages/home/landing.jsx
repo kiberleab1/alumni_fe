@@ -1,8 +1,7 @@
 /**
- * Public home page (design board: Public landing). New hero, live numbers,
- * what members get, upcoming events and latest stories, then the sections
- * admins manage in Web content (about, team, testimonials, contact).
- * Colours come from the institute theme, so admin branding applies here too.
+ * Public home page: hero, live numbers, what members get, upcoming events,
+ * latest news, open jobs, alumni voices and a closing call to join.
+ * Hero text/image come from Web content → "slideshow" when an admin set it.
  */
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
@@ -12,185 +11,212 @@ import {
   BriefcaseIcon,
   CalendarDaysIcon,
   ChatBubbleLeftRightIcon,
+  CheckCircleIcon,
   ClipboardDocumentCheckIcon,
   LightBulbIcon,
-  MapPinIcon,
   RectangleGroupIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
-import { getImageBaseUrl, getPublicHome, getWebContentByComonent } from "src/api";
-import ContactComponent from "src/views/custom-components/sections/contactComponent";
-import TeamComponent from "src/views/custom-components/sections/teamComponent";
-import TestimonialComponent from "src/views/custom-components/sections/testimonialComponent";
-import AboutUsPage from "./aboutus/aboutPage";
-
+import { getPublic } from "src/api";
+import { ButtonLink, CardSkeletons, Container, EventCard, JobRow, JoinBanner, MoreLink, NewsCard, P, SectionHead, fmtNum, img } from "../public/kit";
 
 const FEATURES = [
-  { icon: UserGroupIcon, title: "Find classmates", text: "Search alumni by class, department and company, and reconnect." },
-  { icon: ChatBubbleLeftRightIcon, title: "Message your network", text: "Private, real-time messages with the people you know." },
-  { icon: BriefcaseIcon, title: "Jobs and referrals", text: "Openings shared with alumni, and the classmates who already work there." },
-  { icon: LightBulbIcon, title: "Mentorship", text: "Get advice from graduates ahead of you, or mentor someone yourself." },
-  { icon: CalendarDaysIcon, title: "Events and reunions", text: "RSVP, add to your calendar and see who else is going." },
-  { icon: ClipboardDocumentCheckIcon, title: "Documents", text: "Request verification letters and transcripts and follow their progress." },
+  { icon: UserGroupIcon, title: "Find your classmates", text: "Search alumni by class, department, city and company, then reconnect." },
+  { icon: ChatBubbleLeftRightIcon, title: "Message your network", text: "Private, real-time conversations with the people you know." },
+  { icon: BriefcaseIcon, title: "Jobs and referrals", text: "Openings shared with alumni, and classmates who already work there." },
+  { icon: LightBulbIcon, title: "Mentorship", text: "Get advice from graduates a few steps ahead, or mentor someone yourself." },
+  { icon: CalendarDaysIcon, title: "Events and reunions", text: "RSVP in one tap, add it to your calendar and see who else is going." },
+  { icon: ClipboardDocumentCheckIcon, title: "Official documents", text: "Request verification letters and transcripts, and track every step." },
 ];
 
-const fmtDate = (d) => new Date(d).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
-const fmtNum = (n) => (n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k` : String(n ?? 0));
-
-function Hero({ name }) {
-  const slide = useQuery("landingSlideshow", () => getWebContentByComonent({ component: "slideshow", pageNumber: 1, pageSize: 1 }), { staleTime: 300_000, retry: false });
-  const s = slide.data?.data?.[0];
-  const image = s?.image?.[0] ? getImageBaseUrl(s.image[0]) : null;
+function Hero({ data }) {
+  const h = data?.hero;
+  const image = img(h?.images?.[0]);
+  const name = data?.institute?.name;
   return (
-    <section className="relative isolate overflow-hidden bg-side">
-      {image && <img src={image} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-30" />}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-brand/80 via-black/40 to-black/70" />
-      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28 lg:py-32">
-        <p className="text-sm font-semibold uppercase tracking-widest text-white/70">{name ? `${name} alumni network` : "Alumni network"}</p>
-        <h1 className="mt-4 max-w-3xl text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">{s?.title || "Stay connected with the people who shaped you."}</h1>
-        <p className="mt-5 max-w-2xl text-lg text-white/80">{s?.description || "Find classmates, discover jobs and mentors, and keep up with events and news from your institute, all in one place."}</p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <a href="/signup" className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow hover:bg-slate-100">
-            Join the network <ArrowRightIcon className="h-4 w-4" />
-          </a>
-          <a href="/login" className="inline-flex items-center rounded-xl px-5 py-3 text-sm font-semibold text-white ring-1 ring-inset ring-white/40 hover:bg-white/10">
-            Sign in
-          </a>
+    <section className="relative isolate overflow-hidden bg-slate-950">
+      {image && <img src={image} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-40" />}
+      <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-br from-brand/90 via-slate-950/80 to-slate-950" />
+      <div aria-hidden className="absolute -right-40 top-10 -z-10 h-[28rem] w-[28rem] rounded-full bg-brand/20 blur-3xl" />
+      <Container className="grid items-center gap-12 py-20 sm:py-24 lg:grid-cols-[1.2fr_1fr] lg:py-28">
+        <div>
+          <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white/90 ring-1 ring-inset ring-white/20">
+            <AcademicCapIcon className="h-4 w-4" /> {name ? `${name} alumni` : "Alumni network"}
+          </p>
+          <h1 className="mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">{h?.title || "Stay connected with the people who shaped you."}</h1>
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/80">{h?.description ? h.description.replace(/<[^>]*>/g, " ").trim() : "Find classmates, discover jobs and mentors, and keep up with events and news from your institute, all in one place."}</p>
+          <div className="mt-9 flex flex-wrap gap-3">
+            <ButtonLink href={P.signup} variant="white">
+              Join the network <ArrowRightIcon className="h-4 w-4" />
+            </ButtonLink>
+            <ButtonLink to={P.events} variant="ghost-light">
+              See upcoming events
+            </ButtonLink>
+          </div>
+          <ul className="mt-9 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/75">
+            {["Free for all graduates", "Your privacy, your choice", "Takes a minute"].map((t) => (
+              <li key={t} className="flex items-center gap-1.5">
+                <CheckCircleIcon className="h-5 w-5 text-white/60" /> {t}
+              </li>
+            ))}
+          </ul>
         </div>
-      </div>
+        <HeroCard data={data} />
+      </Container>
     </section>
+  );
+}
+
+/** Glass card on the hero: the next event, so the page feels alive. */
+function HeroCard({ data }) {
+  const next = data?.events?.[0];
+  return (
+    <div className="hidden rounded-3xl bg-white/10 p-6 ring-1 ring-inset ring-white/15 backdrop-blur lg:block">
+      <p className="text-xs font-semibold uppercase tracking-wider text-white/60">Happening next</p>
+      {next ? (
+        <Link to={P.event(next.id)} className="mt-4 block rounded-2xl bg-white p-5 shadow-xl transition hover:-translate-y-0.5">
+          <p className="text-sm font-semibold text-link">{new Date(next.time).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}</p>
+          <p className="mt-1 text-lg font-semibold text-slate-900">{next.title}</p>
+          {next.venue && <p className="mt-1 text-sm text-slate-500">{next.venue}</p>}
+          <p className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-link">
+            View event <ArrowRightIcon className="h-4 w-4" />
+          </p>
+        </Link>
+      ) : (
+        <div className="mt-4 rounded-2xl bg-white/5 p-5 text-sm text-white/70">New events will appear here.</div>
+      )}
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        {[
+          ["Alumni", data?.stats?.alumni],
+          ["Open jobs", data?.stats?.open_jobs],
+        ].map(([l, v]) => (
+          <div key={l} className="rounded-2xl bg-white/5 p-4 ring-1 ring-inset ring-white/10">
+            <p className="text-2xl font-bold text-white">{data ? fmtNum(v) : "–"}</p>
+            <p className="text-xs text-white/60">{l}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
 function Stats({ stats }) {
   const items = [
-    { label: "Alumni", value: stats?.alumni, icon: AcademicCapIcon },
+    { label: "Alumni on the network", value: stats?.alumni, icon: AcademicCapIcon },
     { label: "Upcoming events", value: stats?.upcoming_events, icon: CalendarDaysIcon },
     { label: "Open jobs", value: stats?.open_jobs, icon: BriefcaseIcon },
-    { label: "Groups", value: stats?.groups, icon: RectangleGroupIcon },
+    { label: "Alumni groups", value: stats?.groups, icon: RectangleGroupIcon },
   ];
   return (
-    <section className="relative z-10 mx-auto -mt-10 max-w-5xl px-4 sm:px-6">
-      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-slate-200 shadow-lg ring-1 ring-slate-200 md:grid-cols-4">
-        {items.map((i) => (
-          <div key={i.label} className="flex items-center gap-3 bg-white p-5">
-            <i.icon className="h-6 w-6 shrink-0 text-link" />
-            <div>
-              <dd className="text-2xl font-bold text-slate-900">{stats ? fmtNum(i.value) : "–"}</dd>
-              <dt className="text-sm text-slate-500">{i.label}</dt>
+    <section className="border-b border-slate-200 bg-white">
+      <Container>
+        <dl className="grid grid-cols-2 divide-slate-200 lg:grid-cols-4 lg:divide-x">
+          {items.map((i) => (
+            <div key={i.label} className="flex items-center gap-4 px-2 py-7 lg:px-8">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-link">
+                <i.icon className="h-6 w-6" />
+              </span>
+              <div>
+                <dd className="text-2xl font-bold tracking-tight text-slate-900">{stats ? fmtNum(i.value) : "–"}</dd>
+                <dt className="text-sm text-slate-500">{i.label}</dt>
+              </div>
             </div>
-          </div>
-        ))}
-      </dl>
+          ))}
+        </dl>
+      </Container>
     </section>
   );
 }
 
-function SectionHead({ eyebrow, title, action }) {
+function Features() {
   return (
-    <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
-      <div>
-        <p className="text-sm font-semibold uppercase tracking-wide text-link">{eyebrow}</p>
-        <h2 className="mt-1 text-3xl font-bold text-slate-900">{title}</h2>
-      </div>
-      {action}
-    </div>
-  );
-}
-
-function LandingPage() {
-  const { data } = useQuery("publicHome", getPublicHome, { staleTime: 60_000, retry: false });
-  const name = data?.institute?.name;
-  return (
-    <div className="ui-scope overflow-x-hidden bg-white font-theme">
-      <Hero name={name} />
-      <Stats stats={data?.stats} />
-
-      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <SectionHead eyebrow="Why join" title="Everything your alumni community needs" />
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <section className="py-20 sm:py-24">
+      <Container>
+        <SectionHead center eyebrow="Why join" title="Everything your alumni community needs" text="One place to keep the friendships, the network and the opportunities that started on campus." />
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((f) => (
-            <div key={f.title} className="rounded-2xl border border-slate-200 p-6 transition hover:-translate-y-0.5 hover:shadow-md">
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-soft text-link">
+            <div key={f.title} className="rounded-2xl bg-white p-6 ring-1 ring-slate-200 transition hover:shadow-md hover:ring-brand/30">
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand text-white shadow-sm">
                 <f.icon className="h-6 w-6" />
               </span>
-              <h3 className="mt-4 text-lg font-semibold text-slate-900">{f.title}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-slate-600">{f.text}</p>
+              <h3 className="mt-5 text-lg font-semibold text-slate-900">{f.title}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{f.text}</p>
             </div>
           ))}
         </div>
-      </section>
+      </Container>
+    </section>
+  );
+}
 
-      {data?.events?.length > 0 && (
-        <section className="bg-slate-50 py-20">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <SectionHead
-              eyebrow="Events"
-              title="Coming up"
-              action={
-                <Link to="/landing/events" className="inline-flex items-center gap-1 text-sm font-semibold text-link hover:underline">
-                  All events <ArrowRightIcon className="h-4 w-4" />
-                </Link>
-              }
-            />
-            <div className="grid gap-6 md:grid-cols-3">
-              {data.events.map((e) => (
-                <article key={e.id} className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
-                  {e.image ? <img src={getImageBaseUrl(e.image)} alt="" className="h-40 w-full object-cover" loading="lazy" /> : <div className="h-40 bg-gradient-to-br from-brand to-accent" />}
-                  <div className="p-5">
-                    <p className="text-sm font-semibold text-link">{fmtDate(e.time)}</p>
-                    <h3 className="mt-1 text-lg font-semibold text-slate-900">{e.title}</h3>
-                    {e.venue && (
-                      <p className="mt-1 flex items-center gap-1 text-sm text-slate-500">
-                        <MapPinIcon className="h-4 w-4" /> {e.venue}
-                      </p>
-                    )}
-                    <a href="/login" className="mt-4 inline-block text-sm font-semibold text-link hover:underline">
-                      Sign in to RSVP
-                    </a>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
+function Quotes({ items }) {
+  if (!items?.length) return null;
+  return (
+    <section className="py-20 sm:py-24">
+      <Container>
+        <SectionHead eyebrow="Alumni voices" title="In their words" action={<MoreLink to={P.stories}>More stories</MoreLink>} />
+        <div className="grid gap-5 md:grid-cols-3">
+          {items.map((t) => (
+            <figure key={t.id} className="flex flex-col rounded-2xl bg-slate-50 p-6 ring-1 ring-slate-200">
+              <span aria-hidden className="text-5xl font-serif leading-none text-brand/30">“</span>
+              <blockquote className="m-0 -mt-2 flex-1 border-0 bg-transparent p-0 text-[15px] leading-relaxed text-slate-700">{t.quote}</blockquote>
+              <figcaption className="mt-5 border-t border-slate-200 pt-4">
+                <p className="font-semibold text-slate-900">{t.name}</p>
+                {t.credentials && <p className="text-sm text-slate-500">{t.credentials}</p>}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+export default function LandingPage() {
+  const { data, isLoading } = useQuery("publicHome", () => getPublic("home"), { staleTime: 60_000, retry: false });
+  return (
+    <>
+      <Hero data={data} />
+      <Stats stats={data?.stats} />
+      <Features />
+
+      {(isLoading || data?.events?.length > 0) && (
+        <section className="bg-slate-50 py-20 sm:py-24">
+          <Container>
+            <SectionHead eyebrow="Events" title="Coming up" action={<MoreLink to={P.events}>All events</MoreLink>} />
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{isLoading ? <CardSkeletons className="aspect-[16/9]" /> : data.events.map((e) => <EventCard key={e.id} e={e} />)}</div>
+          </Container>
         </section>
       )}
 
       {data?.news?.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-          <SectionHead eyebrow="News" title="From campus and alumni" />
-          <div className="grid gap-6 md:grid-cols-3">
-            {data.news.map((n) => (
-              <article key={n.id} className="flex flex-col">
-                {n.image ? <img src={getImageBaseUrl(n.image)} alt="" className="h-44 w-full rounded-2xl object-cover" loading="lazy" /> : <div className="h-44 rounded-2xl bg-slate-100" />}
-                <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-link">{n.category}</p>
-                <h3 className="mt-1 text-lg font-semibold text-slate-900">{n.title}</h3>
-                <p className="mt-1 line-clamp-3 text-sm text-slate-600">{n.excerpt}</p>
-              </article>
-            ))}
-          </div>
+        <section className="py-20 sm:py-24">
+          <Container>
+            <SectionHead eyebrow="News" title="From campus and the alumni community" action={<MoreLink to={P.news}>All news</MoreLink>} />
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+              {data.news.map((n, i) => (
+                <NewsCard key={n.id} n={n} large={i === 0} />
+              ))}
+            </div>
+          </Container>
         </section>
       )}
 
-      <AboutUsPage />
-      <TeamComponent />
-      <TestimonialComponent />
+      {data?.jobs?.length > 0 && (
+        <section className="bg-slate-50 py-20 sm:py-24">
+          <Container>
+            <SectionHead eyebrow="Careers" title="Opportunities shared with alumni" action={<MoreLink to={P.jobs}>All jobs</MoreLink>} />
+            <div className="grid gap-4 md:grid-cols-2">
+              {data.jobs.map((j) => (
+                <JobRow key={j.id} j={j} />
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
 
-      <section className="bg-brand">
-        <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 px-4 py-16 sm:px-6 md:flex-row md:items-center">
-          <div>
-            <h2 className="text-3xl font-bold text-white">Your classmates are already here.</h2>
-            <p className="mt-2 text-white/80">Join free in a minute and pick up where you left off.</p>
-          </div>
-          <a href="/signup" className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-slate-900 shadow hover:bg-slate-100">
-            Create your account <ArrowRightIcon className="h-4 w-4" />
-          </a>
-        </div>
-      </section>
-
-      <ContactComponent />
-    </div>
+      <Quotes items={data?.testimonials} />
+      <JoinBanner />
+    </>
   );
 }
-
-export default LandingPage;
