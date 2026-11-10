@@ -1,6 +1,6 @@
 /** Super admin: the whole platform at a glance, one row per institute. */
 import { useQuery } from "react-query";
-import { AdjustmentsHorizontalIcon, BuildingLibraryIcon, PlusIcon, UsersIcon } from "@heroicons/react/24/outline";
+import { AdjustmentsHorizontalIcon, BuildingLibraryIcon, PlusIcon, ShieldCheckIcon, UsersIcon } from "@heroicons/react/24/outline";
 import { getPlatformOverview } from "src/api";
 import { Button, Card, EmptyState, PageHeader, Pill } from "src/components/ui";
 import { KpiTile, num, when } from "./shared";
@@ -46,7 +46,7 @@ export default function PlatformOverview({ go }) {
                   <th className="px-4 py-3 text-right">Members</th>
                   <th className="hidden px-4 py-3 text-right md:table-cell">Active 30d</th>
                   <th className="hidden px-4 py-3 text-right md:table-cell">Pending</th>
-                  <th className="hidden px-4 py-3 text-right lg:table-cell">Admins</th>
+                  <th className="hidden px-4 py-3 text-right lg:table-cell">Owners</th>
                   <th className="hidden px-4 py-3 text-right lg:table-cell">Groups</th>
                   <th className="hidden px-4 py-3 xl:table-cell">Sign-up</th>
                   <th className="hidden px-4 py-3 xl:table-cell">Features off</th>
@@ -67,7 +67,15 @@ export default function PlatformOverview({ go }) {
                     <td className="px-4 py-3 text-right tabular-nums">{num(i.members)}</td>
                     <td className="hidden px-4 py-3 text-right tabular-nums md:table-cell">{num(i.active_30d)}</td>
                     <td className="hidden px-4 py-3 text-right tabular-nums md:table-cell">{i.pending ? <span className="font-semibold text-amber-700">{num(i.pending)}</span> : "0"}</td>
-                    <td className="hidden px-4 py-3 text-right tabular-nums lg:table-cell">{i.admins ? num(i.admins) : <span className="text-rose-600">None</span>}</td>
+                    <td className="hidden px-4 py-3 text-right tabular-nums lg:table-cell">
+                      {i.owners ? (
+                        num(i.owners)
+                      ) : (
+                        <button type="button" onClick={() => go("Admins", { institute_id: i.id, institute_name: i.name, addOwner: true })} className="font-semibold text-rose-600 hover:underline">
+                          Add owner
+                        </button>
+                      )}
+                    </td>
                     <td className="hidden px-4 py-3 text-right tabular-nums lg:table-cell">{num(i.groups)}</td>
                     <td className="hidden px-4 py-3 xl:table-cell">
                       <Pill tone={MODE[i.signup_mode][1]}>{MODE[i.signup_mode][0]}</Pill>
@@ -77,6 +85,9 @@ export default function PlatformOverview({ go }) {
                       <div className="flex justify-end gap-1">
                         <button type="button" onClick={() => go("Members", { institute_id: i.id, status: i.pending ? "PENDING" : "" })} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900" title="Members" aria-label={`Members of ${i.name}`}>
                           <UsersIcon className="h-5 w-5" />
+                        </button>
+                        <button type="button" onClick={() => go("Admins", { institute_id: i.id, institute_name: i.name })} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900" title="Admins" aria-label={`Admins of ${i.name}`}>
+                          <ShieldCheckIcon className="h-5 w-5" />
                         </button>
                         <button type="button" onClick={() => go("Institute Settings", { id: i.id })} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900" title="Settings" aria-label={`Settings for ${i.name}`}>
                           <AdjustmentsHorizontalIcon className="h-5 w-5" />

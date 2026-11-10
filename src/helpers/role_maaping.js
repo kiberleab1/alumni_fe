@@ -43,7 +43,7 @@ const GROUPS = [
       { name: "Members", icon: UsersIcon, cap: "members.manage" },
       { name: "Alumni", icon: AcademicCapIcon },
       { name: "Staff", icon: IdentificationIcon, cap: "organization.manage" },
-      { name: "Admins", icon: UserGroupIcon, cap: "members.manage" },
+      { name: "Admins", icon: UserGroupIcon, cap: "team.manage" },
     ],
   },
   {
@@ -112,8 +112,6 @@ export function possibleNavigationMenus(role_name, caps) {
 
 /** Which sidebar entry a create/edit page belongs to. */
 export const PAGE_PARENT = {
-  "Create Admin": "Admins",
-  "Edit Admin": "Admins",
   "Create User": "Members",
   "Edit User": "Members",
   "Create Institute": "Institutions",

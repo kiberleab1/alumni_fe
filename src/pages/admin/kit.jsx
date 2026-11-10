@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import { ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon, ExclamationTriangleIcon, PencilSquareIcon, PhotoIcon, PlusIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { getAddressById, getDepartments, getInstitutes } from "src/api";
+import { getActAsInstitute, getAddressById, getDepartments, getInstitutes } from "src/api";
 import { getUserToken } from "src/helpers/globalStorage";
 import { Button, Card, EmptyState, Field, Modal, PageHeader, SearchInput, apiError, cx, inputClass } from "src/components/ui";
 
@@ -54,7 +54,9 @@ export const buildContact = (v) =>
 export function useSession() {
   return useMemo(() => {
     const u = getUserToken()?.user || {};
-    return { role: u.role_name, instituteId: u.institute_id || u.ownerInstituteId || "", isSuper: u.role_name === "super_admin", name: fullName(u), email: u.email };
+    const isSuper = u.role_name === "super_admin";
+    const actAs = isSuper ? getActAsInstitute() : null;
+    return { role: u.role_name, instituteId: actAs?.id || u.institute_id || u.ownerInstituteId || "", homeInstituteId: u.institute_id || "", actingAs: actAs, isSuper, name: fullName(u), email: u.email };
   }, []);
 }
 
@@ -410,10 +412,10 @@ export function useSave({ success, onDone, invalidate }) {
     setSaving(true);
     setError("");
     try {
-      await fn();
+      const result = await fn();
       if (invalidate) [].concat(invalidate).forEach((k) => client.invalidateQueries(k));
       toast.success(success);
-      onDone?.();
+      onDone?.(result);
     } catch (e) {
       setError(apiError(e, "Couldn't save. Check the form and try again."));
     } finally {

@@ -12,6 +12,8 @@ import { deleteUserToken, getUserToken } from "src/helpers/globalStorage";
 import { PAGE_PARENT, pageLabel, possibleNavigationMenus } from "src/helpers/role_maaping";
 import { ThemeProvider, navItemClass, useSurfaceDesign, useThemeInfo } from "src/lib/theme";
 import { useAdminConfig } from "./admin/platform/shared";
+import { useInstitutes } from "./admin/kit";
+import { getActAsInstitute, setActAsInstitute } from "src/api";
 import { Avatar, cx } from "src/components/ui";
 import ComponentRender, { isAdminPage } from "./PageRender";
 
@@ -65,6 +67,55 @@ function Sidebar({ groups, active, onPick, onClose }) {
 
 function AdminFrame({ children }) {
   return <div className="ui-scope min-h-screen bg-page font-theme text-slate-900 antialiased">{children}</div>;
+}
+
+/**
+ * Super admin only: pick the institute to work in. Everything in the console
+ * (content, members, settings, design) then applies to that institute.
+ */
+function WorkingIn() {
+  const { data = [] } = useInstitutes();
+  const current = getActAsInstitute();
+  const pick = (id) => {
+    const inst = data.find((i) => i.value === id);
+    setActAsInstitute(inst ? { id: inst.value, name: inst.label } : null);
+    window.location.reload(); // every cached page and the theme belong to the old institute
+  };
+  return (
+    <label className="hidden items-center gap-2 text-sm md:flex">
+      <span className="opacity-70">Working in</span>
+      <select value={current?.id || ""} onChange={(e) => pick(e.target.value)} className="max-w-[14rem] rounded-lg border-0 bg-white py-1.5 pl-3 pr-8 text-sm text-slate-900 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-brand">
+        <option value="">My institute (platform view)</option>
+        {data.map((i) => (
+          <option key={i.value} value={i.value}>
+            {i.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+function ActingBanner() {
+  const current = getActAsInstitute();
+  if (!current) return null;
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 bg-amber-100 px-4 py-2 text-center text-sm text-amber-900">
+      <span>
+        You're working in <b>{current.name}</b>. Content, members, settings and design changes apply to this institute.
+      </span>
+      <button
+        type="button"
+        onClick={() => {
+          setActAsInstitute(null);
+          window.location.reload();
+        }}
+        className="font-semibold underline"
+      >
+        Back to the platform
+      </button>
+    </div>
+  );
 }
 
 function AdminMain({ children }) {
@@ -149,6 +200,7 @@ function SideBar() {
               )}
               <span className="truncate font-semibold">{pageLabel(page)}</span>
             </nav>
+            {user.role_name === "super_admin" && <WorkingIn />}
             <a href="/landing" target="_blank" rel="noreferrer" className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-inherit opacity-80 hover:bg-black/5 hover:opacity-100 sm:inline-flex">
               View site <ArrowTopRightOnSquareIcon className="h-4 w-4" />
             </a>
@@ -163,6 +215,7 @@ function SideBar() {
               </button>
             </div>
           </header>
+          {user.role_name === "super_admin" && <ActingBanner />}
           <AdminMain>
             <ComponentRender page={page} onPageSet={open} />
           </AdminMain>

@@ -19,6 +19,23 @@ const BASE_URL = window.location.origin + "/";
 
 const INSTITUTE_SLUG = import.meta.env?.VITE_INSTITUTE_SLUG;
 
+/** The institute the super admin is working in, or null for their own. */
+export function getActAsInstitute() {
+  try {
+    return JSON.parse(localStorage.getItem("actAsInstitute") || "null");
+  } catch {
+    return null;
+  }
+}
+export function setActAsInstitute(value) {
+  try {
+    if (value) localStorage.setItem("actAsInstitute", JSON.stringify({ id: value.id, name: value.name }));
+    else localStorage.removeItem("actAsInstitute");
+  } catch {
+    /* private mode: the switch lasts for this page only */
+  }
+}
+
 axios.interceptors.request.use(
   (config) => {
     // NB: the whole user object used to be sent in a "User" header on every
@@ -29,6 +46,9 @@ axios.interceptors.request.use(
       config.headers.Authorization = `Bearer ${stored.token}`;
     }
     if (INSTITUTE_SLUG) config.headers["X-Institute-Slug"] = INSTITUTE_SLUG;
+    // super admin "Working in": the server ignores this for everyone else
+    const actAs = getActAsInstitute();
+    if (actAs && stored?.user?.role_name === "super_admin") config.headers["X-Act-As-Institute"] = actAs.id;
     return config;
   },
   (error) => {
@@ -1267,3 +1287,9 @@ export const sendAnnouncement = async (body) => unwrap(await axios.post(`${API_B
 export const previewAnnouncementAudience = async (body) => unwrap(await axios.post(`${API_BASE_URl}/admin/announcements/preview`, clean(body)));
 export const getAuditLog = async (params) => unwrap(await axios.get(`${API_BASE_URl}/admin/audit`, { params: clean(params) }));
 export const getMyAnnouncements = async () => unwrap(await axios.get(`${API_BASE_URl}/announcements/mine`));
+
+/* ------------------------------------------------------------ admin team */
+export const getTeam = async (institute_id) => unwrap(await axios.get(`${API_BASE_URl}/admin/team`, { params: clean({ institute_id }) }));
+export const addTeamAdmin = async (body) => unwrap(await axios.post(`${API_BASE_URl}/admin/team`, body));
+export const updateTeamAdmin = async ({ id, ...body }) => unwrap(await axios.patch(`${API_BASE_URl}/admin/team/${id}`, body));
+export const removeTeamAdmin = async (id) => unwrap(await axios.delete(`${API_BASE_URl}/admin/team/${id}`));

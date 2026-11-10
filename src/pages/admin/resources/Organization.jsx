@@ -1,5 +1,5 @@
 /** Admin screens for institutions and departments. */
-import { AdjustmentsHorizontalIcon, BuildingLibraryIcon, TagIcon } from "@heroicons/react/24/outline";
+import { AdjustmentsHorizontalIcon, BuildingLibraryIcon, TagIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 import { createAddress, createDepartment, createInstitute, deleteDepartment, deleteInstitute, editDepartent, getDepartments, getInstitutes, updateAddress, updateInstitute } from "src/api";
 import { Pill } from "src/components/ui";
 import { ADDRESS_BLANK, ADDRESS_REQUIRED, AddressSection, FormScreen, FormSection, Lead, ResourceList, SelectField, SocialSection, TextArea, TextField, buildContact, compact, dateInput, fmtDate, parseContact, pickAddress, useFormState, useInstitutes, useLoadAddress, useSave, useSession } from "../kit";
@@ -28,9 +28,14 @@ export function InstitutionsPage({ go }) {
       onCreate={() => go("Create Institute")}
       onEdit={(i) => go("Edit Institute", i)}
       actions={(i) => (
+        <>
+        <button type="button" onClick={() => go("Admins", { institute_id: i.id, institute_name: i.name })} className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900" aria-label={`Admins of ${i.name}`} title="Admins">
+          <UserGroupIcon className="h-5 w-5" />
+        </button>
         <button type="button" onClick={() => go("Institute Settings", { id: i.id })} className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900" aria-label={`Settings for ${i.name}`} title="Features, website and admin permissions">
           <AdjustmentsHorizontalIcon className="h-5 w-5" />
         </button>
+        </>
       )}
       remove={(i) => deleteInstitute({ address_id: i.address_id, institute_id: i.id })}
       nameOf={(i) => i.name}
@@ -45,7 +50,12 @@ export function InstituteForm({ record, go }) {
   const c = parseContact(record?.contact_info);
   const form = useFormState({ ...ADDRESS_BLANK, name: record?.name || "", sub_url: record?.sub_url || "", starting_year: dateInput(record?.starting_year), description: record?.description || "", website: record?.website || "", type: record?.type || "", accreditations: record?.accreditations || "", number_of_students: record?.number_of_students ?? "", number_of_alumni: record?.number_of_alumni ?? "", president_name: record?.president_name || "", email: record?.email || "", phone_number: record?.phone_number || "", telegram: c.telegram || "", twitter: c.twitter || "", linkedin: c.linkedin || "", facebook: c.facebook || "" });
   useLoadAddress(record?.address_id, form);
-  const save = useSave({ success: editing ? "Institution updated" : "Institution created", invalidate: ["adminInstitutes", "adminInstituteOptions"], onDone: () => go("Institutions") });
+  // a new institute goes straight to appointing its owner admin
+  const save = useSave({
+    success: editing ? "Institution updated" : "Institution created. Now add its admin.",
+    invalidate: ["adminInstitutes", "adminInstituteOptions", "platformOverview"],
+    onDone: (created) => (editing || !created?.id ? go("Institutions") : go("Admins", { institute_id: created.id, institute_name: created.name, addOwner: true })),
+  });
 
   const submit = (e) => {
     e.preventDefault();
@@ -61,7 +71,9 @@ export function InstituteForm({ record, go }) {
       } else {
         const a = pickAddress(form.values);
         const address = await createAddress({ ...a, houseNumber: a.house_number });
-        await createInstitute({ ...body, sub_url, address_id: address.data.id });
+        const res = await createInstitute({ ...body, sub_url, address_id: address.data.id });
+        const made = res?.data?.data || res?.data || {};
+        return { id: made.id || made.institute?.id, name: form.values.name };
       }
     });
   };

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { PAGE_PARENT } from "src/helpers/role_maaping";
 
 import { Dashboard } from "./admin/Dashboard";
-import { AdminForm, AdminsPage, AlumniPage, StaffForm, StaffPage, UserForm, UsersPage } from "./admin/resources/People";
+import { AlumniPage, StaffForm, StaffPage, UserForm, UsersPage } from "./admin/resources/People";
 import { DepartmentForm, DepartmentsPage, InstituteForm, InstitutionsPage } from "./admin/resources/Organization";
 import { EventForm, EventsPage, JobHistoryForm, JobHistoryPage, JobsPage, NewsPage, PodcastForm, PodcastsPage } from "./admin/resources/Content";
 import { PermissionsPage, RolesPage } from "./admin/resources/Access";
@@ -22,6 +22,7 @@ import ReportsPage from "./admin/platform/Reports";
 import AnnouncementsPage from "./admin/platform/Announcements";
 import AuditLogPage from "./admin/platform/AuditLog";
 import PlatformOverview from "./admin/platform/Overview";
+import TeamPage from "./admin/platform/Team";
 
 const componentsMap = {
   Dashboard,
@@ -33,9 +34,7 @@ const componentsMap = {
   "Audit Log": AuditLogPage,
   Settings: SettingsPage,
   Branding: BrandingPage,
-  Admins: AdminsPage,
-  "Create Admin": AdminForm,
-  "Edit Admin": AdminForm,
+  Admins: TeamPage,
   Users: UsersPage,
   "Create User": UserForm,
   "Edit User": UserForm,

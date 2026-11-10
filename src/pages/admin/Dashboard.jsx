@@ -1,5 +1,6 @@
 /** Admin home: live counts, work waiting on an admin, and recent activity. */
 import { useQuery } from "react-query";
+import { useAdminConfig } from "./platform/shared";
 import { UserPlusIcon, AcademicCapIcon, ArrowRightIcon, BriefcaseIcon, BuildingLibraryIcon, CalendarDaysIcon, CheckCircleIcon, ClipboardDocumentCheckIcon, FlagIcon, NewspaperIcon, PlusIcon, TagIcon } from "@heroicons/react/24/outline";
 import { getAdminMembers, getAdminDocuments, getAllAlumni, getAllEvents, getAllJobs, getAllNews, getDepartments, getInstitutes, getMessageReports } from "src/api";
 import { Avatar, Button, Card, PageHeader, cx } from "src/components/ui";
@@ -9,7 +10,9 @@ import { fmtDate, useSession } from "./kit";
 const safe = (p) => p.catch(() => null);
 const total = (r) => (r?.data ? r.data.total_items ?? null : null);
 
-async function loadDashboard() {
+async function loadDashboard(caps) {
+  const may = (c) => !caps || caps.includes(c);
+  const none = Promise.resolve(null);
   const one = { pageNumber: 1, pageSize: 10 };
   const [alumni, events, jobs, news, institutes, departments, documents, reports, pending] = await Promise.all([
     safe(getAllAlumni({ pageNumber: 1, pageSize: 6 })),
@@ -18,9 +21,9 @@ async function loadDashboard() {
     safe(getAllNews(one)),
     safe(getInstitutes(one)),
     safe(getDepartments(one)),
-    safe(getAdminDocuments({ status: "open" })),
-    safe(getMessageReports({ status: "open" })),
-    safe(getAdminMembers({ status: "PENDING", pageSize: 1 })),
+    may("documents.review") ? safe(getAdminDocuments({ status: "open" })) : none,
+    may("moderation") ? safe(getMessageReports({ status: "open" })) : none,
+    may("members.manage") ? safe(getAdminMembers({ status: "PENDING", pageSize: 1 })) : none,
   ]);
   const unwrap = (r) => r?.data ?? r;
   const docs = unwrap(documents);
@@ -80,7 +83,12 @@ function Panel({ title, action, onAction, children }) {
 
 export function Dashboard({ go }) {
   const session = useSession();
-  const { data, isLoading } = useQuery("adminDashboard", loadDashboard, { staleTime: 30_000 });
+  // co-admins only see (and load) what they're allowed to act on
+  const { data: cfg, isFetched: cfgReady } = useAdminConfig();
+  const caps = cfg?.my_caps;
+  const may = (c) => !caps || caps.includes(c);
+  const { data, isLoading: loadingData } = useQuery(["adminDashboard", caps?.join(",") || "all"], () => loadDashboard(caps), { staleTime: 30_000, enabled: cfgReady });
+  const isLoading = loadingData || !cfgReady;
   const c = data?.counts || {};
   const show = (v) => (isLoading ? "…" : num(v));
   const stats = [
@@ -116,9 +124,10 @@ export function Dashboard({ go }) {
       <div className="grid gap-6 lg:grid-cols-3">
         <Panel title="Needs attention">
           <div className="-mx-2 space-y-1">
-            <Attention icon={UserPlusIcon} label="Sign-ups to approve" count={data?.pendingMembers} onClick={() => go("Members", { status: "PENDING" })} />
-            <Attention icon={ClipboardDocumentCheckIcon} label="Document requests" count={data?.openDocuments} onClick={() => go("Document Verification")} />
-            <Attention icon={FlagIcon} label="Reported messages" count={data?.openReports} onClick={() => go("Message Reports")} />
+            {may("members.manage") && <Attention icon={UserPlusIcon} label="Sign-ups to approve" count={data?.pendingMembers} onClick={() => go("Members", { status: "PENDING" })} />}
+            {may("documents.review") && <Attention icon={ClipboardDocumentCheckIcon} label="Document requests" count={data?.openDocuments} onClick={() => go("Document Verification")} />}
+            {may("moderation") && <Attention icon={FlagIcon} label="Reported messages" count={data?.openReports} onClick={() => go("Message Reports")} />}
+            {!may("members.manage") && !may("documents.review") && !may("moderation") && <p className="px-2 py-4 text-sm text-slate-500">Nothing waiting for you.</p>}
           </div>
         </Panel>
         <Panel title="Newest alumni" action="View all" onAction={() => go("Alumni")}>

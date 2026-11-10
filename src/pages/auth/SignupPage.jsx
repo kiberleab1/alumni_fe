@@ -39,7 +39,8 @@ function Err({ children }) {
 }
 
 export default function SignupPage() {
-  const { signupMode } = useInstituteConfig();
+  const { signupMode, config: instConfig } = useInstituteConfig();
+  const allowedDomains = instConfig?.allowed_domains || [];
   const [step, setStep] = useState(0);
   const [show, setShow] = useState(false);
   const [touched, setTouched] = useState({});
@@ -191,6 +192,7 @@ export default function SignupPage() {
                 <input id="su-email" type="email" autoComplete="email" className={cx(input(showErr("email")), "pl-10")} value={f.email} onChange={set("email")} onBlur={touch("email")} placeholder="you@example.com" />
               </div>
               <Err>{showErr("email")}</Err>
+              {allowedDomains.length > 0 && !showErr("email") && <p className="mt-1 text-xs text-slate-500">Use your {allowedDomains.map((d) => `@${d}`).join(" or ")} address.</p>}
             </div>
             <div>
               <Label htmlFor="su-password">Password</Label>

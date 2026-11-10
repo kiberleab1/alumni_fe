@@ -1,8 +1,9 @@
 /**
- * Per-institute control panel. The super admin can switch member features,
- * set sign-up and upload limits, lay out the public website and decide what
- * that institute's admins may do. Institute admins see the same page; they
- * can edit the website (if allowed) and read everything else.
+ * Per-institute control panel.
+ *   super admin       which features the institute may use, storage and
+ *                     upload limits, the most its admins may ever do
+ *   institute admins  features on/off, security rules, website layout
+ *                     (owners always; co-admins with the matching permission)
  */
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
@@ -12,6 +13,7 @@ import { saveAdminConfig } from "src/api";
 import { Button, Card, Field, PageHeader, Switch, Tabs, apiError, cx, inputClass } from "src/components/ui";
 import { useSession } from "../kit";
 import { InstituteSelect, useAdminConfig } from "./shared";
+import { CAP_GROUPS } from "./Team";
 
 const FEATURE_HINT = {
   groups: "Members join class, department and interest groups with channels.",
@@ -27,17 +29,13 @@ const FEATURE_HINT = {
 };
 const SECTION_LABEL = { hero: "Hero banner", stats: "Live numbers", features: "Why join", events: "Upcoming events", news: "Latest news", jobs: "Open jobs", testimonials: "Alumni voices", join: "Join call-to-action" };
 const NAV_LABEL = { about: "About", events: "Events", news: "News", jobs: "Jobs", stories: "Stories", podcasts: "Podcasts", gallery: "Gallery", contact: "Contact" };
+const BASE = (d) => ({ features: d.enabled, available: d.available, limits: d.limits, security: d.security, website: d.website, admin_caps: d.admin_caps });
+const PARTS = ["features", "available", "limits", "security", "website", "admin_caps"];
 const SIGNUP = {
   open: ["Open", "Anyone can join; accounts work right away."],
   approval: ["Approval", "Anyone can sign up; an admin approves each account under Members → Pending."],
   invite: ["Invite only", "Sign-up is closed; admins invite people or import a CSV."],
 };
-const CAP_GROUPS = [
-  ["People", ["members.manage", "announcements.send", "email.send"]],
-  ["Content", ["content.publish", "events.manage", "jobs.manage", "website.edit", "branding.edit"]],
-  ["Operations", ["documents.review", "moderation", "organization.manage"]],
-  ["Insight", ["analytics.view", "audit.view"]],
-];
 
 function Toggle({ title, hint, checked, onChange, disabled }) {
   return (
@@ -59,21 +57,29 @@ function ReadOnlyNote({ children }) {
   );
 }
 
-export default function InstituteSettingsPage({ record }) {
+export default function InstituteSettingsPage({ record, go }) {
   const { isSuper, instituteId: mine } = useSession();
   const [instituteId, setInstituteId] = useState(record?.id || mine);
-  const [tab, setTab] = useState(record?.tab || (isSuper ? "features" : "website"));
+  const [tab, setTab] = useState(record?.tab || "features");
+  const [domainText, setDomainText] = useState("");
   const { data, isLoading, isError } = useAdminConfig(instituteId);
   const [draft, setDraft] = useState(null);
   useEffect(() => {
-    if (data) setDraft({ features: data.features, limits: data.limits, website: data.website, admin_caps: data.admin_caps });
+    if (data) setDraft(BASE(data));
   }, [data]);
   const client = useQueryClient();
   const dirty = useMemo(() => {
     if (!draft || !data) return [];
-    return ["features", "limits", "website", "admin_caps"].filter((k) => JSON.stringify(draft[k]) !== JSON.stringify(data[k]));
+    const base = BASE(data);
+    return PARTS.filter((k) => JSON.stringify(draft[k]) !== JSON.stringify(base[k]));
   }, [draft, data]);
-  const save = useMutation(() => saveAdminConfig({ institute_id: instituteId, ...Object.fromEntries(dirty.map((k) => [k, draft[k]])) }), {
+  // switches are sent one by one so an untouched feature is never re-submitted
+  const changed = (k) => {
+    if (!["features", "available"].includes(k)) return draft[k];
+    const base = BASE(data)[k];
+    return Object.fromEntries(Object.entries(draft[k]).filter(([f, v]) => base[f] !== v));
+  };
+  const save = useMutation(() => saveAdminConfig({ institute_id: instituteId, ...Object.fromEntries(dirty.map((k) => [k, changed(k)])) }), {
     onSuccess: (next) => {
       client.setQueryData(["adminConfig", instituteId || "mine"], next);
       client.invalidateQueries("adminConfig");
@@ -82,7 +88,14 @@ export default function InstituteSettingsPage({ record }) {
     },
     onError: (e) => toast.error(apiError(e, "Couldn't save settings")),
   });
-  const canWebsite = isSuper || data?.my_caps?.includes("website.edit");
+  const can = data?.can_edit || {};
+  const canWebsite = !!can.website;
+  const addDomain = () => {
+    const d = domainText.trim().toLowerCase().replace(/^@/, "");
+    if (!/^([a-z0-9-]+\.)+[a-z]{2,}$/.test(d)) return toast.error("Enter a domain like kefeta.edu.et");
+    if (!draft.security.allowed_domains.includes(d)) set("security", { allowed_domains: [...draft.security.allowed_domains, d] });
+    setDomainText("");
+  };
   const set = (part, patch) => setDraft((d) => ({ ...d, [part]: { ...d[part], ...patch } }));
   const setWebsite = (patch) => set("website", patch);
   const moveSection = (i, by) =>
@@ -110,9 +123,9 @@ export default function InstituteSettingsPage({ record }) {
         onChange={setTab}
         tabs={[
           { value: "features", label: "Features" },
-          { value: "access", label: "Sign-up & limits" },
+          { value: "access", label: "Security" },
           { value: "website", label: "Website" },
-          { value: "admins", label: "Admin permissions" },
+          ...(isSuper ? [{ value: "admins", label: "Platform limits" }] : []),
         ]}
       />
       {isError ? (
@@ -123,41 +136,94 @@ export default function InstituteSettingsPage({ record }) {
         <div className="mt-6">
           {tab === "features" && (
             <>
-              {!isSuper && <ReadOnlyNote>Only the super admin can switch features.</ReadOnlyNote>}
+              {!can.features && <ReadOnlyNote>You don't have permission to switch features. Ask an owner of this institute.</ReadOnlyNote>}
               <div className="grid gap-3 sm:grid-cols-2">
-                {Object.entries(data.catalog.features).map(([k, label]) => (
-                  <Toggle key={k} title={label} hint={FEATURE_HINT[k]} checked={draft.features[k]} disabled={!isSuper} onChange={(v) => set("features", { [k]: v })} />
-                ))}
+                {Object.entries(data.catalog.features).map(([k, label]) => {
+                  const available = draft.available[k];
+                  return (
+                    <div key={k} className={cx("rounded-xl p-4 ring-1 ring-slate-200", !(available && draft.features[k]) && "bg-slate-50")}>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-slate-900">{label}</p>
+                          <p className="mt-0.5 text-xs text-slate-500">{available ? FEATURE_HINT[k] : "Not included for this institute by the platform."}</p>
+                        </div>
+                        <Switch checked={available && draft.features[k]} onChange={(v) => set("features", { [k]: v })} disabled={!can.features || !available} label={label} />
+                      </div>
+                      {isSuper && (
+                        <label className="mt-3 flex items-center gap-2 border-t border-slate-100 pt-2.5 text-xs font-medium text-slate-600">
+                          <input type="checkbox" checked={available} onChange={(e) => set("available", { [k]: e.target.checked })} /> Available to this institute
+                        </label>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
-              <p className="mt-4 text-xs text-slate-500">Turning a feature off hides it from members right away and blocks it on the server. Nothing is deleted; turning it back on restores everything.</p>
+              <p className="mt-4 text-xs text-slate-500">
+                {isSuper ? "You decide what each institute may use; its admins switch those features on or off. " : "The platform decides which features your institute can use; you choose which are on. "}
+                Nothing is deleted when a feature is off.
+              </p>
             </>
           )}
 
           {tab === "access" && (
             <div className="space-y-5">
-              {!isSuper && <ReadOnlyNote>Only the super admin can change sign-up and limits.</ReadOnlyNote>}
+              {!can.security && <ReadOnlyNote>You don't have permission to change security rules. Ask an owner of this institute.</ReadOnlyNote>}
               <Card className="p-5 sm:p-6">
                 <h2 className="text-base font-semibold text-slate-900">Who can join</h2>
                 <div className="mt-4 grid gap-3 sm:grid-cols-3">
                   {Object.entries(SIGNUP).map(([k, [title, hint]]) => (
-                    <label key={k} className={cx("flex cursor-pointer flex-col rounded-xl p-4 ring-1", draft.limits.signup_mode === k ? "bg-brand-soft ring-2 ring-brand" : "ring-slate-200", !isSuper && "cursor-default opacity-80")}>
+                    <label key={k} className={cx("flex cursor-pointer flex-col rounded-xl p-4 ring-1", draft.security.signup_mode === k ? "bg-brand-soft ring-2 ring-brand" : "ring-slate-200", !can.security && "cursor-default opacity-80")}>
                       <span className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                        <input type="radio" name="signup" checked={draft.limits.signup_mode === k} disabled={!isSuper} onChange={() => set("limits", { signup_mode: k })} /> {title}
+                        <input type="radio" name="signup" checked={draft.security.signup_mode === k} disabled={!can.security} onChange={() => set("security", { signup_mode: k })} /> {title}
                       </span>
                       <span className="mt-1 text-xs text-slate-500">{hint}</span>
                     </label>
                   ))}
                 </div>
+                <div className="mt-5">
+                  <p className="text-sm font-medium text-slate-700">Only these e-mail domains can sign up</p>
+                  <p className="text-xs text-slate-500">Leave empty to allow any address. Sub-domains are included (kefeta.edu.et also allows students.kefeta.edu.et).</p>
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    {draft.security.allowed_domains.map((d) => (
+                      <span key={d} className="inline-flex items-center gap-1 rounded-full bg-slate-100 py-1 pl-3 pr-1 text-sm text-slate-700">
+                        @{d}
+                        {can.security && (
+                          <button type="button" onClick={() => set("security", { allowed_domains: draft.security.allowed_domains.filter((x) => x !== d) })} className="rounded-full px-1.5 text-slate-500 hover:bg-slate-200" aria-label={`Remove ${d}`}>
+                            ×
+                          </button>
+                        )}
+                      </span>
+                    ))}
+                    {can.security && (
+                      <form className="flex gap-2" onSubmit={(e) => (e.preventDefault(), addDomain())}>
+                        <input className={cx(inputClass, "w-48")} value={domainText} onChange={(e) => setDomainText(e.target.value)} placeholder="kefeta.edu.et" aria-label="Add an e-mail domain" />
+                        <Button type="submit" variant="secondary" size="sm">
+                          Add
+                        </Button>
+                      </form>
+                    )}
+                  </div>
+                </div>
               </Card>
-              <Card className="space-y-5 p-5 sm:p-6">
-                <h2 className="text-base font-semibold text-slate-900">Groups and files</h2>
-                <Toggle title="Members can create groups" hint="When off, only admins create groups; members can still join them." checked={draft.limits.member_groups} disabled={!isSuper} onChange={(v) => set("limits", { member_groups: v })} />
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <Field label="Largest file a member can upload (MB)" htmlFor="lim-upload" hint="1 to 100 MB">
-                    <input id="lim-upload" type="number" min="1" max="100" disabled={!isSuper} className={inputClass} value={draft.limits.max_upload_mb} onChange={(e) => set("limits", { max_upload_mb: Math.min(100, Math.max(1, +e.target.value || 1)) })} />
+              <Card className="space-y-4 p-5 sm:p-6">
+                <h2 className="text-base font-semibold text-slate-900">Access rules</h2>
+                <Toggle title="Members must confirm their e-mail before signing in" hint="Admins are never locked out by this." checked={draft.security.require_verified_email} disabled={!can.security} onChange={(v) => set("security", { require_verified_email: v })} />
+                <Toggle title="Members can create groups" hint="When off, only admins create groups; members can still join them." checked={draft.security.member_groups} disabled={!can.security} onChange={(v) => set("security", { member_groups: v })} />
+                <Field label="Largest file a member can upload (MB)" htmlFor="sec-upload" hint={`Up to ${draft.limits.max_upload_mb} MB, the platform limit for this institute`}>
+                  <input id="sec-upload" type="number" min="1" max={draft.limits.max_upload_mb} disabled={!can.security} className={cx(inputClass, "sm:w-40")} value={draft.security.upload_mb} onChange={(e) => set("security", { upload_mb: Math.min(draft.limits.max_upload_mb, Math.max(1, +e.target.value || 1)) })} />
+                </Field>
+              </Card>
+              <Card className="p-5 sm:p-6">
+                <div className="flex items-center justify-between gap-3">
+                  <h2 className="text-base font-semibold text-slate-900">Platform limits</h2>
+                  {!isSuper && <span className="text-xs font-medium text-slate-500">Set by the platform</span>}
+                </div>
+                <div className="mt-4 grid gap-5 sm:grid-cols-2">
+                  <Field label="Largest upload allowed (MB)" htmlFor="lim-upload" hint="1 to 100 MB">
+                    <input id="lim-upload" type="number" min="1" max="100" disabled={!can.limits} className={inputClass} value={draft.limits.max_upload_mb} onChange={(e) => set("limits", { max_upload_mb: Math.min(100, Math.max(1, +e.target.value || 1)) })} />
                   </Field>
                   <Field label="Storage for this institute (MB)" htmlFor="lim-storage" hint="Shared by all groups and messages">
-                    <input id="lim-storage" type="number" min="50" step="50" disabled={!isSuper} className={inputClass} value={draft.limits.storage_mb} onChange={(e) => set("limits", { storage_mb: Math.max(50, +e.target.value || 50) })} />
+                    <input id="lim-storage" type="number" min="50" step="50" disabled={!can.limits} className={inputClass} value={draft.limits.storage_mb} onChange={(e) => set("limits", { storage_mb: Math.max(50, +e.target.value || 50) })} />
                   </Field>
                 </div>
               </Card>
@@ -231,39 +297,37 @@ export default function InstituteSettingsPage({ record }) {
             </div>
           )}
 
-          {tab === "admins" && (
+          {tab === "admins" && isSuper && (
             <div className="space-y-5">
-              {!isSuper && <ReadOnlyNote>Only the super admin can change what admins may do. Your current permissions are ticked.</ReadOnlyNote>}
-              {isSuper && (
-                <div className="flex flex-wrap gap-2">
-                  <Button variant="secondary" size="sm" onClick={() => setDraft((d) => ({ ...d, admin_caps: Object.keys(data.catalog.capabilities) }))}>
-                    Allow everything
-                  </Button>
-                  <Button variant="secondary" size="sm" onClick={() => setDraft((d) => ({ ...d, admin_caps: ["content.publish", "events.manage", "jobs.manage", "analytics.view"] }))}>
-                    Content editors only
-                  </Button>
-                </div>
-              )}
+              <p className="rounded-xl bg-slate-100 px-4 py-3 text-sm text-slate-600">
+                The most this institute's admins may ever do. Owners get all of it; co-admins get what owners grant, within these.{" "}
+                {go && (
+                  <button type="button" onClick={() => go("Admins", { institute_id: instituteId })} className="font-semibold text-link hover:underline">
+                    Manage this institute's admins
+                  </button>
+                )}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="secondary" size="sm" onClick={() => setDraft((d) => ({ ...d, admin_caps: Object.keys(data.catalog.capabilities) }))}>
+                  Allow everything
+                </Button>
+                <Button variant="secondary" size="sm" onClick={() => setDraft((d) => ({ ...d, admin_caps: Object.keys(data.catalog.capabilities).filter((c) => !["features.manage", "security.manage", "branding.edit"].includes(c)) }))}>
+                  Everything but features, security and branding
+                </Button>
+              </div>
               {CAP_GROUPS.map(([group, caps]) => (
                 <Card key={group} className="p-5 sm:p-6">
                   <h2 className="text-base font-semibold text-slate-900">{group}</h2>
                   <div className="mt-3 grid gap-2 sm:grid-cols-2">
                     {caps.map((c) => (
                       <label key={c} className="flex items-start gap-3 rounded-lg p-2 text-sm hover:bg-slate-50">
-                        <input
-                          type="checkbox"
-                          className="mt-0.5"
-                          disabled={!isSuper}
-                          checked={draft.admin_caps.includes(c)}
-                          onChange={(e) => setDraft((d) => ({ ...d, admin_caps: e.target.checked ? [...d.admin_caps, c] : d.admin_caps.filter((x) => x !== c) }))}
-                        />
+                        <input type="checkbox" className="mt-0.5" checked={draft.admin_caps.includes(c)} onChange={(e) => setDraft((d) => ({ ...d, admin_caps: e.target.checked ? [...d.admin_caps, c] : d.admin_caps.filter((x) => x !== c) }))} />
                         <span className="text-slate-700">{data.catalog.capabilities[c]}</span>
                       </label>
                     ))}
                   </div>
                 </Card>
               ))}
-              <p className="text-xs text-slate-500">Applies to every admin of this institute. The super admin always has full access.</p>
             </div>
           )}
         </div>
@@ -273,7 +337,7 @@ export default function InstituteSettingsPage({ record }) {
           <div className="mx-auto flex max-w-5xl items-center justify-between gap-3">
             <p className="text-sm text-slate-600">You have unsaved changes</p>
             <div className="flex gap-2">
-              <Button variant="secondary" onClick={() => setDraft({ features: data.features, limits: data.limits, website: data.website, admin_caps: data.admin_caps })}>
+              <Button variant="secondary" onClick={() => setDraft(BASE(data))}>
                 Discard
               </Button>
               <Button loading={save.isLoading} onClick={() => save.mutate()}>
