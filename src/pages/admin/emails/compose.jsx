@@ -1,330 +1,118 @@
-import { Field, Form, Formik } from "formik";
+/** Send an email to everyone in one institution or department. */
 import { useState } from "react";
-import { useMutation, useQuery } from "react-query";
+import { useMutation } from "react-query";
+import { toast } from "react-toastify";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { Button, Col, Container, FormGroup, Row } from "reactstrap";
-import {
-  createEmailTemplates,
-  fetchEmailTemplates,
-  getEmailFetchingOptions,
-  sendEmail,
-} from "src/api/index";
-import QueryResult from "src/components/utils/queryResults";
-import { v4 as uuidv4 } from "uuid";
-import * as Yup from "yup";
+import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
+import { createEmailTemplates, sendEmail } from "src/api";
+import { Button, Card, Field, Modal, PageHeader, Segmented, apiError, inputClass } from "src/components/ui";
+import { plainText, useDepartments, useInstitutes } from "../kit";
+
+const QUILL = { toolbar: [[{ header: [1, 2, false] }], ["bold", "italic", "underline", "blockquote"], [{ list: "ordered" }, { list: "bullet" }], ["link"], ["clean"]] };
 
 export default function ComposeEmail() {
-  const [emailAddress, setEmailAddress] = useState({
-    id: "",
-    name: "",
-    type: "",
-  });
+  const [type, setType] = useState("institution");
+  const [target, setTarget] = useState("");
+  const [subject, setSubject] = useState("");
+  const [body, setBody] = useState("");
+  const [errors, setErrors] = useState({});
+  const [confirming, setConfirming] = useState(false);
+  const { data: institutes = [] } = useInstitutes();
+  const { data: departments = [] } = useDepartments();
+  const options = type === "institution" ? institutes : departments;
+  const targetName = options.find((o) => o.value === target)?.label;
 
-  const { isError, data, isLoading } = useQuery(
-    "getEmailTemplates",
+  const send = useMutation(
     async () => {
-      return await fetchEmailTemplates({ pageNumber: 1, pageSize: 10 });
-    }
-  );
-
-  return (
-    <QueryResult isLoading={isLoading} isError={isError} data={data}>
-      <FlitteringOptions setEmailAddress={setEmailAddress} />
-      <ComposeNewEmail
-        subject={""}
-        body={""}
-        emailAddress={emailAddress}
-        setEmailAddress={setEmailAddress}
-      />
-    </QueryResult>
-  );
-}
-
-function ComposeNewEmail({ subject, body, emailAddress, setEmailAddress }) {
-  const [, setEmailTemplateId] = useState("");
-  const mutation = useMutation(createEmailTemplates, {
-    onSuccess: (data) => {
-      console.log(data);
-      setEmailTemplateId(data.data.id);
-      sendEmailBlast.mutate({
-        email_template_id: data.data.id,
-        email_filtering_options: {
-          option_type: emailAddress.type || "institution",
-          option_value: emailAddress.id || "default",
-          email_blast_option: "one_time",
-        },
-      });
+      const t = await createEmailTemplates({ header: subject, body });
+      await sendEmail({ email_template_id: t.data.id, email_filtering_options: { option_type: type, option_value: target, email_blast_option: "one_time" } });
     },
-  });
-
-  const sendEmailBlast = useMutation(sendEmail, {
-    onSuccess: (data) => {
-      console.log(data);
+    {
+      onSuccess: () => {
+        toast.success(`Email sent to ${targetName}`);
+        setConfirming(false);
+        setSubject("");
+        setBody("");
+        setTarget("");
+      },
+      onError: (e) => {
+        setConfirming(false);
+        toast.error(apiError(e, "Couldn't send the email. Try again."));
+      },
     },
-  });
+  );
 
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, false] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
-      [
-        { list: "ordered" },
-        { list: "bullet" },
-        { indent: "-1" },
-        { indent: "+1" },
-      ],
-      ["link", "image"],
-      ["clean"],
-    ],
-  };
-
-  async function doSaveEmailTemplate({ subject, body }) {
-    mutation.mutate({ header: subject, body: body });
-  }
-
-  const emailValidationSchema = Yup.string()
-    .required("Email addresses are required")
-    .test(
-      "valid-emails",
-      "All inputs must be valid email addresses",
-      (value) => {
-        if (!value) return false;
-
-        const emails = value.split(",").map((email) => email.trim());
-
-        return emails.every((email) => Yup.string().email().isValidSync(email));
-      }
-    );
-  function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
-
-  const handleSaveButton = (value, { resetForm }) => {
-    value.emailAddress = Array.isArray(value.emailAddress)
-      ? value.emailAddress
-      : [value.emailAddress];
-
-    console.log(value);
-    doSaveEmailTemplate(value);
-    resetForm();
-    setEmailAddress({ id: "", name: "", type: "" });
-  };
-
-  const initialValues = {
-    subject: "",
-    body: "",
-    emailAddress: "",
+  const review = (e) => {
+    e.preventDefault();
+    const next = {};
+    if (!target) next.target = `Choose a ${type}`;
+    if (!subject.trim()) next.subject = "Add a subject";
+    if (!plainText(body)) next.body = "Write a message";
+    setErrors(next);
+    if (!Object.keys(next).length) setConfirming(true);
   };
 
   return (
-    <div className="min-h-96 mt-24 ">
-      <style>
-        {`
-          .ql-editor {
-            min-height: 24rem;
-          }
-        `}
-      </style>
-      <Container>
-        <Row>
-          <Col md="12">
-            <Formik
-              initialValues={initialValues}
-              validationSchema={Yup.object({
-                subject: Yup.string().required("Required"),
-                body: Yup.string().required("Required"),
-                emailAddress: emailValidationSchema,
-              })}
-              onSubmit={handleSaveButton}
-            >
-              {({ handleSubmit, handleReset, values, handleChange }) => (
-                <Form className="row justify-center" onSubmit={handleSubmit}>
-                  <FormGroup className="col-md-12">
-                    <label htmlFor="EmailAddress " className="block">
-                      {capitalizeFirstLetter(emailAddress.type)}:
-                    </label>
-                    <Field
-                      type="text"
-                      className="form-control"
-                      id="EmailAddress"
-                      name="emailAddress"
-                      placeholder="Email Address"
-                      value={`${emailAddress.name}`}
-                      onChange={(e) => {
-                        handleChange(e);
-                        setEmailAddress({
-                          ...emailAddress,
-                          name: e.target.value,
-                        });
-                      }}
-                    />
-                  </FormGroup>
-
-                  <FormGroup className="col-md-12">
-                    <Field
-                      type="text"
-                      className="form-control"
-                      id="subject"
-                      name="subject"
-                      placeholder="Subject"
-                    />
-                  </FormGroup>
-
-                  <FormGroup>
-                    <Field id="body" name="body">
-                      {({ field }) => (
-                        <ReactQuill
-                          theme="snow"
-                          value={field.value}
-                          onChange={field.onChange(field.name)}
-                          className="h-full min-h-96"
-                          modules={modules}
-                          placeholder="Compose Your Email Here"
-                        />
-                      )}
-                    </Field>
-                  </FormGroup>
-
-                  <Col md="12" className="mt-12">
-                    <Button
-                      type="submit"
-                      className="btn btn-success waves-effect waves-light m-r-10"
-                    >
-                      Submit
-                    </Button>
-                    <Button
-                      type="button"
-                      className="btn btn-inverse waves-effect waves-light"
-                      onClick={handleReset}
-                    >
-                      Reset
-                    </Button>
-                  </Col>
-                </Form>
-              )}
-            </Formik>
-          </Col>
-        </Row>
-      </Container>
-    </div>
-  );
-}
-
-function FlitteringOptions({ setEmailAddress }) {
-  const { isError, data, isFetching } = useQuery(
-    ["getInstitutions", "getDepartments"],
-    async () => {
-      return await getEmailFetchingOptions();
-    }
-  );
-
-  return (
-    <div className="flex">
-      <Container>
-        <Row>
-          <div className="flex min-w-full ">
-            <div className="flex flex-col justify-start justify-items-start min-w-full">
-              <div className="text-start px-3">
-                <h2 className="p">Filtering Options</h2>
-                <Loading isLoading={isFetching} />
-                <ErrorComponent isError={isError} />
-                <FlitteringOptionsComp
-                  data={data}
-                  setEmailAddress={setEmailAddress}
-                />
-              </div>
+    <div className="mx-auto max-w-3xl">
+      <PageHeader title="Email" subtitle="Send a message to a whole institution or department." />
+      <form onSubmit={review} noValidate className="mt-6">
+        <Card className="space-y-5 p-5 sm:p-6">
+          <Field label="Send to">
+            <div className="space-y-3">
+              <Segmented
+                label="Audience type"
+                value={type}
+                onChange={(v) => (setType(v), setTarget(""))}
+                options={[
+                  { value: "institution", label: "Institution" },
+                  { value: "department", label: "Department" },
+                ]}
+              />
             </div>
+          </Field>
+          <Field label={type === "institution" ? "Institution" : "Department"} htmlFor="email-target" error={errors.target}>
+            <select id="email-target" className={inputClass} value={target} onChange={(e) => setTarget(e.target.value)}>
+              <option value="">Select…</option>
+              {options.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Subject" htmlFor="email-subject" error={errors.subject}>
+            <input id="email-subject" className={inputClass} value={subject} onChange={(e) => setSubject(e.target.value)} />
+          </Field>
+          <Field label="Message" error={errors.body}>
+            <ReactQuill theme="snow" modules={QUILL} value={body} onChange={setBody} />
+          </Field>
+          <div className="flex justify-end">
+            <Button type="submit">
+              <PaperAirplaneIcon className="h-4 w-4" /> Review and send
+            </Button>
           </div>
-        </Row>
-      </Container>
-    </div>
-  );
-}
-
-function FlitteringOptionsComp({ data, setEmailAddress }) {
-  return (
-    <div className="flex flex-col min-w-full pl-4 ">
-      <div className="container w-full min-w-full ">
-        <CollapseComponent title="Filter By Institutions">
-          <select
-            className="form-control w-full"
-            id="role_id"
-            onChange={(e) => {
-              const inst = data.institutions.find(
-                (item) => item.id === e.target.value
-              );
-              setEmailAddress({
-                id: inst.id,
-                name: inst.name,
-                type: "institution",
-              });
-            }}
-            name="role_id"
-          >
-            {data?.institutions?.map((institution) => (
-              <option key={institution.id} value={institution.id}>
-                {institution.name}
-              </option>
-            ))}
-          </select>
-        </CollapseComponent>
-      </div>
-
-      <div className="container w-full min-w-full pt-2">
-        <CollapseComponent title="Filter By Departments">
-          <select
-            className="form-control w-full"
-            id="role_id"
-            onChange={(e) => {
-              const inst = data.departments.find(
-                (item) => item.id === e.target.value
-              );
-              setEmailAddress({
-                id: inst.id,
-                name: inst.name,
-                type: "department",
-              });
-            }}
-            name="role_id"
-          >
-            {data?.departments?.map((department) => (
-              <option key={department.id + uuidv4()} value={department.id}>
-                {department.name}
-              </option>
-            ))}
-          </select>
-        </CollapseComponent>
-      </div>
-    </div>
-  );
-}
-
-function Loading({ isLoading }) {
-  if (isLoading) return <div>Loading...</div>;
-}
-
-function ErrorComponent({ isError }) {
-  if (isError) return <div>Error Loading filtering</div>;
-}
-
-const CollapseComponent = ({ title, children }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleCollapse = () => {
-    setIsOpen(!isOpen);
-  };
-
-  return (
-    <div className="border rounded-lg w-2/3">
-      <div
-        className="flex items-center justify-between cursor-pointer pl-2"
-        onClick={toggleCollapse}
+        </Card>
+      </form>
+      <Modal
+        open={confirming}
+        onClose={() => setConfirming(false)}
+        title="Send this email?"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setConfirming(false)}>
+              Keep editing
+            </Button>
+            <Button loading={send.isLoading} onClick={() => send.mutate()}>
+              Send now
+            </Button>
+          </>
+        }
       >
-        <h2 className="text-lg font-semibold">{title}</h2>
-        <span className="text-xl">{isOpen ? "▼" : "▲"}</span>
-      </div>
-      {isOpen && <div className="p-4 border-t">{children}</div>}
+        <p className="text-sm leading-relaxed text-slate-600">
+          "<span className="font-semibold text-slate-900">{subject}</span>" will go to everyone in <span className="font-semibold text-slate-900">{targetName}</span>. Sent emails can't be recalled.
+        </p>
+      </Modal>
     </div>
   );
-};
+}

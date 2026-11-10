@@ -1,111 +1,158 @@
-import React from "react";
-import {
-    LineChart,
-    DonutChart,
-    BarChart,
-    RadarChart,
-    PieChart
-} from "../../utils/ChartComponents";
-import "./dashboard.css";
+/** Admin home: live counts, work waiting on an admin, and recent activity. */
+import { useQuery } from "react-query";
+import { AcademicCapIcon, ArrowRightIcon, BriefcaseIcon, BuildingLibraryIcon, CalendarDaysIcon, CheckCircleIcon, ClipboardDocumentCheckIcon, FlagIcon, NewspaperIcon, PlusIcon, TagIcon } from "@heroicons/react/24/outline";
+import { getAdminDocuments, getAllAlumni, getAllEvents, getAllJobs, getAllNews, getDepartments, getInstitutes, getMessageReports } from "src/api";
+import { Avatar, Button, Card, PageHeader, cx } from "src/components/ui";
+import { fmtDate, useSession } from "./kit";
 
-export const Dashboard = () => {
-    return (
-        <div id="webcrumbs" className="md:p-8">
-            <div className="max-w-[1600px] mx-auto bg-white rounded-lg shadow-lg">
-                <header className="flex flex-wrap justify-between items-center px-4 md:px-8 py-4 md:py-6 bg-primary-500 text-primary-50 rounded-t-lg">
-                    <h1 className="text-2xl md:text-3xl font-title text-white text-bold">Dashboard</h1>
-                    <div className="flex items-center gap-2 md:gap-4">
-                        <button className="bg-primary-950 text-primary-50 rounded-md h-[40px] w-[40px] flex items-center justify-center">
-                            <span className="material-symbols-outlined">notifications</span>
-                        </button>
-                        <button className="bg-primary-50 text-primary-950 rounded-full h-[40px] w-[40px]">
-                            <img
-                                src="https://tools-api.webcrumbs.org/image-placeholder/40/40/avatars/1"
-                                alt="User Avatar"
-                                className="rounded-full object-cover"
-                                width={40}
-                                height={40}
-                            />
-                        </button>
-                    </div>
-                </header>
+/** A count that failed to load shows a dash rather than a misleading 0. */
+const safe = (p) => p.catch(() => null);
+const total = (r) => (r?.data ? r.data.total_items ?? null : null);
 
-                <section className="p-4 md:p-8">
+async function loadDashboard() {
+  const one = { pageNumber: 1, pageSize: 10 };
+  const [alumni, events, jobs, news, institutes, departments, documents, reports] = await Promise.all([
+    safe(getAllAlumni({ pageNumber: 1, pageSize: 6 })),
+    safe(getAllEvents({ pageNumber: 1, pageSize: 5 })),
+    safe(getAllJobs(one)),
+    safe(getAllNews(one)),
+    safe(getInstitutes(one)),
+    safe(getDepartments(one)),
+    safe(getAdminDocuments({ status: "open" })),
+    safe(getMessageReports({ status: "open" })),
+  ]);
+  const unwrap = (r) => r?.data ?? r;
+  const docs = unwrap(documents);
+  const reps = unwrap(reports);
+  return {
+    counts: { alumni: total(alumni), events: total(events), jobs: total(jobs), news: total(news), institutes: total(institutes), departments: total(departments) },
+    openDocuments: docs?.total ?? null,
+    openReports: reps?.total ?? reps?.total_items ?? null,
+    recentAlumni: alumni?.data?.alumniProfile || [],
+    events: events?.data?.events || [],
+  };
+}
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-3">
-                        <div className='bg-[#d8cbb2] rounded-md p-4 hover:shadow-xl transition-all duration-300 hover:rotate-3'>
-                            <h2 className='text-lg font-semibold text-neutral-950'>Total Alumni</h2>
-                            <p className='text-4xl font-bold text-[#b87b74] animate-bounce'>15,345</p>
-                        </div>
+const num = (v) => (v == null ? "—" : Number(v).toLocaleString());
 
-                        <div className='bg-[#d8cbb2] rounded-md p-4 hover:shadow-xl transition-all duration-300 hover:rotate-3'>
-                            <h2 className='text-lg font-semibold text-neutral-950'>Active Alumni</h2>
-                            <p className='text-4xl font-bold text-[#b87b74] animate-pulse'>8,765</p>
-                        </div>
+function Stat({ icon: Icon, label, value, onClick }) {
+  return (
+    <button type="button" onClick={onClick} className="rounded-2xl bg-white p-4 text-left shadow-sm ring-1 ring-slate-200 transition hover:ring-slate-300 sm:p-5">
+      <span className="flex items-center gap-2 text-sm font-medium text-slate-500">
+        <Icon className="h-5 w-5 text-link" aria-hidden="true" /> {label}
+      </span>
+      <span className="mt-2 block text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">{value}</span>
+    </button>
+  );
+}
 
-                        <div className='bg-[#d8cbb2] rounded-md p-4 hover:shadow-xl transition-all duration-300 hover:rotate-3'>
-                            <h2 className='text-lg font-semibold text-neutral-950'>New Alumni</h2>
-                            <p className='text-4xl font-bold text-[#b87b74] animate-bounce'>345</p>
-                        </div>
-                    </div>
+function Attention({ icon: Icon, label, count, onClick }) {
+  const waiting = count > 0;
+  return (
+    <button type="button" onClick={onClick} className="flex w-full items-center gap-3 rounded-xl p-3 text-left transition hover:bg-slate-50">
+      <span className={cx("flex h-10 w-10 shrink-0 items-center justify-center rounded-lg", waiting ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700")}>{waiting ? <Icon className="h-5 w-5" /> : <CheckCircleIcon className="h-5 w-5" />}</span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-sm font-semibold text-slate-900">{label}</span>
+        <span className="block text-xs text-slate-500">{count == null ? "Couldn't load" : waiting ? `${num(count)} waiting for review` : "All clear"}</span>
+      </span>
+      <ArrowRightIcon className="h-4 w-4 text-slate-400" />
+    </button>
+  );
+}
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                        <LineChart
-                            title="Alumni Engagement by Year"
-                            data={[4500, 4800, 5100, 5300, 5800, 6000, 6200]}
-                            categories={["2016", "2017", "2018", "2019", "2020", "2021", "2022"]}
-                        />
-                        <DonutChart
-                            title="Alumni by Location"
-                            series={[35, 25, 15, 10, 5, 10]}
-                            labels={["North America", "Europe", "Asia", "South America", "Africa", "Others"]}
-                        />
-                    </div>
+function Panel({ title, action, onAction, children }) {
+  return (
+    <Card className="p-5">
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h2 className="text-base font-semibold text-slate-900">{title}</h2>
+        {action && (
+          <button type="button" onClick={onAction} className="text-sm font-semibold text-link hover:underline">
+            {action}
+          </button>
+        )}
+      </div>
+      {children}
+    </Card>
+  );
+}
 
-                    <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                        <BarChart
-                            title="Alumni Contributions"
-                            data={[1200, 1500, 1800, 2000, 2200, 2450, 2700, 3000]}
-                            categories={["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"]}
-                            yAxisTitle="Contribution ($)"
-                        />
-                        <RadarChart
-                            title="Alumni Events Attendance"
-                            data={[55, 60, 65, 80, 90, 75, 70]}
-                            categories={["Event1", "Event2", "Event3", "Event4", "Event5", "Event6", "Event7"]}
-                        />
-                        <PieChart
-                            title="Alumni Engagement by Medium"
-                            series={[40, 30, 15, 10, 5]}
-                            labels={["Email", "Social Media", "Events", "Phone", "Others"]}
-                        />
-                    </div>
-
-                    <div className='mt-8'>
-                        <h2 className='text-xl font-semibold text-neutral-950 mb-4'>Recent Alumni Activities</h2>
-                        <div className='bg-[#d8cbb2] rounded-md p-4'>
-                            <ul className='divide-y divide-neutral-300 text-black'>
-                                <li className='py-2 flex justify-between items-center hover:bg-[#f5ead2] hover:pl-2 transition-all duration-300'>
-                                    <span>John Doe updated his profile</span>
-                                    <span className='text-sm text-neutral-700'>2 hours ago</span>
-                                </li>
-                                <li className='py-2 flex justify-between items-center hover:bg-[#f5ead2] hover:pl-2 transition-all duration-300'>
-                                    <span>Jane Smith added a new post</span>
-                                    <span className='text-sm text-neutral-700'>1 day ago</span>
-                                </li>
-                                <li className='py-2 flex justify-between items-center hover:bg-[#f5ead2] hover:pl-2 transition-all duration-300'>
-                                    <span>Michael Brown attended a meetup</span>
-                                    <span className='text-sm text-neutral-700'>3 days ago</span>
-                                </li>
-                                <li className='py-2 flex justify-between items-center hover:bg-[#f5ead2] hover:pl-2 transition-all duration-300'>
-                                    <span>Emily Wilson marked her 5-year anniversary</span>
-                                    <span className='text-sm text-neutral-700'>4 days ago</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </div>
-    );
-};
+export function Dashboard({ go }) {
+  const session = useSession();
+  const { data, isLoading } = useQuery("adminDashboard", loadDashboard, { staleTime: 30_000 });
+  const c = data?.counts || {};
+  const show = (v) => (isLoading ? "…" : num(v));
+  const stats = [
+    { icon: AcademicCapIcon, label: "Alumni", value: c.alumni, page: "Alumni" },
+    { icon: CalendarDaysIcon, label: "Events", value: c.events, page: "Events" },
+    { icon: BriefcaseIcon, label: "Jobs", value: c.jobs, page: "Jobs" },
+    { icon: NewspaperIcon, label: "News", value: c.news, page: "News" },
+    { icon: BuildingLibraryIcon, label: "Institutions", value: c.institutes, page: "Institutions" },
+    { icon: TagIcon, label: "Departments", value: c.departments, page: "Departments" },
+  ];
+  const first = session.name.split(" ")[0];
+  return (
+    <div className="mx-auto max-w-7xl space-y-6">
+      <PageHeader
+        title={first && first !== "Unnamed" ? `Welcome back, ${first}` : "Dashboard"}
+        subtitle="Here's what's happening across your alumni network."
+        actions={
+          <div className="flex flex-wrap gap-2">
+            <Button variant="secondary" onClick={() => go("Create News")}>
+              <PlusIcon className="h-4 w-4" /> News
+            </Button>
+            <Button onClick={() => go("Create Event")}>
+              <PlusIcon className="h-4 w-4" /> Event
+            </Button>
+          </div>
+        }
+      />
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+        {stats.map((s) => (
+          <Stat key={s.label} icon={s.icon} label={s.label} value={show(s.value)} onClick={() => go(s.page)} />
+        ))}
+      </div>
+      <div className="grid gap-6 lg:grid-cols-3">
+        <Panel title="Needs attention">
+          <div className="-mx-2 space-y-1">
+            <Attention icon={ClipboardDocumentCheckIcon} label="Document requests" count={data?.openDocuments} onClick={() => go("Document Verification")} />
+            <Attention icon={FlagIcon} label="Reported messages" count={data?.openReports} onClick={() => go("Message Reports")} />
+          </div>
+        </Panel>
+        <Panel title="Newest alumni" action="View all" onAction={() => go("Alumni")}>
+          {data?.recentAlumni?.length ? (
+            <ul className="space-y-3">
+              {data.recentAlumni.map((a) => (
+                <li key={a.id} className="flex items-center gap-3">
+                  <Avatar name={a.user_data?.name} size="sm" />
+                  <div className="min-w-0 leading-tight">
+                    <p className="truncate text-sm font-semibold text-slate-900">{a.user_data?.name}</p>
+                    <p className="truncate text-xs text-slate-500">{a.department_name}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="py-4 text-sm text-slate-500">{isLoading ? "Loading…" : "No alumni profiles yet."}</p>
+          )}
+        </Panel>
+        <Panel title="Recent events" action="View all" onAction={() => go("Events")}>
+          {data?.events?.length ? (
+            <ul className="space-y-3">
+              {data.events.map((e) => (
+                <li key={e.id} className="leading-tight">
+                  <p className="truncate text-sm font-semibold text-slate-900">{e.title}</p>
+                  <p className="truncate text-xs text-slate-500">
+                    {fmtDate(e.time)}
+                    {e.venue ? ` · ${e.venue}` : ""}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="py-4 text-sm text-slate-500">{isLoading ? "Loading…" : "No events yet."}</p>
+          )}
+        </Panel>
+      </div>
+    </div>
+  );
+}

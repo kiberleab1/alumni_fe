@@ -141,14 +141,9 @@ export async function fetchEmailTemplates({ pageNumber, pageSize }) {
 }
 // header: joi.string().required(),
 // body: joi.string().required(),
-export async function createAddress({ country, region, city, houseNumber }) {
-  const data = {
-    country,
-    region,
-    city,
-    houseNumber,
-  };
-  console.log(data);
+export async function createAddress({ country, region, city, houseNumber, house_number }) {
+  const number = house_number || houseNumber;
+  const data = { country, region, city, ...(number ? { house_number: number } : {}) };
   return await axios.post(`${API_BASE_URl}/createAddress`, data);
 }
 export async function getEmailFetchingOptions() {

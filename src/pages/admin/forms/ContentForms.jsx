@@ -76,7 +76,7 @@ function ImageField({ file, onChange, current }) {
 
 function FormShell({ title, subtitle, onBack, preview, children, onSubmit, saving, submitLabel, error }) {
   return (
-    <div className="ui-scope mx-auto max-w-6xl p-4 sm:p-8">
+    <div className="ui-scope mx-auto max-w-6xl">
       {onBack && (
         <button type="button" onClick={onBack} className="mb-3 inline-flex items-center gap-1 text-sm font-semibold text-link hover:underline">
           <ArrowLeftIcon className="h-4 w-4" /> Back

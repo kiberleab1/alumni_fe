@@ -9,7 +9,6 @@ import CustomComponents from "./views/custom-components/custom-components.jsx";
 
 import ComposeEmail from "./pages/admin/emails/compose";
 // import Signin from './pages/signin';
-import CreateStaff from "./pages/admin/staff/CreateStaff";
 import Alumni_profile from "./pages/alumni_profile";
 import Directory from "./pages/directory";
 import LandingPage from "./pages/home/landing";
@@ -19,7 +18,6 @@ import { ArticlePage, JobDetailPage, JobsPage, NewsPage } from "./pages/public/N
 import { AboutPage, ContactPage, GalleryPage, PodcastsPage, StoriesPage } from "./pages/public/InfoPages";
 import { LegacyContentRedirect, PublicNotFound } from "./pages/public/misc";
 import LoginPage from "./pages/login";
-import RolePage from "./pages/Role";
 import SideBar from "./pages/SideBar";
 import SignupPage from "./pages/auth/SignupPage";
 import UserSideBar from "./pages/UserSideBar";
@@ -59,7 +57,6 @@ function App() {
           <Routes>
             <Route path="/custom-components" element={<CustomComponents />} />
             <Route path="/home" element={<Components />} />
-            <Route path="/roles" element={<RolePage />} />
 
             <Route path="/admin/email/compose" element={<ComposeEmail />} />
             <Route path="/admin/*" element={<SideBar />} />
@@ -75,7 +72,6 @@ function App() {
             <Route path="/verify-email" element={<VerifyEmailPage />} />
             <Route path="/accept-invite" element={<AcceptInvitePage />} />
             <Route path="/alumni_profile" element={<Alumni_profile />} />
-            <Route path="/asd" element={<CreateStaff />} />
             <Route path="/sdsds" element={<Directory />} />
             {/* public website: visitors can browse before signing in */}
             <Route path="/landing" element={<PublicLayout />}>

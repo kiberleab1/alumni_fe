@@ -1,185 +1,111 @@
 import {
-  HomeIcon,
-  UsersIcon,
-  BuildingLibraryIcon,
-  TagIcon,
   AcademicCapIcon,
-  EllipsisHorizontalCircleIcon,
-  EllipsisVerticalIcon,
   BriefcaseIcon,
+  BuildingLibraryIcon,
+  CalendarDaysIcon,
   ClipboardDocumentCheckIcon,
-  CalendarIcon,
-  NewspaperIcon,
-  InboxArrowDownIcon,
-  StarIcon,
-  MicrophoneIcon,
-  SwatchIcon,
+  ClockIcon,
+  EnvelopeIcon,
   FlagIcon,
+  GlobeAltIcon,
+  HomeIcon,
+  IdentificationIcon,
+  KeyIcon,
+  MicrophoneIcon,
+  NewspaperIcon,
+  ShieldCheckIcon,
+  SwatchIcon,
+  TagIcon,
+  UserGroupIcon,
+  UsersIcon,
 } from "@heroicons/react/24/outline";
-import CreateAdminPage from "src/pages/admin/admins/createAdmin";
-import CreatePodcast from "src/pages/admin/podcast/podcast";
 
-const role_maps = {
-  super_admin: [
-    {
-      name: "Dashboard",
-      href: "#",
-      icon: HomeIcon,
-      current: false,
-      comp: CreateAdminPage,
-    },
-    { name: "Admins", href: "#", icon: UsersIcon, current: true },
-    {
-      name: "Institutions",
-      href: "#",
-      icon: BuildingLibraryIcon,
-      current: false,
-    },
-    { name: "Departments", href: "#", icon: TagIcon, current: false },
-    { name: "Users", href: "#", icon: AcademicCapIcon, current: false },
-    {
-      name: "Roles",
-      href: "#",
-      icon: EllipsisHorizontalCircleIcon,
-      current: false,
-    },
-    {
-      name: "Permission",
-      href: "#",
-      icon: EllipsisVerticalIcon,
-      current: false,
-    },
-    { name: "Jobs", href: "#", icon: BriefcaseIcon, current: false },
-    { name: "Staff", href: "#", icon: UsersIcon, current: false },
-    { name: "Jobs History", href: "#", icon: BriefcaseIcon, current: false },
-    { name: "Alumni", href: "#", icon: AcademicCapIcon, current: false },
-    {
-      name: "Document Verification",
-      href: "#",
-      icon: ClipboardDocumentCheckIcon,
-      current: false,
-    },
-    { name: "Message Reports", href: "#", icon: FlagIcon, current: false },
-    { name: "Events", href: "#", icon: CalendarIcon, current: false },
-    { name: "News", href: "#", icon: NewspaperIcon, current: false },
-    { name: "Email", href: "#", icon: InboxArrowDownIcon, current: false },
-    { name: "WebContent", href: "#", icon: StarIcon, current: false },
-    {
-      name: "Podcast",
-      href: "#",
-      icon: MicrophoneIcon,
-      current: false,
-      comp: CreatePodcast,
-    },
-    { name: "Branding", href: "#", icon: SwatchIcon, current: false },
-  ],
-  admin: [
-    {
-      name: "Dashboard",
-      href: "#",
-      icon: HomeIcon,
-      current: false,
-      comp: CreateAdminPage,
-    },
-    { name: "Admins", href: "#", icon: UsersIcon, current: true },
-    {
-      name: "Institutions",
-      href: "#",
-      icon: BuildingLibraryIcon,
-      current: false,
-    },
-    { name: "Departments", href: "#", icon: TagIcon, current: false },
-    { name: "Users", href: "#", icon: AcademicCapIcon, current: false },
-    {
-      name: "Roles",
-      href: "#",
-      icon: EllipsisHorizontalCircleIcon,
-      current: false,
-    },
-    {
-      name: "Permission",
-      href: "#",
-      icon: EllipsisVerticalIcon,
-      current: false,
-    },
-    { name: "Jobs", href: "#", icon: BriefcaseIcon, current: false },
-    { name: "Staff", href: "#", icon: UsersIcon, current: false },
-    { name: "Jobs History", href: "#", icon: BriefcaseIcon, current: false },
-    { name: "Alumni", href: "#", icon: AcademicCapIcon, current: false },
-    {
-      name: "Document Verification",
-      href: "#",
-      icon: ClipboardDocumentCheckIcon,
-      current: false,
-    },
-    { name: "Message Reports", href: "#", icon: FlagIcon, current: false },
-    { name: "Events", href: "#", icon: CalendarIcon, current: false },
-    { name: "News", href: "#", icon: NewspaperIcon, current: false },
-    { name: "Email", href: "#", icon: InboxArrowDownIcon, current: false },
-    { name: "WebContent", href: "#", icon: StarIcon, current: false },
-    {
-      name: "Podcast",
-      href: "#",
-      icon: MicrophoneIcon,
-      current: false,
-      comp: CreatePodcast,
-    },
-    { name: "Branding", href: "#", icon: SwatchIcon, current: false },
-  ],
-  aumni: [
-    {
-      name: "Dashboard",
-      href: "#",
-      icon: HomeIcon,
-      current: false,
-      comp: CreateAdminPage,
-    },
-    { name: "Admins", href: "#", icon: UsersIcon, current: true },
-    {
-      name: "Institutions",
-      href: "#",
-      icon: BuildingLibraryIcon,
-      current: false,
-    },
-    { name: "Departments", href: "#", icon: TagIcon, current: false },
-    { name: "Users", href: "#", icon: AcademicCapIcon, current: false },
-    {
-      name: "Roles",
-      href: "#",
-      icon: EllipsisHorizontalCircleIcon,
-      current: false,
-    },
-    {
-      name: "Permission",
-      href: "#",
-      icon: EllipsisVerticalIcon,
-      current: false,
-    },
-    { name: "Jobs", href: "#", icon: BriefcaseIcon, current: false },
-    { name: "Staff", href: "#", icon: UsersIcon, current: false },
-    { name: "Jobs History", href: "#", icon: BriefcaseIcon, current: false },
-    { name: "Alumni", href: "#", icon: AcademicCapIcon, current: false },
-    {
-      name: "Document Verification",
-      href: "#",
-      icon: ClipboardDocumentCheckIcon,
-      current: false,
-    },
-    { name: "Events", href: "#", icon: CalendarIcon, current: false },
-    { name: "News", href: "#", icon: NewspaperIcon, current: false },
-    { name: "Email", href: "#", icon: InboxArrowDownIcon, current: false },
-    { name: "WebContent", href: "#", icon: StarIcon, current: false },
-    {
-      name: "Podcast",
-      href: "#",
-      icon: MicrophoneIcon,
-      current: false,
-      comp: CreatePodcast,
-    },
-  ],
-  Guest: [],
+/** Sidebar sections. `name` is the page id used by PageRender. */
+const GROUPS = [
+  { items: [{ name: "Dashboard", icon: HomeIcon }] },
+  {
+    label: "People",
+    items: [
+      { name: "Alumni", icon: AcademicCapIcon },
+      { name: "Users", icon: UsersIcon },
+      { name: "Staff", icon: IdentificationIcon },
+      { name: "Admins", icon: UserGroupIcon },
+    ],
+  },
+  {
+    label: "Organization",
+    items: [
+      { name: "Institutions", icon: BuildingLibraryIcon },
+      { name: "Departments", icon: TagIcon },
+    ],
+  },
+  {
+    label: "Content",
+    items: [
+      { name: "News", icon: NewspaperIcon },
+      { name: "Events", icon: CalendarDaysIcon },
+      { name: "Jobs", icon: BriefcaseIcon },
+      { name: "Jobs History", label: "Job history", icon: ClockIcon },
+      { name: "Podcast", label: "Podcasts", icon: MicrophoneIcon },
+      { name: "WebContent", label: "Website content", icon: GlobeAltIcon },
+    ],
+  },
+  {
+    label: "Requests",
+    items: [
+      { name: "Document Verification", label: "Documents", icon: ClipboardDocumentCheckIcon },
+      { name: "Message Reports", label: "Message reports", icon: FlagIcon },
+      { name: "Email", icon: EnvelopeIcon },
+    ],
+  },
+  {
+    label: "System",
+    items: [
+      { name: "Roles", icon: ShieldCheckIcon },
+      { name: "Permission", label: "Permissions", icon: KeyIcon },
+      { name: "Branding", icon: SwatchIcon },
+    ],
+  },
+];
+
+const HIDDEN = {
+  super_admin: [],
+  admin: [],
+  aumni: ["Message Reports", "Branding"],
 };
 
+/** Grouped sidebar for a role, or null when the role has no admin area. */
 export function possibleNavigationMenus(role_name) {
-  return role_maps[role_name] ? role_maps[role_name] : null;
+  const hidden = HIDDEN[role_name];
+  if (!hidden) return null;
+  return GROUPS.map((g) => ({ ...g, items: g.items.filter((i) => !hidden.includes(i.name)) })).filter((g) => g.items.length);
+}
+
+/** Which sidebar entry a create/edit page belongs to. */
+export const PAGE_PARENT = {
+  "Create Admin": "Admins",
+  "Edit Admin": "Admins",
+  "Create User": "Users",
+  "Edit User": "Users",
+  "Create Institute": "Institutions",
+  "Edit Institute": "Institutions",
+  "Create Department": "Departments",
+  "Edit Department": "Departments",
+  "Create Staff": "Staff",
+  "Edit Staff": "Staff",
+  "Create Event": "Events",
+  "Edit Event": "Events",
+  "Create News": "News",
+  "Edit News": "News",
+  "Create Job": "Jobs",
+  "Edit Job": "Jobs",
+  "Create JobHistory": "Jobs History",
+  "Edit JobHistory": "Jobs History",
+  "Create Podcast": "Podcast",
+  "Edit Podcast": "Podcast",
+};
+
+export function pageLabel(name) {
+  for (const g of GROUPS) for (const i of g.items) if (i.name === name) return i.label || i.name;
+  return name;
 }

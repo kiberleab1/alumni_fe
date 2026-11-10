@@ -79,7 +79,7 @@ export default function MessageReportsPage() {
   const [status, setStatus] = useState("open");
   const { data, isLoading } = useQuery(["messageReports", status], () => getMessageReports({ status }), { keepPreviousData: true });
   return (
-    <div className="ui-scope mx-auto max-w-4xl p-4 sm:p-8">
+    <div className="ui-scope mx-auto max-w-4xl">
       <h1 className="text-2xl font-bold text-slate-900">Message reports</h1>
       <p className="mt-1 text-sm text-slate-500">Messages members reported. Reporters stay anonymous to the person they reported. To suspend an account, use Users.</p>
       <Tabs

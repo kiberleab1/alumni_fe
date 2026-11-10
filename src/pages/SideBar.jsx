@@ -1,559 +1,163 @@
-import { Dialog, Transition } from "@headlessui/react";
-import {
-  ArrowLongLeftIcon,
-  Bars3Icon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  Cog6ToothIcon,
-  HomeIcon,
-  PencilIcon,
-  PlusCircleIcon,
-  PlusIcon,
-  UserPlusIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import { Fragment, useState } from "react";
-import ComponentRender from "./PageRender";
-import { deleteUserToken, getUserToken } from "src/helpers/globalStorage";
-import { useNavigate } from "react-router-dom";
-import { possibleNavigationMenus } from "src/helpers/role_maaping";
-import { useEffect } from "react";
+/**
+ * Admin shell: themed sidebar grouped by task, top bar with breadcrumb and
+ * account menu, and the current page. The page lives in ?page= so reload and
+ * the browser's back button work.
+ */
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import { useLocation } from "react-router-dom";
-const navigationWithNoSubNavigation = [
-  "Dashboard",
-  "Roles",
-  "Events",
-  "News",
-  "Email",
-  "Permission",
-  "Jobs",
-  "Staff",
-  "Jobs History",
-  "Alumni",
-  "Document Verification",
-  "Podcast",
-];
-const subNavigation = [
-  {
-    name: "Create Admin",
-    parent: "Admins",
-    icon: UserPlusIcon,
-    current: false,
-  },
-  { name: "Create User", parent: "Users", icon: PlusIcon, current: false },
-  {
-    name: "Create Institute",
-    parent: "Institutions",
-    icon: PlusCircleIcon,
-    current: false,
-  },
-  {
-    name: "Create Department",
-    parent: "Departments",
-    icon: PlusCircleIcon,
-    current: false,
-  },
+import { ArrowRightOnRectangleIcon, ArrowTopRightOnSquareIcon, Bars3Icon, ChevronRightIcon, Cog6ToothIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { deleteUserToken, getUserToken } from "src/helpers/globalStorage";
+import { PAGE_PARENT, pageLabel, possibleNavigationMenus } from "src/helpers/role_maaping";
+import { ThemeProvider, useThemeInfo } from "src/lib/theme";
+import { Avatar, cx } from "src/components/ui";
+import ComponentRender, { isAdminPage } from "./PageRender";
 
-  {
-    name: "Manage Testimony",
-    parent: "WebContent",
-    icon: PencilIcon,
-    current: false,
-  },
-  {
-    name: "Manage About us",
-    parent: "WebContent",
-    icon: PencilIcon,
-    current: false,
-  },
-  {
-    name: "Manage Gallery",
-    parent: "WebContent",
-    icon: PencilIcon,
-    current: false,
-  },
-  {
-    name: "Manage SlideShow",
-    parent: "WebContent",
-    icon: PencilIcon,
-    current: false,
-  },
-  {
-    name: "Manage Mission",
-    parent: "WebContent",
-    icon: PencilIcon,
-    current: false,
-  },
-  {
-    name: "Manage Vision",
-    parent: "WebContent",
-    icon: PencilIcon,
-    current: false,
-  },
-];
+const ROLE_LABEL = { super_admin: "Super admin", admin: "Admin", aumni: "Alumni office" };
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
+function NavItem({ item, active, onClick, icon: Icon = item.icon }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-current={active ? "page" : undefined}
+      className={cx("flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition", active ? "bg-side-active text-side-active-fg" : "text-side-fg hover:bg-side-hover")}
+    >
+      <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+      <span className="truncate">{item.label || item.name}</span>
+    </button>
+  );
+}
+
+function Sidebar({ groups, active, onPick, onClose }) {
+  const { logoUrl, name } = useThemeInfo() || {};
+  return (
+    <div className="flex h-full flex-col bg-side font-theme">
+      <div className="flex h-16 shrink-0 items-center gap-3 px-5">
+        {logoUrl && <img src={logoUrl} alt="" className="h-8 w-auto max-w-[72px] rounded bg-white/90 object-contain p-0.5" />}
+        <div className="min-w-0 flex-1 leading-tight text-side-fg">
+          <p className="truncate text-sm font-bold">{name || "Alumni"}</p>
+          <p className="text-xs opacity-70">Admin console</p>
+        </div>
+        {onClose && (
+          <button type="button" onClick={onClose} className="rounded-lg p-1.5 text-side-fg hover:bg-side-hover" aria-label="Close menu">
+            <XMarkIcon className="h-6 w-6" />
+          </button>
+        )}
+      </div>
+      <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-3" aria-label="Admin">
+        {groups.map((g, i) => (
+          <div key={g.label || i}>
+            {g.label && <p className="mb-1 px-3 text-[11px] font-semibold uppercase tracking-wider text-side-fg opacity-60">{g.label}</p>}
+            <div className="space-y-0.5">
+              {g.items.map((item) => (
+                <NavItem key={item.name} item={item} active={active === item.name} onClick={() => onPick(item.name)} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </nav>
+      <div className="shrink-0 border-t border-white/10 p-3">
+        <NavItem item={{ name: "Settings" }} icon={Cog6ToothIcon} active={active === "Settings"} onClick={() => onPick("Settings")} />
+      </div>
+    </div>
+  );
 }
 
 function SideBar() {
-  const [, setchildUrl] = useState("");
-  const [parentUrl, setparentUrl] = useState("");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarOpenMain, setSidebarOpenMain] = useState(true);
-  const [componentClicked, setComponentClicked] = useState({
-    name: "Admins",
-    href: "/admin",
-    current: true,
-  });
-  const [navigation, setNavigation] = useState([]);
-  console.log(navigation);
-
   const navigate = useNavigate();
+  const [params, setParams] = useSearchParams();
+  const [drawer, setDrawer] = useState(false);
+  const user = getUserToken()?.user;
+  const groups = user ? possibleNavigationMenus(user.role_name) : null;
+
   useEffect(() => {
-    const userToken = getUserToken();
-    if (!userToken) {
-      navigate("/landing/program/login");
-    }
-    console.log({ userToken });
-    const role_name = userToken.user.role_name;
-    const navigation = possibleNavigationMenus(role_name);
-    if (!navigation) {
-      navigate("/landing/program/login");
-      return;
-    }
-    setNavigation(navigation);
+    if (!groups) navigate("/landing/program/login", { replace: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const [navigationItems, setNavigationItems] = useState(navigation);
-  const [openDropDown, setOpenDropDown] = useState({});
-  const handleOpenDropDown = (itemName) => {
-    setOpenDropDown((prevState) => ({
-      ...prevState,
-      [itemName]: !prevState[itemName],
-    }));
-    console.log(itemName);
-  };
+  const requested = params.get("page");
+  const page = requested && isAdminPage(requested) ? requested : "Dashboard";
+  const parent = PAGE_PARENT[page];
 
-  const handleNavigationItemClick = (itemName) => {
-    const updatedNavigationItems = navigationItems.map((item) => {
-      if (item.name === itemName) {
-        return { ...item, current: true };
-      } else {
-        return { ...item, current: false };
-      }
-    });
-    setNavigationItems(updatedNavigationItems);
-    setComponentClicked({
-      name: itemName,
-      href: `/${itemName.toLowerCase()}`,
-      current: true,
-    });
-    console.log(itemName);
-    setSidebarOpen(false);
-    setchildUrl(itemName);
-    setparentUrl(itemName);
-    findParentByName(itemName);
-  };
+  useEffect(() => {
+    document.querySelector("#admin-main")?.scrollTo?.(0, 0);
+    window.scrollTo(0, 0);
+  }, [page]);
+  useEffect(() => {
+    if (!drawer) return undefined;
+    document.body.style.overflow = "hidden";
+    const onKey = (e) => e.key === "Escape" && setDrawer(false);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [drawer]);
 
-  // const location = useLocation();
-  // useEffect(() => {
-  //   const item = navigation.find((item) => {
-  //     return item.href === location.pathname;
-  //   });
-  //   handleNavigationItemClick(item.name);
-  // }, []);
-  const handlePageSet = (pageName) => {
-    console.log(`Page set to: ${pageName}`);
-    setComponentClicked({
-      name: pageName,
-      href: `/${pageName.toLowerCase()}`,
-      current: true,
-    });
+  if (!groups) return null;
+
+  const open = (name) => {
+    setParams({ page: name });
+    setDrawer(false);
   };
-  const findParentByName = (name) => {
-    const item = subNavigation.find((entry) => entry.name === name);
-    return setparentUrl(item ? item.parent : null);
+  const signOut = () => {
+    deleteUserToken();
+    navigate("/landing/program/login");
   };
+  const displayName = [user.first_name, user.last_name].filter(Boolean).join(" ") || user.email;
 
   return (
-    <>
-      <div>
-        <Transition.Root show={sidebarOpen} as={Fragment}>
-          <Dialog
-            as="div"
-            className="relative z-50 lg:hidden"
-            onClose={setSidebarOpen}
-          >
-            <Transition.Child
-              as={Fragment}
-              enter="transition-opacity ease-linear duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="transition-opacity ease-linear duration-300"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <div className="fixed inset-0 bg-gray-900/80" />
-            </Transition.Child>
-
-            <div className="fixed inset-0 flex">
-              <Transition.Child
-                as={Fragment}
-                enter="transition ease-in-out duration-300 transform"
-                enterFrom="-translate-x-full"
-                enterTo="translate-x-0"
-                leave="transition ease-in-out duration-300 transform"
-                leaveFrom="translate-x-0"
-                leaveTo="-translate-x-full"
-              >
-                <Dialog.Panel className="relative mr-16 flex w-full max-w-xs flex-1">
-                  <Transition.Child
-                    as={Fragment}
-                    enter="ease-in-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in-out duration-300"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <div className="absolute left-full top-0 flex w-16 justify-center pt-5">
-                      <button
-                        type="button"
-                        className="-m-2.5 p-2.5"
-                        onClick={() => setSidebarOpen(false)}
-                      >
-                        <span className="sr-only">Close sidebar</span>
-                        <XMarkIcon
-                          className="h-6 w-6 text-white"
-                          aria-hidden="true"
-                        />
-                      </button>
-                    </div>
-                  </Transition.Child>
-                  <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4 ring-1 ring-white/10">
-                    <div className="flex h-16 shrink-0 items-center">
-                      <span className="text-2xl text-gray-50 font-bold font-mono">
-                        X Alumni
-                      </span>
-                    </div>
-                    <nav className="flex flex-1 flex-col">
-                      <ul role="list" className="flex flex-1 flex-col gap-y-7">
-                        <li>
-                          <ul role="list" className="-mx-2 space-y-1">
-                            {navigation.map((item) => (
-                              <li key={item.name}>
-                                <a
-                                  href={item.href}
-                                  className={classNames(
-                                    componentClicked.name == item.name
-                                      ? "bg-gray-800 text-white"
-                                      : "text-gray-400 hover:text-white hover:bg-gray-800",
-                                    "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                                  )}
-                                  onClick={() =>
-                                    handleNavigationItemClick(item.name)
-                                  }
-                                >
-                                  <item.icon
-                                    className="h-6 w-6 shrink-0"
-                                    aria-hidden="true"
-                                  />
-
-                                  {item.name}
-                                  <ChevronDownIcon
-                                    className="-mr-1 h-5 w-5 text-gray-400"
-                                    aria-hidden="true"
-                                  />
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                        </li>
-                        <li className="mt-auto">
-                          <ul role="list" className="-mx-2 space-y-1">
-                            <li>
-                              <a
-                                href="#"
-                                className={classNames(
-                                  "text-gray-400 hover:text-white hover:bg-gray-800",
-                                  "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                                )}
-                                onClick={() => {
-                                  console.log("login redirect");
-                                  navigate("/landing/profile/login");
-                                }}
-                              >
-                                <ArrowLongLeftIcon
-                                  className="h-6 w-6 shrink-0"
-                                  aria-hidden="true"
-                                />
-                              </a>
-                            </li>
-
-                            <li>
-                              <a
-                                href="#"
-                                className={classNames(
-                                  "text-gray-400 hover:text-white hover:bg-gray-800",
-                                  "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                                )}
-                              >
-                                <Cog6ToothIcon
-                                  className="h-6 w-6 shrink-0"
-                                  aria-hidden="true"
-                                />
-                                Settings
-                              </a>
-                            </li>
-                          </ul>
-                        </li>
-                      </ul>
-                    </nav>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
+    <ThemeProvider>
+      <div className="ui-scope min-h-screen bg-slate-50 font-theme text-slate-900 antialiased">
+        <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 lg:block">
+          <Sidebar groups={groups} active={parent || page} onPick={open} />
+        </aside>
+        {drawer && (
+          <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Admin menu">
+            <div className="absolute inset-0 bg-slate-900/60" onClick={() => setDrawer(false)} />
+            <div className="absolute inset-y-0 left-0 w-72 max-w-[85vw] shadow-xl">
+              <Sidebar groups={groups} active={parent || page} onPick={open} onClose={() => setDrawer(false)} />
             </div>
-          </Dialog>
-        </Transition.Root>
-        <div
-          className={`${
-            sidebarOpenMain
-              ? "hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col"
-              : "hidden"
-          }`}
-        >
-          <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
-            <div className="flex h-16 shrink-0 items-center">
-              <span className="text-2xl text-gray-50 font-bold font-mono mr-4">
-                X Alumni
-              </span>
-              <button
-                type="button"
-                className="ml-auto"
-                onClick={() => setSidebarOpenMain(false)}
-              >
-                <span className="sr-only">Close sidebar</span>
-                <ArrowLongLeftIcon
-                  className="h-6 w-6 text-white"
-                  aria-hidden="true"
-                />
+          </div>
+        )}
+        <div className="lg:pl-64">
+          <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-slate-200 bg-white px-4 sm:px-6">
+            <button type="button" onClick={() => setDrawer(true)} className="-ml-1 rounded-lg p-2 text-slate-700 hover:bg-slate-100 lg:hidden" aria-label="Open menu">
+              <Bars3Icon className="h-6 w-6" />
+            </button>
+            <nav aria-label="Breadcrumb" className="flex min-w-0 flex-1 items-center gap-1.5 text-sm">
+              {parent && (
+                <>
+                  <button type="button" onClick={() => open(parent)} className="hidden truncate font-medium text-slate-500 hover:text-slate-900 sm:block">
+                    {pageLabel(parent)}
+                  </button>
+                  <ChevronRightIcon className="hidden h-4 w-4 shrink-0 text-slate-400 sm:block" />
+                </>
+              )}
+              <span className="truncate font-semibold text-slate-900">{pageLabel(page)}</span>
+            </nav>
+            <a href="/landing" target="_blank" rel="noreferrer" className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 sm:inline-flex">
+              View site <ArrowTopRightOnSquareIcon className="h-4 w-4" />
+            </a>
+            <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
+              <Avatar name={displayName} size="sm" />
+              <div className="hidden max-w-[160px] leading-tight md:block">
+                <p className="truncate text-sm font-semibold text-slate-900">{displayName}</p>
+                <p className="text-xs text-slate-500">{ROLE_LABEL[user.role_name]}</p>
+              </div>
+              <button type="button" onClick={signOut} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900" aria-label="Sign out" title="Sign out">
+                <ArrowRightOnRectangleIcon className="h-5 w-5" />
               </button>
             </div>
-            <nav className="flex flex-1 flex-col">
-              <ul role="list" className="flex flex-1 flex-col gap-y-7">
-                <li>
-                  <ul role="list" className="-mx-2 space-y-1">
-                    {navigation.map((item) => (
-                      <li key={item.name}>
-                        <a
-                          href={item.href}
-                          className={classNames(
-                            componentClicked.name === item.name
-                              ? "bg-gray-800 text-white"
-                              : "text-gray-400 hover:text-white hover:bg-gray-800",
-                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                          )}
-                          onClick={() => handleNavigationItemClick(item.name)}
-                        >
-                          <item.icon
-                            className="h-6 w-6 shrink-0"
-                            aria-hidden="true"
-                          />
-                          {item.name}
-                          {!navigationWithNoSubNavigation.includes(item.name) &&
-                            openDropDown[item.name] && (
-                              <ChevronUpIcon
-                                className="-mr-1 h-5 w-5 text-gray-400 ml-auto"
-                                aria-hidden="true"
-                                onClick={() => handleOpenDropDown(item.name)}
-                              />
-                            )}
-                          {!navigationWithNoSubNavigation.includes(item.name) &&
-                            !openDropDown[item.name] && (
-                              <ChevronDownIcon
-                                className="-mr-1 h-5 w-5 text-gray-400 ml-auto"
-                                aria-hidden="true"
-                                onClick={() => handleOpenDropDown(item.name)}
-                              />
-                            )}
-                        </a>
-                        {openDropDown[item.name] && (
-                          <ul role="list" className="pl-4">
-                            {subNavigation.map(
-                              (subItem) =>
-                                subItem.parent === item.name && (
-                                  <li key={subItem.name}>
-                                    <a
-                                      href={subItem.href}
-                                      className={classNames(
-                                        componentClicked.name === subItem.name
-                                          ? "bg-gray-800 text-white"
-                                          : "text-gray-400 hover:text-white hover:bg-gray-800",
-                                        "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                                      )}
-                                      onClick={() =>
-                                        handleNavigationItemClick(subItem.name)
-                                      }
-                                    >
-                                      <subItem.icon
-                                        className="h-6 w-6 shrink-0"
-                                        aria-hidden="true"
-                                      />
-                                      {subItem.name}
-                                    </a>
-                                  </li>
-                                )
-                            )}
-                          </ul>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-
-                <li className="mt-auto">
-                  <ul role="list" className="-mx-2 space-y-1">
-                    <li>
-                      <a
-                        href="#"
-                        className={classNames(
-                          "text-gray-400 hover:text-white hover:bg-gray-800",
-                          "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                        )}
-                        onClick={() => {
-                          deleteUserToken();
-                          navigate("/landing/program/login");
-                        }}
-                      >
-                        <ArrowLongLeftIcon
-                          className="h-6 w-6 shrink-0"
-                          aria-hidden="true"
-                        />
-                        Logout
-                      </a>
-                    </li>
-
-                    <li>
-                      <a
-                        href="#"
-                        className={classNames(
-                          "text-gray-400 hover:text-white hover:bg-gray-800",
-                          "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                        )}
-                        onClick={() => handleNavigationItemClick("Settings")}
-                      >
-                        <Cog6ToothIcon
-                          className="h-6 w-6 shrink-0"
-                          aria-hidden="true"
-                        />
-                        Settings
-                      </a>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </nav>
-          </div>
-        </div>
-
-        <div className={`${sidebarOpenMain ? "lg:pl-72" : "lg:pl-85"}`}>
-          <div className="flex ml-4 mt-4">
-            {!sidebarOpenMain ? (
-              <div>
-                <button
-                  type="button"
-                  className="mr-4 p-2.5 text-gray-100"
-                  onClick={() => setSidebarOpenMain(true)}
-                >
-                  <span className="sr-only">Open sidebar</span>
-                  <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-                </button>
-                <span className="text-2xl text-black font-bold font-mono mr-4">
-                  X Alumni
-                </span>
-              </div>
-            ) : (
-              <div className="flex">
-                <button
-                  type="button"
-                  className="m-4 text-gray-100 lg:hidden"
-                  onClick={() => setSidebarOpen(true)}
-                >
-                  <span className="sr-only">Open sidebar</span>
-                  <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-                </button>
-                <nav className="flex ml-4" aria-label="Breadcrumb">
-                  <ol role="list" className="flex items-center space-x-4">
-                    <li>
-                      <div>
-                        <a
-                          href="#"
-                          className="text-gray-900 hover:text-gray-500"
-                        >
-                          <HomeIcon
-                            className="h-5 w-5 flex-shrink-0"
-                            aria-hidden="true"
-                          />
-                          <span className="sr-only">Home</span>
-                        </a>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="flex items-center justify-center">
-                        <a
-                          href="#"
-                          className="ml-0 text-sm font-medium text-gray-500 hover:text-gray-700"
-                          aria-current={
-                            componentClicked.current ? "page" : undefined
-                          }
-                          onClick={() => handleNavigationItemClick(parentUrl)}
-                        >
-                          {parentUrl}
-                        </a>
-                        <svg
-                          className="h-5 w-5 flex-shrink-0 text-gray-300"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                          aria-hidden="true"
-                        >
-                          <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
-                        </svg>
-                        <a
-                          href="#"
-                          className="ml-0 text-sm font-medium text-gray-500 hover:text-gray-700"
-                          aria-current={
-                            componentClicked.current ? "page" : undefined
-                          }
-                          onClick={() =>
-                            handleNavigationItemClick(componentClicked.name)
-                          }
-                        >
-                          {componentClicked.name}
-                        </a>
-                      </div>
-                    </li>
-                  </ol>
-                </nav>
-              </div>
-            )}
-          </div>
-
-          <main className="py-10">
-            <div className="px-4 sm:px-6 lg:px-8">
-              <ComponentRender
-                page={componentClicked.name}
-                onPageSet={handlePageSet}
-              />
-            </div>
-            {/* one toast host for every admin page */}
-            <ToastContainer position="bottom-right" newestOnTop limit={4} />
+          </header>
+          <main id="admin-main" className="p-4 sm:p-6 lg:p-8">
+            <ComponentRender page={page} onPageSet={open} />
           </main>
         </div>
+        <ToastContainer position="bottom-right" newestOnTop limit={4} />
       </div>
-    </>
+    </ThemeProvider>
   );
 }
 

@@ -132,7 +132,7 @@ export default function DocumentVerificationPage() {
   const counts = data?.counts || {};
   const items = data?.items || [];
   return (
-    <div className="ui-scope mx-auto max-w-6xl p-4 sm:p-8">
+    <div className="ui-scope mx-auto max-w-6xl">
       <h1 className="text-2xl font-bold text-slate-900">Document requests</h1>
       <p className="mt-1 text-sm text-slate-500">Verification letters and transcripts requested by members. Members are notified each time you update a request.</p>
       <div className="mt-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
