@@ -14,7 +14,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { getPublic } from "src/api";
-import { ThemeProvider, useThemeInfo } from "src/lib/theme";
+import { ThemeProvider, useSurfaceDesign, useThemeInfo } from "src/lib/theme";
 import { useInstituteConfig } from "src/lib/config";
 import { cx } from "src/components/ui";
 import { getUserToken } from "src/helpers/globalStorage";
@@ -45,7 +45,7 @@ function Banner() {
   if (!b?.enabled || !b.text) return null;
   const inner = <span className="font-medium">{b.text}</span>;
   return (
-    <div className="bg-brand px-4 py-2 text-center text-sm text-white">
+    <div className="bg-brand px-4 py-2 text-center text-sm text-brand-ink">
       {b.link ? (
         <a href={b.link} className="hover:underline" {...(/^https?:/.test(b.link) ? { target: "_blank", rel: "noreferrer" } : {})}>
           {inner} <span aria-hidden="true">→</span>
@@ -96,7 +96,7 @@ function Brand({ onClick }) {
     <Link
       to={P.home}
       onClick={onClick}
-      className="flex min-w-0 items-center gap-3"
+      className="flex min-w-0 items-center gap-3 text-inherit"
     >
       {logoUrl && (
         <img
@@ -106,10 +106,10 @@ function Brand({ onClick }) {
         />
       )}
       <span className="min-w-0 leading-tight">
-        <span className="block truncate text-[15px] font-bold text-slate-900">
+        <span className="block truncate text-[15px] font-bold">
           {title}
         </span>
-        <span className="block text-xs font-medium text-slate-500">
+        <span className="block text-xs font-medium opacity-70">
           Alumni network
         </span>
       </span>
@@ -117,8 +117,16 @@ function Brand({ onClick }) {
   );
 }
 
+const NAV_STYLE = {
+  text: (a) => (a ? "font-semibold opacity-100 bg-black/[0.06]" : "opacity-75 hover:opacity-100 hover:bg-black/5"),
+  underline: (a) => (a ? "font-semibold opacity-100 after:absolute after:inset-x-3 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-current" : "opacity-75 hover:opacity-100"),
+  pill: (a, onBrand) => (a ? (onBrand ? "rounded-full bg-white text-slate-900" : "rounded-full bg-brand text-brand-ink") : "rounded-full opacity-80 hover:opacity-100 hover:bg-black/5"),
+};
+
 function Header() {
   const NAV = useNav();
+  const d = useSurfaceDesign("public");
+  const links = d.links || [];
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
@@ -139,54 +147,62 @@ function Header() {
     };
   }, [open]);
 
-  const link = ({ isActive }) =>
-    cx(
-      "rounded-lg px-3 py-2 text-sm font-medium transition",
-      isActive
-        ? "bg-brand-soft text-link"
-        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
-    );
+  const onBrand = d.header_style === "brand";
+  const link = ({ isActive }) => cx("relative rounded-lg px-3 py-2 text-sm font-medium text-inherit transition", (NAV_STYLE[d.nav_style] || NAV_STYLE.text)(isActive, onBrand));
+  // the main button must stand out on a brand-coloured menu bar
+  const cta = onBrand ? "bg-white text-slate-900 hover:bg-slate-100" : "bg-brand text-brand-ink hover:bg-brand-hover";
+  const clear = d.header_style === "transparent" && !scrolled && !open;
+  const centered = d.header_layout === "center";
+  const nav = (
+    <nav className={cx("hidden items-center gap-0.5 xl:flex", centered && "justify-center")} aria-label="Main">
+      {NAV.map((n) => (
+        <NavLink key={n.to} to={n.to} end={n.end} className={link}>
+          {n.label}
+        </NavLink>
+      ))}
+      {links.map((l) => (
+        <a key={l.url} href={l.url} className={link({ isActive: false })} {...(/^https?:/.test(l.url) ? { target: "_blank", rel: "noreferrer" } : {})}>
+          {l.label}
+        </a>
+      ))}
+    </nav>
+  );
   // the menu panel is rendered next to the header, not inside it: the header's
   // backdrop blur would make it the containing block for "fixed" children
   return (
     <>
       <header
         className={cx(
-          "sticky top-0 z-40 border-b bg-white/90 backdrop-blur transition",
-          scrolled ? "border-slate-200 shadow-sm" : "border-transparent",
+          "z-40 border-b transition",
+          d.sticky !== false && "sticky top-0",
+          d.header_style === "transparent" ? (clear ? "border-transparent bg-transparent text-slate-900" : "border-slate-200 bg-white text-slate-900 shadow-sm") : "bg-pubhead text-pubhead-fg",
+          d.header_style !== "transparent" && (scrolled ? "border-pubhead-border shadow-sm" : "border-transparent"),
         )}
       >
-        <Container className="flex h-16 items-center justify-between gap-4">
-          <Brand />
-          <nav
-            className="hidden items-center gap-0.5 xl:flex"
-            aria-label="Main"
-          >
-            {NAV.map((n) => (
-              <NavLink key={n.to} to={n.to} end={n.end} className={link}>
-                {n.label}
-              </NavLink>
-            ))}
-          </nav>
-          <div className="hidden items-center gap-2 xl:flex">
+        <Container className={cx("flex h-16 items-center justify-between gap-4", centered && "xl:justify-center")}>
+          <div className={cx(centered && "xl:hidden")}>
+            <Brand />
+          </div>
+          {centered ? <div className="hidden xl:block"><Brand /></div> : nav}
+          <div className={cx("hidden items-center gap-2 xl:flex", centered && "xl:absolute xl:right-8")}>
             {home ? (
               <a
                 href={home}
-                className="rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-hover"
+                className={cx("rounded-btn px-4 py-2 text-sm font-semibold shadow-sm", cta)}
               >
-                Open the app
+                {d.cta_label || "Open the app"}
               </a>
             ) : (
               <>
                 <a
                   href={P.login}
-                  className="rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                  className="rounded-btn px-4 py-2 text-sm font-semibold text-inherit opacity-90 hover:bg-black/5 hover:opacity-100"
                 >
                   Sign in
                 </a>
                 <a
                   href={P.signup}
-                  className="rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-hover"
+                  className={cx("rounded-btn px-4 py-2 text-sm font-semibold shadow-sm", cta)}
                 >
                   Join
                 </a>
@@ -196,7 +212,7 @@ function Header() {
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            className="-mr-2 rounded-lg p-2 text-slate-700 hover:bg-slate-100 xl:hidden"
+            className="-mr-2 rounded-lg p-2 hover:bg-black/5 xl:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Close menu" : "Open menu"}
@@ -208,6 +224,7 @@ function Header() {
             )}
           </button>
         </Container>
+        {centered && <Container className="hidden justify-center pb-2 xl:flex">{nav}</Container>}
       </header>
       {open && (
         <div
@@ -232,26 +249,31 @@ function Header() {
                 {n.label}
               </NavLink>
             ))}
+            {links.map((l) => (
+              <a key={l.url} href={l.url} className="rounded-xl px-4 py-3 text-base font-medium text-slate-800 hover:bg-slate-50">
+                {l.label}
+              </a>
+            ))}
           </nav>
           <div className="grid gap-3 border-t border-slate-100 p-4">
             {home ? (
               <a
                 href={home}
-                className="rounded-xl bg-brand px-4 py-3 text-center text-sm font-semibold text-white"
+                className="rounded-btn bg-brand px-4 py-3 text-center text-sm font-semibold text-brand-ink"
               >
-                Open the app
+                {d.cta_label || "Open the app"}
               </a>
             ) : (
               <>
                 <a
                   href={P.signup}
-                  className="rounded-xl bg-brand px-4 py-3 text-center text-sm font-semibold text-white"
+                  className="rounded-btn bg-brand px-4 py-3 text-center text-sm font-semibold text-brand-ink"
                 >
                   Join the network
                 </a>
                 <a
                   href={P.login}
-                  className="rounded-xl px-4 py-3 text-center text-sm font-semibold text-slate-800 ring-1 ring-inset ring-slate-300"
+                  className="rounded-btn px-4 py-3 text-center text-sm font-semibold text-slate-800 ring-1 ring-inset ring-slate-300"
                 >
                   Sign in
                 </a>
@@ -282,21 +304,24 @@ function Footer() {
     retry: false,
   });
   const i = data?.institute;
-  const col = "text-sm text-slate-400 hover:text-white";
+  const d = useSurfaceDesign("public");
+  const col = "text-sm text-pubfoot-muted hover:text-pubfoot-fg";
+  // the institute's own social links plus any set in the website design
+  const social = [...(i?.social || []), ...Object.entries(d.socials || {}).filter(([, url]) => url).map(([network, url]) => ({ network, url }))].filter((s, k, a) => a.findIndex((x) => x.url === s.url) === k);
   return (
-    <footer className="bg-slate-900 text-slate-300">
+    <footer className="bg-pubfoot text-pubfoot-fg">
       <Container className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
         <div className="sm:col-span-2 lg:col-span-1">
-          <p className="text-lg font-bold text-white">
+          <p className="text-lg font-bold">
             {i?.name || "Alumni network"}
           </p>
-          <p className="mt-2 text-sm leading-relaxed text-slate-400">
+          <p className="mt-2 text-sm leading-relaxed text-pubfoot-muted">
             The official alumni community: stay in touch with classmates, find
             opportunities and give back.
           </p>
         </div>
         <div>
-          <p className="text-sm font-semibold text-white">Explore</p>
+          <p className="text-sm font-semibold">Explore</p>
           <ul className="mt-4 space-y-2.5">
             {NAV.slice(1, 7).map((n) => (
               <li key={n.to}>
@@ -308,7 +333,7 @@ function Footer() {
           </ul>
         </div>
         <div>
-          <p className="text-sm font-semibold text-white">Members</p>
+          <p className="text-sm font-semibold">Members</p>
           <ul className="mt-4 space-y-2.5">
             <li>
               <a href={P.signup} className={col}>
@@ -333,7 +358,7 @@ function Footer() {
           </ul>
         </div>
         <div>
-          <p className="text-sm font-semibold text-white">Get in touch</p>
+          <p className="text-sm font-semibold">Get in touch</p>
           <ul className="mt-4 space-y-2.5 text-sm">
             {i?.email && (
               <li>
@@ -374,15 +399,15 @@ function Footer() {
               </li>
             )}
           </ul>
-          {i?.social?.length > 0 && (
+          {social.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-2">
-              {i.social.map((s) => (
+              {social.map((s) => (
                 <a
                   key={s.url}
                   href={s.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-lg bg-white/5 px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white"
+                  className="rounded-lg px-2.5 py-1.5 text-xs font-medium text-pubfoot-muted ring-1 ring-inset ring-[color:var(--pub-footer-muted)] hover:text-pubfoot-fg"
                 >
                   {SOCIAL_LABEL[s.network] || s.network}
                 </a>
@@ -391,13 +416,13 @@ function Footer() {
           )}
         </div>
       </Container>
-      <div className="border-t border-white/10">
-        <Container className="flex flex-col gap-2 py-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+      <div className="border-t border-[color:var(--pub-footer-muted)] border-opacity-30">
+        <Container className="flex flex-col gap-2 py-6 text-xs text-pubfoot-muted sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {new Date().getFullYear()} {i?.name || "Alumni network"}. All
             rights reserved.
           </p>
-          <p>Built for alumni, by alumni.</p>
+          <p>{d.footer_tagline || "Built for alumni, by alumni."}</p>
         </Container>
       </div>
     </footer>
@@ -414,8 +439,8 @@ function ScrollToTop() {
 
 export default function PublicLayout() {
   return (
-    <ThemeProvider>
-      <div className="ui-scope flex min-h-screen flex-col bg-white font-theme text-slate-900 antialiased">
+    <ThemeProvider surface="public">
+      <div className="ui-scope flex min-h-screen flex-col bg-page font-theme text-slate-900 antialiased">
         <ScrollToTop />
         <a
           href="#main"

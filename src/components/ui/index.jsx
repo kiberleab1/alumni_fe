@@ -136,7 +136,7 @@ export function Button({ variant = "primary", size = "md", loading, className, c
       {...props}
       disabled={props.disabled || loading}
       className={cx(
-        "inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60",
+        "inline-flex items-center justify-center gap-1.5 rounded-btn font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60",
         size === "sm" ? "px-2.5 py-1.5 text-xs" : "px-3.5 py-2 text-sm",
         BTN[variant],
         className

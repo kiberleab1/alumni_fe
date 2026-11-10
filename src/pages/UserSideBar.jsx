@@ -23,7 +23,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MemberRoutes from "./UserComponentRender";
 import { logout } from "src/api";
-import { ThemeProvider, useThemeInfo } from "src/lib/theme";
+import { ThemeProvider, navItemClass, useSurfaceDesign, useThemeInfo } from "src/lib/theme";
 import { deleteUserToken } from "src/helpers/globalStorage";
 import { RealtimeProvider, useRealtime } from "src/lib/realtime";
 import { PATHS, notificationTarget } from "src/lib/nav";
@@ -34,24 +34,32 @@ import { FEATURE_FOR_PATH, useInstituteConfig } from "src/lib/config";
 // Main navigation (design: Blueprint · navigation). `badge` picks a live
 // counter from the realtime context.
 const navigation = [
-  { to: PATHS.home, label: "Home", icon: HomeIcon, end: true },
-  { to: PATHS.people, label: "People", icon: UserGroupIcon, badge: "pendingRequests" },
-  { to: PATHS.messages, label: "Messages", icon: ChatBubbleLeftRightIcon, badge: "unreadChats" },
-  { to: PATHS.jobs, label: "Jobs", icon: BriefcaseIcon },
-  { to: PATHS.events, label: "Events", icon: CalendarIcon },
-  { to: PATHS.news, label: "News", icon: NewspaperIcon },
-  { to: PATHS.groups, label: "Groups", icon: RectangleGroupIcon },
-  { to: PATHS.mentorship, label: "Mentorship", icon: LightBulbIcon },
-  { to: PATHS.documents, label: "Documents", icon: ClipboardDocumentCheckIcon },
+  { key: "home", to: PATHS.home, label: "Home", icon: HomeIcon, end: true },
+  { key: "people", to: PATHS.people, label: "People", icon: UserGroupIcon, badge: "pendingRequests" },
+  { key: "messages", to: PATHS.messages, label: "Messages", icon: ChatBubbleLeftRightIcon, badge: "unreadChats" },
+  { key: "jobs", to: PATHS.jobs, label: "Jobs", icon: BriefcaseIcon },
+  { key: "events", to: PATHS.events, label: "Events", icon: CalendarIcon },
+  { key: "news", to: PATHS.news, label: "News", icon: NewspaperIcon },
+  { key: "groups", to: PATHS.groups, label: "Groups", icon: RectangleGroupIcon },
+  { key: "mentorship", to: PATHS.mentorship, label: "Mentorship", icon: LightBulbIcon },
+  { key: "documents", to: PATHS.documents, label: "Documents", icon: ClipboardDocumentCheckIcon },
 ];
+const BY_KEY = Object.fromEntries(navigation.map((n) => [n.key, n]));
+
+/** The institute's menu: its order, its names, minus what it hid. */
+function designedMenu(design) {
+  const menu = design?.menu;
+  if (!Array.isArray(menu) || !menu.length) return navigation;
+  const listed = menu.filter((m) => BY_KEY[m.key]);
+  const rest = navigation.filter((n) => !listed.some((m) => m.key === n.key));
+  return [...listed.filter((m) => m.visible !== false).map((m) => ({ ...BY_KEY[m.key], label: m.label || BY_KEY[m.key].label })), ...rest];
+}
 const secondary = [
   { to: PATHS.profile, label: "My profile", icon: UserCircleIcon },
   { to: PATHS.career, label: "Career history", icon: ClockIcon },
   { to: PATHS.notifications, label: "Notifications", icon: BellIcon, badge: "unreadNotifs" },
   { to: PATHS.settings, label: "Settings", icon: Cog6ToothIcon },
 ];
-// phone bottom bar (design: Mobile · 5 tabs)
-const bottomTabs = [navigation[0], navigation[1], navigation[2], navigation[3]];
 
 const TITLES = Object.fromEntries([...navigation, ...secondary].map((n) => [n.to, n.label]));
 function titleFor(pathname) {
@@ -64,7 +72,7 @@ function titleFor(pathname) {
 export default function UserSideBar() {
   return (
     <RealtimeProvider>
-      <ThemeProvider>
+      <ThemeProvider surface="member">
         <Shell />
       </ThemeProvider>
     </RealtimeProvider>
@@ -78,7 +86,12 @@ function Shell() {
   const navigate = useNavigate();
   const location = useLocation();
   const me = realtime.me;
-  const title = titleFor(location.pathname);
+  const design = useSurfaceDesign("member");
+  const menu = designedMenu(design);
+  const labels = Object.fromEntries(menu.map((n) => [n.to, n.label]));
+  const title = labels[Object.keys(labels).find((p) => p !== PATHS.home && (location.pathname === p || location.pathname.startsWith(`${p}/`)))] || titleFor(location.pathname);
+  const topbar = design.layout === "topbar";
+  const compact = design.density === "compact";
 
   useEffect(() => {
     const total = realtime.unreadChats + realtime.unreadNotifs;
@@ -107,12 +120,7 @@ function Shell() {
       <NavLink
         to={item.to}
         end={item.end}
-        className={({ isActive }) =>
-          cx(
-            "group flex w-full items-center gap-x-3 rounded-lg px-3 py-2 text-sm font-medium transition",
-            isActive ? "bg-side-active text-side-active-fg" : "text-side-fg hover:bg-side-hover hover:text-side-active-fg"
-          )
-        }
+        className={({ isActive }) => cx("group", navItemClass(design.nav_style, isActive, design.density))}
       >
         <item.icon className="h-5 w-5 shrink-0" aria-hidden="true" />
         <span className="flex-1 text-left">{item.label}</span>
@@ -128,7 +136,7 @@ function Shell() {
       </div>
       <nav className="flex flex-1 flex-col" aria-label="Main">
         <ul role="list" className="space-y-1">
-          {visible(navigation).map(navItem)}
+          {visible(menu).map(navItem)}
         </ul>
         <p className="mt-6 px-3 text-[11px] font-semibold uppercase tracking-wider text-side-fg/70">You</p>
         <ul role="list" className="mt-1 space-y-1">
@@ -145,7 +153,7 @@ function Shell() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 font-theme">
+    <div className="min-h-screen bg-page font-theme">
       {/* drawer: phone "More" tab and the tablet menu button */}
       <Transition.Root show={mobileOpen} as={Fragment}>
         <Dialog as="div" className="relative z-50 lg:hidden" onClose={setMobileOpen}>
@@ -182,12 +190,32 @@ function Shell() {
       </Transition.Root>
 
       {/* desktop sidebar */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-64 lg:flex-col">{sidebar}</div>
+      {!topbar && <div className="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-64 lg:flex-col">{sidebar}</div>}
 
-      <div className="lg:pl-64">
-        <header className="ui-scope sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-slate-200 bg-white/90 px-4 backdrop-blur sm:px-6">
-          <img src={brand.logoUrl} alt="" className="h-8 w-auto max-w-[6rem] object-contain sm:hidden" />
-          <h1 className="min-w-0 flex-1 truncate text-base font-semibold text-slate-900">{title}</h1>
+      <div className={topbar ? "" : "lg:pl-64"}>
+        <header className="ui-scope sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-top-border bg-top px-4 text-top-fg sm:px-6">
+          <img src={brand.logoUrl} alt="" className={cx("h-8 w-auto max-w-[6rem] object-contain", topbar ? "" : "sm:hidden")} />
+          {topbar ? (
+            <>
+              <h1 className="sr-only">{title}</h1>
+              <nav aria-label="Main" className="no-scrollbar hidden min-w-0 flex-1 items-center gap-1 overflow-x-auto lg:flex">
+                {visible(menu).map((item) => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.end}
+                    className={({ isActive }) => cx("relative flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-inherit transition", isActive ? "bg-black/10 font-semibold" : "opacity-80 hover:bg-black/5 hover:opacity-100")}
+                  >
+                    {item.label}
+                    <CountBadge count={item.badge ? realtime[item.badge] : 0} />
+                  </NavLink>
+                ))}
+              </nav>
+              <p className="min-w-0 flex-1 truncate text-base font-semibold text-inherit lg:hidden">{title}</p>
+            </>
+          ) : (
+            <h1 className="min-w-0 flex-1 truncate text-base font-semibold text-inherit">{title}</h1>
+          )}
 
           {realtime.status !== "online" && (
             <span className="hidden items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 sm:inline-flex">
@@ -198,9 +226,9 @@ function Shell() {
           <NotificationBell onOpenItem={(n) => navigate(notificationTarget(n))} onSeeAll={() => navigate(PATHS.notifications)} />
 
           <Menu as="div" className="relative">
-            <Menu.Button className="flex items-center gap-2 rounded-full p-1 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand">
+            <Menu.Button className="flex items-center gap-2 rounded-full p-1 hover:bg-black/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand">
               <Avatar name={[me?.first_name, me?.last_name].filter(Boolean).join(" ") || me?.email} size="sm" />
-              <span className="hidden pr-2 text-sm font-medium text-slate-700 sm:block">{me?.first_name}</span>
+              <span className="hidden pr-2 text-sm font-medium sm:block">{me?.first_name}</span>
             </Menu.Button>
             <Transition
               as={Fragment}
@@ -239,13 +267,14 @@ function Shell() {
           </Menu>
         </header>
 
-        <main className="px-3 pb-24 pt-4 sm:px-6 lg:px-8 lg:pb-8">
+        <main className={cx("pb-24 lg:pb-8", compact ? "px-2 pt-3 sm:px-4 lg:px-6" : "px-3 pt-4 sm:px-6 lg:px-8", topbar && "mx-auto max-w-7xl")}>
+          {design.welcome && location.pathname === PATHS.home && <p className="ui-scope mx-auto mb-4 max-w-6xl rounded-xl bg-brand-soft px-4 py-3 text-sm font-medium text-slate-800">{design.welcome}</p>}
           <MemberRoutes />
         </main>
 
         {/* phone bottom bar */}
         <nav aria-label="Main" className="ui-scope fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] lg:hidden">
-          {visible(bottomTabs).map((item) => (
+          {visible((design.mobile_tabs || ["home", "people", "messages", "jobs"]).map((k) => menu.find((n) => n.key === k) || BY_KEY[k]).filter(Boolean)).slice(0, 4).map((item) => (
             <NavLink
               key={item.to}
               to={item.to}

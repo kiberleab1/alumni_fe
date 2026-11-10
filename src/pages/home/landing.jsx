@@ -6,6 +6,8 @@
 import { Fragment } from "react";
 import { useQuery } from "react-query";
 import { useInstituteConfig } from "src/lib/config";
+import { useSurfaceDesign } from "src/lib/theme";
+import { cx } from "src/components/ui";
 import { Link } from "react-router-dom";
 import {
   AcademicCapIcon,
@@ -33,21 +35,25 @@ const FEATURES = [
 
 function Hero({ data, cta }) {
   const h = data?.hero;
-  const image = img(h?.images?.[0]);
+  const d = useSurfaceDesign("public");
+  // the website design can override the hero text and photo per institute
+  const image = img(d.hero_image || h?.images?.[0]);
   const name = data?.institute?.name;
+  const layout = d.hero_layout || "split";
+  const centered = layout === "centered";
   return (
-    <section className="relative isolate overflow-hidden bg-slate-950">
-      {image && <img src={image} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover opacity-40" />}
-      <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-br from-brand/90 via-slate-950/80 to-slate-950" />
-      <div aria-hidden className="absolute -right-40 top-10 -z-10 h-[28rem] w-[28rem] rounded-full bg-brand/20 blur-3xl" />
-      <Container className="grid items-center gap-12 py-20 sm:py-24 lg:grid-cols-[1.2fr_1fr] lg:py-28">
-        <div>
+    <section className={cx("relative isolate overflow-hidden bg-slate-950", layout === "image" && "min-h-[34rem]")}>
+      {image && <img src={image} alt="" className={cx("absolute inset-0 -z-10 h-full w-full object-cover", layout === "image" ? "opacity-70" : "opacity-40")} />}
+      <div aria-hidden className={cx("absolute inset-0 -z-10", layout === "image" ? "bg-gradient-to-t from-slate-950/90 via-slate-950/50 to-slate-950/20" : "bg-gradient-to-br from-brand/90 via-slate-950/80 to-slate-950")} />
+      {layout !== "image" && <div aria-hidden className="absolute -right-40 top-10 -z-10 h-[28rem] w-[28rem] rounded-full bg-brand/20 blur-3xl" />}
+      <Container className={cx("grid items-center gap-12 py-20 sm:py-24 lg:py-28", layout === "split" && "lg:grid-cols-[1.2fr_1fr]", centered && "text-center", layout === "image" && "items-end pt-40")}>
+        <div className={cx(centered && "mx-auto max-w-3xl")}>
           <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white/90 ring-1 ring-inset ring-white/20">
             <AcademicCapIcon className="h-4 w-4" /> {name ? `${name} alumni` : "Alumni network"}
           </p>
-          <h1 className="mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">{h?.title || "Stay connected with the people who shaped you."}</h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/80">{h?.description ? h.description.replace(/<[^>]*>/g, " ").trim() : "Find classmates, discover jobs and mentors, and keep up with events and news from your institute, all in one place."}</p>
-          <div className="mt-9 flex flex-wrap gap-3">
+          <h1 className="mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">{d.hero_title || h?.title || "Stay connected with the people who shaped you."}</h1>
+          <p className={cx("mt-6 max-w-xl text-lg leading-relaxed text-white/80", centered && "mx-auto")}>{d.hero_subtitle || (h?.description ? h.description.replace(/<[^>]*>/g, " ").trim() : "Find classmates, discover jobs and mentors, and keep up with events and news from your institute, all in one place.")}</p>
+          <div className={cx("mt-9 flex flex-wrap gap-3", centered && "justify-center")}>
             <ButtonLink href={P.signup} variant="white">
               {cta || "Join the network"} <ArrowRightIcon className="h-4 w-4" />
             </ButtonLink>
@@ -55,7 +61,7 @@ function Hero({ data, cta }) {
               See upcoming events
             </ButtonLink>
           </div>
-          <ul className="mt-9 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/75">
+          <ul className={cx("mt-9 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/75", centered && "justify-center")}>
             {["Free for all graduates", "Your privacy, your choice", "Takes a minute"].map((t) => (
               <li key={t} className="flex items-center gap-1.5">
                 <CheckCircleIcon className="h-5 w-5 text-white/60" /> {t}
@@ -63,7 +69,7 @@ function Hero({ data, cta }) {
             ))}
           </ul>
         </div>
-        <HeroCard data={data} />
+        {layout === "split" && <HeroCard data={data} />}
       </Container>
     </section>
   );

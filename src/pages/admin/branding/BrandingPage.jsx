@@ -15,7 +15,8 @@ import {
 } from "src/api";
 import { getUserToken } from "src/helpers/globalStorage";
 import { ensureFont, themeLogoUrl } from "src/lib/theme";
-import { Button, Segmented, Spinner, apiError, cx, timeAgo } from "src/components/ui";
+import { Button, Segmented, Spinner, Tabs, apiError, cx, timeAgo } from "src/components/ui";
+import { AdminControls, AdminPreview, MemberControls, MemberPreview, WebsiteControls, WebsitePreview } from "./DesignPanels";
 
 /**
  * Admin › Branding & theme.
@@ -71,9 +72,17 @@ function darkenUntilReadable(hex) {
 
 // the server trims names and stores "" logos as null, so compare normalised values
 const norm = (k, v) => (k === "name" ? (v || "").trim() : v || null);
-const sameTokens = (a = {}, b = {}) => ["brand", "accent", "sidebar", "font", "radius", "logo", "name"].every((k) => norm(k, a[k]) === norm(k, b[k]));
+const sameTokens = (a = {}, b = {}) => ["brand", "accent", "sidebar", "font", "radius", "logo", "name"].every((k) => norm(k, a[k]) === norm(k, b[k])) && JSON.stringify(a.design || null) === JSON.stringify(b.design || null);
 
-export default function BrandingPage() {
+const SURFACE_TABS = [
+  { value: "brand", label: "Brand" },
+  { value: "public", label: "Website" },
+  { value: "member", label: "Member app" },
+  { value: "admin", label: "Admin console" },
+];
+
+export default function BrandingPage({ go }) {
+  const [surface, setSurface] = useState("brand");
   const isSuper = getUserToken()?.user?.role_name === "super_admin";
   const [scope, setScope] = useState({ scope: "institute" });
   const qc = useQueryClient();
@@ -114,6 +123,10 @@ export default function BrandingPage() {
     timer.current = setTimeout(() => save.mutate(next), 400);
   };
   useEffect(() => () => clearTimeout(timer.current), []);
+
+  // the server clamps design values; links being typed may be dropped, so keep
+  // the local draft as the source of truth while editing
+  const updateDesign = (part, patch) => update({ design: { ...draft.design, [part]: { ...draft.design[part], ...patch } } });
 
   const replaceDraftFrom = (data) => {
     setEditor(data);
@@ -167,6 +180,7 @@ export default function BrandingPage() {
   const pending = save.isLoading || !!(draft && E && !sameTokens(draft, E.draft));
   const dirty = !!E?.has_unpublished_changes || pending;
   const previewStyle = useMemo(() => ({ ...(E?.vars || {}), fontFamily: font.css }), [E?.vars, font.css]);
+  const surfaceStyle = useMemo(() => (surface === "brand" ? previewStyle : { ...previewStyle, ...(E?.surfaces?.[surface] || {}) }), [previewStyle, E?.surfaces, surface]);
 
   if (isLoading || !draft) {
     return (
@@ -176,13 +190,14 @@ export default function BrandingPage() {
     );
   }
 
-  const target = E.scope === "platform" ? "every institute that hasn't set its own theme" : "members of this institute";
+  const target = E.scope === "platform" ? "every institute that hasn't set its own design" : "this institute's website, member app and admin console";
+  const hasDesign = !!draft.design;
   return (
     <div className="-m-4 sm:-m-6 lg:-m-8 font-sans text-slate-900">
       {/* the admin shell has no global toast container */}
       <header className="sticky top-0 z-20 flex flex-wrap items-center gap-3 border-b border-slate-200 bg-white px-5 py-4 sm:px-7">
         <div className="min-w-[14rem] flex-1">
-          <h1 className="text-xl font-bold">Branding &amp; theme</h1>
+          <h1 className="text-xl font-bold">Branding &amp; design</h1>
           <p className={cx("text-sm", failing.length ? "text-rose-600" : dirty ? "text-amber-700" : "text-emerald-700")} aria-live="polite">
             {failing.length
               ? "Fix the readability checks before publishing"
@@ -230,13 +245,22 @@ export default function BrandingPage() {
           loading={publish.isLoading}
           onClick={() => publish.mutate()}
         >
-          {E.scope === "platform" ? "Publish defaults" : "Publish theme"}
+          {E.scope === "platform" ? "Publish defaults" : "Publish design"}
         </Button>
       </header>
+      <div className="border-b border-slate-200 bg-white px-5 sm:px-7">
+        <Tabs value={surface} onChange={setSurface} tabs={SURFACE_TABS} />
+      </div>
 
       <div className="flex flex-col gap-6 p-5 sm:p-7 xl:flex-row xl:items-start">
         {/* ------------------------------------------------ controls */}
         <div className="flex w-full flex-col gap-4 xl:w-[32rem] xl:shrink-0">
+          {surface !== "brand" && !hasDesign && <p className="rounded-xl bg-amber-50 p-4 text-sm text-amber-800">The server doesn't support per-surface design yet. Restart the backend.</p>}
+          {surface === "public" && hasDesign && <WebsiteControls d={draft.design.public} set={(p) => updateDesign("public", p)} onOpenSettings={go && E.scope !== "platform" ? () => go("Institute Settings", { id: E.institute_id, tab: "website" }) : null} />}
+          {surface === "member" && hasDesign && <MemberControls d={draft.design.member} set={(p) => updateDesign("member", p)} />}
+          {surface === "admin" && hasDesign && <AdminControls d={draft.design.admin} set={(p) => updateDesign("admin", p)} />}
+          {surface === "brand" && (
+          <>
           <Panel title="Identity">
             <div className="flex flex-wrap items-center gap-4">
               <div className="flex h-16 w-24 items-center justify-center rounded-xl bg-slate-900 p-2">
@@ -386,11 +410,21 @@ export default function BrandingPage() {
               </div>
             </Panel>
           )}
+          </>
+          )}
         </div>
 
         {/* ------------------------------------------------ preview + checks */}
-        <div className="flex min-w-0 flex-1 flex-col gap-4">
-          <Panel title="Live preview" description="What members will see. Updates as you edit.">
+        <div className="flex min-w-0 flex-1 flex-col gap-4 xl:sticky xl:top-24">
+          {surface !== "brand" && hasDesign && (
+            <Panel title="Live preview" description={`The ${SURFACE_TABS.find((t) => t.value === surface).label.toLowerCase()} as it will look. Updates as you edit.`}>
+              {surface === "public" && <WebsitePreview draft={draft} style={surfaceStyle} />}
+              {surface === "member" && <MemberPreview draft={draft} style={surfaceStyle} />}
+              {surface === "admin" && <AdminPreview draft={draft} style={surfaceStyle} />}
+            </Panel>
+          )}
+          {surface === "brand" && (
+          <Panel title="Live preview" description="Shared by the website, member app and admin console. Updates as you edit.">
             <div style={previewStyle} className="flex h-[26rem] overflow-hidden rounded-xl border border-slate-200 bg-slate-50" aria-label="Theme preview">
               <div className="hidden w-44 shrink-0 flex-col gap-1 bg-side p-3 sm:flex">
                 <div className="mb-3 flex h-10 items-center px-1">
@@ -435,6 +469,7 @@ export default function BrandingPage() {
               </div>
             </div>
           </Panel>
+          )}
 
           <Panel title="Readability checks (WCAG AA, 4.5:1)">
             <ul className="space-y-2">

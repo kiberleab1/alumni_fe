@@ -22,6 +22,10 @@ export default {
           soft: "var(--brand-soft)",
         },
         link: "var(--link)",
+        page: "var(--page-bg, #f8fafc)",
+        top: { DEFAULT: "var(--top-bg, #fff)", fg: "var(--top-fg, #0f172a)", border: "var(--top-border, #e2e8f0)" },
+        pubhead: { DEFAULT: "var(--pub-header-bg, #fff)", fg: "var(--pub-header-fg, #0f172a)", border: "var(--pub-header-border, #e2e8f0)" },
+        pubfoot: { DEFAULT: "var(--pub-footer-bg, #0f172a)", fg: "var(--pub-footer-fg, #fff)", muted: "var(--pub-footer-muted, #94a3b8)" },
         accent: "var(--accent)",
         side: {
           DEFAULT: "var(--side-bg)",
@@ -32,7 +36,7 @@ export default {
         },
       },
       fontFamily: { theme: "var(--font)" },
-      borderRadius: { theme: "var(--radius, 16px)" },
+      borderRadius: { theme: "var(--radius, 16px)", btn: "var(--btn-radius, 10px)" },
       keyframes: {
         moveCircle1: { "0%": { transform: "translate(0, 0)" }, "100%": { transform: "translate(100vw, 100vh)" } },
         moveCircle2: { "0%": { transform: "translate(0, 0)" }, "100%": { transform: "translate(-100vw, 100vh)" } },

@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ArrowRightOnRectangleIcon, ArrowTopRightOnSquareIcon, Bars3Icon, ChevronRightIcon, Cog6ToothIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { deleteUserToken, getUserToken } from "src/helpers/globalStorage";
 import { PAGE_PARENT, pageLabel, possibleNavigationMenus } from "src/helpers/role_maaping";
-import { ThemeProvider, useThemeInfo } from "src/lib/theme";
+import { ThemeProvider, navItemClass, useSurfaceDesign, useThemeInfo } from "src/lib/theme";
 import { useAdminConfig } from "./admin/platform/shared";
 import { Avatar, cx } from "src/components/ui";
 import ComponentRender, { isAdminPage } from "./PageRender";
@@ -18,13 +18,9 @@ import ComponentRender, { isAdminPage } from "./PageRender";
 const ROLE_LABEL = { super_admin: "Super admin", admin: "Admin", aumni: "Alumni office" };
 
 function NavItem({ item, active, onClick, icon: Icon = item.icon }) {
+  const d = useSurfaceDesign("admin");
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-current={active ? "page" : undefined}
-      className={cx("flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition", active ? "bg-side-active text-side-active-fg" : "text-side-fg hover:bg-side-hover")}
-    >
+    <button type="button" onClick={onClick} aria-current={active ? "page" : undefined} className={navItemClass(d.nav_style, active, d.density)}>
       <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
       <span className="truncate">{item.label || item.name}</span>
     </button>
@@ -33,13 +29,14 @@ function NavItem({ item, active, onClick, icon: Icon = item.icon }) {
 
 function Sidebar({ groups, active, onPick, onClose }) {
   const { logoUrl, name } = useThemeInfo() || {};
+  const d = useSurfaceDesign("admin");
   return (
     <div className="flex h-full flex-col bg-side font-theme">
       <div className="flex h-16 shrink-0 items-center gap-3 px-5">
         {logoUrl && <img src={logoUrl} alt="" className="h-8 w-auto max-w-[72px] rounded bg-white/90 object-contain p-0.5" />}
         <div className="min-w-0 flex-1 leading-tight text-side-fg">
           <p className="truncate text-sm font-bold">{name || "Alumni"}</p>
-          <p className="text-xs opacity-70">Admin console</p>
+          <p className="truncate text-xs opacity-70">{d.console_name || "Admin console"}</p>
         </div>
         {onClose && (
           <button type="button" onClick={onClose} className="rounded-lg p-1.5 text-side-fg hover:bg-side-hover" aria-label="Close menu">
@@ -47,7 +44,7 @@ function Sidebar({ groups, active, onPick, onClose }) {
           </button>
         )}
       </div>
-      <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-3" aria-label="Admin">
+      <nav className={cx("flex-1 overflow-y-auto px-3 py-3", d.density === "compact" ? "space-y-3" : "space-y-5")} aria-label="Admin">
         {groups.map((g, i) => (
           <div key={g.label || i}>
             {g.label && <p className="mb-1 px-3 text-[11px] font-semibold uppercase tracking-wider text-side-fg opacity-60">{g.label}</p>}
@@ -63,6 +60,19 @@ function Sidebar({ groups, active, onPick, onClose }) {
         <NavItem item={{ name: "Settings" }} icon={Cog6ToothIcon} active={active === "Settings"} onClick={() => onPick("Settings")} />
       </div>
     </div>
+  );
+}
+
+function AdminFrame({ children }) {
+  return <div className="ui-scope min-h-screen bg-page font-theme text-slate-900 antialiased">{children}</div>;
+}
+
+function AdminMain({ children }) {
+  const d = useSurfaceDesign("admin");
+  return (
+    <main id="admin-main" className={d.density === "compact" ? "p-3 sm:p-4 lg:p-6" : "p-4 sm:p-6 lg:p-8"}>
+      {children}
+    </main>
   );
 }
 
@@ -110,8 +120,8 @@ function SideBar() {
   const displayName = [user.first_name, user.last_name].filter(Boolean).join(" ") || user.email;
 
   return (
-    <ThemeProvider>
-      <div className="ui-scope min-h-screen bg-slate-50 font-theme text-slate-900 antialiased">
+    <ThemeProvider surface="admin">
+      <AdminFrame>
         <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 lg:block">
           <Sidebar groups={groups} active={parent || page} onPick={open} />
         </aside>
@@ -124,41 +134,41 @@ function SideBar() {
           </div>
         )}
         <div className="lg:pl-64">
-          <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-slate-200 bg-white px-4 sm:px-6">
-            <button type="button" onClick={() => setDrawer(true)} className="-ml-1 rounded-lg p-2 text-slate-700 hover:bg-slate-100 lg:hidden" aria-label="Open menu">
+          <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-top-border bg-top px-4 text-top-fg sm:px-6">
+            <button type="button" onClick={() => setDrawer(true)} className="-ml-1 rounded-lg p-2 hover:bg-black/5 lg:hidden" aria-label="Open menu">
               <Bars3Icon className="h-6 w-6" />
             </button>
             <nav aria-label="Breadcrumb" className="flex min-w-0 flex-1 items-center gap-1.5 text-sm">
               {parent && (
                 <>
-                  <button type="button" onClick={() => open(parent)} className="hidden truncate font-medium text-slate-500 hover:text-slate-900 sm:block">
+                  <button type="button" onClick={() => open(parent)} className="hidden truncate font-medium opacity-70 hover:opacity-100 sm:block">
                     {pageLabel(parent)}
                   </button>
-                  <ChevronRightIcon className="hidden h-4 w-4 shrink-0 text-slate-400 sm:block" />
+                  <ChevronRightIcon className="hidden h-4 w-4 shrink-0 opacity-50 sm:block" />
                 </>
               )}
-              <span className="truncate font-semibold text-slate-900">{pageLabel(page)}</span>
+              <span className="truncate font-semibold">{pageLabel(page)}</span>
             </nav>
-            <a href="/landing" target="_blank" rel="noreferrer" className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 sm:inline-flex">
+            <a href="/landing" target="_blank" rel="noreferrer" className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-inherit opacity-80 hover:bg-black/5 hover:opacity-100 sm:inline-flex">
               View site <ArrowTopRightOnSquareIcon className="h-4 w-4" />
             </a>
-            <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
+            <div className="flex items-center gap-2 border-l border-top-border pl-3">
               <Avatar name={displayName} size="sm" />
               <div className="hidden max-w-[160px] leading-tight md:block">
-                <p className="truncate text-sm font-semibold text-slate-900">{displayName}</p>
-                <p className="text-xs text-slate-500">{ROLE_LABEL[user.role_name]}</p>
+                <p className="truncate text-sm font-semibold">{displayName}</p>
+                <p className="text-xs opacity-70">{ROLE_LABEL[user.role_name]}</p>
               </div>
-              <button type="button" onClick={signOut} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900" aria-label="Sign out" title="Sign out">
+              <button type="button" onClick={signOut} className="rounded-lg p-2 opacity-70 hover:bg-black/5 hover:opacity-100" aria-label="Sign out" title="Sign out">
                 <ArrowRightOnRectangleIcon className="h-5 w-5" />
               </button>
             </div>
           </header>
-          <main id="admin-main" className="p-4 sm:p-6 lg:p-8">
+          <AdminMain>
             <ComponentRender page={page} onPageSet={open} />
-          </main>
+          </AdminMain>
         </div>
         <ToastContainer position="bottom-right" newestOnTop limit={4} />
-      </div>
+      </AdminFrame>
     </ThemeProvider>
   );
 }

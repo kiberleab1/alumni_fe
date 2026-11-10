@@ -38,7 +38,7 @@ export default function NotificationBell({ onOpenItem, onSeeAll }) {
       {({ close }) => (
         <>
           <Popover.Button
-            className="relative rounded-full p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+            className="relative rounded-full p-2 opacity-75 hover:bg-black/5 hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
             aria-label={`Notifications${unreadNotifs ? ` (${unreadNotifs} unread)` : ""}`}
           >
             <BellIcon className="h-6 w-6" />

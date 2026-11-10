@@ -7,6 +7,7 @@ import DOMPurify from "dompurify";
 import { Link } from "react-router-dom";
 import { ArrowRightIcon, BriefcaseIcon, CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, ClockIcon, MapPinIcon, NewspaperIcon } from "@heroicons/react/24/outline";
 import { getImageBaseUrl } from "src/api";
+import { useSurfaceDesign } from "src/lib/theme";
 import { cx } from "src/components/ui";
 
 export const P = {
@@ -39,7 +40,8 @@ export const hasTime = (d) => {
 export const prettyType = (t) => (t ? String(t).replace(/[_-]+/g, " ").replace(/^\w/, (c) => c.toUpperCase()) : "");
 
 export function Container({ className, children }) {
-  return <div className={cx("mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8", className)}>{children}</div>;
+  const { width } = useSurfaceDesign("public");
+  return <div className={cx("mx-auto w-full px-4 sm:px-6 lg:px-8", width === "wide" ? "max-w-7xl" : "max-w-6xl", className)}>{children}</div>;
 }
 
 /** Title band at the top of every inner page. */
@@ -81,7 +83,7 @@ export function MoreLink({ to, children }) {
 
 export function ButtonLink({ to, href, variant = "primary", className, children }) {
   const cls = cx(
-    "inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand",
+    "inline-flex items-center justify-center gap-2 rounded-btn px-5 py-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand",
     variant === "primary" && "bg-brand text-white shadow-sm hover:bg-brand-hover",
     variant === "white" && "bg-white text-slate-900 shadow-sm hover:bg-slate-100",
     variant === "ghost-light" && "text-white ring-1 ring-inset ring-white/40 hover:bg-white/10",
