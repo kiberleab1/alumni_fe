@@ -15,21 +15,65 @@ import {
 } from "@heroicons/react/24/outline";
 import { getPublic } from "src/api";
 import { ThemeProvider, useThemeInfo } from "src/lib/theme";
+import { useInstituteConfig } from "src/lib/config";
 import { cx } from "src/components/ui";
 import { getUserToken } from "src/helpers/globalStorage";
 import { Container, P } from "./kit";
 
-const NAV = [
+const ALL_NAV = [
   { to: P.home, label: "Home", end: true },
-  { to: P.about, label: "About" },
-  { to: P.events, label: "Events" },
-  { to: P.news, label: "News" },
-  { to: P.jobs, label: "Jobs" },
-  { to: P.stories, label: "Stories" },
-  { to: P.podcasts, label: "Podcasts" },
-  { to: P.gallery, label: "Gallery" },
-  { to: P.contact, label: "Contact" },
+  { to: P.about, label: "About", key: "about" },
+  { to: P.events, label: "Events", key: "events" },
+  { to: P.news, label: "News", key: "news" },
+  { to: P.jobs, label: "Jobs", key: "jobs" },
+  { to: P.stories, label: "Stories", key: "stories" },
+  { to: P.podcasts, label: "Podcasts", key: "podcasts", feature: "podcasts" },
+  { to: P.gallery, label: "Gallery", key: "gallery" },
+  { to: P.contact, label: "Contact", key: "contact" },
 ];
+
+/** Menu items the institute's admin left switched on. */
+function useNav() {
+  const { website, on } = useInstituteConfig();
+  return ALL_NAV.filter((n) => (!n.key || website?.nav?.[n.key] !== false) && on(n.feature));
+}
+
+/** Optional bar above the header, set under Institute settings → Website. */
+function Banner() {
+  const { website } = useInstituteConfig();
+  const b = website?.banner;
+  if (!b?.enabled || !b.text) return null;
+  const inner = <span className="font-medium">{b.text}</span>;
+  return (
+    <div className="bg-brand px-4 py-2 text-center text-sm text-white">
+      {b.link ? (
+        <a href={b.link} className="hover:underline" {...(/^https?:/.test(b.link) ? { target: "_blank", rel: "noreferrer" } : {})}>
+          {inner} <span aria-hidden="true">→</span>
+        </a>
+      ) : (
+        inner
+      )}
+    </div>
+  );
+}
+
+/** Title and description for search engines and browser tabs. */
+function Seo() {
+  const { website } = useInstituteConfig();
+  useEffect(() => {
+    if (website?.seo_title) document.title = website.seo_title;
+    if (website?.seo_description) {
+      let tag = document.querySelector('meta[name="description"]');
+      if (!tag) {
+        tag = document.createElement("meta");
+        tag.name = "description";
+        document.head.appendChild(tag);
+      }
+      tag.content = website.seo_description;
+    }
+  }, [website?.seo_title, website?.seo_description]);
+  return null;
+}
 
 function signedInHome() {
   try {
@@ -74,6 +118,7 @@ function Brand({ onClick }) {
 }
 
 function Header() {
+  const NAV = useNav();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
@@ -231,6 +276,7 @@ const SOCIAL_LABEL = {
 };
 
 function Footer() {
+  const NAV = useNav();
   const { data } = useQuery("publicAbout", () => getPublic("about"), {
     staleTime: 5 * 60_000,
     retry: false,
@@ -377,6 +423,8 @@ export default function PublicLayout() {
         >
           Skip to content
         </a>
+        <Seo />
+        <Banner />
         <Header />
         <main id="main" className="flex-1">
           <Outlet />

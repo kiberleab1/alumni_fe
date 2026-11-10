@@ -1,5 +1,10 @@
 import {
   AcademicCapIcon,
+  AdjustmentsHorizontalIcon,
+  ChartBarIcon,
+  ClipboardDocumentListIcon,
+  GlobeEuropeAfricaIcon,
+  MegaphoneIcon,
   BriefcaseIcon,
   BuildingLibraryIcon,
   CalendarDaysIcon,
@@ -20,50 +25,68 @@ import {
   UsersIcon,
 } from "@heroicons/react/24/outline";
 
-/** Sidebar sections. `name` is the page id used by PageRender. */
+/**
+ * Sidebar sections. `name` is the page id used by PageRender; `cap` is the
+ * capability an institute admin needs (the super admin decides these per
+ * institute); `superOnly` items are hidden from institute admins.
+ */
 const GROUPS = [
-  { items: [{ name: "Dashboard", icon: HomeIcon }] },
+  {
+    items: [
+      { name: "Dashboard", icon: HomeIcon },
+      { name: "Platform Overview", label: "Platform overview", icon: GlobeEuropeAfricaIcon, superOnly: true },
+    ],
+  },
   {
     label: "People",
     items: [
+      { name: "Members", icon: UsersIcon, cap: "members.manage" },
       { name: "Alumni", icon: AcademicCapIcon },
-      { name: "Users", icon: UsersIcon },
-      { name: "Staff", icon: IdentificationIcon },
-      { name: "Admins", icon: UserGroupIcon },
+      { name: "Staff", icon: IdentificationIcon, cap: "organization.manage" },
+      { name: "Admins", icon: UserGroupIcon, cap: "members.manage" },
     ],
   },
   {
     label: "Organization",
     items: [
-      { name: "Institutions", icon: BuildingLibraryIcon },
-      { name: "Departments", icon: TagIcon },
+      { name: "Institutions", icon: BuildingLibraryIcon, superOnly: true },
+      { name: "Departments", icon: TagIcon, cap: "organization.manage" },
+      { name: "Institute Settings", label: "Institute settings", icon: AdjustmentsHorizontalIcon },
     ],
   },
   {
     label: "Content",
     items: [
-      { name: "News", icon: NewspaperIcon },
-      { name: "Events", icon: CalendarDaysIcon },
-      { name: "Jobs", icon: BriefcaseIcon },
+      { name: "News", icon: NewspaperIcon, cap: "content.publish" },
+      { name: "Events", icon: CalendarDaysIcon, cap: "events.manage" },
+      { name: "Jobs", icon: BriefcaseIcon, cap: "jobs.manage" },
       { name: "Jobs History", label: "Job history", icon: ClockIcon },
-      { name: "Podcast", label: "Podcasts", icon: MicrophoneIcon },
-      { name: "WebContent", label: "Website content", icon: GlobeAltIcon },
+      { name: "Podcast", label: "Podcasts", icon: MicrophoneIcon, cap: "website.edit" },
+      { name: "WebContent", label: "Website content", icon: GlobeAltIcon, cap: "website.edit" },
     ],
   },
   {
-    label: "Requests",
+    label: "Engagement",
     items: [
-      { name: "Document Verification", label: "Documents", icon: ClipboardDocumentCheckIcon },
-      { name: "Message Reports", label: "Message reports", icon: FlagIcon },
-      { name: "Email", icon: EnvelopeIcon },
+      { name: "Announcements", icon: MegaphoneIcon, cap: "announcements.send" },
+      { name: "Email", icon: EnvelopeIcon, cap: "email.send" },
+      { name: "Document Verification", label: "Documents", icon: ClipboardDocumentCheckIcon, cap: "documents.review" },
+      { name: "Message Reports", label: "Message reports", icon: FlagIcon, cap: "moderation" },
+    ],
+  },
+  {
+    label: "Insights",
+    items: [
+      { name: "Reports", icon: ChartBarIcon, cap: "analytics.view" },
+      { name: "Audit Log", label: "Audit log", icon: ClipboardDocumentListIcon, cap: "audit.view" },
     ],
   },
   {
     label: "System",
     items: [
-      { name: "Roles", icon: ShieldCheckIcon },
-      { name: "Permission", label: "Permissions", icon: KeyIcon },
-      { name: "Branding", icon: SwatchIcon },
+      { name: "Roles", icon: ShieldCheckIcon, superOnly: true },
+      { name: "Permission", label: "Permissions", icon: KeyIcon, superOnly: true },
+      { name: "Branding", icon: SwatchIcon, cap: "branding.edit" },
     ],
   },
 ];
@@ -74,19 +97,25 @@ const HIDDEN = {
   aumni: ["Message Reports", "Branding"],
 };
 
-/** Grouped sidebar for a role, or null when the role has no admin area. */
-export function possibleNavigationMenus(role_name) {
+/**
+ * Grouped sidebar for a role, or null when the role has no admin area.
+ * `caps` (from /admin/config) hides what this institute's admins may not do;
+ * while it loads, everything the role allows is shown.
+ */
+export function possibleNavigationMenus(role_name, caps) {
   const hidden = HIDDEN[role_name];
   if (!hidden) return null;
-  return GROUPS.map((g) => ({ ...g, items: g.items.filter((i) => !hidden.includes(i.name)) })).filter((g) => g.items.length);
+  const isSuper = role_name === "super_admin";
+  const allowed = (i) => !hidden.includes(i.name) && (isSuper || (!i.superOnly && (!i.cap || !caps || caps.includes(i.cap))));
+  return GROUPS.map((g) => ({ ...g, items: g.items.filter(allowed) })).filter((g) => g.items.length);
 }
 
 /** Which sidebar entry a create/edit page belongs to. */
 export const PAGE_PARENT = {
   "Create Admin": "Admins",
   "Edit Admin": "Admins",
-  "Create User": "Users",
-  "Edit User": "Users",
+  "Create User": "Members",
+  "Edit User": "Members",
   "Create Institute": "Institutions",
   "Edit Institute": "Institutions",
   "Create Department": "Departments",

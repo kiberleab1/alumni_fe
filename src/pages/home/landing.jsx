@@ -3,7 +3,9 @@
  * latest news, open jobs, alumni voices and a closing call to join.
  * Hero text/image come from Web content → "slideshow" when an admin set it.
  */
+import { Fragment } from "react";
 import { useQuery } from "react-query";
+import { useInstituteConfig } from "src/lib/config";
 import { Link } from "react-router-dom";
 import {
   AcademicCapIcon,
@@ -29,7 +31,7 @@ const FEATURES = [
   { icon: ClipboardDocumentCheckIcon, title: "Official documents", text: "Request verification letters and transcripts, and track every step." },
 ];
 
-function Hero({ data }) {
+function Hero({ data, cta }) {
   const h = data?.hero;
   const image = img(h?.images?.[0]);
   const name = data?.institute?.name;
@@ -47,7 +49,7 @@ function Hero({ data }) {
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/80">{h?.description ? h.description.replace(/<[^>]*>/g, " ").trim() : "Find classmates, discover jobs and mentors, and keep up with events and news from your institute, all in one place."}</p>
           <div className="mt-9 flex flex-wrap gap-3">
             <ButtonLink href={P.signup} variant="white">
-              Join the network <ArrowRightIcon className="h-4 w-4" />
+              {cta || "Join the network"} <ArrowRightIcon className="h-4 w-4" />
             </ButtonLink>
             <ButtonLink to={P.events} variant="ghost-light">
               See upcoming events
@@ -174,49 +176,55 @@ function Quotes({ items }) {
 
 export default function LandingPage() {
   const { data, isLoading } = useQuery("publicHome", () => getPublic("home"), { staleTime: 60_000, retry: false });
+  const { website } = useInstituteConfig();
+  // the institute's admin chooses which sections show and in what order
+  const sections = {
+    hero: <Hero data={data} cta={website?.hero_cta} />,
+    stats: <Stats stats={data?.stats} />,
+    features: <Features />,
+    events: (isLoading || data?.events?.length > 0) && (
+      <section className="bg-slate-50 py-20 sm:py-24">
+        <Container>
+          <SectionHead eyebrow="Events" title="Coming up" action={<MoreLink to={P.events}>All events</MoreLink>} />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{isLoading ? <CardSkeletons className="aspect-[16/9]" /> : data.events.map((e) => <EventCard key={e.id} e={e} />)}</div>
+        </Container>
+      </section>
+    ),
+    news: data?.news?.length > 0 && (
+      <section className="py-20 sm:py-24">
+        <Container>
+          <SectionHead eyebrow="News" title="From campus and the alumni community" action={<MoreLink to={P.news}>All news</MoreLink>} />
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            {data.news.map((n, i) => (
+              <NewsCard key={n.id} n={n} large={i === 0} />
+            ))}
+          </div>
+        </Container>
+      </section>
+    ),
+    jobs: data?.jobs?.length > 0 && (
+      <section className="bg-slate-50 py-20 sm:py-24">
+        <Container>
+          <SectionHead eyebrow="Careers" title="Opportunities shared with alumni" action={<MoreLink to={P.jobs}>All jobs</MoreLink>} />
+          <div className="grid gap-4 md:grid-cols-2">
+            {data.jobs.map((j) => (
+              <JobRow key={j.id} j={j} />
+            ))}
+          </div>
+        </Container>
+      </section>
+    ),
+    testimonials: <Quotes items={data?.testimonials} />,
+    join: <JoinBanner />,
+  };
+  const order = website?.sections || Object.keys(sections).map((key) => ({ key, visible: true }));
   return (
     <>
-      <Hero data={data} />
-      <Stats stats={data?.stats} />
-      <Features />
-
-      {(isLoading || data?.events?.length > 0) && (
-        <section className="bg-slate-50 py-20 sm:py-24">
-          <Container>
-            <SectionHead eyebrow="Events" title="Coming up" action={<MoreLink to={P.events}>All events</MoreLink>} />
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{isLoading ? <CardSkeletons className="aspect-[16/9]" /> : data.events.map((e) => <EventCard key={e.id} e={e} />)}</div>
-          </Container>
-        </section>
-      )}
-
-      {data?.news?.length > 0 && (
-        <section className="py-20 sm:py-24">
-          <Container>
-            <SectionHead eyebrow="News" title="From campus and the alumni community" action={<MoreLink to={P.news}>All news</MoreLink>} />
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-              {data.news.map((n, i) => (
-                <NewsCard key={n.id} n={n} large={i === 0} />
-              ))}
-            </div>
-          </Container>
-        </section>
-      )}
-
-      {data?.jobs?.length > 0 && (
-        <section className="bg-slate-50 py-20 sm:py-24">
-          <Container>
-            <SectionHead eyebrow="Careers" title="Opportunities shared with alumni" action={<MoreLink to={P.jobs}>All jobs</MoreLink>} />
-            <div className="grid gap-4 md:grid-cols-2">
-              {data.jobs.map((j) => (
-                <JobRow key={j.id} j={j} />
-              ))}
-            </div>
-          </Container>
-        </section>
-      )}
-
-      <Quotes items={data?.testimonials} />
-      <JoinBanner />
+      {order
+        .filter((s) => s.visible && sections[s.key])
+        .map((s) => (
+          <Fragment key={s.key}>{sections[s.key]}</Fragment>
+        ))}
     </>
   );
 }

@@ -29,6 +29,7 @@ import { RealtimeProvider, useRealtime } from "src/lib/realtime";
 import { PATHS, notificationTarget } from "src/lib/nav";
 import NotificationBell from "src/components/NotificationBell";
 import { Avatar, CountBadge, cx } from "src/components/ui";
+import { FEATURE_FOR_PATH, useInstituteConfig } from "src/lib/config";
 
 // Main navigation (design: Blueprint · navigation). `badge` picks a live
 // counter from the realtime context.
@@ -97,6 +98,10 @@ function Shell() {
     window.location.href = "/login";
   };
 
+  // the super admin can switch features off per institute
+  const { on } = useInstituteConfig();
+  const visible = (list) => list.filter((i) => on(FEATURE_FOR_PATH[i.to]));
+
   const navItem = (item) => (
     <li key={item.to}>
       <NavLink
@@ -123,11 +128,11 @@ function Shell() {
       </div>
       <nav className="flex flex-1 flex-col" aria-label="Main">
         <ul role="list" className="space-y-1">
-          {navigation.map(navItem)}
+          {visible(navigation).map(navItem)}
         </ul>
         <p className="mt-6 px-3 text-[11px] font-semibold uppercase tracking-wider text-side-fg/70">You</p>
         <ul role="list" className="mt-1 space-y-1">
-          {secondary.map(navItem)}
+          {visible(secondary).map(navItem)}
         </ul>
         <button
           onClick={signOut}
@@ -213,7 +218,7 @@ function Shell() {
                   </p>
                   <p className="truncate text-xs text-slate-500">{me?.email}</p>
                 </div>
-                {secondary.map((item) => (
+                {visible(secondary).map((item) => (
                   <Menu.Item key={item.to}>
                     {({ active }) => (
                       <button onClick={() => navigate(item.to)} className={cx("flex w-full items-center gap-2 px-4 py-2 text-sm text-slate-700", active && "bg-slate-50")}>
@@ -240,7 +245,7 @@ function Shell() {
 
         {/* phone bottom bar */}
         <nav aria-label="Main" className="ui-scope fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)] lg:hidden">
-          {bottomTabs.map((item) => (
+          {visible(bottomTabs).map((item) => (
             <NavLink
               key={item.to}
               to={item.to}

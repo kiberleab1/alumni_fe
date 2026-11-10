@@ -11,6 +11,7 @@ import { ArrowRightOnRectangleIcon, ArrowTopRightOnSquareIcon, Bars3Icon, Chevro
 import { deleteUserToken, getUserToken } from "src/helpers/globalStorage";
 import { PAGE_PARENT, pageLabel, possibleNavigationMenus } from "src/helpers/role_maaping";
 import { ThemeProvider, useThemeInfo } from "src/lib/theme";
+import { useAdminConfig } from "./admin/platform/shared";
 import { Avatar, cx } from "src/components/ui";
 import ComponentRender, { isAdminPage } from "./PageRender";
 
@@ -70,7 +71,8 @@ function SideBar() {
   const [params, setParams] = useSearchParams();
   const [drawer, setDrawer] = useState(false);
   const user = getUserToken()?.user;
-  const groups = user ? possibleNavigationMenus(user.role_name) : null;
+  const { data: adminConfig } = useAdminConfig();
+  const groups = user ? possibleNavigationMenus(user.role_name, adminConfig?.my_caps) : null;
 
   useEffect(() => {
     if (!groups) navigate("/landing/program/login", { replace: true });

@@ -1,5 +1,5 @@
 /** Admin screens for institutions and departments. */
-import { BuildingLibraryIcon, TagIcon } from "@heroicons/react/24/outline";
+import { AdjustmentsHorizontalIcon, BuildingLibraryIcon, TagIcon } from "@heroicons/react/24/outline";
 import { createAddress, createDepartment, createInstitute, deleteDepartment, deleteInstitute, editDepartent, getDepartments, getInstitutes, updateAddress, updateInstitute } from "src/api";
 import { Pill } from "src/components/ui";
 import { ADDRESS_BLANK, ADDRESS_REQUIRED, AddressSection, FormScreen, FormSection, Lead, ResourceList, SelectField, SocialSection, TextArea, TextField, buildContact, compact, dateInput, fmtDate, parseContact, pickAddress, useFormState, useInstitutes, useLoadAddress, useSave, useSession } from "../kit";
@@ -27,6 +27,11 @@ export function InstitutionsPage({ go }) {
       createLabel="Add institution"
       onCreate={() => go("Create Institute")}
       onEdit={(i) => go("Edit Institute", i)}
+      actions={(i) => (
+        <button type="button" onClick={() => go("Institute Settings", { id: i.id })} className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900" aria-label={`Settings for ${i.name}`} title="Features, website and admin permissions">
+          <AdjustmentsHorizontalIcon className="h-5 w-5" />
+        </button>
+      )}
       remove={(i) => deleteInstitute({ address_id: i.address_id, institute_id: i.id })}
       nameOf={(i) => i.name}
       emptyIcon={BuildingLibraryIcon}

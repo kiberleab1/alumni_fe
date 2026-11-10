@@ -1,7 +1,7 @@
 /** Admin home: live counts, work waiting on an admin, and recent activity. */
 import { useQuery } from "react-query";
-import { AcademicCapIcon, ArrowRightIcon, BriefcaseIcon, BuildingLibraryIcon, CalendarDaysIcon, CheckCircleIcon, ClipboardDocumentCheckIcon, FlagIcon, NewspaperIcon, PlusIcon, TagIcon } from "@heroicons/react/24/outline";
-import { getAdminDocuments, getAllAlumni, getAllEvents, getAllJobs, getAllNews, getDepartments, getInstitutes, getMessageReports } from "src/api";
+import { UserPlusIcon, AcademicCapIcon, ArrowRightIcon, BriefcaseIcon, BuildingLibraryIcon, CalendarDaysIcon, CheckCircleIcon, ClipboardDocumentCheckIcon, FlagIcon, NewspaperIcon, PlusIcon, TagIcon } from "@heroicons/react/24/outline";
+import { getAdminMembers, getAdminDocuments, getAllAlumni, getAllEvents, getAllJobs, getAllNews, getDepartments, getInstitutes, getMessageReports } from "src/api";
 import { Avatar, Button, Card, PageHeader, cx } from "src/components/ui";
 import { fmtDate, useSession } from "./kit";
 
@@ -11,7 +11,7 @@ const total = (r) => (r?.data ? r.data.total_items ?? null : null);
 
 async function loadDashboard() {
   const one = { pageNumber: 1, pageSize: 10 };
-  const [alumni, events, jobs, news, institutes, departments, documents, reports] = await Promise.all([
+  const [alumni, events, jobs, news, institutes, departments, documents, reports, pending] = await Promise.all([
     safe(getAllAlumni({ pageNumber: 1, pageSize: 6 })),
     safe(getAllEvents({ pageNumber: 1, pageSize: 5 })),
     safe(getAllJobs(one)),
@@ -20,6 +20,7 @@ async function loadDashboard() {
     safe(getDepartments(one)),
     safe(getAdminDocuments({ status: "open" })),
     safe(getMessageReports({ status: "open" })),
+    safe(getAdminMembers({ status: "PENDING", pageSize: 1 })),
   ]);
   const unwrap = (r) => r?.data ?? r;
   const docs = unwrap(documents);
@@ -28,6 +29,7 @@ async function loadDashboard() {
     counts: { alumni: total(alumni), events: total(events), jobs: total(jobs), news: total(news), institutes: total(institutes), departments: total(departments) },
     openDocuments: docs?.total ?? null,
     openReports: reps?.total ?? reps?.total_items ?? null,
+    pendingMembers: pending ? pending.total : null,
     recentAlumni: alumni?.data?.alumniProfile || [],
     events: events?.data?.events || [],
   };
@@ -114,6 +116,7 @@ export function Dashboard({ go }) {
       <div className="grid gap-6 lg:grid-cols-3">
         <Panel title="Needs attention">
           <div className="-mx-2 space-y-1">
+            <Attention icon={UserPlusIcon} label="Sign-ups to approve" count={data?.pendingMembers} onClick={() => go("Members", { status: "PENDING" })} />
             <Attention icon={ClipboardDocumentCheckIcon} label="Document requests" count={data?.openDocuments} onClick={() => go("Document Verification")} />
             <Attention icon={FlagIcon} label="Reported messages" count={data?.openReports} onClick={() => go("Message Reports")} />
           </div>

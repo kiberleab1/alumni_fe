@@ -8,6 +8,8 @@
  */
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { PATHS, chatPath, eventPath } from "src/lib/nav";
+import { featureForPath, useInstituteConfig } from "src/lib/config";
+import { NoSymbolIcon } from "@heroicons/react/24/outline";
 
 import HomePage from "./user/home/HomePage";
 import PeoplePage from "./user/people/PeoplePage";
@@ -53,7 +55,24 @@ function Settings() {
 }
 
 
+function FeatureOff() {
+  return (
+    <div className="ui-scope mx-auto max-w-md py-20 text-center">
+      <NoSymbolIcon className="mx-auto h-10 w-10 text-slate-400" />
+      <h1 className="mt-4 text-lg font-semibold text-slate-900">This isn't available</h1>
+      <p className="mt-1 text-sm text-slate-500">Your alumni office has turned this feature off.</p>
+      <a href={PATHS.home} className="mt-5 inline-block text-sm font-semibold text-link hover:underline">
+        Back to home
+      </a>
+    </div>
+  );
+}
+
 export default function MemberRoutes() {
+  const { pathname } = useLocation();
+  const { on } = useInstituteConfig();
+  const feature = featureForPath(pathname);
+  if (feature && !on(feature)) return <FeatureOff />;
   return (
     <Routes>
       <Route index element={<HomePage />} />

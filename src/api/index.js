@@ -1239,3 +1239,31 @@ export async function getPublic(path, params) {
 export async function sendContactMessage(body) {
   return (await axios.post(`${API_BASE_URl}/public/contact`, body)).data.data;
 }
+
+/* ---------------------------------------- institute configuration & admin */
+const unwrap = (r) => r.data.data;
+const clean = (o = {}) => Object.fromEntries(Object.entries(o).filter(([, v]) => v !== "" && v != null));
+/** features + website layout for the current institute (members, guests) */
+export const getInstituteConfig = async () => unwrap(await axios.get(`${API_BASE_URl}/config`));
+export const getAdminConfig = async (institute_id) => unwrap(await axios.get(`${API_BASE_URl}/admin/config`, { params: clean({ institute_id }) }));
+export const saveAdminConfig = async (body) => unwrap(await axios.put(`${API_BASE_URl}/admin/config`, body));
+export const getAdminMembers = async (params) => unwrap(await axios.get(`${API_BASE_URl}/admin/members`, { params: clean(params) }));
+export async function downloadMembersCsv(params) {
+  const r = await axios.get(`${API_BASE_URl}/admin/members/export`, { params: clean(params), responseType: "blob" });
+  const url = URL.createObjectURL(r.data);
+  const a = Object.assign(document.createElement("a"), { href: url, download: `members-${new Date().toISOString().slice(0, 10)}.csv` });
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+export const importMembers = async (body) => unwrap(await axios.post(`${API_BASE_URl}/admin/members/import`, body));
+export const bulkMembers = async (body) => unwrap(await axios.post(`${API_BASE_URl}/admin/members/bulk`, body));
+export const setMemberRole = async ({ id, role }) => unwrap(await axios.patch(`${API_BASE_URl}/admin/members/${id}/role`, { role }));
+export const getAnalytics = async (params) => unwrap(await axios.get(`${API_BASE_URl}/admin/analytics`, { params: clean(params) }));
+export const getPlatformOverview = async () => unwrap(await axios.get(`${API_BASE_URl}/super/overview`));
+export const getAnnouncements = async (params) => unwrap(await axios.get(`${API_BASE_URl}/admin/announcements`, { params: clean(params) }));
+export const sendAnnouncement = async (body) => unwrap(await axios.post(`${API_BASE_URl}/admin/announcements`, clean(body)));
+export const previewAnnouncementAudience = async (body) => unwrap(await axios.post(`${API_BASE_URl}/admin/announcements/preview`, clean(body)));
+export const getAuditLog = async (params) => unwrap(await axios.get(`${API_BASE_URl}/admin/audit`, { params: clean(params) }));
+export const getMyAnnouncements = async () => unwrap(await axios.get(`${API_BASE_URl}/announcements/mine`));

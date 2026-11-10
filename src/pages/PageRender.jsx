@@ -16,9 +16,21 @@ import MessageReportsPage from "./admin/reports/MessageReportsPage";
 import ComposeEmail from "./admin/emails/compose";
 import SettingsPage from "./admin/settings/settings";
 import BrandingPage from "./admin/branding/BrandingPage";
+import MembersPage from "./admin/platform/Members";
+import InstituteSettingsPage from "./admin/platform/InstituteSettings";
+import ReportsPage from "./admin/platform/Reports";
+import AnnouncementsPage from "./admin/platform/Announcements";
+import AuditLogPage from "./admin/platform/AuditLog";
+import PlatformOverview from "./admin/platform/Overview";
 
 const componentsMap = {
   Dashboard,
+  "Platform Overview": PlatformOverview,
+  Members: MembersPage,
+  "Institute Settings": InstituteSettingsPage,
+  Reports: ReportsPage,
+  Announcements: AnnouncementsPage,
+  "Audit Log": AuditLogPage,
   Settings: SettingsPage,
   Branding: BrandingPage,
   Admins: AdminsPage,

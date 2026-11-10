@@ -84,7 +84,7 @@ function PersonForm({ record, go, kind, listPage, fixedRole }) {
     },
     { enabled: !editing },
   );
-  const save = useSave({ success: editing ? `${kind} updated` : `${kind} created`, invalidate: listPage === "Users" ? "adminUsers" : "adminAdmins", onDone: () => go(listPage) });
+  const save = useSave({ success: editing ? `${kind} updated` : `${kind} created`, invalidate: ["adminUsers", "adminAdmins", "adminMembers"], onDone: () => go(listPage) });
 
   const submit = (e) => {
     e.preventDefault();
@@ -133,7 +133,7 @@ function PersonForm({ record, go, kind, listPage, fixedRole }) {
     </FormScreen>
   );
 }
-export const UserForm = (p) => <PersonForm {...p} kind="User" listPage="Users" fixedRole="alumni" />;
+export const UserForm = (p) => <PersonForm {...p} kind="User" listPage="Members" fixedRole="alumni" />;
 export const AdminForm = (p) => <PersonForm {...p} kind="Admin" listPage="Admins" />;
 
 /* --------------------------------------------------------------- staff */

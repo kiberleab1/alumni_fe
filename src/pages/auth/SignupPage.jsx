@@ -10,6 +10,7 @@ import { CheckCircleIcon, EnvelopeIcon, EyeIcon, EyeSlashIcon } from "@heroicons
 import { apiErrorMessage, createAddress, getRoleByName, signup } from "src/api";
 import { Spinner, cx } from "src/components/ui";
 import { AuthLayout } from "./AuthPages";
+import { useInstituteConfig } from "src/lib/config";
 
 const RULES = [
   { test: (p) => p.length >= 8, label: "At least 8 characters" },
@@ -38,6 +39,7 @@ function Err({ children }) {
 }
 
 export default function SignupPage() {
+  const { signupMode } = useInstituteConfig();
   const [step, setStep] = useState(0);
   const [show, setShow] = useState(false);
   const [touched, setTouched] = useState({});
@@ -80,6 +82,37 @@ export default function SignupPage() {
       address_id,
     });
   });
+
+  if (signupMode === "invite") {
+    return (
+      <AuthLayout title="Joining is by invitation" subtitle="Your alumni office adds members directly.">
+        <p className="mt-6 text-sm leading-relaxed text-slate-600">If you're a graduate, contact the alumni office and they'll e-mail you an invitation to set up your account.</p>
+        <a href="/landing/contact" className={cx(primaryBtn, "mt-6")}>
+          Contact the alumni office
+        </a>
+        <p className="mt-4 text-center text-sm text-slate-600">
+          Already have an account?{" "}
+          <a href="/login" className="font-semibold text-sky-700 hover:underline">
+            Sign in
+          </a>
+        </p>
+      </AuthLayout>
+    );
+  }
+
+  if (create.isSuccess && create.data?.data?.data?.needs_approval) {
+    return (
+      <AuthLayout title="Thanks for joining" subtitle="Your account is waiting for approval.">
+        <div className="mt-6 flex gap-3 rounded-lg bg-amber-50 p-4 text-sm text-amber-900 ring-1 ring-amber-200">
+          <CheckCircleIcon className="h-5 w-5 shrink-0" />
+          <span>The alumni office reviews new accounts to keep the network for graduates. We'll e-mail {f.email.trim()} as soon as yours is approved, and you can sign in then.</span>
+        </div>
+        <a href="/landing" className={cx(primaryBtn, "mt-6")}>
+          Back to the website
+        </a>
+      </AuthLayout>
+    );
+  }
 
   if (create.isSuccess) {
     return (
